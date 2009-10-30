@@ -8,11 +8,5 @@
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/resources"/>
         <property name="context-root" value="spring-batch-admin-sample"/>
         <property name="java-output-path"/>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/springsource-batch-manager/springsource-batch-manager">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/springsource-batch-resources/springsource-batch-resources">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
     </wb-module>
 </project-modules>

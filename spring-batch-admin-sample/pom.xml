@@ -2,15 +2,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>springsource-batch-sample</artifactId>
+	<artifactId>spring-batch-admin-sample</artifactId>
 	<parent>
-		<artifactId>springsource-batch-parent</artifactId>
-		<groupId>com.springsource.batch</groupId>
+		<artifactId>spring-batch-admin-parent</artifactId>
+		<groupId>org.springframework.batch</groupId>
 		<version>1.0.0.CI-SNAPSHOT</version>
-		<relativePath>../springsource-batch-parent</relativePath>
+		<relativePath>../spring-batch-admin-parent</relativePath>
 	</parent>
 	<packaging>war</packaging>
-	<name>Springsource Batch Web Contributor Sample</name>
+	<name>Spring Batch Admin Web Contributor Sample</name>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
