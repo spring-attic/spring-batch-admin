@@ -45,7 +45,7 @@ public class JobControllerTests {
 
 		DateFormat timeFormat = DateFormat.getTimeInstance();
 		timeFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-		assertEquals("00:00:01", timeFormat.format(new Date(1000)));
+		assertEquals("01:00:01", timeFormat.format(new Date(3601000)));
 
 	}
 
