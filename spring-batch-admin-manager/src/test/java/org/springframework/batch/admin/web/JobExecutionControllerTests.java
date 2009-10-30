@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -44,7 +45,7 @@ public class JobExecutionControllerTests {
 	@Test
 	public void testTimeFormat() throws Exception {
 
-		DateFormat timeFormat = DateFormat.getTimeInstance();
+		DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 		timeFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 		assertEquals("01:00:01", timeFormat.format(new Date(3601000)).substring(0, 8));
 
