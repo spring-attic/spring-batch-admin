@@ -86,7 +86,6 @@ public class SimpleJobService implements JobService, DisposableBean {
 		this.shutdownTimeout = shutdownTimeout;
 	}
 
-	@Autowired
 	public SimpleJobService(SearchableJobInstanceDao jobInstanceDao, SearchableJobExecutionDao jobExecutionDao,
 			SearchableStepExecutionDao stepExecutionDao, JobRepository jobRepository, JobLauncher jobLauncher,
 			ListableJobLocator jobLocator, ExecutionContextDao executionContextDao) {

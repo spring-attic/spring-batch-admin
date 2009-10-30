@@ -30,7 +30,6 @@ public class PooledStepService implements StepService {
 
 	private List<StepService> stepServices;
 
-	@Autowired
 	public void setStepServices(List<StepService> stepServices) {
 		this.stepServices = stepServices;
 	}

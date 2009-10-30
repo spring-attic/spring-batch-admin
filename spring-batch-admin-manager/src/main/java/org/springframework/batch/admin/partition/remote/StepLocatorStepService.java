@@ -44,12 +44,10 @@ public class StepLocatorStepService implements StepService {
 
 	private float weight = 1;
 
-	@Autowired
 	private JobExplorer jobExplorer;
 
 	/**
-	 * Public setter for the {@link JobExplorer}. Will be injected by default if
-	 * the {@link Autowired @Autowired} annotation is enabled.
+	 * Public setter for the {@link JobExplorer}.
 	 * 
 	 * @param jobExplorer
 	 */
