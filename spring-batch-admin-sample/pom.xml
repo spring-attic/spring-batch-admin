@@ -95,13 +95,13 @@
 			<artifactId>spring-batch-infrastructure</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.springsource.batch</groupId>
-			<artifactId>springsource-batch-manager</artifactId>
+			<groupId>org.springframework.batch</groupId>
+			<artifactId>spring-batch-admin-manager</artifactId>
 			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.springsource.batch</groupId>
-			<artifactId>springsource-batch-resources</artifactId>
+			<groupId>org.springframework.batch</groupId>
+			<artifactId>spring-batch-admin-resources</artifactId>
 			<version>${pom.version}</version>
 		</dependency>
 	</dependencies>

@@ -7,7 +7,7 @@
 		<groupId>org.springframework.batch</groupId>
 		<artifactId>spring-batch-admin-parent</artifactId>
 		<version>1.0.0.CI-SNAPSHOT</version>
-		<relativePath>../springsource-batch-parent</relativePath>
+		<relativePath>../spring-batch-admin-parent</relativePath>
 	</parent>
 	<artifactId>spring-batch-admin-resources</artifactId>
 	<packaging>jar</packaging>
