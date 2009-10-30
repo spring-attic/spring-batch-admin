@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                                 http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                                 http://www.springframework.org/schema/context
+                                 http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+	<context:component-scan base-package="org.springframework.batch.admin.web" />
+
+	<bean id="stepService" class="org.springframework.batch.admin.partition.remote.StepLocatorStepService">
+		<property name="stepLocator">
+			<bean class="org.springframework.batch.admin.partition.remote.SimpleStepLocator">
+				<!-- property name="step" ref="step1" /-->
+			</bean>
+		</property>
+		<!-- <property name="weight" value="12" /> -->
+	</bean>
+
+	<bean id="remoteStepService" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
+		<property name="serviceInterface" value="org.springframework.batch.admin.partition.remote.StepService" />
+		<!-- TODO: grab the ServletContext and get this URL context root dynamically -->
+		<property name="serviceUrl" value="http://localhost:8080/springsource-batch-web-contributor-sample/batch/step.service" />
+	</bean>
+
+	<bean name="/step.service" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+		<property name="serviceInterface" value="org.springframework.batch.admin.partition.remote.StepService" />
+		<property name="service" ref="stepService" />
+	</bean>
+
+</beans>

@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>SpringSource Enterprise Sample</title>
+<link rel="stylesheet" href="../../../main/resources/META-INF/styles/main.css" type="text/css"></link>
+<link rel="stylesheet" href="../../../main/resources/META-INF/styles/colors.css" type="text/css"></link>
+<link rel="stylesheet" href="../../../main/resources/META-INF/styles/local.css" type="text/css"></link>
+<link rel="stylesheet" href="../../../main/resources/META-INF/styles/print.css" type="text/css" media="print"></link>
+<!-- 
+Some icons from Silk icon set 1.3 by Mark James, http://www.famfamfam.com/lab/icons/silk/
+ -->
+</head>
+<body class="main tundra">
+<div id="page"><div id="header">
+	<div id="name-and-company">
+		<div id='site-name'>
+			<a href=/ title="Site Name" rel="home">
+				SpringSource Enterprise Batch
+			</a>
+		</div>
+		<div id='company-name'>
+			<a href="http://www.springsource.com/" title="SpringSource">
+				SpringSource
+			</a>
+		</div>         
+	</div> <!-- /name-and-company -->
+</div> <!-- /header -->
+ <div id="primary-navigation">
+	<div id="primary-left">
+<ul>
+		<li><a href="/batch/home">Home</a></li>
+	<li><a href="/batch/messages">Messages</a></li>
+</ul>
+	</div>
+	<div id="primary-right">
+		<ul>
+			<li><a href="http://www.springsource.com/products/enterprise">SpringSource Enterprise</a></li>
+			<li><a href="http://tbits.springsource.com/batch">SpringSource Batch</a></li>
+		</ul>
+	</div>
+</div><!-- /primary-navigation -->
+<div id="container">
+<div id="secondary-navigation">
+	<ul>
+		<li><a href="files">Files</a></li>	
+		<li><a href="files">Messages</a></li>	
+	</ul>
+</div>
+<div id="content">
+<div id="body"><div id="messages">
+
+	<h2>Recent Messages</h2>
+	
+		<p/>
+		<table title="Recent Messages"
+			class="bordered-table">
+			<tr>
+				<th>ID</th>
+				<th>Timestamp</th>
+				<th>Payload</th>
+				<th>Correlation</th>
+			</tr>
+				<tr class="name-sublevel1-even">
+					<td>FOO</td>
+					<td></td>
+					<td>foo</td>
+					<td>BAR</td>
+				</tr>
+		</table>
+
+	
+	<h3>Register XML File</h3>
+	<p>
+		Browse to a file containing Spring Batch XML configuration and press the button marked Upload.
+	</p>
+	<form id="registerFileForm" action="/batch/job-configuration-requests" method="post">
+
+		<label for="fileXml">Job Configuration File</label><input id="fileXml" type="file" name="xml" />
+		<input id="registerFile" type="submit" value="Upload" name="registerFile" />
+		<script type="text/javascript">
+			Spring.addDecoration(new Spring.AjaxEventDecoration({
+				elementId : "registerFile",
+				event : "onclick",
+				formId: "registerFileForm",
+				params : {
+					fragments: "body"
+				}
+			}));
+		</script>
+
+	</form>
+
+	<h3>Register XML Configuration</h3>
+	<p>
+		Paste in your configuration into the text area and press the button marked Register.
+	</p>
+	<form id="registerXmlForm" action="/batch/job-configuration-requests" method="post">
+	
+		<label for="textXml">Job Configuration XML</label><textarea id="textXml" name="xml"></textarea>
+		<input id="registerXml" type="submit" value="Register" name="registerXml" />
+		<script type="text/javascript">
+			Spring.addDecoration(new Spring.AjaxEventDecoration({
+				elementId : "registerXml",
+				event : "onclick",
+				formId: "registerXmlForm",
+				params : {
+					fragments: "body"
+				}
+			}));
+		</script>
+		<script type="text/javascript">
+		    Spring.addDecoration(new Spring.ElementDecoration({
+			elementId : "textXml",
+			widgetType : "dijit.form.TextArea"
+		    }));
+		</script>
+	
+	</form>
+
+</div><!-- messages -->
+</div>
+</div>
+<!-- /content --></div>
+<!-- /container --> <div id="footer-wrapper">
+	<div id="footer-left">
+		&copy; Copyright 2008 SpringSource. All Rights Reserved.
+	</div>
+	<div id="footer-right">
+		<a href="http://www.springsource.com/web/guest/contact">Contact SpringSource</a>
+	</div> 
+</div> <!-- /footer-wrapper -->
+</div>
+<!-- /page -->
+<script type="text/javascript">
+			dojo.require("dojo.NodeList-fx");
+			dojo.addOnLoad(function(){
+				var loadingImg = "<img id='loading_indicator' src='/resources/images/ajax-loader.gif' alt='Loading...' />";
+				var parentNode = dojo.query("#content h1").slice(0,1);
+				parentNode.addClass('loading_indicator_parent');
+				parentNode.addContent(loadingImg);
+				var loadingNode = dojo.query('#loading_indicator');
+				var fadeInAnimation = loadingNode.fadeIn();
+				var fadeOutAnimation = loadingNode.fadeOut();
+				dojo.connect(Spring.remoting, "getResource", fadeInAnimation, "play");
+				dojo.connect(Spring.remoting, "submitForm", fadeInAnimation, "play");
+				dojo.connect(Spring.remoting, "handleResponse", fadeOutAnimation, "play");
+				dojo.connect(Spring.remoting, "handleError", fadeOutAnimation, "play");
+			});
+		</script>
+</body>
+</html>

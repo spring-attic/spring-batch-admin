@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd"
+	xmlns:context="http://www.springframework.org/schema/context">
+
+	<job id="test-job" xmlns="http://www.springframework.org/schema/batch">
+		<step id="step1-master" parent="partitionStep" />
+	</job>
+
+	<bean id="partitionStep" class="org.springframework.batch.core.partition.support.PartitionStep">
+		<property name="jobRepository" ref="jobRepository" />
+		<property name="partitionHandler">
+			<bean class="org.springframework.batch.core.partition.support.TaskExecutorPartitionHandler">
+				<property name="gridSize" value="2" />
+				<property name="step" ref="step1" />
+				<property name="taskExecutor">
+					<!-- TODO: re-use executor from main context -->
+					<bean class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor"/>
+				</property>
+			</bean>
+		</property>
+		<property name="stepExecutionSplitter">
+			<bean class="org.springframework.batch.core.partition.support.SimpleStepExecutionSplitter">
+				<constructor-arg ref="jobRepository" />
+				<constructor-arg ref="step1" />
+			</bean>
+		</property>
+	</bean>
+
+	<step id="step1" xmlns="http://www.springframework.org/schema/batch">
+		<tasklet>
+			<chunk reader="sampleReader" writer="sampleWriter" commit-interval="3" />
+		</tasklet>
+	</step>
+
+	<bean id="sampleReader" class="org.springframework.batch.admin.sample.ExampleItemReader" />
+	<bean id="sampleWriter" class="org.springframework.batch.admin.sample.ExampleItemWriter" />
+
+</beans>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beansProjectDescription>
+	<version>1</version>
+	<pluginVersion><![CDATA[2.2.7.200910202224-RELEASE]]></pluginVersion>
+	<configSuffixes>
+		<configSuffix><![CDATA[xml]]></configSuffix>
+	</configSuffixes>
+	<enableImports><![CDATA[true]]></enableImports>
+	<configs>
+		<config>src/test/resources/com/springsource/batch/sample/JobExecutionTests-context.xml</config>
+		<config>src/test/resources/com/springsource/batch/sample/JobIntegrationTests-context.xml</config>
+		<config>src/main/resources/META-INF/batch/module-context.xml</config>
+	</configs>
+	<configSets>
+	</configSets>
+</beansProjectDescription>

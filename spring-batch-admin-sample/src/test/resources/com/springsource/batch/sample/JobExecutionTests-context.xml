@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                                 http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                                 http://www.springframework.org/schema/context
+                                 http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+ 	<import resource="classpath*:/com/springsource/batch/bootstrap/*.xml" />
+	<import resource="classpath:/META-INF/batch/*-context.xml" />
+	
+	<bean id="taskExecutor" class="org.springframework.core.task.SyncTaskExecutor"/>
+	<!-- prevent loading of other jobs by overriding the loader in the main bootstrap context -->
+	<bean id="jobLoader" class="java.lang.String"/>
+
+	<bean id="stepService" class="com.springsource.batch.partition.remote.StepLocatorStepService">
+		<property name="stepLocator">
+			<bean class="com.springsource.batch.partition.remote.SimpleStepLocator">
+				<property name="step" ref="step1" />
+			</bean>
+		</property>
+	</bean>
+
+</beans>

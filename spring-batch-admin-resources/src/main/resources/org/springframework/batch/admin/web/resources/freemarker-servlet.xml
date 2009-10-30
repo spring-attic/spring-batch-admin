@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                                 http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                                 http://www.springframework.org/schema/context
+                                 http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+	<context:component-scan base-package="org.springframework.batch.admin.web.base" />
+
+	<!-- freemarker config -->
+	<bean id="freemarkerConfig" class="org.springframework.batch.admin.web.freemarker.HippyFreeMarkerConfigurer">
+		<property name="templateLoaderPaths" value="/WEB-INF/web,classpath:/org/springframework/batch/admin/web" />
+		<!-- TODO: find a way to switch this on for some template paths and not others -->
+		<property name="preferFileSystemAccess" value="false" />
+		<property name="freemarkerVariables">
+			<map>
+				<entry key="menuManager" value-ref="menuManager" />
+			</map>
+		</property>
+	</bean>
+
+	<bean id="defaultAnnotationHandlerMapping" class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+		<property name="interceptors">
+			<bean class="org.springframework.batch.admin.web.interceptor.ContentTypeInterceptor">
+				<property name="extensions" value="rss"/>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="beanNameUrlHandlerMapping" class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"/>
+
+	<bean id="beanNameViewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver" />
+
+	<bean id="parentLayout" class="org.springframework.js.ajax.freemarker.AjaxFreeMarkerView" abstract="true">
+		<property name="viewResolver">
+			<bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+				<property name="exposeSpringMacroHelpers" value="false" />
+				<property name="allowRequestOverride" value="true" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="standard" parent="parentLayout">
+		<property name="url" value="/layouts/standard.ftl" />
+		<property name="attributes" value="body=/layouts/home.ftl" />
+	</bean>
+
+	<bean id="standard.rss" parent="parentLayout">
+		<property name="url" value="/layouts/rss/standard.ftl" />
+		<property name="attributes" value="body=/layouts/rss/home.ftl" />
+		<property name="contentType" value="text/xml"/>
+	</bean>
+
+	<bean id="home" parent="standard" />
+
+</beans>

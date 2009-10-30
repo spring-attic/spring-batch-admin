@@ -1,0 +1,60 @@
+/* print.css 2008/04/22 nicolekonicki */
+
+/* White background, black text, arial font, decent font size */
+  body
+  {
+    background-color: #fff;
+    color: #000;
+    font-family: Arial, Helvetica, "Bitstream Vera Sans", sans-serif;
+    font-size: 10pt;
+    width: 100%;
+  }
+
+/* Change the layout to remove columns */
+  html body
+  {
+    background: transparent;
+    width: auto;
+  }
+
+  #main, #container 
+  {
+    width: 100%;
+  }
+
+  #page
+  {
+    margin: 0;
+    width: 90%;
+  }
+  
+  #content
+  {
+  	margin:0;
+  	overflow:visible;
+  }
+
+
+/* Hide header and nav elements */
+  #header, #primary-navigation, #secondary-navigation, #footer-wrapper
+  {
+    visibility: hidden;
+    display: none;
+  }
+
+/* Style links */
+  a:link, a:visited
+  {
+    color: #520;
+    background: transparent;
+    text-decoration: underline !important;
+  }
+  
+/* Remove table header graphic */  
+  .bordered-table th
+  {
+  	background-image:none;
+  }
+  
+
+

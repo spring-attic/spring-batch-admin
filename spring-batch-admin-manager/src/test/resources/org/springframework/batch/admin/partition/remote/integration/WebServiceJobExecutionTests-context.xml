@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+       	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<import resource="classpath:/test-config.xml" />
+
+	<bean id="taskExecutor" class="org.springframework.core.task.SyncTaskExecutor"/>
+
+	<!-- Override the local one -->
+	<bean id="stepService" class="org.springframework.batch.admin.partition.remote.PooledStepService">
+		<property name="stepServices">
+			<list>
+				<ref bean="stepService1"/>
+				<ref bean="stepService2"/>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="stepServiceParent" abstract="true"
+		class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
+		<property name="serviceInterface"
+			value="org.springframework.batch.admin.partition.remote.StepService" />
+	</bean>
+
+	<bean id="stepService1" parent="stepServiceParent">
+		<property name="serviceUrl" value="http://localhost:8080/StepService" />
+	</bean>
+
+	<bean id="stepService2" parent="stepServiceParent">
+		<property name="serviceUrl" value="http://localhost:8081/StepService" />
+	</bean>
+
+</beans>

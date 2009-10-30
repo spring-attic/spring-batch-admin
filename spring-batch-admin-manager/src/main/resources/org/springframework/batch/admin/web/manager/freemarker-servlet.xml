@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                                 http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                                 http://www.springframework.org/schema/context
+                                 http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+	<bean name="services" parent="standard">
+		<property name="attributes" value="body=/manager/services/index.ftl" />
+	</bean>
+
+	<bean name="services/remote" parent="standard">
+		<property name="attributes" value="body=/manager/services/remote.ftl" />
+	</bean>
+
+	<bean name="services/local" parent="standard">
+		<property name="attributes" value="body=/manager/services/local.ftl" />
+	</bean>
+
+	<bean name="jobs" parent="standard">
+		<property name="attributes" value="body=/manager/jobs/jobs.ftl" />
+	</bean>
+
+	<bean name="jobs/job" parent="standard">
+		<property name="attributes" value="body=/manager/jobs/job.ftl" />
+	</bean>
+
+	<bean name="jobs/executions" parent="standard">
+		<property name="attributes">
+			<props>
+				<prop key="body">/manager/jobs/executions.ftl</prop>
+				<prop key="feedPath">/batch/jobs/executions.rss</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="jobs/executions.rss" parent="standard.rss">
+		<property name="attributes">
+			<props>
+				<prop key="body">/manager/jobs/rss/executions.ftl</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="jobs/execution" parent="standard">
+		<property name="attributes" value="body=/manager/jobs/execution.ftl" />
+	</bean>
+
+	<bean name="jobs/executions/steps" parent="standard">
+		<property name="attributes" value="body=/manager/jobs/steps/executions.ftl" />
+	</bean>
+
+	<bean name="jobs/executions/step" parent="standard">
+		<property name="attributes" value="body=/manager/jobs/steps/execution.ftl" />
+	</bean>
+
+	<bean name="jobs/executions/step/history" parent="standard">
+		<property name="attributes" value="body=/manager/jobs/steps/history.ftl" />
+	</bean>
+
+	<bean name="jobs/executions/step/progress" parent="standard">
+		<property name="attributes">
+			<value>
+				body=/manager/jobs/steps/progress.ftl
+				history=/manager/jobs/steps/history.ftl
+				execution=/manager/jobs/steps/execution.ftl
+			</value>
+		</property>
+	</bean>
+
+</beans>
+

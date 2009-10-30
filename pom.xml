@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.springsource.batch</groupId>
+	<artifactId>springsource-batch</artifactId>
+	<name>Spring Batch Admin</name>
+	<version>1.0.0.CI-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<modules>
+		<module>spring-batch-admin-parent</module>
+		<module>spring-batch-admin-resources</module>
+		<module>spring-batch-admin-manager</module>
+		<module>spring-batch-admin-sample</module>
+	</modules>
+</project>

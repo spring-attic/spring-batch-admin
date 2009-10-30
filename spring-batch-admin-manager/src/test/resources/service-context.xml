@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:batch="http://www.springframework.org/schema/batch"
+	xsi:schemaLocation="http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<import resource="classpath:/org/springframework/batch/admin/bootstrap/*.xml" />
+	<import resource="classpath:/test-job-context.xml" />
+	
+	<bean id="stepService" class="org.springframework.batch.admin.partition.remote.StepLocatorStepService">
+		<property name="stepLocator">
+			<bean class="org.springframework.batch.admin.partition.remote.SimpleStepLocator">
+				<property name="step" ref="step1" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="stepServiceHandler"
+		class="org.springframework.remoting.httpinvoker.SimpleHttpInvokerServiceExporter">
+		<property name="serviceInterface" value="org.springframework.batch.admin.partition.remote.StepService" />
+		<property name="service" ref="stepService" />
+	</bean>
+
+	<bean
+		class="org.springframework.remoting.support.SimpleHttpServerFactoryBean">
+		<property name="contexts">
+			<map>
+				<entry key="/StepService" value-ref="stepServiceHandler" />
+			</map>
+		</property>
+		<property name="port" value="8080" />
+	</bean>
+
+	<bean
+		class="org.springframework.remoting.support.SimpleHttpServerFactoryBean">
+		<property name="contexts">
+			<map>
+				<entry key="/StepService" value-ref="stepServiceHandler" />
+			</map>
+		</property>
+		<property name="port" value="8081" />
+	</bean>
+
+</beans>

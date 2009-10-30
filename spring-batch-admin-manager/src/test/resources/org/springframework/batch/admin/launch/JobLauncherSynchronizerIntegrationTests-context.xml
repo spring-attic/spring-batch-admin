@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<import resource="classpath:/test-config.xml" />
+
+	<bean id="jobLauncherSynchronizer" class="org.springframework.batch.admin.launch.JobLauncherSynchronizer">
+		<property name="jobExplorer" ref="jobExplorer"/>
+		<property name="jobRepository" ref="jobRepository"/>
+		<property name="jobNames" value="test-job"/>
+	</bean>
+	
+	<aop:aspectj-autoproxy>
+		<aop:include name="jobLauncherSynchronizer"/>
+	</aop:aspectj-autoproxy>
+
+</beans>

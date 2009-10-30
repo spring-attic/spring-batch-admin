@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<job id="job1" parent="simpleJob" xmlns="http://www.springframework.org/schema/batch" incrementer="incrementer">
+		<step id="j1.s1" parent="step1" />
+	</job>
+
+	<job id="job2" parent="simpleJob" xmlns="http://www.springframework.org/schema/batch">
+		<step id="j2.s1" parent="step1:master" />
+	</job>
+
+	<bean id="incrementer" class="com.springsource.batch.sample.TrivialJobParamemetersIncrementer" />
+
+	<bean name="step1:master" class="org.springframework.batch.core.partition.support.PartitionStep">
+		<property name="partitionHandler">
+			<bean class="org.springframework.batch.core.partition.support.TaskExecutorPartitionHandler">
+				<property name="step" ref="step1" />
+				<property name="gridSize" value="${batch.grid.size}" />
+				<property name="taskExecutor" ref="throttledTaskExecutor" />
+			</bean>
+		</property>
+		<property name="stepExecutionSplitter">
+			<bean class="org.springframework.batch.core.partition.support.SimpleStepExecutionSplitter">
+				<constructor-arg ref="jobRepository" />
+				<constructor-arg ref="step1" />
+			</bean>
+		</property>
+		<property name="jobRepository" ref="jobRepository" />
+	</bean>
+
+	<bean id="step1" parent="simpleStep">
+		<property name="itemReader" ref="itemReader" />
+		<property name="itemWriter" ref="itemWriter" />
+	</bean>
+
+	<bean id="itemWriter" class="com.springsource.batch.sample.ExampleItemWriter" p:fail="#{jobParameters['fail']}"
+		scope="step" />
+	<bean id="itemReader" class="com.springsource.batch.sample.ExampleItemReader" scope="step" />
+
+</beans>
