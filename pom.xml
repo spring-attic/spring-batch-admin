@@ -31,4 +31,20 @@
 			</plugin>
 		</plugins>
 	</build>
+	<distributionManagement>
+		<site>
+			<id>staging</id>
+			<url>file:///${user.dir}/target/staging</url>
+		</site>
+		<repository>
+			<id>spring-milestone</id>
+			<name>Spring Milestone Repository</name>
+			<url>s3://maven.springframework.org/milestone</url>
+		</repository>
+		<snapshotRepository>
+			<id>spring-snapshot</id>
+			<name>Spring Snapshot Repository</name>
+			<url>s3://maven.springframework.org/snapshot</url>
+		</snapshotRepository>
+	</distributionManagement>
 </project>
