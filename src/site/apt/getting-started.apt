@@ -1,0 +1,106 @@
+  ------
+  Getting Started with Spring Batch Admin
+  ------
+  Dave Syer
+  ------
+  November 2009
+
+Getting Started with Spring Batch Admin
+
+  Easiest way to get started: deploy the sample.  It's a regular war file.  
+  Once it's deployed, browse with a web browser 
+  (e.g. localhost:8080/spring-batch-admin-sample) and check out the features for
+  launching jobs and inspecting job executions.
+  
+  Three ways to get the code:
+  
+    [[1]] Get latest snapshots from S3 (browse to /maven.springframework.org/snapshot/org/springframework/batch
+  	with your favourite S3 tool or a service like {{{http://s3browse.com}s3browse}}). 
+
+    [[2]] Check out the source code from 
+  	{{{https://src.springframework.org/svn/spring-batch-admin/trunk}SVN}}.
+
+    [[3]] Use Maven to download the artifacts by creating a pom with 
+  	dependency
+  	
++---
+ <dependency>
+	<groupId>org.springframework.batch</groupId>
+	<artifactId>spring-batch-admin-manager</artifactId>
+	<version>1.0.0.CI-SNAPSHOT</version>
+</dependency>
++---
+ 
+      and a repository location:
+      
++---
+<repository>
+	<id>spring-snapshots</id>
+	<name>Spring Maven Snapshot Repository</name>
+	<url>http://s3.amazonaws.com/maven.springframework.org/snapshot</url>
+</repository>
++---
+
+* Add your Own Job Executions
+
+  Just execute a job (e.g. from command line) against the same database that is
+  used by Spring Batch Admin, and the UI picks up the meta data from the 
+  usual Spring Batch tables.
+
+* Add your Own Jobs For Launching
+
+  Include Spring XML files in <<<META-INF/batch>>>.  Each file should be self-contained
+  (except for Batch execution components like the <<<jobRepository>>> which are provided
+  centrally), and carry one or more bean definitions for a Spring Batch <<<Job>>>.  When
+  the application starts these files are scanned and loaded as child contexts, and then 
+  the jobs are registered with a <<<JobRegistry>>> in the parent.  Because they are 
+  child contexts you don't have to worry about name clashes between different XML files 
+  or different contributing JARs (except for the jobs which must have unique names, at 
+  present, but perhaps not when we get to a release).  
+  
+  As a convenience, the child contexts inherit
+  property placeholders and AOP configuration from the parent (this is not the default
+  behaviour for a child context).  This means you can control those things centrally
+  if you need to.  Of course, the child can always create its own placeholder definition and AOP
+  configuration, but these will not affect the parent or any of its siblings.
+
+* Environment Settings
+
+  The most likely thing you will want to customize is the location of the database.  
+  Spring Batch Admin ships with an embedded HSQLDB database, which is initialized on
+  start up.
+  
+    * To change the database type add a file to the application classpath called 
+    <<<batch-[type].properties>>>, where <<<[type]>>> is the database type you want to use.
+    Copy the contents of the <<<batch-hsql.properties>>> from the Manager jar and change the values
+    to suit your environment.  Then launch the application with a system property 
+    <<<-Dorg.springframework.batch.support.SystemPropertyInitializer.ENVIRONMENT=[type]>>>.
+    
+    * To stop the database from being 
+    wiped and re-created just set <<<batch.data.source.init=false>>>
+    (in the properties file or as a System property). 
+
+* Overriding Components from Spring Batch Admin
+
+  The system tries to provide some useful defaults for things like transaction manager,
+  job repository, job registry etc.  Most of these live in the manager jar in
+  a special package: <<<org.springframework.batch.admin.bootstrap>>>.  If you want to
+  override them, just add your own versions of the same bean definitions to a
+  Spring XML config file in <<<META-INF/spring>>> (these are guaranteed to load 
+  after the bootstrap files, so they can override default definitions).  You could
+  use this to override the data source definition as an alternative to the environment
+  settings described above. 
+
+* Create your own Web Application
+
+  Hints for custom applications:
+  
+    * Look at the sample.
+    
+    * Create a war project with an index.jsp and a web.xml (from the sample)
+    
+    * Include the <<<spring-batch-admin-*.jar>>> files in <<<WEB-INF/lib>>>.  In the sample this is done simply by 
+    making the WAR depend on those jar files in the Maven pom.
+    
+    * Deploy the web app. 
+  

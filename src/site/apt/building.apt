@@ -1,0 +1,15 @@
+  ------
+  Building Spring Batch Admin
+  ------
+  Dave Syer
+  ------
+  November 2009
+
+Building Spring Batch Admin
+
+* Instructions
+
++---
+$ mvn package
++---
+  

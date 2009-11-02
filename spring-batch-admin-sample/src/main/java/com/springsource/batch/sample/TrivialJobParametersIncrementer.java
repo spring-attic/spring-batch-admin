@@ -22,7 +22,7 @@ import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersIncrementer;
 
-public class TrivialJobParamemetersIncrementer implements
+public class TrivialJobParametersIncrementer implements
 		JobParametersIncrementer {
 
 	public JobParameters getNext(JobParameters parameters) {

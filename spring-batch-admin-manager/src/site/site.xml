@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="Spring Batch Admin: ${project.name}">
+  <bannerLeft>
+    <name>Spring Batch Admin: ${project.name}</name>
+  </bannerLeft>
+
+	<body>
+
+		<links>
+			<item name="${project.name}" href="index.html"/>			
+		</links>
+		
+		<menu name="Spring Batch Admin: ${project.name}">
+			<item name="${project.name}" href="index.html"/>
+		</menu>
+		<menu ref="reports"/>
+
+	</body>
+</project>

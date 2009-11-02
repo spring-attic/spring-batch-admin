@@ -3,6 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>spring-batch-admin-sample</artifactId>
+	<description>A sample web application (WAR project) for Spring Batch Admin console.</description>
 	<parent>
 		<artifactId>spring-batch-admin-parent</artifactId>
 		<groupId>org.springframework.batch</groupId>
@@ -10,7 +11,7 @@
 		<relativePath>../spring-batch-admin-parent</relativePath>
 	</parent>
 	<packaging>war</packaging>
-	<name>Spring Batch Admin Web Contributor Sample</name>
+	<name>Web Sample</name>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>

@@ -14,7 +14,7 @@
 		<step id="j2.s1" parent="step1:master" />
 	</job>
 
-	<bean id="incrementer" class="com.springsource.batch.sample.TrivialJobParamemetersIncrementer" />
+	<bean id="incrementer" class="com.springsource.batch.sample.TrivialJobParametersIncrementer"/>
 
 	<bean name="step1:master" class="org.springframework.batch.core.partition.support.PartitionStep">
 		<property name="partitionHandler">

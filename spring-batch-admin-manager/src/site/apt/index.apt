@@ -1,8 +1,0 @@
-SpringSource Batch Manager
-
-* Status
-
-  Prototype project for web and service tier of Batch console.  Basic use cases in place
-  visualization of Batch meta data, and also launching and stopping jobs inside the
-  webapp container.
-  
