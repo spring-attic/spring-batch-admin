@@ -14,7 +14,7 @@
 		<step id="j2.s1" parent="step1:master" />
 	</job>
 
-	<bean id="incrementer" class="com.springsource.batch.sample.TrivialJobParametersIncrementer"/>
+	<bean id="incrementer" class="org.springframework.batch.admin.sample.TrivialJobParametersIncrementer"/>
 
 	<bean name="step1:master" class="org.springframework.batch.core.partition.support.PartitionStep">
 		<property name="partitionHandler">
@@ -38,8 +38,8 @@
 		<property name="itemWriter" ref="itemWriter" />
 	</bean>
 
-	<bean id="itemWriter" class="com.springsource.batch.sample.ExampleItemWriter" p:fail="#{jobParameters['fail']}"
+	<bean id="itemWriter" class="org.springframework.batch.admin.sample.ExampleItemWriter" p:fail="#{jobParameters['fail']}"
 		scope="step" />
-	<bean id="itemReader" class="com.springsource.batch.sample.ExampleItemReader" scope="step" />
+	<bean id="itemReader" class="org.springframework.batch.admin.sample.ExampleItemReader" scope="step" />
 
 </beans>

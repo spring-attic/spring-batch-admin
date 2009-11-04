@@ -54,5 +54,10 @@ public class JobExplorerSupport implements JobExplorer {
 
 		return null;
 	}
+	
+	public List<String> getJobNames() {
+
+		return null;
+	}
 
 }

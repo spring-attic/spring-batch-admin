@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.springsource.batch.sample;
+package org.springframework.batch.admin.sample;
 
 import java.util.Arrays;
 
 import org.junit.Test;
+import org.springframework.batch.admin.sample.ExampleItemWriter;
 
 public class ExampleItemWriterTests {
 	
