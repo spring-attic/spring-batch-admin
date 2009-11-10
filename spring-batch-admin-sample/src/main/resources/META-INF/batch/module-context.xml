@@ -15,9 +15,10 @@
 	</job>
 
 	<job id="infinite" parent="simpleJob" xmlns="http://www.springframework.org/schema/batch" incrementer="incrementer">
-		<step id="infinite.s1" parent="step1" next="infinite.s1"/>
+		<!-- To allow this job to be stopped we need it to actually execute the step multiple times -->
+		<step id="infinite.s1" parent="step1.allow.start" next="infinite.s1"/>
 	</job>
-
+	
 	<bean id="incrementer" class="org.springframework.batch.admin.sample.TrivialJobParametersIncrementer"/>
 
 	<bean name="step1:master" class="org.springframework.batch.core.partition.support.PartitionStep">
@@ -40,6 +41,10 @@
 	<bean id="step1" parent="simpleStep">
 		<property name="itemReader" ref="itemReader" />
 		<property name="itemWriter" ref="itemWriter" />
+	</bean>
+
+	<bean id="step1.allow.start" parent="step1">
+		<property name="allowStartIfComplete" value="true"/>
 	</bean>
 
 	<bean id="itemWriter" class="org.springframework.batch.admin.sample.ExampleItemWriter" p:fail="#{jobParameters['fail']}"

@@ -16,9 +16,16 @@
 	</modules>
 	<profiles>
 		<profile>
-			<id>release</id>
+			<id>dist</id>
 			<build>
 				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-deploy-plugin</artifactId>
+						<configuration>
+							<skip>false</skip>
+						</configuration>
+					</plugin>
 					<plugin>
 						<artifactId>maven-assembly-plugin</artifactId>
 						<inherited>false</inherited>
@@ -41,6 +48,43 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>milestone</id>
+			<distributionManagement>
+				<repository>
+					<id>spring-milestone</id>
+					<name>Spring Milestone Repository</name>
+					<url>s3://maven.springframework.org/milestone</url>
+				</repository>
+			</distributionManagement>
+		</profile>
+		<profile>
+			<id>central</id>
+			<distributionManagement>
+				<repository>
+					<id>spring-sourceforge</id>
+					<name>Spring Sourceforge Repository</name>
+					<url>https://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo</url>
+				</repository>
+			</distributionManagement>
+		</profile>
+		<profile>
+			<id>staging</id>
+			<distributionManagement>
+				<site>
+					<id>staging</id>
+					<url>file:///${user.dir}/target/staging</url>
+				</site>
+				<repository>
+					<id>staging</id>
+					<url>file:///${user.dir}/target/staging</url>
+				</repository>
+				<snapshotRepository>
+					<id>staging</id>
+					<url>file:///${user.dir}/target/staging</url>
+				</snapshotRepository>
+			</distributionManagement>
+		</profile>
 	</profiles>
 	<build>
 		<extensions>
@@ -62,13 +106,13 @@
 	</build>
 	<distributionManagement>
 		<site>
-			<id>staging</id>
-			<url>file:///${user.dir}/target/staging</url>
+			<id>static.springframework.org</id>
+			<url>scp://static.springframework.org/var/www/domains/springframework.org/static/htdocs/spring-batch-admin/trunk</url>
 		</site>
 		<repository>
-			<id>spring-milestone</id>
-			<name>Spring Milestone Repository</name>
-			<url>s3://maven.springframework.org/milestone</url>
+			<id>spring-release</id>
+			<name>Spring Release Repository</name>
+			<url>s3://maven.springframework.org/release</url>
 		</repository>
 		<snapshotRepository>
 			<id>spring-snapshot</id>
