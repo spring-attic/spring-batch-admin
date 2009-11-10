@@ -14,6 +14,10 @@
 		<step id="j2.s1" parent="step1:master" />
 	</job>
 
+	<job id="infinite" parent="simpleJob" xmlns="http://www.springframework.org/schema/batch" incrementer="incrementer">
+		<step id="infinite.s1" parent="step1" next="infinite.s1"/>
+	</job>
+
 	<bean id="incrementer" class="org.springframework.batch.admin.sample.TrivialJobParametersIncrementer"/>
 
 	<bean name="step1:master" class="org.springframework.batch.core.partition.support.PartitionStep">

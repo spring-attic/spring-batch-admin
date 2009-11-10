@@ -12,7 +12,7 @@
 	</parent>
 	<artifactId>spring-batch-admin-resources</artifactId>
 	<packaging>jar</packaging>
-	<name>Web Resources</name>
+	<name>Resources</name>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
