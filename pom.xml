@@ -102,8 +102,146 @@
 					<skip>true</skip>
 				</configuration>
 			</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>site</id>
+						<phase>pre-site</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<echo>Copying image files...</echo>
+								<copy todir="${basedir}/target/generated-site/pdf/reference">
+									<fileset dir="${basedir}/src/site/resources">
+										<include name="**/*.png" />
+										<include name="**/*.gif" />
+										<include name="**/*.jpg" />
+									</fileset>
+								</copy>
+								<copy todir="${basedir}/target/site/reference">
+									<fileset dir="${basedir}/src/site/resources">
+										<include name="**/*.png" />
+										<include name="**/*.gif" />
+										<include name="**/*.jpg" />
+									</fileset>
+								</copy>
+							</tasks>
+						</configuration>
+					</execution>
+					<execution>
+						<id>post-site</id>
+						<!-- N.B. you have to ask for "mvn post-site" to get this -->
+						<phase>post-site</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<echo>Copying generated files...</echo>
+								<copy todir="${basedir}/target/site">
+									<fileset dir="${basedir}/target/generated-site/xhtml">
+										<include name="**/*.xhtml" />
+									</fileset>
+									<fileset dir="${basedir}/target/generated-site/pdf">
+										<include name="**/*.pdf" />
+									</fileset>
+								</copy>
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.doxia</groupId>
+				<artifactId>doxia-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>pre-site</phase>
+						<goals>
+							<goal>render-books</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<books>
+						<book>
+							<directory>src/site</directory>
+							<descriptor>src/books/reference.xml </descriptor>
+							<formats>
+								<format>
+									<id>xdoc</id>
+								</format>
+								<format>
+									<id>pdf</id>
+								</format>
+								<format>
+									<id>xhtml</id>
+								</format>
+							</formats>
+						</book>
+					</books>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
+		<reporting>
+		<excludeDefaults>true</excludeDefaults>
+		<plugins>
+		  <plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-project-info-reports-plugin</artifactId>
+			<version>2.1.1</version>
+		  </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>2.3</version>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jdepend-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<reportSets>
+					<reportSet>
+						<id>html</id>
+						<reports>
+							<report>javadoc</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+				<configuration>
+					<aggregate>true</aggregate>
+					<breakiterator>true</breakiterator>
+					<links>
+						<link>http://java.sun.com/j2ee/1.4/docs/api</link>
+						<link>http://java.sun.com/j2se/1.5.0/docs/api</link>
+						<link>http://jakarta.apache.org/commons/collections/apidocs-COLLECTIONS_3_0/</link>
+						<link>http://jakarta.apache.org/commons/dbcp/apidocs/</link>
+						<link>http://jakarta.apache.org/commons/fileupload/apidocs/</link>
+						<link>http://jakarta.apache.org/commons/httpclient/apidocs/</link>
+						<link>http://jakarta.apache.org/commons/pool/apidocs/</link>
+						<link>http://jakarta.apache.org/commons/logging/apidocs/</link>
+						<link>http://junit.sourceforge.net/javadoc/</link>
+						<link>http://logging.apache.org/log4j/docs/api/</link>
+						<link>http://jakarta.apache.org/regexp/apidocs/</link>
+						<link>http://jakarta.apache.org/velocity/api/</link>
+						<link>http://static.springsource.org/spring/docs/3.0.x/javadoc-api/</link>
+						<link>http://static.springframework.org/spring-batch/apidocs/</link>
+						<link>http://static.springframework.org/spring-ws/site/apidocs/</link>
+					</links>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</reporting>
 	<distributionManagement>
 		<site>
 			<id>static.springframework.org</id>

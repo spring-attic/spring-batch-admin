@@ -1,0 +1,40 @@
+<book xmlns="http://maven.apache.org/BOOK/1.0.0"
+	xsi:schemaLocation="http://maven.apache.org/BOOK/1.0.0 http://maven.apache.org/xsd/book-1.0.0.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<id>reference</id>
+	<author>Dave Syer</author>
+	<date>2009</date>
+	<title>Spring Batch Admin User Guide</title>
+	<chapters>
+		<chapter>
+			<id>cover</id>
+			<title>Spring Batch Admin User Guide</title>
+			<sections>
+				<section>
+					<id>cover</id>
+				</section>
+			</sections>
+		</chapter>
+		<chapter>
+			<id>introduction</id>
+			<title>Introduction</title>
+			<sections>
+				<section>
+					<id>screenshots</id>
+				</section>
+			</sections>
+		</chapter>
+		<chapter>
+			<id>customization</id>
+			<title>Customization</title>
+			<sections>
+				<section>
+					<id>getting-started</id>
+				</section>
+				<section>
+					<id>building</id>
+				</section>
+			</sections>
+		</chapter>
+	</chapters>
+</book>

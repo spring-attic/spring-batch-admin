@@ -32,6 +32,8 @@
 		<menu name="Documentation" inherit="none">
 			<item name="Home" href="index.html" />
 			<item name="Getting Started" href="getting-started.html" />
+			<item name="User Guide" href="reference.html" />
+			<item name="API" href="apidocs/index.html" />
 		</menu>
 
 		<menu name="Support" inherit="none">
