@@ -1,4 +1,10 @@
+  ------
+  Cover Page
 
-  Version: 1.0.0.M1
+  <<Version>>: 1.0.0.M1 \
+  <<Authors>>: Dave Syer
   
-  Authors: Dave Syer
+  Spring Batch Admin provides a web-based user interface that features 
+  an admin console for {{{http://www.springframework.org/spring-batch/}Spring Batch}} 
+  applications and systems.  It is an
+  open-source project from {{{http://www.springsource.com}SpringSource}}.

@@ -13,12 +13,6 @@
 				<section>
 					<id>cover</id>
 				</section>
-			</sections>
-		</chapter>
-		<chapter>
-			<id>introduction</id>
-			<title>Introduction</title>
-			<sections>
 				<section>
 					<id>screenshots</id>
 				</section>

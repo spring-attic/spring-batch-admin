@@ -1,11 +1,60 @@
+  ------
+  Design
 
 Design and Architecture
 
-  Spring Batch Admin is a layered, extensible application.  Its main artifacts are JAR files
+  Spring Batch Admin is a layered, extensible application.  Its main artifacts are 2 JAR files
   (libraries) containing all the content and business logic for the web application.  To deploy them
   you need a deployment platform, like a WAR file in a servlet container.  There is a sample application
   <<<spring-batch-admin-sample>>> which show how this works in practice. 
 
-* Application Context Structure
+Application Context Structure
 
-  There is a root or parent application context...  
+  There is a root or parent application context, and a child context for the UI components.  These
+  are both loaded in the standard Spring MVC way following directives in web.xml.  There are also
+  possibly several separate child contexts (of the main root) containing job configurations.
+  
+    * The root context is loaded from a file in the manager JAR, but all that does is import
+    from well known locations on the classpath:
+    
++---
+<import resource="classpath*:/META-INF/bootstrap/*.xml"/>
+<import resource="classpath*:/META-INF/spring/*.xml"/>
++---
+
+    * The UI child context is loaded in the same way from
+    
++---
+<import resource="classpath*:/META-INF/servlet/*.xml"/>
++---
+
+    N.B. the child context by default only loads when you visit the first page in the 
+    application.  You should be able to see which files it actually loads from the log
+    statements that come out on the server console.
+    
+    * The job contexts are loaded by a special component (<<<ClasspathXmlJobLoader>>> from 
+    Spring Batch) in the parent context.  It looks for individual files in the pattern
+    <<<classpath*/META-INF/batch/*.xml>>> and loads each file individually as its own self-contained
+    context, registering any instance of Job it finds in the <<<JobRegistry>>> at the top level.
+    
+  The job contexts are loaded in this way so that you can provide your own jobs in multiple
+  (possibly many) JAR files included in the application, but you do not have to worry too much about
+  duplicate bean definitions because only the Job names have to be unique.  A job context inherits
+  the AOP and <<<PropertyPlaceholderConfigurer>>> settings from the root context (not the standard behaviour
+  of a child context) as a convenience, but you can add your own settings to apply locally as well.
+  
+Extending the UI
+
+  There are two extension points for the UI: adding menus, and modifying the content of the existing
+  pages.
+  
+* Adding a Menu
+
+  Create a component of type <<<org.springframework.batch.admin.web.base.Menu>>> in the UI child 
+  context (<<<META-INF/servlet/*.xml>>>).  It has a <<<url>>> property that should point to
+  a controller mapping (relative to the application root context).  That's it really.
+  
+  If you want the page you add to show the other menus and links, you will want to 
+  implement the view for the URL that you add in a specific way.  Namely you will
+  use a Freemarker template to render the body of the page, and insert it in a Spring
+  MVC <<<View>>> definition in your servlet XML configuration.

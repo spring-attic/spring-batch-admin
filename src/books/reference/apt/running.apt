@@ -1,14 +1,49 @@
+  ------
+  Running
+
 Running Spring Batch Admin
 
-  Hints for custom applications:
+  If you are deploying Spring Batch Admin as a WAR file (either the sample or
+  one you rolled yourself), just deploy it as normal to a servlet container
+  like {{{http://www.springsource.com/products/tcserver}SpringSource tcServer}}.
   
-    * Look at the sample.
-    
-    * Create a war project with an index.jsp and a web.xml (from the sample or from 
-    the <<<spring-batch-admin-resources.jar>>>).
-    
-    * Include the <<<spring-batch-admin-*.jar>>> files in <<<WEB-INF/lib>>>.  In the sample this is done simply by 
-    making the WAR depend on those jar files in the Maven pom.
-    
-    * Deploy the web app. 
+  If the WAR file is called <<<spring-batch-admin-sample.war>>> (it may have a version 
+  number appended), then when you load the application in a browser 
+  at {{http://localhost:8080/spring-batch-admin-sample)}}) it should show a 
+  listing of the contents of the application:
   
+[images/home-page.jpg]Home page screenshot 
+
+  This page is a list of URLs, or URL patterns, along with the HTTP method (GET, 
+  POST, etc.) that you need to use to carry out an operation on that resource.
+  If the URL is a pattern it has
+  braces (\{}) in it to represent the value of a parameter that needs to be
+  supplied by the user.  Users of Spring REST support in MVC will recognise this
+  convention, and also the idea that a GET represents a request for information,
+  and a POST is an "insert" operation.  So, for example, to request a list of
+  all running Job executions you must GET the resource at <<</jobs/executions>>> (relative
+  to the <<<batch/>>> servlet in the application).  And to launch a new job execution
+  you  POST to <<</jobs/{jobName}>>> (with "\{jobName}" replaced with the name of a 
+  launchable job).
+  
+  Links on the home page that are not parameterised and require a GET method are
+  clickable in the browser and take you to that page in the application.  The others
+  are all navigable from there.
+  
+Menus
+
+  The basic menus for the application out of the box are
+  
+    * <Home> - the URL list or site map listing the interface for the application
+    
+    * <Jobs> - list and launch jobs.  Only jobs which are either configured in
+    the application or have been executed in other processes against the same
+    database show up here.
+    
+    * <Executions> - view and interact with running Job and Step executions.
+    
+    * <Status> - a status page for the health of the application (may be removed
+    before 1.0.0 is released).
+    
+  You can learn how to extend the content of the application including the menus
+  in a later section.

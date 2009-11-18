@@ -1,9 +1,5 @@
   ------
-  Spring Batch Admin Screenshots
-  ------
-  Dave Syer
-  ------
-  November 2009
+  Screenshots
   
 Main Use Cases
 
@@ -11,7 +7,7 @@ Main Use Cases
   see some screenshots of the main use cases.The user interface is a
   web application (built with Spring MVC).
 
-* Inspect Jobs
+Inspect Jobs
 
 [images/jobs-view.jpg]Jobs View
 
@@ -24,7 +20,7 @@ Main Use Cases
   of jobs and steps, so historic executions can be queried to show the
   non-launchable jobs.)
   
-* Launch Job
+Launch Job
 
 [images/launch-job-view.jpg]Launch Job View
 
@@ -32,7 +28,7 @@ Main Use Cases
   with job parameters provided as name value pairs, or by an incrementer
   configured into the application.
 
-* Inspect Executions
+Inspect Executions
 
 [images/job-executions-view.jpg]Job Executions View
 
@@ -64,7 +60,7 @@ Main Use Cases
   as well as an extract of the stack trace from any exception that 
   caused a failure of the step (as in the example shown above).
 
-* Stop an Execution
+Stop an Execution
   
 [images/stop-job-execution-view.jpg]Stop Job Execution View
 

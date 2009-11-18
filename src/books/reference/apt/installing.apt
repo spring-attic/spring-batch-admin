@@ -1,7 +1,26 @@
+  ------
+  Installing
+
 Installing Spring Batch Admin
 
-  Easiest way to get started: deploy the sample.  It's a regular war file.  
+  There is a sample project in the distribution - it's a regular war file.  
   Once it's deployed, browse with a web browser 
   (e.g. localhost:8080/spring-batch-admin-sample) and check out the features for
   launching jobs and inspecting job executions.
+  
+* Building your own applications:
+  
+  A custom web application with the ability to inspect job execution data from external processes
+  is really easy to build:
+    
+    * Create a war project with an index.jsp and a web.xml (from the sample or from 
+    the <<<spring-batch-admin-resources.jar>>>).
+    
+    * Include the <<<spring-batch-admin-*.jar>>> files in <<<WEB-INF/lib>>>, plus all their dependencies.  
+    In the sample this is done simply by making the WAR depend on those jar files in the Maven pom.
+    
+    * Deploy the web app.  It starts up with an in-memory database, so without any jobs defined
+    in the application it isn't going to do much at first.  See the 
+    {{{./infrastructure.html}section on environment}} settings for more detail.  
+
 

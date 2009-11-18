@@ -1,22 +1,29 @@
-Infrastructure Customizations
+  ------
+  Infrastructure
 
-* Environment Settings
+Environment Settings
 
   The most likely thing you will want to customize is the location of the database.  
   Spring Batch Admin ships with an embedded HSQLDB database, which is initialized on
   start up.
   
     * To change the database type add a file to the application classpath called 
-    <<<batch-[type].properties>>>, where <<<[type]>>> is the database type you want to use.
+    <<<batch-[type].properties>>>, where <<<[type]>>> is the database type you want to use
+    (e.g. <<<mysql>>>, <<<oracle>>>, <<<db2>>>).  
     Copy the contents of the <<<batch-hsql.properties>>> from the Manager jar and change the values
     to suit your environment.  Then launch the application with a system property 
     <<<-Dorg.springframework.batch.support.SystemPropertyInitializer.ENVIRONMENT=[type]>>>.
     
     * To stop the database from being 
-    wiped and re-created just set <<<batch.data.source.init=false>>>
-    (in the properties file or as a System property). 
+    wiped and re-created on start up just set <<<batch.data.source.init=false>>>
+    (in the properties file or as a System property).
+    
+  N.B. The use of the environment variable to switch on the database
+  type is only a suggestion.  You can change that and other things by
+  overriding and adding configuration fragments to the Spring application
+  context.  See below for details. 
 
-* Overriding Components from Spring Batch Admin
+Overriding Components from Spring Batch Admin
 
   The system tries to provide some useful defaults for things like transaction manager,
   job repository, job registry etc.  Most of these live in the manager jar in
@@ -27,7 +34,7 @@ Infrastructure Customizations
   use this to override the data source definition as an alternative to the environment
   settings described above. 
 
-* Create your own Web Application
+Create your own Web Application
 
   Hints for custom applications:
   
