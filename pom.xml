@@ -115,14 +115,14 @@
 							<tasks>
 								<echo>Copying image files...</echo>
 								<copy todir="${basedir}/target/generated-site/pdf/reference">
-									<fileset dir="${basedir}/src/site/resources">
+									<fileset dir="${basedir}/src/books/reference/resources">
 										<include name="**/*.png" />
 										<include name="**/*.gif" />
 										<include name="**/*.jpg" />
 									</fileset>
 								</copy>
 								<copy todir="${basedir}/target/site/reference">
-									<fileset dir="${basedir}/src/site/resources">
+									<fileset dir="${basedir}/src/books/reference/resources">
 										<include name="**/*.png" />
 										<include name="**/*.gif" />
 										<include name="**/*.jpg" />
@@ -168,7 +168,7 @@
 				<configuration>
 					<books>
 						<book>
-							<directory>src/site</directory>
+							<directory>src/books/reference</directory>
 							<descriptor>src/books/reference.xml </descriptor>
 							<formats>
 								<format>

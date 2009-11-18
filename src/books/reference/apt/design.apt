@@ -1,0 +1,11 @@
+
+Design and Architecture
+
+  Spring Batch Admin is a layered, extensible application.  Its main artifacts are JAR files
+  (libraries) containing all the content and business logic for the web application.  To deploy them
+  you need a deployment platform, like a WAR file in a servlet container.  There is a sample application
+  <<<spring-batch-admin-sample>>> which show how this works in practice. 
+
+* Application Context Structure
+
+  There is a root or parent application context...  

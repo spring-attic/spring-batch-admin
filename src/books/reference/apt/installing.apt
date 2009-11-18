@@ -1,0 +1,7 @@
+Installing Spring Batch Admin
+
+  Easiest way to get started: deploy the sample.  It's a regular war file.  
+  Once it's deployed, browse with a web browser 
+  (e.g. localhost:8080/spring-batch-admin-sample) and check out the features for
+  launching jobs and inspecting job executions.
+

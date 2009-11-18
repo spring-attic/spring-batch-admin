@@ -1,0 +1,14 @@
+Running Spring Batch Admin
+
+  Hints for custom applications:
+  
+    * Look at the sample.
+    
+    * Create a war project with an index.jsp and a web.xml (from the sample or from 
+    the <<<spring-batch-admin-resources.jar>>>).
+    
+    * Include the <<<spring-batch-admin-*.jar>>> files in <<<WEB-INF/lib>>>.  In the sample this is done simply by 
+    making the WAR depend on those jar files in the Maven pom.
+    
+    * Deploy the web app. 
+  

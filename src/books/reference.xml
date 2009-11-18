@@ -7,7 +7,7 @@
 	<title>Spring Batch Admin User Guide</title>
 	<chapters>
 		<chapter>
-			<id>cover</id>
+			<id>guide</id>
 			<title>Spring Batch Admin User Guide</title>
 			<sections>
 				<section>
@@ -25,14 +25,29 @@
 			</sections>
 		</chapter>
 		<chapter>
+			<id>installation</id>
+			<title>Installation</title>
+			<sections>
+				<section>
+					<id>installing</id>
+				</section>
+				<section>
+					<id>running</id>
+				</section>
+			</sections>
+		</chapter>
+		<chapter>
 			<id>customization</id>
 			<title>Customization</title>
 			<sections>
 				<section>
-					<id>getting-started</id>
+					<id>infrastructure</id>
 				</section>
 				<section>
-					<id>building</id>
+					<id>jobs</id>
+				</section>
+				<section>
+					<id>design</id>
 				</section>
 			</sections>
 		</chapter>
