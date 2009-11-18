@@ -7,7 +7,7 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-	<import resource="classpath:/org/springframework/batch/admin/bootstrap/*.xml" />
+	<import resource="classpath:/META-INF/bootstrap/*.xml" />
 	<import resource="classpath:/test-job-context.xml" />
 	
 	<bean id="stepService" class="org.springframework.batch.admin.partition.remote.StepLocatorStepService">

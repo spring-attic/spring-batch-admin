@@ -68,7 +68,7 @@ public class HomeViewTests extends AbstractResourceViewTests {
 		model.put("resources", resources);
 		secondary.render(model, request, response);
 		String content = response.getContentAsString();
-		System.err.println(content);
+		// System.err.println(content);
 		assertTrue(content.contains("<div id=\"content\" >"));
 		assertTrue(content.contains("<div id=\"secondary-navigation\">"));
 	}
