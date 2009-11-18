@@ -84,7 +84,7 @@ Getting Started with Spring Batch Admin
 
   The system tries to provide some useful defaults for things like transaction manager,
   job repository, job registry etc.  Most of these live in the manager jar in
-  a special package: <<<org.springframework.batch.admin.bootstrap>>>.  If you want to
+  a special place: <<<META-INF/bootstrap>>>.  If you want to
   override them, just add your own versions of the same bean definitions to a
   Spring XML config file in <<<META-INF/spring>>> (these are guaranteed to load 
   after the bootstrap files, so they can override default definitions).  You could
@@ -97,7 +97,8 @@ Getting Started with Spring Batch Admin
   
     * Look at the sample.
     
-    * Create a war project with an index.jsp and a web.xml (from the sample)
+    * Create a war project with an index.jsp and a web.xml (from the sample or from 
+    the <<<spring-batch-admin-resources.jar>>>).
     
     * Include the <<<spring-batch-admin-*.jar>>> files in <<<WEB-INF/lib>>>.  In the sample this is done simply by 
     making the WAR depend on those jar files in the Maven pom.
