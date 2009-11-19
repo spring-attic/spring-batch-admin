@@ -45,7 +45,7 @@ import org.springframework.core.task.TaskRejectedException;
  */
 public class ThrottledTaskExecutor implements TaskExecutor {
 
-	private final BlockingQueue<Runnable> completionQueue;
+	private BlockingQueue<Runnable> completionQueue;
 
 	private final Semaphore semaphore;
 
@@ -86,6 +86,16 @@ public class ThrottledTaskExecutor implements TaskExecutor {
 		}
 		this.completionQueue = new LinkedBlockingQueue<Runnable>(throttleLimit);
 		this.semaphore = new Semaphore(throttleLimit);
+	}
+	
+	/**
+	 * Limits the number of concurrent executions on the enclosed task executor.  Do not
+	 * call this after initialization (for configuration purposes only).
+	 * 
+	 * @param throttleLimit the throttle limit to apply
+	 */
+	public void setThrottleLimit(int throttleLimit) {
+		this.completionQueue = new LinkedBlockingQueue<Runnable>(throttleLimit);
 	}
 
 	/**

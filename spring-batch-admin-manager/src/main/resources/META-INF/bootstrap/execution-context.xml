@@ -2,60 +2,28 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:p="http://www.springframework.org/schema/p" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
 	<context:annotation-config />
 
 	<bean class="org.springframework.batch.core.scope.StepScope" />
 
-	<bean id="simpleJob" class="org.springframework.batch.core.job.SimpleJob"
-		abstract="true">
-		<property name="jobRepository" ref="jobRepository" />
-		<property name="restartable" value="true" />
-	</bean>
-
-	<bean id="taskletStep" class="org.springframework.batch.core.step.tasklet.TaskletStep"
-		abstract="true">
-		<property name="transactionManager" ref="transactionManager" />
-		<property name="jobRepository" ref="jobRepository" />
-		<property name="allowStartIfComplete" value="true" />
-	</bean>
-
-	<bean id="simpleStep"
-		class="org.springframework.batch.core.step.item.SimpleStepFactoryBean"
-		abstract="true">
-		<property name="transactionManager" ref="transactionManager" />
-		<property name="jobRepository" ref="jobRepository" />
-		<property name="startLimit" value="100" />
-		<property name="commitInterval" value="1" />
-	</bean>
-
-	<bean id="skipLimitStep"
-		class="org.springframework.batch.core.step.item.FaultTolerantStepFactoryBean"
-		parent="simpleStep" abstract="true">
-		<property name="skipLimit" value="0" />
-	</bean>
-
 	<bean id="jobLauncher"
 		class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
 		<property name="jobRepository" ref="jobRepository" />
-		<property name="taskExecutor" ref="taskExecutor" />
+		<property name="taskExecutor" ref="jobLauncherTaskExecutor" />
 	</bean>
-
-	<bean id="poolTaskExecutor"
-		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
-		<property name="corePoolSize" value="2"></property>
-		<property name="maxPoolSize" value="20"></property>
-	</bean>
-
-	<bean id="taskExecutor" parent="poolTaskExecutor" />
-
+	
+	<task:executor id="jobLauncherTaskExecutor" pool-size="6" rejection-policy="ABORT"/>
+	
+	<task:executor id="poolTaskExecutor" pool-size="600" rejection-policy="CALLER_RUNS"/>
+	
 	<bean id="throttledTaskExecutor"
 		class="org.springframework.batch.admin.util.ThrottledTaskExecutor">
-		<property name="taskExecutor">
-			<bean parent="poolTaskExecutor" />
-		</property>
+		<property name="taskExecutor" ref="poolTaskExecutor"/>
 	</bean>
 
 	<bean id="jobRepository"
@@ -107,29 +75,6 @@
 				</property>
 			</bean>
 		</constructor-arg>
-	</bean>
-
-	<bean id="customEditorConfigurer"
-		class="org.springframework.beans.factory.config.CustomEditorConfigurer">
-		<property name="customEditors">
-			<map>
-				<entry key="int[]"
-					value="org.springframework.batch.support.IntArrayPropertyEditor" />
-				<entry key="double[]"
-					value="org.springframework.batch.support.IntArrayPropertyEditor" />
-				<entry key="java.lang.Class[]"
-					value="org.springframework.beans.propertyeditors.ClassArrayEditor" />
-				<entry key="org.springframework.batch.item.file.transform.Range[]"
-					value="org.springframework.batch.item.file.transform.RangeArrayPropertyEditor" />
-				<!--
-					entry key="java.util.Date"> <bean
-					class="org.springframework.beans.propertyeditors.CustomDateEditor">
-					<constructor-arg> <bean class="java.text.SimpleDateFormat">
-					<constructor-arg value="yyyyMMdd" /> </bean> </constructor-arg>
-					<constructor-arg value="false" /> </bean> </entry
-				-->
-			</map>
-		</property>
 	</bean>
 
 </beans>

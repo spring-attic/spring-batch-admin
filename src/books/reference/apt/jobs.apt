@@ -7,6 +7,40 @@ Add your Own Job Executions
   against the same database that is
   used by Spring Batch Admin, and the UI picks up the meta data from the 
   usual Spring Batch tables.
+  
+* Create Your Own Standalone Application
+
+  To create a standalone application and run jobs against the Spring Batch Admin database, the
+  easiest thing to do is include the <<<spring-batch-admin-*.jar>>> files in the classpath of your
+  application and use the same conventions to override and extend as you would for a web application.
+  
+  If you do that then in particular for a standalone application that runs a single job in 
+  its own process, you will want
+  to override the <<<jobLauncherTaskExecutor>>> as descriobed above, and possibly also the <<<jobLoader>>> in
+  addition to providing data source properties.  Here's an example configuration file to drive a 
+  job:
+  
++---
+<beans ...>
+
+  <import resource="classpath*:/META-INF/bootstrap/*.xml" />
+  <import resource="classpath*:/META-INF/batch/*.xml" />
+
+  <!-- ensure job runs in foreground thread -->
+  <bean id="jobLauncherTaskExecutor" class="org.springframework.core.task.SyncTaskExecutor"/>
+  <!-- prevent loading of other jobs by overriding the loader in the main bootstrap context -->
+  <bean id="jobLoader" class="java.lang.String"/>
+
+</beans>
++---
+
+  With the job defined in <<</META-INF/batch/*.xml>>> you can use the <<<CommandLineJobRunner>>> from 
+  Spring Batch to load the file above, and launch the job by name, e.g.
+  
++---
+$ java org.springframework.batch.core.launch.support.CommandLineJobRunner \
+  -next config/launch-context.xml jobName
++---
 
 Add your Own Jobs For Launching
 
@@ -24,4 +58,19 @@ Add your Own Jobs For Launching
   behaviour for a child context in Spring).  This means you can control those things centrally
   if you need to.  Of course, the child can always create its own placeholder definition and AOP
   configuration, but these will not affect the parent or any of its siblings.
+
+* Create your own Web Application
+
+  Hints for custom applications:
   
+    * Look at the sample.
+    
+    * Create a war project with an index.jsp and a web.xml (from the sample or from 
+    the <<<spring-batch-admin-resources.jar>>>).
+    
+    * Include the <<<spring-batch-admin-*.jar>>> files in <<<WEB-INF/lib>>>.  In the sample this is done simply by 
+    making the WAR depend on those jar files in the Maven pom.
+    
+    * Optionally add your own jobs in the classpath under <<<META-INF/batch/*.xml>>>.
+    
+    * Deploy the web app.

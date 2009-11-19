@@ -34,6 +34,7 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.configuration.ListableJobLocator;
 import org.springframework.batch.core.launch.JobExecutionNotRunningException;
@@ -48,7 +49,6 @@ import org.springframework.batch.core.repository.dao.ExecutionContextDao;
 import org.springframework.batch.core.step.NoSuchStepException;
 import org.springframework.batch.core.step.StepLocator;
 import org.springframework.beans.factory.DisposableBean;
-
 
 // TODO: FactoryBean for this that includes table prefix
 public class SimpleJobService implements JobService, DisposableBean {
@@ -151,7 +151,7 @@ public class SimpleJobService implements JobService, DisposableBean {
 
 	public JobExecution restart(Long jobExecutionId) throws NoSuchJobExecutionException,
 			JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException,
-			NoSuchJobException {
+			NoSuchJobException, JobParametersInvalidException {
 
 		JobExecution target = getJobExecution(jobExecutionId);
 		JobInstance lastInstance = target.getJobInstance();
@@ -167,7 +167,8 @@ public class SimpleJobService implements JobService, DisposableBean {
 	}
 
 	public JobExecution launch(String jobName, JobParameters jobParameters) throws NoSuchJobException,
-			JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
+			JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException,
+			JobParametersInvalidException {
 
 		Job job = jobLocator.getJob(jobName);
 
@@ -178,7 +179,7 @@ public class SimpleJobService implements JobService, DisposableBean {
 			if (!lastInstances.isEmpty()) {
 				lastInstance = lastInstances.iterator().next();
 			}
-			
+
 			JobParameters oldParameters = new JobParameters();
 			if (lastInstance != null) {
 				oldParameters = lastInstance.getJobParameters();
@@ -249,11 +250,13 @@ public class SimpleJobService implements JobService, DisposableBean {
 
 	}
 
-	public JobExecution abandon(Long jobExecutionId) throws NoSuchJobExecutionException, JobExecutionAlreadyRunningException {
+	public JobExecution abandon(Long jobExecutionId) throws NoSuchJobExecutionException,
+			JobExecutionAlreadyRunningException {
 
 		JobExecution jobExecution = getJobExecution(jobExecutionId);
 		if (jobExecution.getStatus().isLessThan(BatchStatus.STOPPING)) {
-			throw new JobExecutionAlreadyRunningException("JobExecution is running or complete and therefore cannot be aborted");
+			throw new JobExecutionAlreadyRunningException(
+					"JobExecution is running or complete and therefore cannot be aborted");
 		}
 
 		logger.info("Aborting job execution: " + jobExecution);

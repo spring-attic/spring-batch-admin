@@ -22,6 +22,7 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.launch.JobExecutionNotRunningException;
@@ -33,7 +34,6 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.batch.core.step.NoSuchStepException;
 import org.springframework.batch.core.step.tasklet.Tasklet;
-
 
 /**
  * Interface for general purpose monitoring and management of Batch jobs. The
@@ -69,9 +69,11 @@ public interface JobService {
 	 * @throws JobExecutionAlreadyRunningException
 	 * @throws JobRestartException
 	 * @throws JobInstanceAlreadyCompleteException
+	 * @throws JobParametersInvalidException
 	 */
 	JobExecution launch(String jobName, JobParameters params) throws NoSuchJobException,
-			JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException;
+			JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException,
+			JobParametersInvalidException;
 
 	/**
 	 * Launch a job with the parameters provided. The parameters are a comma- or
@@ -85,9 +87,10 @@ public interface JobService {
 	 * @throws JobRestartException
 	 * @throws JobInstanceAlreadyCompleteException
 	 * @throws NoSuchJobException
+	 * @throws JobParametersInvalidException
 	 */
 	JobExecution restart(Long jobExecutionId) throws NoSuchJobExecutionException, JobExecutionAlreadyRunningException,
-			JobRestartException, JobInstanceAlreadyCompleteException, NoSuchJobException;
+			JobRestartException, JobInstanceAlreadyCompleteException, NoSuchJobException, JobParametersInvalidException;
 
 	/**
 	 * Send a signal to a job execution to stop processing. This method does not

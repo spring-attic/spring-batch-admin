@@ -9,7 +9,7 @@
  	<import resource="classpath*:/META-INF/bootstrap/*.xml" />
 	<import resource="classpath:/META-INF/batch/*-context.xml" />
 	
-	<bean id="taskExecutor" class="org.springframework.core.task.SyncTaskExecutor"/>
+	<bean id="jobLauncherTaskExecutor" class="org.springframework.core.task.SyncTaskExecutor"/>
 	<!-- prevent loading of other jobs by overriding the loader in the main bootstrap context -->
 	<bean id="jobLoader" class="java.lang.String"/>
 

@@ -27,23 +27,142 @@ Overriding Components from Spring Batch Admin
 
   The system tries to provide some useful defaults for things like transaction manager,
   job repository, job registry etc.  Most of these live in the manager jar in
-  a special place: <<<META-INF/bootstrap>>>.  If you want to
+  a special place: <<<META-INF/bootstrap/*.xml>>>.  If you want to
   override them, just add your own versions of the same bean definitions to a
   Spring XML config file in <<<META-INF/spring>>> (these are guaranteed to load 
   after the bootstrap files, so they can override default definitions).  You could
   use this to override the data source definition as an alternative to the environment
-  settings described above. 
+  settings described above.
 
-Create your own Web Application
-
-  Hints for custom applications:
+* Important Bootstrap Components  
   
-    * Look at the sample.
+  The important bootstrap components are listed below along with some common scenarios
+  for when you might want to override or replace them:
+  
+** JDBC Data Source
+
+  * <Bean ID>: <<<dataSource>>>
+  
+  * <Default>: DBCP <<<BasicDataSource>>> with placeholders for common properties.
+  
+  * <Override Scenarios>: Change to another implememtation, or add  additional placeholders.
+  
+** Spring Transaction Manager
+
+  * <Bean ID>: <<<transactionManager>>>
+  
+  * <Default>: <<<DataSourceTransactionManager>>> injected with the <<<dataSource>>>
+  
+  * <Override Scenarios>: Change to another implementation.  For example if you are using
+  Hibernate in your jobs, you will need to provide a <<<HibernateTransactionManager>>>.
+
+** Job Launcher
+
+  * <Bean ID>: <<<jobLauncher>>>
+  
+  * <Default>: <<<SimpleJobLauncher>>> injected with the <<<jobRepository>>> and <<<transactionManager>>>, and
+  also a thread pool task executor with bean id <<<poolTaskExector>>>, so that launches happen in a 
+  background thread by default.
+  
+  * <Override Scenarios>: Should be fine as it is for most use cases.  To switch to synchronous
+  launching change the task executor (see below).
+
+** Job Launcher Task Executor
+
+  * <Bean ID>: <<<jobLauncherTaskExecutor>>>
+  
+  * <Default>: a task executor with <<<pool-size=6>>> and rejection policy <<<ABORT>>>.
+  
+  * <Description>:  Injected into the <<<jobLauncher>>> to control the number of cocurrent 
+  jobs executing in-process.  The effect of the defaults is that at most 
+  6 jobs will run concurrently when launched locally from this application, and any 
+  submitted in excess of that will fail.
+  
+  * <Override Scenarios>: 
+  
+    * Change to a synchronous task executor for integration testing (see the 
+    sample unit tests for an example), e.g.
     
-    * Create a war project with an index.jsp and a web.xml (from the sample or from 
-    the <<<spring-batch-admin-resources.jar>>>).
++---
+<bean id="jobLauncherTaskExecutor" class="org.springframework.core.task.SyncTaskExecutor"/>
++---
+
+    * Change the pool parameters. Note that these settings can be changed at 
+    runtime using JMX, if the task executor is exposed explictly.
     
-    * Include the <<<spring-batch-admin-*.jar>>> files in <<<WEB-INF/lib>>>.  In the sample this is done simply by 
-    making the WAR depend on those jar files in the Maven pom.
-    
-    * Deploy the web app. 
+** Throttled Task Executor for Jobs and Steps
+
+  * <Bean ID>: <<<throttledTaskExecutor>>>
+  
+  * <Default>: a task executor with <<<pool-size=600>>> and rejection policy <<<CALLER_RUNS>>> and
+  infinite throttle limit.
+  
+  * <Description>:  Not used anywhere in the manager, but provided as a convenience for
+  applications that provide their own jobs and steps with concurrent behaviour.
+  
+  * <Override Scenarios>: The sample contains one job with a concurrent step ("job2"), and it 
+  works by creating a local <<<taskExecutor>>> bean inheriting
+  from the root definition, and adding a throttle limit:
+  
++---
+<bean id="taskExecutor" parent="throttledTaskExecutor">
+  <property name="throttleLimit" value="100"/>
+</bean>
++---
+
+  This task executor is then injected into a step in the sample which has the effect of limiting
+  the concurrency of the step to 100, but within overall limits set globally by the bootstrap 
+  context, and without discarding or failing any tasks that are submitted.  The throttle limit is
+  set to 100 so that if this job is the only one running it will hardly be affected by the throttle,
+  but if it is contending with other jobs, then they will all eventually run in the thread pool provided
+  by the bootstrap (with 600 threads by default).
+  
+  The bootstrap pool can be modified by overriding its bean definition <<<poolTaskExecutor>>>, e.g.
+
++---
+<task:executor id="poolTaskExecutor" pool-size="200" rejection-policy="CALLER_RUNS"/>
++---
+
+  changes the pool size to 200, limiting all jobs that use it to at most 200 threads.  
+  
+  Your mileage may vary with these thread pool settings depending on the workload that is executed.
+  It is worth experimenting with the parameters to see if you can affect the overall throughput
+  or execution times of your multi-threaded jobs.
+  
+** Job Repository
+
+  * <Bean ID>: <<<jobRepository>>>
+  
+  * <Default>: a JDBC version of <<<SimpleJobRepository>>>.
+  
+  * <Override Scenarios>: Not common to override.  But if you do override then probably
+  the application can be used to launch but not inspect job executions, since
+  it relies on JDBC to inspect the database for historic executions.
+
+** Job Loader
+
+  * <Bean ID>: <<<jobLoader>>>
+  
+  * <Default>: a <<<ClassPathXmlJobLoader>>> with path locations set to <<<classpath*:/META-INF/batch/*.xml>>>.
+  
+  * <Override Scenarios>: 
+  
+    * Changing the path locations maybe (trivial but not that useful).
+  
+    * Change
+  the inheritance strategy for post processors.  By default the AOP configuration and the 
+  <<<PropertyPLaceHolderConfigurer>>> instances from the root context are copied into the child context
+  created from the Job configuration files.  You can change this behaviour just by providing your
+  own versions in addition in the child context, or to make global changes you can override the
+  <<<jobLoader>>> with one that copies different post processors down into the child, or one that
+  does something completely different.  
+  
+    * Override it to a dummy bean for the purposes of an integration test, so that it doesn't
+  try to create multiple instances of the Job that you want to test. The sample application
+  has an example.  In <<<JobExecutionTests-context.xml>>> we want to load the Jobs explicitly into the test
+  context, and prevent them from being loaded again by the job loader, so we do this:
+
++---
+<!-- prevent loading of other jobs by overriding the loader in the main bootstrap context -->
+<bean id="jobLoader" class="java.lang.String"/>
++---

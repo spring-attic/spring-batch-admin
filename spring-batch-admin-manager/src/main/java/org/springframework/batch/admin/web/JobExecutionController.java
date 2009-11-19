@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.admin.service.JobService;
 import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.launch.JobExecutionNotRunningException;
 import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.batch.core.launch.NoSuchJobExecutionException;
@@ -191,6 +192,9 @@ public class JobExecutionController {
 				// TODO error message
 			}
 			catch (JobInstanceAlreadyCompleteException e) {
+				// TODO error message
+			}
+			catch (JobParametersInvalidException e) {
 				// TODO error message
 			}
 

@@ -6,7 +6,7 @@
 
 	<import resource="classpath:/test-config.xml" />
 
-	<bean id="taskExecutor" class="org.springframework.core.task.SyncTaskExecutor"/>
+	<bean id="jobLauncherTaskExecutor" class="org.springframework.core.task.SyncTaskExecutor"/>
 
 	<!-- Override the local one -->
 	<bean id="stepService" class="org.springframework.batch.admin.partition.remote.PooledStepService">

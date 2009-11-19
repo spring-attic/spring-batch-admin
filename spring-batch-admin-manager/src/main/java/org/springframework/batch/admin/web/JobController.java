@@ -25,6 +25,7 @@ import org.springframework.batch.admin.service.JobService;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.converter.DefaultJobParametersConverter;
 import org.springframework.batch.core.converter.JobParametersConverter;
 import org.springframework.batch.core.launch.NoSuchJobException;
@@ -89,6 +90,11 @@ public class JobController {
 			errors
 					.reject("job.already.complete",
 							"A job with this name and parameters already completed successfully.");
+		}
+		catch (JobParametersInvalidException e) {
+			errors
+			.reject("job.parameters.invalid",
+					"The job parameters are invalid according to the configuration.");
 		}
 
 		if ("execution".equals(origin)){

@@ -21,6 +21,9 @@ Installing Spring Batch Admin
     
     * Deploy the web app.  It starts up with an in-memory database, so without any jobs defined
     in the application it isn't going to do much at first.  See the 
-    {{{./infrastructure.html}section on environment}} settings for more detail.  
+    section on environment settings for more detail.
+    
+  See later in this guide for instructions on how to modify the application and add you own 
+  jobs for launching.
 
 
