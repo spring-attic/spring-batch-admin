@@ -15,10 +15,9 @@
  */
 package org.springframework.batch.admin.util;
 
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.FutureTask;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.core.task.SyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
@@ -45,11 +44,9 @@ import org.springframework.core.task.TaskRejectedException;
  */
 public class ThrottledTaskExecutor implements TaskExecutor {
 
-	private BlockingQueue<Runnable> completionQueue;
+	private Semaphore semaphore;
 
-	private final Semaphore semaphore;
-
-	private volatile int count = 0;
+	private volatile AtomicInteger count = new AtomicInteger(0);
 
 	private TaskExecutor taskExecutor = new SyncTaskExecutor();
 
@@ -84,18 +81,17 @@ public class ThrottledTaskExecutor implements TaskExecutor {
 		if (taskExecutor != null) {
 			this.taskExecutor = taskExecutor;
 		}
-		this.completionQueue = new LinkedBlockingQueue<Runnable>(throttleLimit);
 		this.semaphore = new Semaphore(throttleLimit);
 	}
-	
+
 	/**
-	 * Limits the number of concurrent executions on the enclosed task executor.  Do not
-	 * call this after initialization (for configuration purposes only).
+	 * Limits the number of concurrent executions on the enclosed task executor.
+	 * Do not call this after initialization (for configuration purposes only).
 	 * 
 	 * @param throttleLimit the throttle limit to apply
 	 */
 	public void setThrottleLimit(int throttleLimit) {
-		this.completionQueue = new LinkedBlockingQueue<Runnable>(throttleLimit);
+		this.semaphore = new Semaphore(throttleLimit);
 	}
 
 	/**
@@ -129,35 +125,35 @@ public class ThrottledTaskExecutor implements TaskExecutor {
 	 * @return the estimate
 	 */
 	public int size() {
-		return count;
+		return count.get();
 	}
 
 	private Runnable doSubmit(final Runnable task) {
 
 		try {
 			semaphore.acquire();
-			count++;
+			count.incrementAndGet();
 		}
 		catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			throw new TaskRejectedException("Task could not be submitted because of a thread interruption.");
 		}
 
-		taskExecutor.execute(new FutureTask<Object>(task, null) {
-			@Override
-			protected void done() {
-				try {
-					completionQueue.put(task);
+		try {
+			taskExecutor.execute(new FutureTask<Object>(task, null) {
+				@Override
+				protected void done() {
 					semaphore.release();
-					count--;
+					count.decrementAndGet();
 				}
-				catch (InterruptedException e) {
-					Thread.currentThread().interrupt();
-				}
-			}
-		});
+			});
+		}
+		catch (TaskRejectedException e) {
+			semaphore.release();
+			count.decrementAndGet();
+			throw e;
+		}
 
 		return task;
 	}
-
 }

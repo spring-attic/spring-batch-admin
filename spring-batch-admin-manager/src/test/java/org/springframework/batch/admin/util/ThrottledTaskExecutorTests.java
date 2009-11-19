@@ -18,6 +18,7 @@ package org.springframework.batch.admin.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
@@ -27,8 +28,9 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
-import org.springframework.batch.admin.util.ThrottledTaskExecutor;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.core.task.TaskRejectedException;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 public class ThrottledTaskExecutorTests {
 
@@ -57,7 +59,7 @@ public class ThrottledTaskExecutorTests {
 	}
 
 	@Test
-	public void testSubmitRunnableV() throws Exception {
+	public void testSubmitRunnable() throws Exception {
 		Future<String> future = service.submit(new Runnable() {
 			public void run() {
 			}
@@ -123,6 +125,48 @@ public class ThrottledTaskExecutorTests {
 		// Wait for the second task to be submitted...
 		Thread.sleep(50);
 		assertEquals("bar", service.take().get());
+
+	}
+
+	@Test
+	public void testBufferedExecuteRejected() throws Exception {
+
+		ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+		taskExecutor.setCorePoolSize(1);
+		taskExecutor.setMaxPoolSize(1);
+		taskExecutor.setQueueCapacity(0);
+		taskExecutor.afterPropertiesSet();
+
+		ThrottledTaskExecutor executor = new ThrottledTaskExecutor(taskExecutor, 10);
+		service = new ExecutorCompletionService<String>(executor);
+
+		service.submit(new Callable<String>() {
+			public String call() throws Exception {
+				while (!ready) {
+					Thread.sleep(10);
+				}
+				return "foo";
+			}
+		});
+		assertNull(service.poll());
+		assertEquals(1, executor.size());
+
+		try {
+			service.submit(new Callable<String>() {
+				public String call() throws Exception {
+					return "bar";
+				}
+			});
+			fail("Expected TaskRejectedException");
+		}
+		catch (TaskRejectedException e) {
+			// Expected
+		}
+
+		// The second submit fails, so still only one...
+		assertEquals(1, executor.size());
+		ready = true;
+		assertEquals("foo", service.take().get());
 
 	}
 
