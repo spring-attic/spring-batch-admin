@@ -102,7 +102,6 @@ public class AnnotationMappingMetaData implements ApplicationContextAware, Initi
 					}
 				}
 				else {
-					// TODO: strategy for default methods
 					result.add(new ResourceInfo(key, RequestMethod.GET));
 				}
 			}

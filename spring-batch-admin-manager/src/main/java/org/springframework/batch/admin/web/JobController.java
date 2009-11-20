@@ -43,7 +43,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
 /**
  * Controller for launching jobs.
  * 
@@ -92,18 +91,19 @@ public class JobController {
 							"A job with this name and parameters already completed successfully.");
 		}
 		catch (JobParametersInvalidException e) {
-			errors
-			.reject("job.parameters.invalid",
-					"The job parameters are invalid according to the configuration.");
+			errors.reject("job.parameters.invalid", "The job parameters are invalid according to the configuration.");
 		}
 
-		if ("execution".equals(origin)){
+		if ("execution".equals(origin)) {
 			return "jobs/execution";
-		} else {
+		}
+		else {
 			return details(model, jobName, 0, 20);
 		}
 
-		// TODO: make it a redirect?
+		// Not a redirect because normally it is requested by an Ajax call so
+		// there's less of a pressing need for one (the browser history won't
+		// contain the request).
 
 	}
 
@@ -118,9 +118,10 @@ public class JobController {
 			Collection<JobInstance> result = jobService.listJobInstances(jobName, startJobInstance, pageSize);
 			Collection<JobInstanceInfo> jobInstances = new ArrayList<JobInstanceInfo>();
 			for (JobInstance jobInstance : result) {
-				jobInstances.add(new JobInstanceInfo(jobInstance, jobService.getJobExecutionsForJobInstance(jobName, jobInstance.getId())));
+				jobInstances.add(new JobInstanceInfo(jobInstance, jobService.getJobExecutionsForJobInstance(jobName,
+						jobInstance.getId())));
 			}
-			
+
 			model.addAttribute("jobInstances", jobInstances);
 			int total = jobService.countJobInstances(jobName);
 			TableUtils.addPagination(model, total, startJobInstance, pageSize, "JobInstance");

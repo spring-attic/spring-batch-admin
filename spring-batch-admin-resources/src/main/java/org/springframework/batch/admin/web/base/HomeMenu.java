@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
 public class HomeMenu extends BaseMenu {
 
 	public HomeMenu() {
-		// TODO: discover the servlet root context?
 		super("/batch/home", "Home", Integer.MIN_VALUE);
 	}
 

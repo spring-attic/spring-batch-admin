@@ -26,6 +26,7 @@ import org.springframework.js.ajax.SpringJavascriptAjaxHandler;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerView;
 
 /**
@@ -66,8 +67,8 @@ public class AjaxFreeMarkerView extends FreeMarkerView {
 		this.ajaxHandler = ajaxHandler;
 	}
 
-	protected void renderMergedTemplateModel(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
+	protected void renderMergedTemplateModel(Map<String, Object> model, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
 
 		if (ajaxHandler.isAjaxRequest(request, response)) {
 
@@ -92,8 +93,7 @@ public class AjaxFreeMarkerView extends FreeMarkerView {
 				catch (Exception e) {
 					if (getAttributesMap().containsKey(attrNames[i])) {
 						String viewName = (String) getAttributesMap().get(attrNames[i]);
-						// TODO: use a locale resolver
-						fragmentView = viewResolver.resolveViewName(viewName, request.getLocale());
+						fragmentView = viewResolver.resolveViewName(viewName, RequestContextUtils.getLocale(request));
 					}
 				}
 
@@ -110,7 +110,8 @@ public class AjaxFreeMarkerView extends FreeMarkerView {
 		}
 	}
 
-	protected String[] getRenderFragments(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) {
+	protected String[] getRenderFragments(Map<String, Object> model, HttpServletRequest request,
+			HttpServletResponse response) {
 		String attrName = request.getParameter(FRAGMENTS_PARAM);
 		String[] renderFragments = StringUtils.commaDelimitedListToStringArray(attrName);
 		return StringUtils.trimArrayElements(renderFragments);

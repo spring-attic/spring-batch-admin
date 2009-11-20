@@ -29,7 +29,6 @@ public class CumulativeHistory {
 		sum += value;
 		sumSquares += value * value;
 		count++;
-		// TODO: percentiles and histograms
 	}
 	
 	public int getCount() {
