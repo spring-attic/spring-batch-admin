@@ -79,7 +79,6 @@ public class AnnotationMappingMetaData implements ApplicationContextAware, Initi
 			mapping.initApplicationContext();
 		}
 
-		@SuppressWarnings("unchecked")
 		Map<String, Object> handlerMap = mapping.getHandlerMap();
 		this.urls = findUniqueUrls(handlerMap.keySet());
 		this.resources = findMethods(handlerMap, this.urls);

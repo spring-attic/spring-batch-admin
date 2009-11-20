@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.js.ajax.AjaxHandler;
 import org.springframework.js.ajax.SpringJavascriptAjaxHandler;
-import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
@@ -67,7 +66,7 @@ public class AjaxFreeMarkerView extends FreeMarkerView {
 		this.ajaxHandler = ajaxHandler;
 	}
 
-	protected void renderMergedTemplateModel(Map model, HttpServletRequest request, HttpServletResponse response)
+	protected void renderMergedTemplateModel(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 
 		if (ajaxHandler.isAjaxRequest(request, response)) {
@@ -111,7 +110,7 @@ public class AjaxFreeMarkerView extends FreeMarkerView {
 		}
 	}
 
-	protected String[] getRenderFragments(Map model, HttpServletRequest request, HttpServletResponse response) {
+	protected String[] getRenderFragments(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) {
 		String attrName = request.getParameter(FRAGMENTS_PARAM);
 		String[] renderFragments = StringUtils.commaDelimitedListToStringArray(attrName);
 		return StringUtils.trimArrayElements(renderFragments);

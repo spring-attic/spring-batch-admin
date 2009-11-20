@@ -17,7 +17,6 @@ package org.springframework.batch.admin.service;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -25,9 +24,6 @@ import org.junit.runner.RunWith;
 import org.springframework.batch.admin.service.SearchableJobExecutionDao;
 import org.springframework.batch.admin.service.SearchableStepExecutionDao;
 import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.test.JobRepositoryTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
