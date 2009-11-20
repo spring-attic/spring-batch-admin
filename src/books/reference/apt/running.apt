@@ -41,9 +41,6 @@ Menus
     database show up here.
     
     * <Executions> - view and interact with running Job and Step executions.
-    
-    * <Status> - a status page for the health of the application (may be removed
-    before 1.0.0 is released).
-    
+   
   You can learn how to extend the content of the application including the menus
   in a later section.
