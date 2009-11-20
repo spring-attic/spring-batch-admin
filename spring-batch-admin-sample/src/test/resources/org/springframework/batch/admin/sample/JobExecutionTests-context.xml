@@ -13,12 +13,4 @@
 	<!-- prevent loading of other jobs by overriding the loader in the main bootstrap context -->
 	<bean id="jobLoader" class="java.lang.String"/>
 
-	<bean id="stepService" class="org.springframework.batch.admin.partition.remote.StepLocatorStepService">
-		<property name="stepLocator">
-			<bean class="org.springframework.batch.admin.partition.remote.SimpleStepLocator">
-				<property name="step" ref="step1" />
-			</bean>
-		</property>
-	</bean>
-
 </beans>

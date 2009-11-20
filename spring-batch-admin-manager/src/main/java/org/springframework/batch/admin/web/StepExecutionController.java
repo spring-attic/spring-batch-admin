@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.TimeZone;
 
-import org.springframework.batch.admin.partition.remote.NoSuchStepExecutionException;
 import org.springframework.batch.admin.service.JobService;
+import org.springframework.batch.admin.service.NoSuchStepExecutionException;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.launch.NoSuchJobExecutionException;

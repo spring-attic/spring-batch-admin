@@ -13,14 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.batch.admin.partition.remote;
+package org.springframework.batch.admin.service;
 
-import org.springframework.batch.core.step.NoSuchStepException;
+import org.springframework.batch.core.JobExecutionException;
 
-public interface StepService {
+public class NoSuchStepExecutionException extends JobExecutionException {
 
-	StepExecutionResponse execute(StepExecutionRequest wrapper) throws NoSuchStepExecutionException, NoSuchStepException;
-	
-	StepServiceStatus getStatus();
+	public NoSuchStepExecutionException(String msg, Throwable cause) {
+		super(msg, cause);
+	}
+
+	public NoSuchStepExecutionException(String msg) {
+		super(msg);
+	}
 
 }

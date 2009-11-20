@@ -7,7 +7,6 @@
 	</configSuffixes>
 	<enableImports><![CDATA[true]]></enableImports>
 	<configs>
-		<config>src/test/resources/service-context.xml</config>
 		<config>src/test/resources/test-config.xml</config>
 		<config>src/test/resources/test-job-context.xml</config>
 		<config>src/main/resources/META-INF/bootstrap/data-source-context.xml</config>

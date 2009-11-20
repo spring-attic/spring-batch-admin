@@ -16,15 +16,13 @@
 package org.springframework.batch.admin;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.springframework.batch.admin.partition.remote.StepService;
+import org.springframework.batch.admin.web.JobController;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 
 /**
  * @author Dave Syer
@@ -34,8 +32,7 @@ public class BootstrapTests {
 
 	@Test
 	public void testBootstrapConfiguration() throws Exception {
-		ApplicationContext context = new ClassPathXmlApplicationContext(
-				"classpath:/META-INF/bootstrap/*.xml");
+		ApplicationContext context = new ClassPathXmlApplicationContext("classpath:/META-INF/bootstrap/*.xml");
 		assertTrue(context.containsBean("jobRepository"));
 	}
 
@@ -50,21 +47,18 @@ public class BootstrapTests {
 	public void testServletConfiguration() throws Exception {
 		ApplicationContext parent = new ClassPathXmlApplicationContext(
 				"classpath:/org/springframework/batch/admin/web/resources/webapp-config.xml");
-		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
-				new String[] {
-						"classpath*:/META-INF/servlet/*.xml",
-						// This is not used in a web app, but step1 is needed
-						// while we are using a SimpleStepLocator
-						"classpath:/test-job-context.xml" }, parent);
+		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new String[] {
+				"classpath*:/META-INF/servlet/*.xml",
+				// This is not used in a web app, but step1 is needed
+				// while we are using a SimpleStepLocator
+				"classpath:/test-job-context.xml" }, parent);
 
 		assertTrue(context.containsBean("jobRepository"));
-		String[] beanNames = BeanFactoryUtils
-				.beanNamesForTypeIncludingAncestors(context.getBeanFactory(),
-						StepService.class);
-		assertEquals(2, beanNames.length);
+		String[] beanNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(context.getBeanFactory(),
+				JobController.class);
+		assertEquals(1, beanNames.length);
 
 		context.refresh();
-		assertNotNull(context.getBean("stepService", StepService.class));
 	}
 
 }

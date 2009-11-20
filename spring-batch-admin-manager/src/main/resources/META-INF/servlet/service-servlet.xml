@@ -9,25 +9,4 @@
 		<context:exclude-filter type="regex" expression=".*Tests.*"/>
 	</context:component-scan>
 
-	<bean id="stepService" class="org.springframework.batch.admin.partition.remote.StepLocatorStepService">
-		<property name="stepLocator">
-			<bean class="org.springframework.batch.admin.partition.remote.SimpleStepLocator">
-				<!-- property name="step" ref="step1" /-->
-			</bean>
-		</property>
-		<property name="jobExplorer" ref="jobExplorer"/>
-		<!-- <property name="weight" value="12" /> -->
-	</bean>
-
-	<bean id="remoteStepService" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
-		<property name="serviceInterface" value="org.springframework.batch.admin.partition.remote.StepService" />
-		<!-- TODO: grab the ServletContext and get this URL context root dynamically -->
-		<property name="serviceUrl" value="${batch.remote.base.url}/step.service" />
-	</bean>
-
-	<bean name="/step.service" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
-		<property name="serviceInterface" value="org.springframework.batch.admin.partition.remote.StepService" />
-		<property name="service" ref="stepService" />
-	</bean>
-
 </beans>

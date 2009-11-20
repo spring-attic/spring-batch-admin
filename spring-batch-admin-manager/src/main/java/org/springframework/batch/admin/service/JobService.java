@@ -17,7 +17,6 @@ package org.springframework.batch.admin.service;
 
 import java.util.Collection;
 
-import org.springframework.batch.admin.partition.remote.NoSuchStepExecutionException;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
