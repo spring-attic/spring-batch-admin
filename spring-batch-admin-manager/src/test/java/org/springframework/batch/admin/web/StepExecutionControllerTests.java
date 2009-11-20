@@ -107,6 +107,9 @@ public class StepExecutionControllerTests {
 		assertEquals("jobs/executions/step/progress", result);
 
 		assertTrue(model.containsKey("stepExecutionHistory"));
+		StepExecutionHistory history = (StepExecutionHistory) model.get("stepExecutionHistory");
+		// The wildcard is intentional:
+		assertEquals("step:partition*", history.getStepName());
 
 		EasyMock.verify(jobService);
 
