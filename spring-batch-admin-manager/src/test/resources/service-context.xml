@@ -16,6 +16,7 @@
 				<property name="step" ref="step1" />
 			</bean>
 		</property>
+		<property name="jobExplorer" ref="jobExplorer"/>
 	</bean>
 
 	<bean id="stepServiceHandler"

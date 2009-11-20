@@ -15,6 +15,7 @@
  */
 package org.springframework.batch.admin.partition.remote;
 
+import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.UnexpectedJobExecutionException;
 import org.springframework.batch.core.explore.JobExplorer;
@@ -55,6 +56,10 @@ public class StepServiceStepDecorator implements InitializingBean {
 
 	public void setStepService(StepService stepService) {
 		this.stepService = stepService;
+	}
+
+	public void proxy(Step step, StepExecution stepExecution) throws Exception {
+		execute(step.getName(), stepExecution);
 	}
 
 	public void execute(String remoteStepName, StepExecution stepExecution) throws Exception {

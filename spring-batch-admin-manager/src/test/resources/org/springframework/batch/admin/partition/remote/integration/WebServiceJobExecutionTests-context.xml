@@ -1,19 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans 
-       	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
 	<import resource="classpath:/test-config.xml" />
 
-	<bean id="jobLauncherTaskExecutor" class="org.springframework.core.task.SyncTaskExecutor"/>
+	<aop:config>
+		<aop:aspect ref="stepServiceStepDecorator">
+			<aop:around method="proxy"
+				pointcut="bean(step1) and execution(* org.springframework.batch.core.Step.execute(org.springframework.batch.core.StepExecution)) and target(step) and args(stepExecution)" />
+		</aop:aspect>
+	</aop:config>
+
+	<bean id="stepServiceStepDecorator"
+		class="org.springframework.batch.admin.partition.remote.StepServiceStepDecorator">
+		<property name="jobExplorer" ref="jobExplorer" />
+		<property name="stepService" ref="stepService" />
+	</bean>
+
+	<bean id="jobLauncherTaskExecutor" class="org.springframework.core.task.SyncTaskExecutor" />
 
 	<!-- Override the local one -->
-	<bean id="stepService" class="org.springframework.batch.admin.partition.remote.PooledStepService">
+	<bean id="stepService"
+		class="org.springframework.batch.admin.partition.remote.PooledStepService">
 		<property name="stepServices">
 			<list>
-				<ref bean="stepService1"/>
-				<ref bean="stepService2"/>
+				<ref bean="stepService1" />
+				<ref bean="stepService2" />
 			</list>
 		</property>
 	</bean>
