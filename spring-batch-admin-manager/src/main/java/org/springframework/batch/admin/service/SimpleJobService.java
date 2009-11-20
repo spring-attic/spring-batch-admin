@@ -48,8 +48,15 @@ import org.springframework.batch.core.repository.dao.ExecutionContextDao;
 import org.springframework.batch.core.step.NoSuchStepException;
 import org.springframework.batch.core.step.StepLocator;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.scheduling.annotation.Scheduled;
 
-// TODO: FactoryBean for this that includes table prefix
+/**
+ * Implementation of {@link JobService} that delegates most of its work to other
+ * off-the-shelf components.
+ * 
+ * @author Dave Syer
+ * 
+ */
 public class SimpleJobService implements JobService, DisposableBean {
 
 	private static final Log logger = LogFactory.getLog(SimpleJobService.class);
@@ -387,11 +394,11 @@ public class SimpleJobService implements JobService, DisposableBean {
 
 	}
 
-	// TODO: schedule this for regular execution
 	/**
 	 * Check all the active executions and see if they are still actually
 	 * running. Remove the ones that have completed.
 	 */
+	@Scheduled(fixedDelay=60000)
 	public void removeInactiveExecutions() {
 
 		for (Iterator<JobExecution> iterator = activeExecutions.iterator(); iterator.hasNext();) {
