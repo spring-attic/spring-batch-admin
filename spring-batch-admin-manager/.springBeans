@@ -16,5 +16,15 @@
 		<config>src/main/resources/META-INF/servlet/service-servlet.xml</config>
 	</configs>
 	<configSets>
+		<configSet>
+			<name><![CDATA[bootstrap]]></name>
+			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
+			<incomplete>false</incomplete>
+			<configs>
+				<config>src/main/resources/META-INF/bootstrap/data-source-context.xml</config>
+				<config>src/main/resources/META-INF/bootstrap/env-context.xml</config>
+				<config>src/main/resources/META-INF/bootstrap/execution-context.xml</config>
+			</configs>
+		</configSet>
 	</configSets>
 </beansProjectDescription>
