@@ -39,7 +39,7 @@
 	<bean name="step1:master" class="org.springframework.batch.core.partition.support.PartitionStep">
 		<property name="partitionHandler">
 			<bean class="org.springframework.batch.core.partition.support.TaskExecutorPartitionHandler">
-				<property name="step" ref="step1" />
+				<property name="step" ref="remoteStep1" />
 				<property name="gridSize" value="${batch.grid.size}" />
 				<property name="taskExecutor" ref="taskExecutor" />
 			</bean>
@@ -69,5 +69,10 @@
 	<bean id="itemWriter" class="org.springframework.batch.admin.sample.ExampleItemWriter" p:fail="#{jobParameters['fail']}"
 		scope="step" />
 	<bean id="itemReader" class="org.springframework.batch.admin.sample.ExampleItemReader" scope="step" />
+
+	<bean id="remoteStep1" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
+		<property name="serviceInterface" value="org.springframework.batch.core.Step" />
+		<property name="serviceUrl" value="${batch.remote.base.url}/steps/step1" />
+	</bean>
 
 </beans>
