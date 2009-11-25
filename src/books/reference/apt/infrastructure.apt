@@ -12,7 +12,7 @@ Environment Settings
     (e.g. <<<mysql>>>, <<<oracle>>>, <<<db2>>>).  
     Copy the contents of the <<<batch-hsql.properties>>> from the Manager jar and change the values
     to suit your environment.  Then launch the application with a system property 
-    <<<-Dorg.springframework.batch.support.SystemPropertyInitializer.ENVIRONMENT=[type]>>>.
+    <<<-DENVIRONMENT=[type]>>>.
     
     * To stop the database from being 
     wiped and re-created on start up just set <<<batch.data.source.init=false>>>
