@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.springframework.batch</groupId>
 	<artifactId>spring-batch-admin</artifactId>
 	<name>Spring Batch Admin</name>
-	<version>1.0.0.CI-SNAPSHOT</version>
+	<version>1.0.0.M1</version>
 	<packaging>pom</packaging>
 	<scm>
-		<url>https://fisheye.springframework.org/browse/spring-batch-admin</url>
-		<connection>scm:svn:https://src.springframework.org/svn/spring-batch-admin/trunk</connection>
-		<developerConnection>scm:svn:https://src.springframework.org/svn/spring-batch-admin/trunk</developerConnection>
+		<url>https://fisheye.springframework.org/browse/spring-batch-admin/tags/1.0.0.M1</url>
+		<connection>scm:svn:https://src.springframework.org/svn/spring-batch-admin/tags/1.0.0.M1</connection>
+		<developerConnection>scm:svn:https://src.springframework.org/svn/spring-batch-admin/tags/1.0.0.M1</developerConnection>
 	</scm>
 	<issueManagement>
 		<system>JIRA</system>

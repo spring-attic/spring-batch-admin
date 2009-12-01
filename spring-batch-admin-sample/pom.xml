@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>spring-batch-admin-sample</artifactId>
 	<description>A sample web application (WAR project) for Spring Batch Admin console.</description>
 	<parent>
 		<artifactId>spring-batch-admin-parent</artifactId>
 		<groupId>org.springframework.batch</groupId>
-		<version>1.0.0.CI-SNAPSHOT</version>
+		<version>1.0.0.M1</version>
 		<relativePath>../spring-batch-admin-parent</relativePath>
 	</parent>
 	<packaging>war</packaging>
