@@ -8,6 +8,32 @@
 	<name>Spring Batch Admin</name>
 	<version>1.0.0.CI-SNAPSHOT</version>
 	<packaging>pom</packaging>
+	<scm>
+		<url>https://fisheye.springframework.org/browse/spring-batch-admin</url>
+		<connection>scm:svn:https://src.springframework.org/svn/spring-batch-admin/trunk</connection>
+		<developerConnection>scm:svn:https://src.springframework.org/svn/spring-batch-admin/trunk</developerConnection>
+	</scm>
+	<issueManagement>
+		<system>JIRA</system>
+		<url>http://opensource.atlassian.com/projects/spring/browse/BATCHADM</url>
+	</issueManagement>
+	<mailingLists>
+		<mailingList>
+			<name>Spring Batch Forum</name>
+			<post>http://forum.springframework.org/forumdisplay.php?f=41</post>
+			<archive>http://forum.springframework.org/forumdisplay.php?f=41</archive>
+		</mailingList>
+	</mailingLists>
+	<ciManagement>
+		<system>Bamboo</system>
+		<url>https://build.springframework.org/bamboo/browse/BATCH</url>
+	</ciManagement>
+	<licenses>
+		<license>
+			<name>Apache 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
 	<modules>
 		<module>spring-batch-admin-parent</module>
 		<module>spring-batch-admin-resources</module>
