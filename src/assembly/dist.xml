@@ -58,11 +58,12 @@
 			</includes>
 			<sources>
 				<outputDirectoryMapping>
-					samples/spring-batch-admin-parent
+					sample/spring-batch-admin-parent
 				</outputDirectoryMapping>
 				<fileSets>
 					<fileSet>
 						<excludes>
+							<exclude>src/**</exclude>
 							<exclude>bin/**</exclude>
 							<exclude>target/**</exclude>
 						</excludes>

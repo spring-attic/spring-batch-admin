@@ -69,6 +69,64 @@
 							</execution>
 						</executions>
 					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>extract</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<unzip dest="target/it">
+											<fileset dir="target">
+												<include name="*.zip" />
+											</fileset>
+											<regexpmapper from="^[^/]*/(.*)$$" to="\1" handledirsep="true" />
+										</unzip>
+										<fail message="Failed integration test of zip distro: dist/* jar file count wrong.">
+											<condition>
+												<not>
+													<resourcecount count="4">
+														<fileset id="fs" dir="target/it/dist" includes="spring-batch-*.jar" />
+													</resourcecount>
+												</not>
+											</condition>
+										</fail>
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<!-- After the file count, we build the samples and archetypes as well -->
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-invoker-plugin</artifactId>
+						<configuration>
+							<projectsDirectory>target/it</projectsDirectory>
+							<localRepositoryPath>target/local-repo</localRepositoryPath>
+							<debug>true</debug>
+							<settingsFile>${basedir}/src/it/settings.xml</settingsFile>
+							<goals>
+								<goal>test</goal>
+							</goals>
+							<pomIncludes>
+								<pomInclude>sample/*/pom.xml</pomInclude>
+							</pomIncludes>
+						</configuration>
+						<executions>
+							<execution>
+								<id>integration-test</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
@@ -118,6 +176,33 @@
 				<version>2.0.0.RELEASE</version>
 			</extension>
 		</extensions>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-antrun-plugin</artifactId>
+					<dependencies>
+						<dependency>
+							<groupId>org.apache.ant</groupId>
+							<artifactId>ant</artifactId>
+							<version>1.7.0</version>
+						</dependency>
+						<dependency>
+							<groupId>org.apache.ant</groupId>
+							<artifactId>ant-apache-regexp</artifactId>
+							<version>1.7.0</version>
+						</dependency>
+					</dependencies>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<configuration>
+						<junitArtifactName>junit:junit</junitArtifactName>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
