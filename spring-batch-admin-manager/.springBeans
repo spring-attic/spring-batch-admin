@@ -11,6 +11,22 @@
 		<config>src/test/resources/test-job-context.xml</config>
 		<config>src/main/resources/META-INF/servlet/freemarker-servlet.xml</config>
 		<config>src/main/resources/META-INF/servlet/service-servlet.xml</config>
+		<config>src/test/resources/org/springframework/batch/admin/web/views/AbstractManagerViewTests-context.xml</config>
+		<config>src/main/resources/META-INF/bootstrap/integration/configuration-context.xml</config>
+		<config>src/main/resources/META-INF/bootstrap/batch/data-source-context.xml</config>
+		<config>src/main/resources/META-INF/bootstrap/batch/env-context.xml</config>
+		<config>src/main/resources/META-INF/bootstrap/batch/execution-context.xml</config>
+		<config>src/test/resources/org/springframework/batch/admin/sample/FileDropJobIntegrationTests-context.xml</config>
+		<config>src/test/resources/org/springframework/batch/admin/sample/JobConfigurationRequestIntegrationTests-context.xml</config>
+		<config>src/test/resources/org/springframework/batch/admin/sample/JobIntegrationTests-context.xml</config>
+		<config>src/test/resources/org/springframework/batch/admin/launch/JobLauncherSynchronizerIntegrationTests-context.xml</config>
+		<config>src/test/resources/org/springframework/batch/admin/sample/JobLaunchIntegrationTests-context.xml</config>
+		<config>src/main/resources/META-INF/bootstrap/integration/launcher-context.xml</config>
+		<config>src/main/resources/META-INF/bootstrap/integration/restart-context.xml</config>
+		<config>src/test/resources/org/springframework/batch/admin/sample/RestartJobIntegrationTests-context.xml</config>
+		<config>src/test/resources/META-INF/batch/staging-context.xml</config>
+		<config>src/test/resources/org/springframework/batch/admin/sample/StringPayloadJobIntegrationTests-context.xml</config>
+		<config>src/test/resources/org/springframework/batch/admin/sample/WireTapJobIntegrationTests-context.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
