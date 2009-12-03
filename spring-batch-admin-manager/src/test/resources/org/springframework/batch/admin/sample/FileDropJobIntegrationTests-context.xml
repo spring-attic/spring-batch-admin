@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:file="http://www.springframework.org/schema/integration/file" xmlns:integration="http://www.springframework.org/schema/integration"
+	xsi:schemaLocation="http://www.springframework.org/schema/integration/file http://www.springframework.org/schema/integration/file/spring-integration-file-2.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-2.0.xsd"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:p="http://www.springframework.org/schema/p">
+
+	<import resource="classpath*:/META-INF/bootstrap/integration/launcher-context.xml" />
+
+	<integration:channel id="lead-files" />
+
+	<file:inbound-channel-adapter directory="target/data" channel="lead-files">
+		<integration:poller>
+			<integration:interval-trigger interval="200" />
+		</integration:poller>
+	</file:inbound-channel-adapter>
+	
+	<integration:service-activator input-channel="lead-files" output-channel="job-requests">
+		<beans:bean class="org.springframework.batch.admin.integration.FileToJobLaunchRequestAdapter" p:job-ref="staging"/>
+	</integration:service-activator>
+
+</beans>

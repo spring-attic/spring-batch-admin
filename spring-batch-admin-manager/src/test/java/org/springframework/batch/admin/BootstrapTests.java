@@ -32,7 +32,7 @@ public class BootstrapTests {
 
 	@Test
 	public void testBootstrapConfiguration() throws Exception {
-		ApplicationContext context = new ClassPathXmlApplicationContext("classpath:/META-INF/bootstrap/*.xml");
+		ApplicationContext context = new ClassPathXmlApplicationContext("classpath:/META-INF/bootstrap/**/*.xml");
 		assertTrue(context.containsBean("jobRepository"));
 	}
 
@@ -48,10 +48,7 @@ public class BootstrapTests {
 		ApplicationContext parent = new ClassPathXmlApplicationContext(
 				"classpath:/org/springframework/batch/admin/web/resources/webapp-config.xml");
 		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new String[] {
-				"classpath*:/META-INF/servlet/*.xml",
-				// This is not used in a web app, but step1 is needed
-				// while we are using a SimpleStepLocator
-				"classpath:/test-job-context.xml" }, parent);
+				"classpath:/org/springframework/batch/admin/web/resources/servlet-config.xml"}, parent);
 
 		assertTrue(context.containsBean("jobRepository"));
 		String[] beanNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(context.getBeanFactory(),

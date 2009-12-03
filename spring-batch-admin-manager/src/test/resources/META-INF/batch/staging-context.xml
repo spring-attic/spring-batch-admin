@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.1.xsd">
+
+	<job id="staging" xmlns="http://www.springframework.org/schema/batch">
+
+		<step id="staging-step">
+			<tasklet>
+				<chunk reader="reader" writer="writer" commit-interval="5" />
+			</tasklet>
+		</step>
+
+	</job>
+
+	<bean id="reader" class="org.springframework.batch.item.file.FlatFileItemReader" scope="step">
+		<property name="linesToSkip" value="1" />
+		<property name="lineMapper">
+			<bean class="org.springframework.batch.item.file.mapping.PassThroughLineMapper"/>
+		</property>
+		<property name="resource" value="#{jobParameters['input.file']}" />
+	</bean>
+
+	<bean id="writer" class="org.springframework.batch.admin.sample.lead.support.StagingWriter">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="incrementer" ref="incrementer"/>
+	</bean>
+
+	<bean id="incrementer" class="${batch.database.incrementer.class}">
+		<property name="dataSource" ref="dataSource" />
+		<property name="columnName" value="ID" />
+		<property name="incrementerName" value="LEAD_INPUTS_SEQ" />
+	</bean>
+
+</beans>

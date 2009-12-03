@@ -1,0 +1,8 @@
+id,client.name,client.country,product.name,amount,query
+12,Jochen,DE,Foo,1000,
+13,Willi,DE,Foo,10000,
+14,Goetz,DE,Foo,10,
+15,Brian,UK,Bar,20000,
+16,Roderick,UK,Bar,30,
+17,Francois,FR,Fail,25,
+18,Muriel,FR,Bar,120,

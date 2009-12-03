@@ -9,9 +9,6 @@
 	<configs>
 		<config>src/test/resources/test-config.xml</config>
 		<config>src/test/resources/test-job-context.xml</config>
-		<config>src/main/resources/META-INF/bootstrap/data-source-context.xml</config>
-		<config>src/main/resources/META-INF/bootstrap/env-context.xml</config>
-		<config>src/main/resources/META-INF/bootstrap/execution-context.xml</config>
 		<config>src/main/resources/META-INF/servlet/freemarker-servlet.xml</config>
 		<config>src/main/resources/META-INF/servlet/service-servlet.xml</config>
 	</configs>
@@ -21,9 +18,6 @@
 			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
 			<incomplete>false</incomplete>
 			<configs>
-				<config>src/main/resources/META-INF/bootstrap/data-source-context.xml</config>
-				<config>src/main/resources/META-INF/bootstrap/env-context.xml</config>
-				<config>src/main/resources/META-INF/bootstrap/execution-context.xml</config>
 			</configs>
 		</configSet>
 	</configSets>
