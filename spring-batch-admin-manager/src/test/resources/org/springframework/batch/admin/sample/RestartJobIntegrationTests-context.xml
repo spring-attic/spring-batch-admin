@@ -6,4 +6,8 @@
 	<import resource="classpath:/META-INF/bootstrap/integration/launcher-context.xml" />
 	<import resource="classpath:/META-INF/bootstrap/integration/restart-context.xml" />
 
+	<bean class="org.springframework.batch.core.configuration.support.JobRegistryBeanPostProcessor">
+		<property name="jobRegistry" ref="jobRegistry"/>
+	</bean>
+
 </beans>
