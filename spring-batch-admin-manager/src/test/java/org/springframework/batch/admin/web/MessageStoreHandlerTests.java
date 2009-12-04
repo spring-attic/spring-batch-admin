@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.batch.admin.integration;
+package org.springframework.batch.admin.web;
 
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -63,6 +64,18 @@ public class MessageStoreHandlerTests {
 		handler.handleRequest(request, response);
 		assertEquals("{feedPath=messages.rss, messages=[]}", response.getContentAsString());
 
+	}
+
+	@Test
+	public void testHandleMessageTimestamp() throws Exception {
+		handler.handleMessageInternal(MessageBuilder.withPayload("foo").setHeader("bar", "spam").build());
+		handler.handleRequest(request, response);
+		assertEquals(2, defaultView.getModel().size());
+		@SuppressWarnings("unchecked")
+		Collection<Message<?>> messages = (Collection<Message<?>>) defaultView.getModel().get("messages");
+		assertEquals(1, messages.size());
+		Message<?> message = messages.iterator().next();
+		assertEquals(new Date(message.getHeaders().getTimestamp()), message.getHeaders().get("timestamp"));
 	}
 
 	@Test

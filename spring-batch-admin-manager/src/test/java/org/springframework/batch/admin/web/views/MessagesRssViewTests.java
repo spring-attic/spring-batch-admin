@@ -15,66 +15,58 @@
  */
 package org.springframework.batch.admin.web.views;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.TimeZone;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.batch.admin.web.JobExecutionInfo;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.test.MetaDataInstanceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.integration.core.Message;
+import org.springframework.integration.core.MessageHeaders;
+import org.springframework.integration.message.MessageBuilder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.WebApplicationContextLoader;
 import org.springframework.web.servlet.View;
 
-
-@ContextConfiguration(loader = WebApplicationContextLoader.class, inheritLocations = true, locations = "AbstractManagerViewTests-context.xml")
+@ContextConfiguration(loader = WebApplicationContextLoader.class, inheritLocations = false, locations = "AbstractIntegrationViewTests-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
-public class JobExecutionsRssViewTests extends AbstractManagerViewTests {
+public class MessagesRssViewTests extends AbstractManagerViewTests {
 
 	private final HashMap<String, Object> model = new HashMap<String, Object>();
 
 	@Autowired
-	@Qualifier("jobs/executions.rss")
+	@Qualifier("messages.rss")
 	private View view;
 
 	@Test
-	public void testLaunchedJobExecutions() throws Exception {
+	public void testMessages() throws Exception {
 		JobExecution jobExecution = MetaDataInstanceFactory.createJobExecution();
 		jobExecution.setEndTime(new Date());
-		model.put("baseUrl", "http://localhost:8080/springsource");
-		model.put("jobExecutions", Arrays.asList(new JobExecutionInfo(jobExecution, TimeZone.getTimeZone("GMT"))));
+		Message<String> message = MessageBuilder.withPayload("foo").setHeader(MessageHeaders.ID, "FOO").setHeader(
+				MessageHeaders.CORRELATION_ID, "BAR").setHeaderIfAbsent("timestamp", new Date()).build();
+		assertEquals("FOO", message.getHeaders().getId());
+		@SuppressWarnings("unchecked")
+		List<Message<String>> messages = Arrays.asList(message);
+		model.put("messages", messages);
 		model.put("currentTime", new Date());
-		view.render(model, request, response);
-		String content = response.getContentAsString();
-		// System.err.println(content);
-		assertTrue(content.contains("Recent and Current Job Executions"));
-		assertTrue(content.contains("<lastBuildDate>"));
-		assertTrue(content.contains("id=12"));
-	}
-
-	@Test
-	public void testUnfinishedJobExecutions() throws Exception {
-		JobExecution jobExecution1 = MetaDataInstanceFactory.createJobExecution();
-		JobExecution jobExecution2 = MetaDataInstanceFactory.createJobExecution(13L);
-		jobExecution2.setEndTime(new Date());
-		model.put("baseUrl", "http://localhost:8080/springsource");
-		model.put("jobExecutions", Arrays.asList(new JobExecutionInfo(jobExecution1,
-				TimeZone.getTimeZone("GMT")), new JobExecutionInfo(jobExecution2,
-						TimeZone.getTimeZone("GMT"))));
-		model.put("currentTime", new Date());
+		model.put("baseUrl", "http://localhost:8080");
 		view.render(model, request, response);
 		String content = response.getContentAsString();
 		System.err.println(content);
-		assertTrue(content.contains("Recent and Current Job Executions"));
+		assertTrue(content.contains("Recent Messages"));
 		assertTrue(content.contains("<lastBuildDate>"));
-		assertTrue(content.contains("id=12"));
+		assertTrue(content.contains("FOO:(foo)"));
+		assertTrue(content.matches("(?s).*lastBuildDate>\\d\\d\\d\\d.*</lastBuildDate>.*"));
+		assertTrue(content.matches("(?s).*pubDate>\\d\\d\\d\\d.*</pubDate>.*"));
 	}
+
 }

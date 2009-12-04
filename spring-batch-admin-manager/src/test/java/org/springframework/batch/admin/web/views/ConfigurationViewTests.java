@@ -17,16 +17,10 @@ package org.springframework.batch.admin.web.views;
 
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.TimeZone;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.batch.admin.web.JobExecutionInfo;
-import org.springframework.batch.admin.web.StepExecutionInfo;
-import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.test.MetaDataInstanceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
@@ -34,30 +28,23 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.WebApplicationContextLoader;
 import org.springframework.web.servlet.View;
 
-
-@ContextConfiguration(loader = WebApplicationContextLoader.class, inheritLocations = true, locations = "AbstractManagerViewTests-context.xml")
+@ContextConfiguration(loader = WebApplicationContextLoader.class, inheritLocations = false, locations = "AbstractIntegrationViewTests-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
-public class StepExecutionsViewTests extends AbstractManagerViewTests {
+public class ConfigurationViewTests extends AbstractManagerViewTests {
 
 	private final HashMap<String, Object> model = new HashMap<String, Object>();
 
 	@Autowired
-	@Qualifier("jobs/executions/steps")
+	@Qualifier("configuration")
 	private View view;
 
 	@Test
-	public void testLaunchViewWithStepExecutions() throws Exception {
-		StepExecution stepExecution = MetaDataInstanceFactory.createStepExecution();
-		model.put("stepExecutions", Arrays.asList(new StepExecutionInfo(stepExecution, TimeZone.getTimeZone("GMT"))));
-		model.put("jobExecutionInfo",
-				new JobExecutionInfo(stepExecution.getJobExecution(), TimeZone.getTimeZone("GMT")));
+	public void testMessages() throws Exception {
 		view.render(model, request, response);
 		String content = response.getContentAsString();
 		// System.err.println(content);
-		assertTrue(content.contains("Step Executions"));
-		assertTrue(content.contains("for Job = job"));
-		assertTrue(content.contains("<a href=\"/batch/jobs/executions/123/steps/1234/progress\">detail</a>"));
-		assertTrue(content.contains("<th>ID</th>"));
+		assertTrue(content.contains("<div id=\"secondary-navigation\">"));
+		assertTrue(content.contains("Register XML Configuration"));
 	}
 
 }

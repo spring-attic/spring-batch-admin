@@ -36,7 +36,7 @@ import org.springframework.test.context.support.WebApplicationContextLoader;
 import org.springframework.web.servlet.View;
 
 
-@ContextConfiguration(loader = WebApplicationContextLoader.class, locations = "AbstractManagerViewTests-context.xml")
+@ContextConfiguration(loader = WebApplicationContextLoader.class, inheritLocations = true, locations = "AbstractManagerViewTests-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
 public class JobViewTests extends AbstractManagerViewTests {
 

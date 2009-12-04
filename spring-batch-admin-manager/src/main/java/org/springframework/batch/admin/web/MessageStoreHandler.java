@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.batch.admin.integration;
+package org.springframework.batch.admin.web;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -59,7 +59,12 @@ public class MessageStoreHandler extends AbstractMessageHandler implements HttpR
 			IOException {
 
 		Map<String, Object> model = new HashMap<String, Object>();
-		List<Message<?>> messages = new ArrayList<Message<?>>(this.messages);
+		List<Message<?>> messages = new ArrayList<Message<?>>();
+		for (Message<?> message : this.messages) {
+			message = MessageBuilder.fromMessage(message).setHeaderIfAbsent("timestamp",
+					new Date(message.getHeaders().getTimestamp())).build();
+			messages.add(message);
+		}
 		Collections.sort(messages, new MessageTimestampComparator());
 		model.put("messages", messages);
 
@@ -77,8 +82,7 @@ public class MessageStoreHandler extends AbstractMessageHandler implements HttpR
 			view = feedView;
 		}
 		else {
-			model.put("feedPath", new RequestContext(request, response, null, model)
-					.getContextUrl("messages.rss"));
+			model.put("feedPath", new RequestContext(request, response, null, model).getContextUrl("messages.rss"));
 			view = defaultView;
 		}
 

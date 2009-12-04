@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:integration="http://www.springframework.org/schema/integration" xmlns:http="http://www.springframework.org/schema/integration/http"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                                 http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                                 http://www.springframework.org/schema/integration/http http://www.springframework.org/schema/integration/http/spring-integration-http-2.0.xsd
+                                 http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-2.0.xsd">
+
+	<bean class="org.springframework.batch.admin.web.FilesMenu"/>
+
+	<bean class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+		<property name="customEditors">
+			<map>
+				<entry key="org.springframework.web.multipart.MultipartFile" value="org.springframework.web.multipart.support.StringMultipartFileEditor" />
+			</map>
+		</property>
+	</bean>
+
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
+
+	<bean name="messages" parent="standard">
+		<property name="attributes">
+			<value>
+				body=/manager/files/messages.ftl
+				side=/manager/files/side.ftl
+			</value>
+		</property>
+	</bean>
+
+	<bean name="files" parent="standard">
+		<property name="attributes">
+			<value>
+				body=/manager/files/files.ftl
+				side=/manager/files/side.ftl
+			</value>
+		</property>
+	</bean>
+
+	<bean name="configuration" parent="standard">
+		<property name="attributes">
+			<value>
+				body=/manager/files/configuration.ftl
+				side=/manager/files/side.ftl
+			</value>
+		</property>
+	</bean>
+
+	<bean name="messages.rss" parent="standard.rss">
+		<property name="attributes" value="body=/manager/files/rss/messages.ftl" />
+	</bean>
+
+	<bean id="messageStoreHandler" name="/messages,/messages.rss" class="org.springframework.batch.admin.web.MessageStoreHandler">
+		<property name="defaultView" ref="messages" />
+		<property name="feedView" ref="messages.rss" />
+	</bean>
+
+	<bean id="configurationHandler" name="/configuration" class="org.springframework.batch.admin.web.ViewHandler">
+		<property name="view" ref="configuration" />
+	</bean>
+
+	<bean id="bodyInboundRequestMapper" class="org.springframework.batch.admin.web.BodyInboundRequestMapper" />
+
+	<integration:outbound-channel-adapter ref="messageStoreHandler" channel="errorChannel" />
+
+	<integration:outbound-channel-adapter ref="messageStoreHandler" channel="job-operator" />
+
+	<integration:outbound-channel-adapter ref="messageStoreHandler" channel="job-registrations" />
+
+	<bean id="reload-job-executions" class="org.springframework.web.servlet.view.RedirectView">
+		<property name="url" value="/batch/jobs/executions" />
+		<property name="contextRelative" value="true"/>
+	</bean>
+
+	<http:inbound-channel-adapter name="/job-requests" channel="job-launches" request-mapper="bodyInboundRequestMapper"
+		view="reload-job-executions" />
+
+	<http:inbound-channel-adapter name="/job-restarts" channel="job-restarts" request-mapper="bodyInboundRequestMapper"
+		view="reload-job-executions" />
+
+	<bean id="configurationFileRequestMapper" class="org.springframework.integration.http.DataBindingInboundRequestMapper">
+		<property name="targetType" value="org.springframework.batch.admin.integration.JobConfigurationRequest" />
+		<property name="webBindingInitializer">
+			<bean class="org.springframework.batch.admin.web.CustomWebBindingInitializer" />
+		</property>
+	</bean>
+
+	<bean id="reload-messages" class="org.springframework.web.servlet.view.RedirectView">
+		<property name="url" value="/batch/messages" />
+		<property name="contextRelative" value="true"/>
+	</bean>
+
+	<http:inbound-channel-adapter name="/job-configuration-requests" channel="job-configuration-requests"
+		request-mapper="configurationFileRequestMapper" view="reload-messages" />
+
+	<http:inbound-channel-adapter name="/job-configuration-files" channel="job-configuration-files"
+		request-mapper="bodyInboundRequestMapper" view="reload-messages" />
+
+	<bean id="filesHandler" name="/files" class="org.springframework.batch.admin.web.ViewHandler">
+		<property name="view" ref="files" />
+	</bean>
+
+</beans>
