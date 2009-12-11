@@ -33,6 +33,7 @@ import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -133,7 +134,7 @@ public class JobExecutionController {
 
 	@RequestMapping(value = {"/jobs/executions", "/jobs/executions.*"}, method = RequestMethod.GET)
 	public @ModelAttribute("jobExecutions")
-	Collection<JobExecutionInfo> list(Model model, @RequestParam(defaultValue = "0") int startJobExecution,
+	Collection<JobExecutionInfo> list(ModelMap model, @RequestParam(defaultValue = "0") int startJobExecution,
 			@RequestParam(defaultValue = "20") int pageSize) {
 
 		int total = jobService.countJobExecutions();
@@ -209,7 +210,7 @@ public class JobExecutionController {
 
 	@RequestMapping(value = "/jobs/executions", method = RequestMethod.DELETE)
 	public @ModelAttribute("jobExecutions")
-	Collection<JobExecutionInfo> stopAll(Model model, @RequestParam(defaultValue = "0") int startJobExecution,
+	Collection<JobExecutionInfo> stopAll(ModelMap model, @RequestParam(defaultValue = "0") int startJobExecution,
 			@RequestParam(defaultValue = "20") int pageSize) {
 
 		model.addAttribute("stoppedCount", jobService.stopAll());
@@ -218,7 +219,7 @@ public class JobExecutionController {
 	}
 
 	@RequestMapping(value = "/jobs/{jobName}/executions", method = RequestMethod.GET)
-	public String listForJob(Model model, @PathVariable String jobName,
+	public String listForJob(ModelMap model, @PathVariable String jobName,
 			@RequestParam(defaultValue = "0") int startJobExecution, @RequestParam(defaultValue = "20") int pageSize) {
 
 		int total = startJobExecution;

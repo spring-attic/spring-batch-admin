@@ -17,6 +17,7 @@ package org.springframework.batch.admin.web.views;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.Date;
 import java.util.HashMap;
 
 import org.junit.Test;
@@ -26,6 +27,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.WebApplicationContextLoader;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.View;
 
 @ContextConfiguration(loader = WebApplicationContextLoader.class, inheritLocations = false, locations = "AbstractIntegrationViewTests-context.xml")
@@ -39,11 +42,25 @@ public class FilesViewTests extends AbstractManagerViewTests {
 	private View view;
 
 	@Test
-	public void testMessages() throws Exception {
+	public void testFiles() throws Exception {
 		view.render(model, request, response);
 		String content = response.getContentAsString();
 		// System.err.println(content);
 		assertTrue(content.contains("<div id=\"secondary-navigation\">"));
+		assertTrue(content.contains("Upload File"));
+	}
+
+	@Test
+	public void testEmptyFile() throws Exception {
+		Date date = new Date();
+		model.put("date", date);
+		BindException errors = new BindException(date, "date");
+		errors.reject("foo", "Foo");
+		model.put(BindingResult.MODEL_KEY_PREFIX+"date", errors);
+		view.render(model, request, response);
+		String content = response.getContentAsString();
+		// System.err.println(content);
+		assertTrue(content.contains("<span class=\"error\">Foo</span>"));
 		assertTrue(content.contains("Upload File"));
 	}
 

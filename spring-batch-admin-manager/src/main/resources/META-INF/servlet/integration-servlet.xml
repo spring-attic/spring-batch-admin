@@ -84,19 +84,20 @@
 		</property>
 	</bean>
 
-	<bean id="reload-messages" class="org.springframework.web.servlet.view.RedirectView">
+	<bean name="redirect:messages" class="org.springframework.web.servlet.view.RedirectView">
 		<property name="url" value="/batch/messages" />
 		<property name="contextRelative" value="true"/>
 	</bean>
 
+	<bean name="redirect:files" class="org.springframework.web.servlet.view.RedirectView">
+		<property name="url" value="/batch/files" />
+		<property name="contextRelative" value="true"/>
+	</bean>
+
 	<http:inbound-channel-adapter name="/job-configuration-requests" channel="job-configuration-requests"
-		request-mapper="configurationFileRequestMapper" view="reload-messages" />
+		request-mapper="configurationFileRequestMapper" view="redirect:messages" />
 
 	<http:inbound-channel-adapter name="/job-configuration-files" channel="job-configuration-files"
-		request-mapper="bodyInboundRequestMapper" view="reload-messages" />
-
-	<bean id="filesHandler" name="/files" class="org.springframework.batch.admin.web.ViewHandler">
-		<property name="view" ref="files" />
-	</bean>
+		request-mapper="bodyInboundRequestMapper" view="redirect:messages" />
 
 </beans>

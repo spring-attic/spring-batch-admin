@@ -15,26 +15,23 @@
  */
 package org.springframework.batch.admin.web;
 
-import org.springframework.ui.Model;
+import java.util.Map;
 
 public class TableUtils {
 
-	public static void addPagination(Model model, int total, int start, int number,
-			String suffix) {
-		model.addAttribute("total" + suffix + "s", total);
-		model.addAttribute("start" + suffix, start + 1);
+	public static void addPagination(Map<String, Object> model, int total,
+			int start, int number, String suffix) {
+		model.put("total" + suffix + "s", total);
+		model.put("start" + suffix, start + 1);
 		int end = start + number;
-		model.addAttribute("end" + suffix, end > total ? total : end);
+		model.put("end" + suffix, end > total ? total : end);
 		if (end < total) {
-			model.addAttribute("next" + suffix, end);
+			model.put("next" + suffix, end);
 		}
 		if (start > 0) {
 			int previous = start - number;
-			model
-					.addAttribute("previous" + suffix, previous < 0 ? 0
-							: previous);
+			model.put("previous" + suffix, previous < 0 ? 0 : previous);
 		}
 	}
-
 
 }

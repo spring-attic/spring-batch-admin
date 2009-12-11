@@ -35,7 +35,7 @@ import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.batch.support.PropertiesConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -61,7 +61,7 @@ public class JobController {
 	}
 
 	@RequestMapping(value = "/jobs/{jobName}", method = RequestMethod.POST)
-	public String launch(Model model, @PathVariable String jobName,
+	public String launch(ModelMap model, @PathVariable String jobName,
 			@ModelAttribute("launchRequest") LaunchRequest launchRequest, Errors errors,
 			@RequestParam(defaultValue = "job") String origin) {
 
@@ -108,7 +108,7 @@ public class JobController {
 	}
 
 	@RequestMapping(value = "/jobs/{jobName}", method = RequestMethod.GET)
-	public String details(Model model, @PathVariable String jobName,
+	public String details(ModelMap model, @PathVariable String jobName,
 			@RequestParam(defaultValue = "0") int startJobInstance, @RequestParam(defaultValue = "20") int pageSize) {
 
 		model.addAttribute("launchable", jobService.isLaunchable(jobName));
@@ -138,7 +138,7 @@ public class JobController {
 	}
 
 	@RequestMapping(value = "/jobs", method = RequestMethod.GET)
-	public void jobs(Model model, @RequestParam(defaultValue = "0") int startJob,
+	public void jobs(ModelMap model, @RequestParam(defaultValue = "0") int startJob,
 			@RequestParam(defaultValue = "20") int pageSize) {
 		int total = jobService.countJobs();
 		TableUtils.addPagination(model, total, startJob, pageSize, "Job");
