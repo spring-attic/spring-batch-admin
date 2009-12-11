@@ -10,6 +10,10 @@
 	
 	<p>
 		Browse to a file containing input data and press the button marked Upload.
+		Uploaded files will be placed in a a temporary directory with a parent
+		directory given by the "server path" property below.  Once the file is 
+		uploaded a trigger file will be created with the file name of the
+		uploaded file as its contents.
 	</p>
 	<#assign url><@spring.url relativeUrl="/batch/files"/></#assign>
 	<form id="registerFileForm" action="${url}" method="POST" enctype="multipart/form-data" encoding="multipart/form-data">
@@ -27,10 +31,10 @@
 	<p>Uploaded file: ${uploaded}</p>
 	</#if>
 
-	<#if files?? && files?size!=0>
+	<p>Parent directory: ${outputDir}</p>
+	<p>Trigger directory: ${triggerDir}</p>
 
-		<p>Parent directory: ${outputDir}</p>
-		<p>Trigger directory: ${triggerDir}</p>
+	<#if files?? && files?size!=0>
 
 		<#assign files_url><@spring.url relativeUrl="/batch/files"/></#assign>
 		<form action="${files_url}" method="POST">
