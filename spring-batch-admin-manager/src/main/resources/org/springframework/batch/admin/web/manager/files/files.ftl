@@ -31,7 +31,7 @@
 	<p>Uploaded file: ${uploaded}</p>
 	</#if>
 
-	<p>Parent directory: ${outputDir}</p>
+	<p>Temporary directory: ${outputDir}</p>
 	<p>Trigger directory: ${triggerDir}</p>
 
 	<#if files?? && files?size!=0>
