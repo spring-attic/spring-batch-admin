@@ -26,6 +26,7 @@
 		<config>src/test/resources/org/springframework/batch/admin/sample/RestartJobIntegrationTests-context.xml</config>
 		<config>src/test/resources/org/springframework/batch/admin/sample/StringPayloadJobIntegrationTests-context.xml</config>
 		<config>src/test/resources/org/springframework/batch/admin/sample/WireTapJobIntegrationTests-context.xml</config>
+		<config>src/test/resources/staging-context.xml</config>
 	</configs>
 	<configSets>
 		<configSet>

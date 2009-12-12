@@ -43,6 +43,8 @@ public class FilesViewTests extends AbstractManagerViewTests {
 
 	@Test
 	public void testFiles() throws Exception {
+		model.put("outputDir", "/tmp/batch");
+		model.put("triggerDir", "/tmp/trigger");
 		view.render(model, request, response);
 		String content = response.getContentAsString();
 		// System.err.println(content);
@@ -53,6 +55,8 @@ public class FilesViewTests extends AbstractManagerViewTests {
 	@Test
 	public void testEmptyFile() throws Exception {
 		Date date = new Date();
+		model.put("outputDir", "/tmp/batch");
+		model.put("triggerDir", "/tmp/trigger");
 		model.put("date", date);
 		BindException errors = new BindException(date, "date");
 		errors.reject("foo", "Foo");
