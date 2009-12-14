@@ -10,7 +10,6 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.validation.BindException;
@@ -30,7 +29,6 @@ public class FileControllerTests {
 		MockMultipartFile file = new MockMultipartFile("foo", "foo.properties",
 				"text/plain", "bar".getBytes());
 		ExtendedModelMap model = new ExtendedModelMap();
-		controller.afterPropertiesSet();
 		Date date = new Date();
 		controller.upload("spam", file, model, date, new BindException(date, "date"));
 		String uploaded = (String) model.get("uploaded");
@@ -44,7 +42,6 @@ public class FileControllerTests {
 		MockMultipartFile file = new MockMultipartFile("foo", "foo.properties",
 				"text/plain", "".getBytes());
 		ExtendedModelMap model = new ExtendedModelMap();
-		controller.afterPropertiesSet();
 		Date date = new Date();
 		BindException errors = new BindException(date, "date");
 		controller.upload("spam", file, model, date, errors);
@@ -54,8 +51,6 @@ public class FileControllerTests {
 	@Test
 	public void testList() throws Exception {
 		ExtendedModelMap model = new ExtendedModelMap();
-		controller.setResourceLoader(new DefaultResourceLoader());
-		controller.afterPropertiesSet();
 		controller.list(model, 0, 20);
 		@SuppressWarnings("unchecked")
 		List<String> uploaded = (List<String>) model.get("files");
@@ -66,8 +61,6 @@ public class FileControllerTests {
 	@Test
 	public void testDeleteAll() throws Exception {
 		ExtendedModelMap model = new ExtendedModelMap();
-		controller.setResourceLoader(new DefaultResourceLoader());
-		controller.afterPropertiesSet();
 		controller.deleteAll(model);
 		@SuppressWarnings("unchecked")
 		List<String> uploaded = (List<String>) model.get("files");
