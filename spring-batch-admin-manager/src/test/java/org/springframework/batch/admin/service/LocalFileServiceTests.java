@@ -27,11 +27,27 @@ public class LocalFileServiceTests {
 		assertTrue(file.getParentFile().exists());
 	}
 
+	@Test(expected = IllegalStateException.class)
+	public void testUploadFailsForNotAFile() throws Exception {
+		File file = service.createFile("spam", "bucket/crap");
+		assertTrue(file.exists());
+	}
+
+	@Test
+	public void testTrigger() throws Exception {
+		File file = service.createFile("spam/bucket", "crap");
+		assertTrue(file.exists());
+		File trigger = service.createTrigger(file);
+		assertEquals(file.getName(), trigger.getName());
+		String path = new File(service.getTriggerDirectory(), "spam/bucket/crap").getAbsolutePath();
+		assertEquals(path, trigger.getAbsolutePath().substring(0, path.length()));
+	}
+
 	@Test
 	public void testList() throws Exception {
 		service.setResourceLoader(new DefaultResourceLoader());
 		service.afterPropertiesSet();
-		List<String> uploaded = service.getFiles(0, 20);
+		List<FileInfo> uploaded = service.getFiles(0, 20);
 		assertEquals(0, uploaded.size());
 	}
 

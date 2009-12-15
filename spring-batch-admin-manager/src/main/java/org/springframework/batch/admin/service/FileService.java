@@ -28,14 +28,10 @@ public interface FileService {
 	
 	File createFile(String path, String name) throws IOException;
 	
-	void createTrigger(File dest) throws IOException;
+	File createTrigger(File dest) throws IOException;
 	
-	List<String> getFiles(int startFile, int pageSize) throws IOException;
+	List<FileInfo> getFiles(int startFile, int pageSize) throws IOException;
 	
-	void deleteAll() throws IOException;
+	int deleteAll() throws IOException;
 	
-	File getTriggerDirectory();
-	
-	File getUploadDirectory();
-
 }

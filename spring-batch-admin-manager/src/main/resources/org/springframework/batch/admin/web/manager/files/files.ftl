@@ -31,9 +31,6 @@
 	<p>Uploaded file: ${uploaded}</p>
 	</#if>
 
-	<p>Temporary directory: ${outputDir}</p>
-	<p>Trigger directory: ${triggerDir}</p>
-
 	<#if files?? && files?size!=0>
 
 		<#assign files_url><@spring.url relativeUrl="/batch/files"/></#assign>
@@ -49,7 +46,11 @@
 
 		<table title="Uploaded Files" class="bordered-table">
 			<tr>
-				<th>Name</th>
+				<th>Path</th>
+				<th>Upload Directory</th>
+				<th>Host Locator</th>
+				<th>Trigger Directory</th>
+				<th>Trigger</th>
 			</tr>
 			<#list files as file>
 				<#if file_index % 2 == 0>
@@ -58,7 +59,11 @@
 					<#assign rowClass="name-sublevel1-odd" />
 				</#if>
 				<tr class="${rowClass}">
-					<td>${file!}</td>
+					<td>${file.path}</td>
+					<td>${file.outputPath}</td>
+					<td>${file.locator!}</td>
+					<td>${file.triggerPath}</td>
+					<td>${file.trigger?string}</td>
 				</tr>
 			</#list>
 		</table>

@@ -17,11 +17,14 @@ package org.springframework.batch.admin.web.views;
 
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.batch.admin.service.FileInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
@@ -43,20 +46,19 @@ public class FilesViewTests extends AbstractManagerViewTests {
 
 	@Test
 	public void testFiles() throws Exception {
-		model.put("outputDir", "/tmp/batch");
-		model.put("triggerDir", "/tmp/trigger");
+		File dir = new File(System.getProperty("java.io.tmpdir"));
+		model.put("files", Arrays.asList(new FileInfo(dir, dir, new File(dir, "foo"))));
 		view.render(model, request, response);
 		String content = response.getContentAsString();
 		// System.err.println(content);
 		assertTrue(content.contains("<div id=\"secondary-navigation\">"));
+		assertTrue(content.matches("(?s).*<td>.*"+dir.getName()+"</td>.*<td></td>.*<td>.*"+dir.getName()+"</td>.*"));
 		assertTrue(content.contains("Upload File"));
 	}
 
 	@Test
 	public void testEmptyFile() throws Exception {
 		Date date = new Date();
-		model.put("outputDir", "/tmp/batch");
-		model.put("triggerDir", "/tmp/trigger");
 		model.put("date", date);
 		BindException errors = new BindException(date, "date");
 		errors.reject("foo", "Foo");

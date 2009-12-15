@@ -35,7 +35,7 @@ import org.springframework.util.Assert;
 
 /**
  * @author Dave Syer
- *
+ * 
  */
 public class LocalFileService implements FileService, InitializingBean, ResourceLoaderAware {
 
@@ -59,41 +59,46 @@ public class LocalFileService implements FileService, InitializingBean, Resource
 
 	public File createFile(String path, String name) throws IOException {
 
+		Assert.state(!name.contains("/") && !name.contains("\\"),
+				"The name to create must be a file without a directory (" + name
+						+ ").  Use the path parameter to create a directory.");
 		File directory = new File(outputDir, path);
 		directory.mkdirs();
 		Assert.state(directory.exists() && directory.isDirectory(), "Could not create directory: " + directory);
 
 		File dest = File.createTempFile(name + getSuffix(), "", directory);
-		
+
 		return dest;
-		
+
 	}
-	
-	public void createTrigger(File dest) throws IOException {
-		FileUtils.writeStringToFile(new File(triggerDir, dest.getName()), dest.getAbsolutePath());
+
+	public File createTrigger(File dest) throws IOException {
+		File file = new File(triggerDir, dest.getAbsolutePath().substring(outputDir.getAbsolutePath().length()));
+		FileUtils.writeStringToFile(file, dest.getAbsolutePath());
+		return file;
 	}
-	
-	public List<String> getFiles(int startFile, int pageSize) throws IOException {
+
+	public List<FileInfo> getFiles(int startFile, int pageSize) throws IOException {
 
 		ResourcePatternResolver resolver = ResourcePatternUtils.getResourcePatternResolver(resourceLoader);
 		Resource[] resources = resolver.getResources("file:///" + outputDir.getAbsolutePath() + "/**");
-		int start = outputDir.getAbsolutePath().length();
 
-		List<String> files = new ArrayList<String>();
-		for (int i = startFile; i<startFile+pageSize && i<resources.length; i++) {
+		List<FileInfo> files = new ArrayList<FileInfo>();
+		for (int i = startFile; i < startFile + pageSize && i < resources.length; i++) {
 			Resource resource = resources[i];
 			File file = resource.getFile();
 			if (file.isFile()) {
-				files.add(file.getAbsolutePath().substring(start + 1).replace("\\", "/"));
+				FileInfo info = new FileInfo(triggerDir, outputDir, file);
+				files.add(info);
 			}
 		}
 		Collections.sort(files);
-		
+
 		return files;
-		
+
 	}
-	
-	public void deleteAll() throws IOException {
+
+	public int deleteAll() throws IOException {
 
 		ResourcePatternResolver resolver = ResourcePatternUtils.getResourcePatternResolver(resourceLoader);
 		Resource[] resources = resolver.getResources("file:///" + outputDir.getAbsolutePath() + "/**");
@@ -105,12 +110,14 @@ public class LocalFileService implements FileService, InitializingBean, Resource
 			}
 		}
 
+		return resources.length;
+
 	}
-	
+
 	public File getTriggerDirectory() {
 		return triggerDir;
 	}
-	
+
 	public File getUploadDirectory() {
 		return outputDir;
 	}

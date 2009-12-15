@@ -65,5 +65,7 @@ public class FileControllerTests {
 		@SuppressWarnings("unchecked")
 		List<String> uploaded = (List<String>) model.get("files");
 		assertEquals(0, uploaded.size());
+		int deletedCount = (Integer) model.get("deletedCount");
+		assertEquals(0, deletedCount);
 	}
 }

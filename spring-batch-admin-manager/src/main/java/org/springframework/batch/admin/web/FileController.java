@@ -18,8 +18,11 @@ package org.springframework.batch.admin.web;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
+import org.springframework.batch.admin.service.FileInfo;
 import org.springframework.batch.admin.service.FileService;
 import org.springframework.batch.admin.service.LocalFileService;
 import org.springframework.stereotype.Controller;
@@ -33,16 +36,26 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * Controller for uploading files.
+ * Controller for uploading and managing files.
  * 
  * @author Dave Syer
  * 
  */
 @Controller
 public class FileController {
-	
+
 	private FileService fileService = new LocalFileService();
-	
+
+	/**
+	 * The service used to manage file lists and uploads. Defaults to a local
+	 * service that is only intended to work on a single node application.
+	 * 
+	 * @param fileService the {@link FileService} to set
+	 */
+	public void setFileService(FileService fileService) {
+		this.fileService = fileService;
+	}
+
 	@RequestMapping(value = "/files", method = RequestMethod.POST)
 	public String uploadRequest(@RequestParam String path, @RequestParam MultipartFile file, ModelMap model,
 			@ModelAttribute("date") Date date, Errors errors) throws Exception {
@@ -79,21 +92,22 @@ public class FileController {
 	public void list(ModelMap model, @RequestParam(defaultValue = "0") int startFile,
 			@RequestParam(defaultValue = "20") int pageSize) throws Exception {
 
-		model.put("files", fileService.getFiles(startFile, pageSize));
-		model.put("outputDir", fileService.getUploadDirectory().getAbsolutePath().replace("\\", "/"));
-		model.put("triggerDir", fileService.getTriggerDirectory().getAbsolutePath().replace("\\", "/"));
+		List<FileInfo> files = fileService.getFiles(startFile, pageSize);
+
+		Collections.sort(files);
+
+		model.put("files", files);
 
 	}
 
 	@RequestMapping(value = "/files", method = RequestMethod.DELETE)
 	public String deleteAll(ModelMap model) throws Exception {
 
-		fileService.deleteAll();
+		int deletedCount = fileService.deleteAll();
 
 		model.put("files", new ArrayList<String>());
-		model.put("outputDir", fileService.getUploadDirectory().getAbsolutePath().replace("\\", "/"));
-		model.put("triggerDir", fileService.getTriggerDirectory().getAbsolutePath().replace("\\", "/"));
-		
+		model.put("deletedCount", deletedCount);
+
 		return "redirect:files";
 
 	}
