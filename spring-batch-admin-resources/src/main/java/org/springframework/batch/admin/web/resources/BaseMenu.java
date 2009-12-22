@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.batch.admin.web.base;
+package org.springframework.batch.admin.web.resources;
 
 /**
  * Convenient base class for {@link Menu} implementations.

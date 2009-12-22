@@ -25,6 +25,8 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.support.HandlerMethodResolver;
 import org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping;
+import org.springframework.web.util.UrlPathHelper;
 
 /**
  * Component that discovers request mappings in its application context and
@@ -47,7 +50,7 @@ import org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMa
  * 
  */
 @Controller
-public class AnnotationMappingMetaData implements ApplicationContextAware, InitializingBean {
+public class AnnotationMappingMetaDataController implements ApplicationContextAware, InitializingBean {
 
 	@Autowired(required = false)
 	private DefaultAnnotationHandlerMapping mapping;
@@ -129,11 +132,13 @@ public class AnnotationMappingMetaData implements ApplicationContextAware, Initi
 	 * Each URI pattern that is mapped can be mapped to multiple request
 	 * methods. If the mapping is not explicit this method only returns GET
 	 * (even though technically it would respond to POST as well).
+	 * @param request TODO
 	 * 
 	 * @return a map of URI pattern to request methods accepted
 	 */
 	@RequestMapping(value="/home", method=RequestMethod.GET)
-	public @ModelAttribute("resources") List<ResourceInfo> getResources() {
+	public @ModelAttribute("resources") List<ResourceInfo> getResources(HttpServletRequest request) {
+		request.setAttribute("servletPath", new UrlPathHelper().getServletPath(request));
 		return resources;
 	}
 

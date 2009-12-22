@@ -9,7 +9,6 @@
 	<configs>
 		<config>src/test/resources/test-config.xml</config>
 		<config>src/test/resources/test-job-context.xml</config>
-		<config>src/main/resources/META-INF/servlet/freemarker-servlet.xml</config>
 		<config>src/main/resources/META-INF/servlet/service-servlet.xml</config>
 		<config>src/test/resources/org/springframework/batch/admin/web/views/AbstractManagerViewTests-context.xml</config>
 		<config>src/main/resources/META-INF/bootstrap/integration/configuration-context.xml</config>

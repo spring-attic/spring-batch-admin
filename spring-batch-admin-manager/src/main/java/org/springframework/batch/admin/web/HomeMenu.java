@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.batch.admin.web.base;
+package org.springframework.batch.admin.web;
 
 import org.springframework.batch.admin.web.resources.BaseMenu;
 import org.springframework.stereotype.Component;
 
-
 @Component
-public class DummyMenu extends BaseMenu {
-	
-	public DummyMenu() {
-		super("dummy.html", "dummy");
+public class HomeMenu extends BaseMenu {
+
+	public HomeMenu() {
+		super("/batch/home", "Home", Integer.MIN_VALUE);
 	}
 
 }

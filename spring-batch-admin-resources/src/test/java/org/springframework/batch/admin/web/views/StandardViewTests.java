@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.batch.admin.web.resources;
+package org.springframework.batch.admin.web.views;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -31,7 +31,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.WebApplicationContextLoader;
 import org.springframework.web.servlet.View;
 
-@ContextConfiguration(locations = "/META-INF/servlet/freemarker-servlet.xml", loader = WebApplicationContextLoader.class)
+@ContextConfiguration(locations = "/META-INF/servlet/resources-servlet.xml", loader = WebApplicationContextLoader.class)
 @RunWith(SpringJUnit4ClassRunner.class)
 public class StandardViewTests {
 

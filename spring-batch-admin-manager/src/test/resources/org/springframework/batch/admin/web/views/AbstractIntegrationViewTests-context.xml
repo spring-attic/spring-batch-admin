@@ -7,7 +7,8 @@
                                  http://www.springframework.org/schema/integration/http http://www.springframework.org/schema/integration/http/spring-integration-http-1.0.xsd
                                  http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-2.0.xsd">
 
-	<import resource="classpath*:/META-INF/servlet/freemarker-servlet.xml"/>
+	<import resource="classpath*:/META-INF/servlet/resources-servlet.xml"/>
+	<import resource="classpath*:/META-INF/servlet/manager-servlet.xml"/>
 	<import resource="classpath*:/META-INF/servlet/integration-servlet.xml"/>
 	
 	<integration:channel id="job-launches"/>

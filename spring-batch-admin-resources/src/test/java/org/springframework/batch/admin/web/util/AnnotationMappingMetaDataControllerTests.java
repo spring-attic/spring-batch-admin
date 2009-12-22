@@ -24,18 +24,19 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.batch.admin.web.util.AnnotationMappingMetaData;
+import org.springframework.batch.admin.web.util.AnnotationMappingMetaDataController;
 import org.springframework.batch.admin.web.util.ResourceInfo;
 import org.springframework.context.support.StaticApplicationContext;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 
-public class AnnotationMappingMetaDataTests {
+public class AnnotationMappingMetaDataControllerTests {
 
-	private AnnotationMappingMetaData metaData = new AnnotationMappingMetaData();
+	private AnnotationMappingMetaDataController metaData = new AnnotationMappingMetaDataController();
 
 	private StaticApplicationContext context = new StaticApplicationContext();
 
@@ -97,16 +98,19 @@ public class AnnotationMappingMetaDataTests {
 	public void testAdapter() throws Exception {
 		context.registerSingleton("controller", VanillaController.class);
 		metaData.afterPropertiesSet();
-		List<ResourceInfo> resources = metaData.getResources();
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		List<ResourceInfo> resources = metaData.getResources(request);
 		assertEquals(1, resources.size());
 		assertEquals(RequestMethod.GET, resources.iterator().next().getMethod());
+		assertEquals("", request.getAttribute("servletPath"));
 	}
 
 	@Test
 	public void testAdapterWithMultipleMethods() throws Exception {
 		context.registerSingleton("controller", FormController.class);
 		metaData.afterPropertiesSet();
-		List<ResourceInfo> resources = metaData.getResources();
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		List<ResourceInfo> resources = metaData.getResources(request);
 		Collections.sort(resources);
 		assertEquals(2, resources.size());
 		Iterator<ResourceInfo> iterator = resources.iterator();

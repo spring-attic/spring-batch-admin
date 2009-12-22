@@ -8,7 +8,9 @@
 
 	<context:component-scan base-package="org.springframework.batch.admin.web">
 		<context:exclude-filter type="regex"
-			expression=".*Tests.*" />
+			expression=".*Test.*" />
+		<context:exclude-filter type="regex"
+			expression=".*Dummy.*" />
 	</context:component-scan>
 
 	<task:annotation-driven scheduler="scheduler" />

@@ -13,21 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.batch.admin.web.base;
+package org.springframework.batch.admin.web.resources;
 
-/**
- * Interface for menu component contributions. Any Spring component implementing
- * this interface will be used to create a menu on the navigation bar.
- * 
- * @author Dave Syer
- * 
- */
-public interface Menu {
+import org.springframework.batch.admin.web.resources.BaseMenu;
+import org.springframework.stereotype.Component;
 
-	String getLabel();
+@Component
+public class DummyMenu extends BaseMenu {
 
-	String getUrl();
-
-	int getOrder();
+	public DummyMenu() {
+		super("/batch/home", "Home", Integer.MIN_VALUE);
+	}
 
 }

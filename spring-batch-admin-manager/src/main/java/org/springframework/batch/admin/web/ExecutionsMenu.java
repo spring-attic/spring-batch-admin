@@ -15,7 +15,7 @@
  */
 package org.springframework.batch.admin.web;
 
-import org.springframework.batch.admin.web.base.BaseMenu;
+import org.springframework.batch.admin.web.resources.BaseMenu;
 import org.springframework.stereotype.Component;
 
 

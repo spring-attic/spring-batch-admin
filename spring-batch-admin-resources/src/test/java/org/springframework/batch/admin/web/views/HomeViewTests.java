@@ -40,8 +40,8 @@ public class HomeViewTests extends AbstractResourceViewTests {
 	private final HashMap<String, Object> model = new HashMap<String, Object>();
 	
 	@Autowired
-	@Qualifier("standard")
-	private View standard;
+	@Qualifier("home")
+	private View home;
 	
 	@Autowired
 	@Qualifier("secondary")
@@ -53,7 +53,8 @@ public class HomeViewTests extends AbstractResourceViewTests {
 		resources.add(new ResourceInfo("/local", RequestMethod.GET));
 		resources.add(new ResourceInfo("/jobs/{jobName}", RequestMethod.GET));
 		model.put("resources", resources);
-		standard.render(model, request, response);
+		model.put("servletPath", "batch");
+		home.render(model, request, response);
 		String content = response.getContentAsString();
 		// System.err.println(content);
 		assertTrue(content.contains("<td><a href=\"/batch/local\">/local</a></td>"));
@@ -66,6 +67,7 @@ public class HomeViewTests extends AbstractResourceViewTests {
 		resources.add(new ResourceInfo("/local", RequestMethod.GET));
 		resources.add(new ResourceInfo("/jobs/{jobName}", RequestMethod.GET));
 		model.put("resources", resources);
+		model.put("servletPath", "batch");
 		secondary.render(model, request, response);
 		String content = response.getContentAsString();
 		// System.err.println(content);

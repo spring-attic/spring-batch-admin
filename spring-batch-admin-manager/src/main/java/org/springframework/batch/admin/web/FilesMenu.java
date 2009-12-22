@@ -15,7 +15,7 @@
  */
 package org.springframework.batch.admin.web;
 
-import org.springframework.batch.admin.web.base.Menu;
+import org.springframework.batch.admin.web.resources.Menu;
 
 public class FilesMenu implements Menu {
 
