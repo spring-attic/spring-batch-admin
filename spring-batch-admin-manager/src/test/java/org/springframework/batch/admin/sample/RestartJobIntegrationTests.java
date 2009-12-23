@@ -17,6 +17,9 @@ package org.springframework.batch.admin.sample;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import javax.sql.DataSource;
 
 import org.hamcrest.Description;
@@ -27,7 +30,6 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.launch.JobParametersNotFoundException;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.test.JobRepositoryTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +41,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@ContextConfiguration(locations = {"JobIntegrationTests-context.xml", "RestartJobIntegrationTests-context.xml"})
+@ContextConfiguration(locations = { "JobIntegrationTests-context.xml", "RestartJobIntegrationTests-context.xml" })
 @RunWith(SpringJUnit4ClassRunner.class)
 public class RestartJobIntegrationTests {
 
@@ -50,14 +52,14 @@ public class RestartJobIntegrationTests {
 	@Autowired
 	@Qualifier("job-restarts")
 	private MessageChannel restarts;
-	
+
 	private JobRepositoryTestUtils jobRepositoryTestUtils;
-	
+
 	@Autowired
 	public void initializeTestUtils(JobRepository jobRepository, DataSource dataSource) {
-		jobRepositoryTestUtils = new JobRepositoryTestUtils(jobRepository, dataSource);		
+		jobRepositoryTestUtils = new JobRepositoryTestUtils(jobRepository, dataSource);
 	}
-	
+
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
@@ -73,7 +75,8 @@ public class RestartJobIntegrationTests {
 		restart.setRequestChannel(restarts);
 		restart.afterPropertiesSet();
 
-		JobExecution result = (JobExecution) launch.sendAndReceive("staging[input.file=classpath:data/bad.txt,foo=bar]");
+		JobExecution result = (JobExecution) launch
+				.sendAndReceive("staging[input.file=classpath:data/bad.txt,foo=bar]");
 		assertEquals(BatchStatus.FAILED, result.getStatus());
 		result = (JobExecution) restart.sendAndReceive("staging");
 		assertEquals(BatchStatus.FAILED, result.getStatus());
@@ -86,19 +89,22 @@ public class RestartJobIntegrationTests {
 	@Test
 	@DirtiesContext
 	public void testFailedRestart() throws Exception {
-		
+
 		thrown.expect(MessageHandlingException.class);
 
 		thrown.expect(new TypeSafeMatcher<Exception>() {
 			@Override
 			public boolean matchesSafely(Exception item) {
-				return item.getCause() instanceof JobParametersNotFoundException;
+				StringWriter writer = new StringWriter();
+				item.printStackTrace(new PrintWriter(writer));
+				return writer.toString().matches("(?s).*JobParametersNotFoundException.*");
 			}
+
 			public void describeTo(Description description) {
 				description.appendText("exception has cause of JobParametersNotFoundException");
 			}
-		});		
-		
+		});
+
 		jobRepositoryTestUtils.removeJobExecutions();
 
 		SimpleMessagingGateway restart = new SimpleMessagingGateway();
@@ -106,9 +112,9 @@ public class RestartJobIntegrationTests {
 		restart.afterPropertiesSet();
 
 		JobExecution result = (JobExecution) restart.sendAndReceive("staging");
- 		assertEquals(BatchStatus.FAILED, result.getStatus());
- 	
- 		restart.stop();
+		assertEquals(BatchStatus.FAILED, result.getStatus());
+
+		restart.stop();
 
 	}
 
