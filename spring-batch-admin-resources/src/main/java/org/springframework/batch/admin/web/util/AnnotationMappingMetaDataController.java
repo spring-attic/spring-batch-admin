@@ -18,6 +18,7 @@ package org.springframework.batch.admin.web.util;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Controller;
@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.support.HandlerMethodResolver;
+import org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping;
 import org.springframework.web.util.UrlPathHelper;
 
@@ -51,9 +52,6 @@ import org.springframework.web.util.UrlPathHelper;
  */
 @Controller
 public class AnnotationMappingMetaDataController implements ApplicationContextAware, InitializingBean {
-
-	@Autowired(required = false)
-	private DefaultAnnotationHandlerMapping mapping;
 
 	private ApplicationContext applicationContext;
 
@@ -76,18 +74,23 @@ public class AnnotationMappingMetaDataController implements ApplicationContextAw
 	 */
 	public void afterPropertiesSet() throws Exception {
 
-		if (mapping == null) {
-			mapping = new DefaultAnnotationHandlerMapping();
-			mapping.setApplicationContext(applicationContext);
-			mapping.initApplicationContext();
-		}
+		Map<String, Object> handlerMap = new HashMap<String, Object>();
 
-		Map<String, Object> handlerMap = mapping.getHandlerMap();
+		DefaultAnnotationHandlerMapping annotationMapping = new DefaultAnnotationHandlerMapping();
+		annotationMapping.setApplicationContext(applicationContext);
+		annotationMapping.initApplicationContext();
+		handlerMap.putAll(annotationMapping.getHandlerMap());
+		
+		BeanNameUrlHandlerMapping beanMapping = new BeanNameUrlHandlerMapping();
+		beanMapping.setApplicationContext(applicationContext);
+		beanMapping.initApplicationContext();
+		handlerMap.putAll(beanMapping.getHandlerMap());
+
 		this.urls = findUniqueUrls(handlerMap.keySet());
 		this.resources = findMethods(handlerMap, this.urls);
 
 	}
-	
+
 	private List<ResourceInfo> findMethods(Map<String, Object> handlerMap, Set<String> urls) {
 		SortedSet<ResourceInfo> result = new TreeSet<ResourceInfo>();
 		for (String key : urls) {
@@ -96,17 +99,21 @@ public class AnnotationMappingMetaDataController implements ApplicationContextAw
 			Class handlerType = ClassUtils.getUserClass(handler);
 			HandlerMethodResolver resolver = new HandlerMethodResolver();
 			resolver.init(handlerType);
-			for (Method method : resolver.getHandlerMethods()) {
+			Set<Method> handlerMethods = resolver.getHandlerMethods();
+			for (Method method : handlerMethods) {
 				RequestMapping mapping = method.getAnnotation(RequestMapping.class);
 				RequestMethod[] methods = mapping.method();
 				if (methods != null && methods.length > 0) {
-					for (RequestMethod requestMethod : methods) {						
+					for (RequestMethod requestMethod : methods) {
 						result.add(new ResourceInfo(key, requestMethod));
 					}
 				}
 				else {
 					result.add(new ResourceInfo(key, RequestMethod.GET));
 				}
+			}
+			if (handlerMethods.isEmpty()) {
+				result.add(new ResourceInfo(key, RequestMethod.GET));				
 			}
 		}
 		return new ArrayList<ResourceInfo>(result);
@@ -136,8 +143,9 @@ public class AnnotationMappingMetaDataController implements ApplicationContextAw
 	 * 
 	 * @return a map of URI pattern to request methods accepted
 	 */
-	@RequestMapping(value="/home", method=RequestMethod.GET)
-	public @ModelAttribute("resources") List<ResourceInfo> getResources(HttpServletRequest request) {
+	@RequestMapping(value = "/home", method = RequestMethod.GET)
+	public @ModelAttribute("resources")
+	List<ResourceInfo> getResources(HttpServletRequest request) {
 		request.setAttribute("servletPath", new UrlPathHelper().getServletPath(request));
 		return resources;
 	}

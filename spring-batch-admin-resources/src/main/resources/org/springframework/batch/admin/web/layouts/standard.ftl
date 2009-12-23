@@ -1,15 +1,14 @@
 <#import "/spring.ftl" as spring />
-<#macro url value>${springMacroRequestContext.getContextPath()}${value?html}</#macro>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>Spring Batch Admin</title>
+<title><@spring.messageText code="title" text=title!"Spring Batch Admin"/></title>
 <#assign url><@spring.url relativeUrl="/resources/dijit/themes/tundra/tundra.css"/></#assign>
 <link rel="stylesheet" href="${url}" type="text/css"></link>
 <#assign url><@spring.url relativeUrl="/resources/styles/main.css"/></#assign>
 <link rel="stylesheet" href="${url}" type="text/css"></link>
 <#assign url><@spring.url relativeUrl="/resources/styles/colors.css"/></#assign>
-<link rel="stylesheet" href="${url}" type="text/css"></link>
+<link rel="stylesheet" href="${url}" typ="${url}"ext/css"></link>
 <#assign url><@spring.url relativeUrl="/resources/styles/local.css"/></#assign>
 <link rel="stylesheet" href="${url}" type="text/css"></link>
 <#assign url><@spring.url relativeUrl="/resources/styles/print.css"/></#assign>
@@ -21,7 +20,7 @@
 <#assign url><@spring.url relativeUrl="/resources/spring/Spring-Dojo.js"/></#assign>
 <script type="text/javascript" src="${url}"></script>
 <#if feedPath??>
-<#assign url><@spring.url relativeUrl="${feedPath}"/></#assign>
+<#assign url><@spring.url relativeUrl=feedPath/></#assign>
 	<link rel="alternate" type="application/rss+xml" title="RSS Feed" href="${url}">
 </#if>
 <!-- 

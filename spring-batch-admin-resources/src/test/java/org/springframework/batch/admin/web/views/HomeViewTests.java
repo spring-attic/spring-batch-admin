@@ -53,7 +53,8 @@ public class HomeViewTests extends AbstractResourceViewTests {
 		resources.add(new ResourceInfo("/local", RequestMethod.GET));
 		resources.add(new ResourceInfo("/jobs/{jobName}", RequestMethod.GET));
 		model.put("resources", resources);
-		model.put("servletPath", "batch");
+		model.put("servletPath", "/batch");
+		model.put("title", "Foo");
 		home.render(model, request, response);
 		String content = response.getContentAsString();
 		// System.err.println(content);
@@ -67,7 +68,7 @@ public class HomeViewTests extends AbstractResourceViewTests {
 		resources.add(new ResourceInfo("/local", RequestMethod.GET));
 		resources.add(new ResourceInfo("/jobs/{jobName}", RequestMethod.GET));
 		model.put("resources", resources);
-		model.put("servletPath", "batch");
+		model.put("servletPath", "/batch");
 		secondary.render(model, request, response);
 		String content = response.getContentAsString();
 		// System.err.println(content);
