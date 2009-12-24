@@ -100,4 +100,18 @@
 	<http:inbound-channel-adapter name="/job-configuration-files" channel="job-configuration-files"
 		request-mapper="bodyInboundRequestMapper" view="redirect:messages" />
 
+	<http:inbound-channel-adapter name="/files" channel="file-requests" 
+		request-mapper="inputFileRequestMapper" view="redirect:files" supported-methods="POST"/>
+
+	<bean id="inputFileRequestMapper" class="org.springframework.integration.http.DataBindingInboundRequestMapper">
+		<property name="targetType" value="org.springframework.batch.admin.integration.FileUploadRequest" />
+		<property name="webBindingInitializer">
+			<bean class="org.springframework.batch.admin.web.CustomWebBindingInitializer" />
+		</property>
+	</bean>
+
+	<integration:service-activator input-channel="file-requests" output-channel="input-files">
+		<bean class="org.springframework.batch.admin.integration.FileUploadRequestToFileAdapter"/>
+	</integration:service-activator>
+
 </beans>

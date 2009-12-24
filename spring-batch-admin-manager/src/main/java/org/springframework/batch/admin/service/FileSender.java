@@ -13,24 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.springframework.batch.admin.service;
 
-import java.io.IOException;
-import java.util.List;
+import java.io.File;
 
 /**
  * @author Dave Syer
  *
  */
-public interface FileService {
+public interface FileSender {
 	
-	FileInfo createFile(String path, String name) throws IOException;
-	
-	boolean createTrigger(FileInfo dest) throws IOException;
-	
-	List<FileInfo> getFiles(int startFile, int pageSize) throws IOException;
-	
-	int deleteAll() throws IOException;
-	
+	void send(File file);
+
 }

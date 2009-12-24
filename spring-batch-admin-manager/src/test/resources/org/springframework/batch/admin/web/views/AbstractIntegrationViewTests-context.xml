@@ -17,7 +17,7 @@
 	<integration:channel id="job-configuration-files"/>
 	<integration:channel id="job-configuration-requests"/>
 	<integration:channel id="job-registrations"/>
-	<integration:channel id="lead-files"/>
+	<integration:channel id="input-files"/>
 	<integration:channel id="job-operator"/>
 
 </beans>

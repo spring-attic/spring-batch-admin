@@ -10,6 +10,8 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.batch.admin.service.FileSender;
+import org.springframework.batch.admin.service.LocalFileService;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.validation.BindException;
@@ -20,6 +22,12 @@ public class FileControllerTests {
 
 	@Before
 	public void setUp() throws Exception {
+		LocalFileService fileService = new LocalFileService();
+		fileService.setFileSender(new FileSender() {
+			public void send(File file) {
+			}
+		});
+		controller.setFileService(fileService);
 		FileUtils.deleteDirectory(new File(System.getProperty("java.io.tmpdir",
 				"/tmp"), "batch/files"));
 	}

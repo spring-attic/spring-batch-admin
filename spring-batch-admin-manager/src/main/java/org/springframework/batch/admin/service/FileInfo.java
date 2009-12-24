@@ -25,30 +25,28 @@ public class FileInfo implements Comparable<FileInfo> {
 	
 	private String path;
 	
+	private String name;
+	
 	private String locator;
 	
-	private boolean trigger;
-	
 	private String outputPath;
-
-	private String triggerPath;
 
 	/**
 	 * @param path
 	 */
-	public FileInfo(File triggerPath, File outputPath, File file) {
-		this(triggerPath, outputPath, file, "");
+	public FileInfo(File outputPath, File file) {
+		this(outputPath, file, "");
 	}	
 
 	/**
 	 * @param path
 	 * @param locator
 	 */
-	public FileInfo(File triggerPath, File outputPath, File file, String locator) {
+	public FileInfo(File outputPath, File file, String locator) {
 		super();
 		this.path = extractPath(outputPath, file);
+		this.name = extractName(file);
 		this.outputPath = extractPath(outputPath);
-		setTriggerPath(triggerPath);
 		this.locator = locator;
 	}
 
@@ -57,6 +55,13 @@ public class FileInfo implements Comparable<FileInfo> {
 	 */
 	public String getPath() {
 		return path;
+	}
+	
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
 	}
 
 	/**
@@ -67,42 +72,16 @@ public class FileInfo implements Comparable<FileInfo> {
 	}
 
 	/**
-	 * @param locator the locator to set
-	 */
-	public void setLocator(String locator) {
-		this.locator = locator;
-	}
-
-	/**
-	 * @return the trigger
-	 */
-	public boolean isTrigger() {
-		return trigger;
-	}
-
-	/**
-	 * @param trigger the trigger to set
-	 */
-	public void setTriggerPath(File parent) {
-		File file = new File(parent, path);
-		this.trigger = file.exists();
-		this.triggerPath = extractPath(parent);
-	}
-
-	/**
 	 * @return the outputPath
 	 */
 	public String getOutputPath() {
 		return outputPath;
 	}
 
-	/**
-	 * @return the triggerPath
-	 */
-	public String getTriggerPath() {
-		return triggerPath;
+	public String getAbsolutePath() {
+		return outputPath + "/" + path;
 	}
-
+	
 	public int compareTo(FileInfo o) {
 		return path.compareTo(o.path);
 	}
@@ -111,9 +90,13 @@ public class FileInfo implements Comparable<FileInfo> {
 		return file.getAbsolutePath().replace("\\", "/");
 	}
 	
+	private String extractName(File file) {
+		return file.getName();
+	}
+	
 	private String extractPath(File parent, File file) {
 		int start = parent.getAbsolutePath().length();
 		return file.getAbsolutePath().substring(start + 1).replace("\\", "/");
 	}
-	
+
 }

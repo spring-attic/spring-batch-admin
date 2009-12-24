@@ -34,6 +34,10 @@ import org.springframework.core.io.support.ResourcePatternUtils;
 import org.springframework.util.Assert;
 
 /**
+ * An implementation of {@link FileService} that deals with files only in the
+ * local file system. Files and triggers are created in subdirectories of the
+ * Java temporary directory.
+ * 
  * @author Dave Syer
  * 
  */
@@ -41,15 +45,20 @@ public class LocalFileService implements FileService, InitializingBean, Resource
 
 	private File outputDir = new File(System.getProperty("java.io.tmpdir", "/tmp"), "batch/files");
 
-	private File triggerDir = new File(System.getProperty("java.io.tmpdir", "/tmp"), "batch/triggers");
-
 	private ResourceLoader resourceLoader = new DefaultResourceLoader();
+
+	private FileSender fileSender;
 
 	public void setResourceLoader(ResourceLoader resourceLoader) {
 		this.resourceLoader = resourceLoader;
 	}
+	
+	public void setFileSender(FileSender fileSender) {
+		this.fileSender = fileSender;
+	}
 
 	public void afterPropertiesSet() throws Exception {
+		Assert.state(fileSender!=null, "A FileSender must be provided");
 		if (!outputDir.exists()) {
 			Assert.state(outputDir.mkdirs(), "Cannot create output directory " + outputDir);
 		}
@@ -57,7 +66,7 @@ public class LocalFileService implements FileService, InitializingBean, Resource
 		Assert.state(outputDir.isDirectory(), "Output file is not a directory " + outputDir);
 	}
 
-	public File createFile(String path, String name) throws IOException {
+	public FileInfo createFile(String path, String name) throws IOException {
 
 		Assert.state(!name.contains("/") && !name.contains("\\"),
 				"The name to create must be a file without a directory (" + name
@@ -68,14 +77,14 @@ public class LocalFileService implements FileService, InitializingBean, Resource
 
 		File dest = File.createTempFile(name + getSuffix(), "", directory);
 
-		return dest;
+		return new FileInfo(outputDir, dest);
 
 	}
 
-	public File createTrigger(File dest) throws IOException {
-		File file = new File(triggerDir, dest.getAbsolutePath().substring(outputDir.getAbsolutePath().length()));
-		FileUtils.writeStringToFile(file, dest.getAbsolutePath());
-		return file;
+	public boolean createTrigger(FileInfo dest) throws IOException {
+		File file = new File(dest.getAbsolutePath());
+		fileSender.send(file);
+		return true;
 	}
 
 	public List<FileInfo> getFiles(int startFile, int pageSize) throws IOException {
@@ -88,7 +97,7 @@ public class LocalFileService implements FileService, InitializingBean, Resource
 			Resource resource = resources[i];
 			File file = resource.getFile();
 			if (file.isFile()) {
-				FileInfo info = new FileInfo(triggerDir, outputDir, file);
+				FileInfo info = new FileInfo(outputDir, file);
 				files.add(info);
 			}
 		}
@@ -112,10 +121,6 @@ public class LocalFileService implements FileService, InitializingBean, Resource
 
 		return resources.length;
 
-	}
-
-	public File getTriggerDirectory() {
-		return triggerDir;
 	}
 
 	public File getUploadDirectory() {

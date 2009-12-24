@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:aop="http://www.springframework.org/schema/aop"
-	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:file="http://www.springframework.org/schema/integration/file"
+	xmlns:integration="http://www.springframework.org/schema/integration" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
 		http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.1.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-2.0.xsd
+		http://www.springframework.org/schema/integration/file http://www.springframework.org/schema/integration/file/spring-integration-file-2.0.xsd">
 
 	<job id="job1" parent="simpleJob" xmlns="http://www.springframework.org/schema/batch" incrementer="incrementer">
 		<step id="j1.s1" parent="step1" />
 	</job>
 
 	<job id="job2" parent="simpleJob" xmlns="http://www.springframework.org/schema/batch">
-		<step id="j2.s1" parent="step1:master" />
+		<step id="j2.s1">
+			<partition step="step1" partitioner="partitioner">
+				<handler grid-size="2" task-executor="taskExecutor" />
+			</partition>
+		</step>
 	</job>
 
 	<job id="infinite" parent="simpleJob" xmlns="http://www.springframework.org/schema/batch" incrementer="incrementer">
@@ -21,6 +28,15 @@
 		-->
 		<step id="infinite.s1" parent="step1.allow.start" next="infinite.s1" />
 	</job>
+
+	<chain input-channel="input-files" output-channel="job-requests" xmlns="http://www.springframework.org/schema/integration">
+		<filter expression="payload.parent.name=='sample'" />
+		<service-activator input-channel="file-uploads" output-channel="job-requests">
+			<bean class="org.springframework.batch.admin.integration.FileToJobLaunchRequestAdapter" xmlns="http://www.springframework.org/schema/beans">
+				<property name="job" ref="job1" />
+			</bean>
+		</service-activator>
+	</chain>
 
 	<bean id="simpleJob" class="org.springframework.batch.core.job.SimpleJob" abstract="true">
 		<property name="jobRepository" ref="jobRepository" />
@@ -36,25 +52,7 @@
 
 	<bean id="incrementer" class="org.springframework.batch.admin.sample.TrivialJobParametersIncrementer" />
 
-	<bean name="step1:master" class="org.springframework.batch.core.partition.support.PartitionStep">
-		<property name="partitionHandler">
-			<bean class="org.springframework.batch.core.partition.support.TaskExecutorPartitionHandler">
-				<property name="step" ref="remoteStep1" />
-				<property name="gridSize" value="${batch.grid.size}" />
-				<property name="taskExecutor" ref="taskExecutor" />
-			</bean>
-		</property>
-		<property name="stepExecutionSplitter">
-			<bean class="org.springframework.batch.core.partition.support.SimpleStepExecutionSplitter">
-				<property name="jobRepository" ref="jobRepository" />
-				<property name="partitioner">
-					<bean class="org.springframework.batch.core.partition.support.SimplePartitioner" />
-				</property>
-				<property name="stepName" value="step1" />
-			</bean>
-		</property>
-		<property name="jobRepository" ref="jobRepository" />
-	</bean>
+	<bean id="partitioner" class="org.springframework.batch.core.partition.support.SimplePartitioner" />
 
 	<bean id="taskExecutor" parent="throttledTaskExecutor">
 		<property name="throttleLimit" value="100" />

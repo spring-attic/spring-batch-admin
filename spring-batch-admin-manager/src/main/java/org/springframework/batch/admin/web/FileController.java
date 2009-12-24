@@ -24,7 +24,6 @@ import java.util.List;
 
 import org.springframework.batch.admin.service.FileInfo;
 import org.springframework.batch.admin.service.FileService;
-import org.springframework.batch.admin.service.LocalFileService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.Errors;
@@ -44,11 +43,10 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller
 public class FileController {
 
-	private FileService fileService = new LocalFileService();
+	private FileService fileService;
 
 	/**
-	 * The service used to manage file lists and uploads. Defaults to a local
-	 * service that is only intended to work on a single node application.
+	 * The service used to manage file lists and uploads.
 	 * 
 	 * @param fileService the {@link FileService} to set
 	 */
@@ -73,8 +71,8 @@ public class FileController {
 		}
 
 		try {
-			File dest = fileService.createFile(path, file.getOriginalFilename());
-			file.transferTo(dest);
+			FileInfo dest = fileService.createFile(path, file.getOriginalFilename());
+			file.transferTo(new File(dest.getAbsolutePath()));
 			fileService.createTrigger(dest);
 			model.put("uploaded", dest.getAbsolutePath());
 		}

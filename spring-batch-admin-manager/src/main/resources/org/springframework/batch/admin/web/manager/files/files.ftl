@@ -49,8 +49,6 @@
 				<th>Path</th>
 				<th>Upload Directory</th>
 				<th>Host Locator</th>
-				<th>Trigger Directory</th>
-				<th>Trigger</th>
 			</tr>
 			<#list files as file>
 				<#if file_index % 2 == 0>
@@ -62,8 +60,6 @@
 					<td>${file.path}</td>
 					<td>${file.outputPath}</td>
 					<td>${file.locator!}</td>
-					<td>${file.triggerPath}</td>
-					<td>${file.trigger?string}</td>
 				</tr>
 			</#list>
 		</table>

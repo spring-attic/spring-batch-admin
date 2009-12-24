@@ -30,25 +30,17 @@ public class FileInfoTests {
 	@Test
 	public void testFileInfoFileFileFile() {
 		File dir = new File(System.getProperty("java.io.tmpdir"));
-		FileInfo info = new FileInfo(dir, dir, new File(dir, "foo"));
+		FileInfo info = new FileInfo(dir, new File(dir, "foo"));
 		assertEquals(dir, new File(info.getOutputPath()));
-		assertEquals(dir, new File(info.getTriggerPath()));
 		assertEquals(new File("foo"), new File(info.getPath()));
 		assertEquals("", info.getLocator());
 	}
 
 	@Test
-	public void testIsTrigger() {
-		File dir = new File(System.getProperty("java.io.tmpdir"));
-		FileInfo info = new FileInfo(dir, dir, new File(dir, "foo"));
-		assertEquals(false, info.isTrigger());
-	}
-
-	@Test
 	public void testCompareTo() {
 		File dir = new File(System.getProperty("java.io.tmpdir"));
-		FileInfo info1 = new FileInfo(dir, dir, new File(dir, "foo"));
-		FileInfo info2 = new FileInfo(dir, dir, new File(dir, "bar"));
+		FileInfo info1 = new FileInfo(dir, new File(dir, "foo"));
+		FileInfo info2 = new FileInfo(dir, new File(dir, "bar"));
 		assertEquals(4, info1.compareTo(info2));
 	}
 

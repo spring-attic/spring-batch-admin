@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:beans="http://www.springframework.org/schema/beans" 
+	xmlns:integration="http://www.springframework.org/schema/integration"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-2.0.xsd">
+
+	<import resource="classpath*:/META-INF/bootstrap/batch/*.xml" />
+	<import resource="classpath*:/META-INF/bootstrap/integration/*.xml" />
+	<import resource="classpath:/staging-context.xml" />
+
+	<!-- Override the job launcher to make sure it is blocking -->
+	<bean id="jobLauncher" class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
+		<property name="jobRepository" ref="jobRepository" />
+	</bean>
+
+	<chain input-channel="input-files" output-channel="job-requests" xmlns="http://www.springframework.org/schema/integration">
+		<filter expression="payload.parentFile.name=='staging'" />
+		<service-activator>
+			<beans:bean class="org.springframework.batch.admin.integration.FileToJobLaunchRequestAdapter">
+				<beans:property name="job" ref="staging" />
+			</beans:bean>
+		</service-activator>
+	</chain>
+
+</beans>

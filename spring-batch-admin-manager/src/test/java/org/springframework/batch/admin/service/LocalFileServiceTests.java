@@ -1,6 +1,7 @@
 package org.springframework.batch.admin.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -14,33 +15,41 @@ import org.springframework.core.io.DefaultResourceLoader;
 public class LocalFileServiceTests {
 
 	private LocalFileService service = new LocalFileService();
+	
+	private File trigger = null;
 
 	@Before
 	public void setUp() throws Exception {
+		service.setFileSender(new FileSender() {
+			public void send(File file) {
+				trigger = file;
+			}
+		});
 		FileUtils.deleteDirectory(service.getUploadDirectory());
 	}
 
 	@Test
 	public void testUpload() throws Exception {
-		File file = service.createFile("spam", "bucket");
+		FileInfo info = service.createFile("spam", "bucket");
+		File file = new File(info.getAbsolutePath());
 		assertTrue(file.exists());
 		assertTrue(file.getParentFile().exists());
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void testUploadFailsForNotAFile() throws Exception {
-		File file = service.createFile("spam", "bucket/crap");
+		FileInfo info = service.createFile("spam", "bucket/crap");
+		File file = new File(info.getAbsolutePath());
 		assertTrue(file.exists());
 	}
 
 	@Test
 	public void testTrigger() throws Exception {
-		File file = service.createFile("spam/bucket", "crap");
+		FileInfo info = service.createFile("spam/bucket", "crap");
+		File file = new File(info.getAbsolutePath());
 		assertTrue(file.exists());
-		File trigger = service.createTrigger(file);
-		assertEquals(file.getName(), trigger.getName());
-		String path = new File(service.getTriggerDirectory(), "spam/bucket/crap").getAbsolutePath();
-		assertEquals(path, trigger.getAbsolutePath().substring(0, path.length()));
+		service.createTrigger(info);
+		assertNotNull(trigger);
 	}
 
 	@Test
