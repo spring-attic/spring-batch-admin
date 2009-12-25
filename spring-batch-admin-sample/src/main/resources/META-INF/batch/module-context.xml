@@ -31,7 +31,7 @@
 
 	<chain input-channel="input-files" output-channel="job-requests" xmlns="http://www.springframework.org/schema/integration">
 		<filter expression="payload.parent.name=='sample'" />
-		<service-activator input-channel="file-uploads" output-channel="job-requests">
+		<service-activator>
 			<bean class="org.springframework.batch.admin.integration.FileToJobLaunchRequestAdapter" xmlns="http://www.springframework.org/schema/beans">
 				<property name="job" ref="job1" />
 			</bean>
