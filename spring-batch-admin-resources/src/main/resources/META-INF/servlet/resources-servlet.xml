@@ -39,11 +39,21 @@
 				<property name="allowRequestOverride" value="true" />
 			</bean>
 		</property>
+		<property name="attributes">
+			<props merge="true">
+				<prop key="titleCode">home.title</prop>
+				<prop key="titleText">Spring Batch Admin</prop>
+			</props>
+		</property>
 	</bean>
 
 	<bean id="standard" parent="parentLayout">
 		<property name="url" value="/layouts/standard.ftl" />
-		<property name="attributes" value="body=/layouts/home.ftl" />
+		<property name="attributes">
+			<props merge="true">
+				<prop key="body">/layouts/home.ftl</prop>
+			</props>
+		</property>
 	</bean>
 
 	<bean id="standard.rss" parent="parentLayout">

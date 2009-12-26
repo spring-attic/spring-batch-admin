@@ -54,12 +54,12 @@ public class HomeViewTests extends AbstractResourceViewTests {
 		resources.add(new ResourceInfo("/jobs/{jobName}", RequestMethod.GET));
 		model.put("resources", resources);
 		model.put("servletPath", "/batch");
-		model.put("title", "Foo");
 		home.render(model, request, response);
 		String content = response.getContentAsString();
 		// System.err.println(content);
 		assertTrue(content.contains("<td><a href=\"/batch/local\">/local</a></td>"));
 		assertTrue(content.contains("<td>/jobs/{jobName}</td>"));
+		assertTrue(content.contains("<title>Test Title</title>"));
 	}
 
 	@Test

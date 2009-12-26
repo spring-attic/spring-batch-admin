@@ -4,13 +4,12 @@
 
 	<import resource="classpath*:/META-INF/servlet/*.xml" />
 
-	<bean id="secondary" parent="parentLayout">
-		<property name="url" value="/layouts/standard.ftl" />
+	<bean id="secondary" parent="standard">
 		<property name="attributes">
-			<value>
-				body=/layouts/home.ftl
-				side=/layouts/side.ftl
-			</value>
+			<props merge="true">
+				<prop key="body">/layouts/home.ftl</prop>
+				<prop key="side">/layouts/side.ftl</prop>
+			</props>
 		</property>
 	</bean>
 	

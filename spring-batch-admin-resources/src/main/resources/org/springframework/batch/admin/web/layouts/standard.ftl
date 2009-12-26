@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title><@spring.messageText code="title" text=title!"Spring Batch Admin"/></title>
+<title><@spring.messageText code=titleCode!"title" text=titleText!"Spring Batch Admin"/></title>
 <#assign url><@spring.url relativeUrl="/resources/dijit/themes/tundra/tundra.css"/></#assign>
 <link rel="stylesheet" href="${url}" type="text/css"></link>
 <#assign url><@spring.url relativeUrl="/resources/styles/main.css"/></#assign>
@@ -32,12 +32,12 @@ Some icons from Silk icon set 1.3 by Mark James, http://www.famfamfam.com/lab/ic
 <div id="container">
 <#if side??>
 <div id="secondary-navigation">
-	<#include "${side}">
+	<#include side>
 </div>
 </#if>
 <#assign class><#if side??><#else>class="no-side-nav"</#if></#assign>
 <div id="content" ${class}>
-<div id="body"><#include "${body}"></div>
+<div id="body"><#include body></div>
 </div>
 <!-- /content --></div>
 <!-- /container --> <#include "footer.ftl"></div>

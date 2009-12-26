@@ -7,53 +7,89 @@
                                  http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
 	<bean name="jobs" parent="standard">
-		<property name="attributes" value="body=/manager/jobs/jobs.ftl" />
+		<property name="attributes">
+			<props merge="true">
+				<prop key="body">/manager/jobs/jobs.ftl</prop>
+				<prop key="titleCode">jobs.title</prop>
+				<prop key="titleText">Spring Batch Admin: Jobs</prop>
+			</props>
+		</property>
 	</bean>
 
 	<bean name="jobs/job" parent="standard">
-		<property name="attributes" value="body=/manager/jobs/job.ftl" />
+		<property name="attributes">
+			<props merge="true">
+				<prop key="body">/manager/jobs/job.ftl</prop>
+				<prop key="titleCode">job.title</prop>
+				<prop key="titleText">Spring Batch Admin: Job Summary</prop>
+			</props>
+		</property>
 	</bean>
 
 	<bean name="jobs/executions" parent="standard">
 		<property name="attributes">
-			<props>
+			<props merge="true">
 				<prop key="body">/manager/jobs/executions.ftl</prop>
 				<prop key="feedPath">/batch/jobs/executions.rss</prop>
+				<prop key="titleCode">job.executions.title</prop>
+				<prop key="titleText">Spring Batch Admin: Job Executions</prop>
 			</props>
 		</property>
 	</bean>
 
 	<bean name="jobs/executions.rss" parent="standard.rss">
+		<property name="attributes" value="body=/manager/jobs/rss/executions.ftl"/>
+	</bean>
+
+	<bean name="jobs/execution" parent="standard">
 		<property name="attributes">
-			<props>
-				<prop key="body">/manager/jobs/rss/executions.ftl</prop>
+			<props merge="true">
+				<prop key="body">/manager/jobs/execution.ftl</prop>
+				<prop key="titleCode">job.execution.title</prop>
+				<prop key="titleText">Spring Batch Admin: Job Execution</prop>
 			</props>
 		</property>
 	</bean>
 
-	<bean name="jobs/execution" parent="standard">
-		<property name="attributes" value="body=/manager/jobs/execution.ftl" />
-	</bean>
-
 	<bean name="jobs/executions/steps" parent="standard">
-		<property name="attributes" value="body=/manager/jobs/steps/executions.ftl" />
+		<property name="attributes">
+			<props merge="true">
+				<prop key="body">/manager/jobs/steps/executions.ftl</prop>
+				<prop key="titleCode">step.executions.title</prop>
+				<prop key="titleText">Spring Batch Admin: Step Executions</prop>
+			</props>
+		</property>
 	</bean>
 
 	<bean name="jobs/executions/step" parent="standard">
-		<property name="attributes" value="body=/manager/jobs/steps/execution.ftl" />
+		<property name="attributes">
+			<props merge="true">
+				<prop key="body">/manager/jobs/steps/execution.ftl</prop>
+				<prop key="titleCode">step.execution.title</prop>
+				<prop key="titleText">Spring Batch Admin: Step Execution Summary</prop>
+			</props>
+		</property>
 	</bean>
 
 	<bean name="jobs/executions/step/history" parent="standard">
-		<property name="attributes" value="body=/manager/jobs/steps/history.ftl" />
+		<property name="attributes">
+			<props merge="true">
+				<prop key="body">/manager/jobs/steps/history.ftl</prop>
+				<prop key="titleCode">step.history.title</prop>
+				<prop key="titleText">Spring Batch Admin: Step Execution History</prop>
+			</props>
+		</property>
 	</bean>
 
 	<bean name="jobs/executions/step/progress" parent="standard">
 		<property name="attributes">
-			<value>
-				body=/manager/jobs/steps/progress.ftl
-				history=/manager/jobs/steps/history.ftl
-				execution=/manager/jobs/steps/execution.ftl
-			</value>
+			<props merge="true">
+				<prop key="body">/manager/jobs/steps/progress.ftl</prop>
+				<prop key="history">/manager/jobs/steps/history.ftl</prop>
+				<prop key="execution">/manager/jobs/steps/execution.ftl</prop>
+				<prop key="titleCode">step.progress.title</prop>
+				<prop key="titleText">Spring Batch Admin: Step Execution Progress</prop>
+			</props>
 		</property>
 	</bean>
 
