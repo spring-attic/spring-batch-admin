@@ -135,9 +135,9 @@ Overriding Components from Spring Batch Admin
   
   * <Default>: a JDBC version of <<<SimpleJobRepository>>>.
   
-  * <Override Scenarios>: Not common to override.  But if you do override then probably
-  the application can be used to launch but not inspect job executions, since
-  it relies on JDBC to inspect the database for historic executions.
+  * <Override Scenarios>: Not common to override.  The most likely scenario is changing
+  the table prefix or large string column sizes (e.g. for a 2-byte character encoding the
+  <<<maxVarCharLength>>> property would be set to 1/2 the length of the long columns in the database).
 
 ** Job Loader
 
@@ -166,3 +166,14 @@ Overriding Components from Spring Batch Admin
 <!-- prevent loading of other jobs by overriding the loader in the main bootstrap context -->
 <bean id="jobLoader" class="java.lang.String"/>
 +---
+
+** Job Service
+
+  * <Bean ID>: <<<jobService>>>
+  
+  * <Default>: a JDBC version of <<<SimpleJobService>>>.
+  
+  * <Override Scenarios>: Not common to override.  The job service is configured through a factory 
+  bean a bit like the JobRepository, and it has the same basic properties.
+  
+
