@@ -32,6 +32,7 @@ import org.springframework.batch.item.database.support.SqlPagingQueryProviderFac
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.jdbc.support.incrementer.AbstractDataFieldMaxValueIncrementer;
+import org.springframework.util.Assert;
 
 /**
  * @author Dave Syer
@@ -72,8 +73,12 @@ public class JdbcSearchableJobExecutionDao extends JdbcJobExecutionDao
 	 */
 	@Override
 	public void afterPropertiesSet() throws Exception {
+		
+		Assert.state(dataSource!=null, "DataSource must be provided");
 
-		setJdbcTemplate(new SimpleJdbcTemplate(dataSource));
+		if (getJdbcTemplate()==null) {
+			setJdbcTemplate(new SimpleJdbcTemplate(dataSource));
+		}
 		setJobExecutionIncrementer(new AbstractDataFieldMaxValueIncrementer() {
 			@Override
 			protected long getNextKey() {

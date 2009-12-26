@@ -15,11 +15,8 @@
  */
 package org.springframework.batch.admin.service;
 
-import javax.sql.DataSource;
-
 import org.springframework.batch.core.repository.dao.JdbcJobExecutionDao;
 import org.springframework.batch.core.repository.dao.JdbcJobInstanceDao;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.jdbc.support.incrementer.AbstractDataFieldMaxValueIncrementer;
 
 /**
@@ -31,22 +28,12 @@ public class JdbcSearchableJobInstanceDao extends JdbcJobInstanceDao implements 
 	private static final String GET_COUNT_BY_JOB_NAME = "SELECT COUNT(1) from %PREFIX%JOB_INSTANCE "
 			+ "where JOB_NAME=?";
 
-	private DataSource dataSource;
-
-	/**
-	 * @param dataSource the dataSource to set
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
-
 	/**
 	 * @see JdbcJobExecutionDao#afterPropertiesSet()
 	 */
 	@Override
 	public void afterPropertiesSet() throws Exception {
 
-		setJdbcTemplate(new SimpleJdbcTemplate(dataSource));
 		setJobIncrementer(new AbstractDataFieldMaxValueIncrementer() {
 			@Override
 			protected long getNextKey() {

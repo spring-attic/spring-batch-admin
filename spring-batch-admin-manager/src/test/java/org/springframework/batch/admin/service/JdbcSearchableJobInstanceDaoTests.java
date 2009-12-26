@@ -19,13 +19,15 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.batch.admin.service.SearchableJobInstanceDao;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.test.JobRepositoryTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.AfterTransaction;
@@ -40,13 +42,19 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations = "/test-config.xml")
 public class JdbcSearchableJobInstanceDaoTests {
 
-	@Autowired
-	private SearchableJobInstanceDao dao;
+	private JdbcSearchableJobInstanceDao dao;
 
 	@Autowired
 	private JobRepositoryTestUtils jobRepositoryUtils;
 
 	private List<JobExecution> list;
+
+	@Autowired
+	public void setDataSource(DataSource dataSource) throws Exception {
+		dao = new JdbcSearchableJobInstanceDao();
+		dao.setJdbcTemplate(new SimpleJdbcTemplate(dataSource));
+		dao.afterPropertiesSet();
+	}
 
 	@BeforeTransaction
 	public void prepareExecutions() throws Exception {

@@ -43,38 +43,11 @@
 	<bean id="jobRegistry"
 		class="org.springframework.batch.core.configuration.support.MapJobRegistry" />
 
-	<bean id="jobInstanceDao"
-		class="org.springframework.batch.admin.service.JdbcSearchableJobInstanceDao">
+	<bean class="org.springframework.batch.admin.service.SimpleJobServiceFactoryBean">
+		<property name="jobRepository" ref="jobRepository" />
+		<property name="jobLauncher" ref="jobLauncher" />
+		<property name="jobLocator" ref="jobRegistry" />
 		<property name="dataSource" ref="dataSource" />
-	</bean>
-
-	<bean id="jobExecutionDao"
-		class="org.springframework.batch.admin.service.JdbcSearchableJobExecutionDao">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
-
-	<bean id="stepExecutionDao"
-		class="org.springframework.batch.admin.service.JdbcSearchableStepExecutionDao">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
-
-	<bean class="org.springframework.batch.admin.service.SimpleJobService">
-		<constructor-arg ref="jobInstanceDao" />
-		<constructor-arg ref="jobExecutionDao" />
-		<constructor-arg ref="stepExecutionDao" />
-		<constructor-arg ref="jobRepository" />
-		<constructor-arg ref="jobLauncher" />
-		<constructor-arg ref="jobRegistry" />
-		<constructor-arg>
-			<bean
-				class="org.springframework.batch.core.repository.dao.JdbcExecutionContextDao">
-				<property name="jdbcTemplate">
-					<bean class="org.springframework.jdbc.core.simple.SimpleJdbcTemplate">
-						<constructor-arg ref="dataSource" />
-					</bean>
-				</property>
-			</bean>
-		</constructor-arg>
 	</bean>
 
 </beans>

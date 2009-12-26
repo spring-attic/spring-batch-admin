@@ -36,6 +36,7 @@ import org.springframework.batch.support.PatternMatcher;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.jdbc.support.incrementer.AbstractDataFieldMaxValueIncrementer;
+import org.springframework.util.Assert;
 
 /**
  * @author Dave Syer
@@ -70,7 +71,11 @@ public class JdbcSearchableStepExecutionDao extends JdbcStepExecutionDao
 	@Override
 	public void afterPropertiesSet() throws Exception {
 
-		setJdbcTemplate(new SimpleJdbcTemplate(dataSource));
+		Assert.state(dataSource!=null, "DataSource must be provided");
+
+		if (getJdbcTemplate()==null) {
+			setJdbcTemplate(new SimpleJdbcTemplate(dataSource));
+		}
 		setStepExecutionIncrementer(new AbstractDataFieldMaxValueIncrementer() {
 			@Override
 			protected long getNextKey() {
