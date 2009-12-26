@@ -85,9 +85,9 @@ public class StepExecutionHistoryViewTests extends AbstractManagerViewTests {
 		progress.render(model, request, response);
 		String content = response.getContentAsString();
 		// System.err.println(content);
-		assertTrue(content.contains("This execution is estimated to be 50% complete"));
-		assertTrue(content.contains("Details for Step Execution"));
-		assertTrue(content
+		assertTrue("Wrong content: "+content, content.contains("This execution is estimated to be 50% complete"));
+		assertTrue("Wrong content: "+content, content.contains("Details for Step Execution"));
+		assertTrue("Wrong content: "+content, content
 				.contains("<a href=\"/batch/jobs/executions/123\">123</a>"));
 	}
 
