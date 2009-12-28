@@ -77,22 +77,23 @@ public class ContentTypeInterceptor extends HandlerInterceptorAdapter {
 					viewName = viewName.substring(0, path.indexOf("."));
 				}
 
-				String scheme = request.getScheme();
-				StringBuffer url = new StringBuffer(scheme + "://");
-				url.append(request.getServerName());
-				int port = request.getServerPort();
-				if ((scheme.equals("http") && port != 80) || (scheme.equals("https") && port != 443)) {
-					url.append(":" + port);
-				}
-
 				modelAndView.setViewName(viewName + "." + extension);
-				modelAndView.addObject("baseUrl", url.toString());
-				modelAndView.addObject("currentTime", new Date());
 
 			}
 
 		}
 
+		String scheme = request.getScheme();
+		StringBuffer url = new StringBuffer(scheme + "://");
+		url.append(request.getServerName());
+		int port = request.getServerPort();
+		if ((scheme.equals("http") && port != 80) || (scheme.equals("https") && port != 443)) {
+			url.append(":" + port);
+		}
+		
+		modelAndView.addObject("baseUrl", url.toString());
+		modelAndView.addObject("currentTime", new Date());
+		
 	}
 
 }

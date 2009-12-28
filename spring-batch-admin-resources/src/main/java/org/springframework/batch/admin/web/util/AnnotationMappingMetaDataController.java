@@ -59,12 +59,25 @@ public class AnnotationMappingMetaDataController implements ApplicationContextAw
 
 	private List<ResourceInfo> resources;
 
+	private String servletPath;
+
 	/**
 	 * 
 	 * @see ApplicationContextAware#setApplicationContext(ApplicationContext)
 	 */
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		this.applicationContext = applicationContext;
+	}
+
+	/**
+	 * The path that will be added to the model as an attribute ("servletPath")
+	 * before rendering. Defaults to the parent servlet path (as defined in
+	 * the http servlet request).
+	 * 
+	 * @param servletPath the servlet path to set
+	 */
+	public void setServletPath(String servletPath) {
+		this.servletPath = servletPath;
 	}
 
 	/**
@@ -80,7 +93,7 @@ public class AnnotationMappingMetaDataController implements ApplicationContextAw
 		annotationMapping.setApplicationContext(applicationContext);
 		annotationMapping.initApplicationContext();
 		handlerMap.putAll(annotationMapping.getHandlerMap());
-		
+
 		BeanNameUrlHandlerMapping beanMapping = new BeanNameUrlHandlerMapping();
 		beanMapping.setApplicationContext(applicationContext);
 		beanMapping.initApplicationContext();
@@ -113,7 +126,7 @@ public class AnnotationMappingMetaDataController implements ApplicationContextAw
 				}
 			}
 			if (handlerMethods.isEmpty()) {
-				result.add(new ResourceInfo(key, RequestMethod.GET));				
+				result.add(new ResourceInfo(key, RequestMethod.GET));
 			}
 		}
 		return new ArrayList<ResourceInfo>(result);
@@ -139,14 +152,21 @@ public class AnnotationMappingMetaDataController implements ApplicationContextAw
 	 * Each URI pattern that is mapped can be mapped to multiple request
 	 * methods. If the mapping is not explicit this method only returns GET
 	 * (even though technically it would respond to POST as well).
-	 * @param request TODO
+	 * 
+	 * @param request the current servlet request (used to extract a page
+	 * attribute "sevletPath")
 	 * 
 	 * @return a map of URI pattern to request methods accepted
 	 */
 	@RequestMapping(value = "/home", method = RequestMethod.GET)
 	public @ModelAttribute("resources")
 	List<ResourceInfo> getResources(HttpServletRequest request) {
-		request.setAttribute("servletPath", new UrlPathHelper().getServletPath(request));
+
+		String servletPath = this.servletPath;
+		if (servletPath == null) {
+			servletPath = new UrlPathHelper().getServletPath(request);
+		}
+		request.setAttribute("servletPath", servletPath);
 		return resources;
 	}
 

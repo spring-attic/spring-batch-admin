@@ -1,31 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
-	xmlns:context="http://www.springframework.org/schema/context"
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
 	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
 	<!--  Initialise the database before every test case: -->
-	<bean id="dataSourceInitializer"
-		class="org.springframework.batch.admin.test.datasource.DataSourceInitializer">
-		<property name="initialize" value="${batch.data.source.init}" />
-		<property name="dataSource" ref="dataSource" />
-		<property name="destroyScript" value="${batch.drop.script}" />
-		<property name="initScripts">
-			<list>
-				<value>${batch.schema.script}</value>
-				<value>${batch.business.schema.script}</value>
-			</list>
-		</property>
-	</bean>
+	<jdbc:initialize-database data-source="dataSource" enabled="${batch.data.source.init}" ignore-failures="DROPS">
+		<jdbc:script location="${batch.drop.script}"/>
+		<jdbc:script location="${batch.schema.script}"/>
+		<jdbc:script location="${batch.business.schema.script}"/>
+	</jdbc:initialize-database>
 
 	<!--  Use this to set additional properties on beans at run time -->
-	<bean id="placeholderProperties"
-		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="location"
-			value="classpath:batch-${ENVIRONMENT:hsql}.properties" />
+	<bean id="placeholderProperties" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value="classpath:batch-${ENVIRONMENT:hsql}.properties" />
 		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
 		<property name="ignoreUnresolvablePlaceholders" value="false" />
 		<property name="order" value="1" />

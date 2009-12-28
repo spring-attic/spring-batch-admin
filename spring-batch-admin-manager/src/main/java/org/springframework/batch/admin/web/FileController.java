@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.springframework.batch.admin.service.FileInfo;
 import org.springframework.batch.admin.service.FileService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.Errors;
@@ -50,6 +51,7 @@ public class FileController {
 	 * 
 	 * @param fileService the {@link FileService} to set
 	 */
+	@Autowired
 	public void setFileService(FileService fileService) {
 		this.fileService = fileService;
 	}

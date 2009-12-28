@@ -23,7 +23,14 @@
 	<bean id="defaultAnnotationHandlerMapping" class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
 		<property name="interceptors">
 			<bean class="org.springframework.batch.admin.web.interceptor.ContentTypeInterceptor">
-				<property name="extensions" value="rss"/>
+				<property name="extensions">
+					<set>
+						<value>rss</value>
+						<value>xml</value>
+						<value>txt</value>
+						<value>properties</value>
+					</set>
+				</property>
 			</bean>
 		</property>
 	</bean>
