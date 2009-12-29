@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>spring-batch-admin-manager</artifactId>
 	<packaging>jar</packaging>
-	<description><![CDATA[Web and service tier of Spring Batch Admin console.  Basic use cases in place:
+	<description><![CDATA[Web and service tier of Spring Batch Admin console.  Basic use cases include
 visualization of Batch meta data, and also launching and stopping jobs inside the webapp container.]]></description>
 	<parent>
 		<artifactId>spring-batch-admin-parent</artifactId>

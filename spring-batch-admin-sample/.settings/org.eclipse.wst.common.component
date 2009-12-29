@@ -9,6 +9,9 @@
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/spring-batch-admin-manager/spring-batch-admin-manager">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/spring-batch-integration/spring-batch-integration">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/spring-batch-admin-resources/spring-batch-admin-resources">
             <dependency-type>uses</dependency-type>
         </dependent-module>
