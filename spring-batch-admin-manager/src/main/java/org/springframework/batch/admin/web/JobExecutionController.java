@@ -17,6 +17,7 @@ package org.springframework.batch.admin.web;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.TimeZone;
 
 import org.apache.commons.logging.Log;
@@ -40,7 +41,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
 
 /**
  * Controller for job executions.
@@ -132,7 +132,7 @@ public class JobExecutionController {
 
 	}
 
-	@RequestMapping(value = {"/jobs/executions", "/jobs/executions.*"}, method = RequestMethod.GET)
+	@RequestMapping(value = { "/jobs/executions", "/jobs/executions.*" }, method = RequestMethod.GET)
 	public @ModelAttribute("jobExecutions")
 	Collection<JobExecutionInfo> list(ModelMap model, @RequestParam(defaultValue = "0") int startJobExecution,
 			@RequestParam(defaultValue = "20") int pageSize) {
@@ -168,40 +168,49 @@ public class JobExecutionController {
 	}
 
 	@RequestMapping(value = "/jobs/{jobName}/{jobInstanceId}/executions", method = RequestMethod.POST)
-	public String restart(Model model, @PathVariable String jobName, @PathVariable long jobInstanceId) {
+	public String restart(Model model, @PathVariable String jobName, @PathVariable long jobInstanceId,
+			@ModelAttribute("date") Date date, Errors errors) {
 
 		try {
 
 			Collection<JobExecution> jobExecutions = jobService.getJobExecutionsForJobInstance(jobName, jobInstanceId);
-			model.addAttribute(new JobInfo(jobName, jobExecutions.size()+1));
+			model.addAttribute(new JobInfo(jobName, jobExecutions.size() + 1));
 			JobExecution jobExecution = jobExecutions.iterator().next();
 			model.addAttribute(new JobExecutionInfo(jobExecution, TimeZone.getTimeZone("GMT")));
 
+			Long jobExecutionId = jobExecution.getId();
+
 			try {
 
-				jobExecution = jobService.restart(jobExecution.getId());
+				jobExecution = jobService.restart(jobExecutionId);
 				model.addAttribute(new JobExecutionInfo(jobExecution, TimeZone.getTimeZone("GMT")));
 
 			}
 			catch (NoSuchJobExecutionException e) {
-				// TODO error message
+				errors.reject("no.such.job.execution", new Object[] { jobExecutionId },
+						"There is no such job execution (" + jobExecutionId + ")");
 			}
 			catch (JobExecutionAlreadyRunningException e) {
-				// TODO error message
+				errors.reject("job.execution.already.running", new Object[] { jobExecutionId },
+						"This job execution is already running (" + jobExecutionId + ")");
 			}
 			catch (JobRestartException e) {
-				// TODO error message
+				errors.reject("job.restart.exception", new Object[] { jobName },
+						"There was a problem restarting the job (" + jobName + ")");
 			}
 			catch (JobInstanceAlreadyCompleteException e) {
-				// TODO error message
+				errors.reject("job.instance.already.complete", new Object[] { jobName },
+						"The job instance is already complete for (" + jobName
+								+ "). Use different job parameters to launch it again.");
 			}
 			catch (JobParametersInvalidException e) {
-				// TODO error message
+				errors.reject("job.parameters.invalid", new Object[] { jobName },
+						"The job parameters are invalid according to the job (" + jobName + ")");
 			}
 
 		}
 		catch (NoSuchJobException e) {
-			// TODO error message
+			errors.reject("no.such.job", new Object[] { jobName }, "There is no such job (" + jobName + ")");
 		}
 
 		return "jobs/execution";
@@ -219,15 +228,16 @@ public class JobExecutionController {
 	}
 
 	@RequestMapping(value = "/jobs/{jobName}/executions", method = RequestMethod.GET)
-	public String listForJob(ModelMap model, @PathVariable String jobName,
-			@RequestParam(defaultValue = "0") int startJobExecution, @RequestParam(defaultValue = "20") int pageSize) {
+	public String listForJob(ModelMap model, @PathVariable String jobName, @ModelAttribute("date") Date date,
+			Errors errors, @RequestParam(defaultValue = "0") int startJobExecution,
+			@RequestParam(defaultValue = "20") int pageSize) {
 
 		int total = startJobExecution;
 		try {
 			total = jobService.countJobExecutionsForJob(jobName);
 		}
 		catch (NoSuchJobException e) {
-			// TODO: add an error message
+			errors.reject("no.such.job", new Object[] { jobName }, "There is no such job (" + jobName + ")");
 			logger.warn("Could not locate Job with name=" + jobName);
 		}
 		TableUtils.addPagination(model, total, startJobExecution, pageSize, "JobExecution");
@@ -244,7 +254,7 @@ public class JobExecutionController {
 
 		}
 		catch (NoSuchJobException e) {
-			// TODO: add an error message
+			errors.reject("no.such.job", new Object[] { jobName }, "There is no such job (" + jobName + ")");
 			logger.warn("Could not locate Job with name=" + jobName);
 		}
 
@@ -253,14 +263,16 @@ public class JobExecutionController {
 	}
 
 	@RequestMapping(value = "/jobs/executions/{jobExecutionId}", method = RequestMethod.GET)
-	public String detail(Model model, @PathVariable Long jobExecutionId) {
+	public String detail(Model model, @PathVariable Long jobExecutionId, @ModelAttribute("date") Date date,
+			Errors errors) {
 
 		try {
 			JobExecution jobExecution = jobService.getJobExecution(jobExecutionId);
 			model.addAttribute(new JobExecutionInfo(jobExecution, TimeZone.getTimeZone("GMT")));
 		}
 		catch (NoSuchJobExecutionException e) {
-			// TODO: add an error message
+			errors.reject("no.such.job.execution", new Object[] { jobExecutionId }, "There is no such job execution ("
+					+ jobExecutionId + ")");
 		}
 
 		return "jobs/execution";

@@ -81,7 +81,7 @@ public class JobExecutionControllerTests {
 		EasyMock.replay(jobService);
 
 		ExtendedModelMap model = new ExtendedModelMap();
-		String result = controller.detail(model, 123L);
+		String result = controller.detail(model, 123L, null, null);
 		// JobExecution
 		assertEquals(1, model.size());
 		assertEquals("jobs/execution", result);
@@ -104,7 +104,7 @@ public class JobExecutionControllerTests {
 		EasyMock.replay(jobService);
 
 		ExtendedModelMap model = new ExtendedModelMap();
-		String result = controller.listForJob(model, "foo", 10, 20);
+		String result = controller.listForJob(model, "foo", null, null, 10, 20);
 		// JobExecutions, Job, total, next, previous, start, end
 		assertEquals(7, model.size());
 		assertEquals("jobs/executions", result);
@@ -146,7 +146,7 @@ public class JobExecutionControllerTests {
 		EasyMock.replay(jobService);
 
 		ExtendedModelMap model = new ExtendedModelMap();
-		String result = controller.restart(model, "foo", 11L);
+		String result = controller.restart(model, "foo", 11L, null, null);
 		// JobExecution, Job
 		assertEquals(2, model.size());
 		assertEquals("jobs/execution", result);

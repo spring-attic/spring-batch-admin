@@ -23,7 +23,6 @@ import java.util.Arrays;
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.springframework.batch.admin.service.JobService;
-import org.springframework.batch.admin.web.StepExecutionController;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.test.MetaDataInstanceFactory;
 import org.springframework.ui.ExtendedModelMap;
@@ -45,7 +44,7 @@ public class StepExecutionControllerTests {
 		EasyMock.replay(jobService);
 
 		ExtendedModelMap model = new ExtendedModelMap();
-		String result = controller.detail(model, 123L, 1234L);
+		String result = controller.detail(model, 123L, 1234L, null, null);
 		// StepExecution
 		assertEquals(1, model.size());
 		assertEquals("jobs/executions/step", result);
@@ -73,7 +72,7 @@ public class StepExecutionControllerTests {
 		EasyMock.replay(jobService);
 
 		ExtendedModelMap model = new ExtendedModelMap();
-		String result = controller.history(model, 123L, 1234L);
+		String result = controller.history(model, 123L, 1234L, null, null);
 		// StepExecution, history and progress
 		assertEquals(3, model.size());
 		assertEquals("jobs/executions/step/progress", result);
@@ -101,7 +100,7 @@ public class StepExecutionControllerTests {
 		EasyMock.replay(jobService);
 
 		ExtendedModelMap model = new ExtendedModelMap();
-		String result = controller.history(model, 123L, 1234L);
+		String result = controller.history(model, 123L, 1234L, null, null);
 		// StepExecution, history and progress
 		assertEquals(3, model.size());
 		assertEquals("jobs/executions/step/progress", result);
@@ -127,7 +126,7 @@ public class StepExecutionControllerTests {
 		EasyMock.replay(jobService);
 
 		ExtendedModelMap model = new ExtendedModelMap();
-		String result = controller.list(model, 123L);
+		String result = controller.list(model, 123L, null, null);
 		// StepExecutions, JobExecution
 		assertEquals(2, model.size());
 		assertEquals("jobs/executions/steps", result);

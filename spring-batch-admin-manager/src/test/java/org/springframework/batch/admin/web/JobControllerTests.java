@@ -126,7 +126,7 @@ public class JobControllerTests {
 		EasyMock.replay(jobService);
 
 		ExtendedModelMap model = new ExtendedModelMap();
-		controller.details(model, "job", 10, 20);
+		controller.details(model, "job", null, null, 10, 20);
 		// Job, JobInstances, total, next, previous, start, end, launchable
 		assertEquals(8, model.size());
 

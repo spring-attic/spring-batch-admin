@@ -17,6 +17,7 @@ package org.springframework.batch.admin.web;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.TimeZone;
 
 import org.springframework.batch.admin.service.JobService;
@@ -27,10 +28,11 @@ import org.springframework.batch.core.launch.NoSuchJobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
 
 /**
  * Controller for step executions.
@@ -50,7 +52,7 @@ public class StepExecutionController {
 	}
 
 	@RequestMapping(value = "/jobs/executions/{jobExecutionId}/steps", method = RequestMethod.GET)
-	public String list(Model model, @PathVariable Long jobExecutionId) {
+	public String list(Model model, @PathVariable Long jobExecutionId, @ModelAttribute("date") Date date, Errors errors) {
 
 		Collection<StepExecutionInfo> result = new ArrayList<StepExecutionInfo>();
 		try {
@@ -58,11 +60,11 @@ public class StepExecutionController {
 				result.add(new StepExecutionInfo(stepExecution, TimeZone.getTimeZone("GMT")));
 			}
 			JobExecution jobExecution = jobService.getJobExecution(jobExecutionId);
-			model.addAttribute(new JobExecutionInfo(jobExecution, TimeZone
-					.getTimeZone("GMT")));
+			model.addAttribute(new JobExecutionInfo(jobExecution, TimeZone.getTimeZone("GMT")));
 		}
 		catch (NoSuchJobExecutionException e) {
-			// TODO: add an error message
+			errors.reject("no.such.job.execution", new Object[] { jobExecutionId }, "There is no such job execution ("
+					+ jobExecutionId + ")");
 		}
 		model.addAttribute("stepExecutions", result);
 
@@ -71,17 +73,20 @@ public class StepExecutionController {
 	}
 
 	@RequestMapping(value = "/jobs/executions/{jobExecutionId}/steps/{stepExecutionId}", method = RequestMethod.GET)
-	public String detail(Model model, @PathVariable Long jobExecutionId, @PathVariable Long stepExecutionId) {
+	public String detail(Model model, @PathVariable Long jobExecutionId, @PathVariable Long stepExecutionId,
+			@ModelAttribute("date") Date date, Errors errors) {
 
 		try {
 			StepExecution stepExecution = jobService.getStepExecution(jobExecutionId, stepExecutionId);
 			model.addAttribute(new StepExecutionInfo(stepExecution, TimeZone.getTimeZone("GMT")));
 		}
 		catch (NoSuchStepExecutionException e) {
-			// TODO: add an error message
+			errors.reject("no.such.step.execution", new Object[] { stepExecutionId }, "There is no such step execution ("
+					+ stepExecutionId + ")");
 		}
 		catch (NoSuchJobExecutionException e) {
-			// TODO: add an error message
+			errors.reject("no.such.job.execution", new Object[] { jobExecutionId }, "There is no such job execution ("
+					+ jobExecutionId + ")");
 		}
 
 		return "jobs/executions/step";
@@ -89,7 +94,8 @@ public class StepExecutionController {
 	}
 
 	@RequestMapping(value = "/jobs/executions/{jobExecutionId}/steps/{stepExecutionId}/progress", method = RequestMethod.GET)
-	public String history(Model model, @PathVariable Long jobExecutionId, @PathVariable Long stepExecutionId) {
+	public String history(Model model, @PathVariable Long jobExecutionId, @PathVariable Long stepExecutionId,
+			@ModelAttribute("date") Date date, Errors errors) {
 
 		try {
 			StepExecution stepExecution = jobService.getStepExecution(jobExecutionId, stepExecutionId);
@@ -104,10 +110,12 @@ public class StepExecutionController {
 			model.addAttribute(new StepExecutionProgress(stepExecution, stepExecutionHistory));
 		}
 		catch (NoSuchStepExecutionException e) {
-			// TODO: add an error message
+			errors.reject("no.such.step.execution", new Object[] { stepExecutionId }, "There is no such step execution ("
+					+ stepExecutionId + ")");
 		}
 		catch (NoSuchJobExecutionException e) {
-			// TODO: add an error message
+			errors.reject("no.such.job.execution", new Object[] { jobExecutionId }, "There is no such job execution ("
+					+ jobExecutionId + ")");
 		}
 
 		return "jobs/executions/step/progress";
@@ -117,7 +125,7 @@ public class StepExecutionController {
 	private StepExecutionHistory computeHistory(String stepName) {
 		int total = jobService.countStepExecutionsForStep(stepName);
 		StepExecutionHistory stepExecutionHistory = new StepExecutionHistory(stepName);
-		for (int i=0; i<total; i+=1000) {
+		for (int i = 0; i < total; i += 1000) {
 			for (StepExecution stepExecution : jobService.listStepExecutionsForStep(stepName, i, 1000)) {
 				stepExecutionHistory.append(stepExecution);
 			}

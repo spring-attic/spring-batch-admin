@@ -17,6 +17,7 @@ package org.springframework.batch.admin.web;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.TimeZone;
@@ -98,7 +99,7 @@ public class JobController {
 			return "jobs/execution";
 		}
 		else {
-			return details(model, jobName, 0, 20);
+			return details(model, jobName, new Date(), errors, 0, 20);
 		}
 
 		// Not a redirect because normally it is requested by an Ajax call so
@@ -108,8 +109,9 @@ public class JobController {
 	}
 
 	@RequestMapping(value = "/jobs/{jobName}", method = RequestMethod.GET)
-	public String details(ModelMap model, @PathVariable String jobName,
-			@RequestParam(defaultValue = "0") int startJobInstance, @RequestParam(defaultValue = "20") int pageSize) {
+	public String details(ModelMap model, @PathVariable String jobName, @ModelAttribute("date") Date date,
+			Errors errors, @RequestParam(defaultValue = "0") int startJobInstance,
+			@RequestParam(defaultValue = "20") int pageSize) {
 
 		model.addAttribute("launchable", jobService.isLaunchable(jobName));
 
@@ -130,7 +132,7 @@ public class JobController {
 
 		}
 		catch (NoSuchJobException e) {
-			// TODO: add an error message
+			errors.reject("no.such.job", new Object[] { jobName }, "There is no such job (" + jobName + ")");
 		}
 
 		return "jobs/job";
