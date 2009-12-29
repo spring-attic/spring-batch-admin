@@ -150,7 +150,8 @@ public class JobExecutionController {
 	}
 
 	@RequestMapping(value = "/jobs/{jobName}/{jobInstanceId}/executions", method = RequestMethod.GET)
-	public String listForInstance(Model model, @PathVariable String jobName, @PathVariable long jobInstanceId) {
+	public String listForInstance(Model model, @PathVariable String jobName, @PathVariable long jobInstanceId,
+			@ModelAttribute("date") Date date, Errors errors) {
 
 		Collection<JobExecutionInfo> result = new ArrayList<JobExecutionInfo>();
 		try {
@@ -159,7 +160,7 @@ public class JobExecutionController {
 			}
 		}
 		catch (NoSuchJobException e) {
-			// TODO error message
+			errors.reject("no.such.job", new Object[] { jobName }, "There is no such job (" + jobName + ")");
 		}
 		model.addAttribute(new JobInfo(jobName, result.size(), jobInstanceId, null));
 		model.addAttribute("jobExecutions", result);

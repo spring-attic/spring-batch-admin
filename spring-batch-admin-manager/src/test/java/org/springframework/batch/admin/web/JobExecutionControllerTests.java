@@ -123,7 +123,7 @@ public class JobExecutionControllerTests {
 		EasyMock.replay(jobService);
 
 		ExtendedModelMap model = new ExtendedModelMap();
-		String result = controller.listForInstance(model, "foo", 11L);
+		String result = controller.listForInstance(model, "foo", 11L, null, null);
 		// JobExecutions, Job
 		assertEquals(2, model.size());
 		assertEquals("jobs/executions", result);

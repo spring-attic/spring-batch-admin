@@ -36,7 +36,7 @@ import org.springframework.validation.MapBindingResult;
 import org.springframework.web.servlet.View;
 
 
-@ContextConfiguration(loader = WebApplicationContextLoader.class, inheritLocations = true, locations = "AbstractManagerViewTests-context.xml")
+@ContextConfiguration(loader = WebApplicationContextLoader.class, inheritLocations = false, locations = "AbstractManagerViewTests-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
 public class JobExecutionsViewTests extends AbstractManagerViewTests {
 
