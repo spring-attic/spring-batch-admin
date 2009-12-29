@@ -15,7 +15,7 @@
 				<td>${stepExecutionInfo.id}</td>
 			</tr>
 			<tr class="name-sublevel1-even">
-				<#assign execution_url><@spring.url relativeUrl="/batch/jobs/executions/${stepExecutionInfo.jobExecutionId?c}"/></#assign>
+				<#assign execution_url><@spring.url relativeUrl="${servletPath}/jobs/executions/${stepExecutionInfo.jobExecutionId?c}"/></#assign>
 				<td>Job Execution</td>
 				<td><a href="${execution_url}">${stepExecutionInfo.jobExecutionId}</a></td>
 			</tr>

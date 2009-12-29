@@ -32,7 +32,7 @@
 				</#if>
 				<tr class="${rowClass}">
 					<td>${execution.id}</td>
-					<#assign execution_url><@spring.url relativeUrl="/batch/jobs/executions/${execution.jobExecutionId?c}/steps/${execution.id?c}/progress"/></#assign>
+					<#assign execution_url><@spring.url relativeUrl="${servletPath}/jobs/executions/${execution.jobExecutionId?c}/steps/${execution.id?c}/progress"/></#assign>
 					<td><a href="${execution_url}">detail</a></td>
 					<td>${execution.jobExecutionId}</td>
 					<td>${execution.name}</td>

@@ -15,7 +15,7 @@
 		uploaded a trigger file will be created with the file name of the
 		uploaded file as its contents.
 	</p>
-	<#assign url><@spring.url relativeUrl="/batch/files"/></#assign>
+	<#assign url><@spring.url relativeUrl="${servletPath}/files"/></#assign>
 	<form id="registerFileForm" action="${url}" method="POST" enctype="multipart/form-data" encoding="multipart/form-data">
 
 		<ol>
@@ -33,7 +33,7 @@
 
 	<#if files?? && files?size!=0>
 
-		<#assign files_url><@spring.url relativeUrl="/batch/files"/></#assign>
+		<#assign files_url><@spring.url relativeUrl="${servletPath}/files"/></#assign>
 		<form action="${files_url}" method="POST">
 			<#if stoppedCount??>
 				<p>Deleted ${deletedCount} files.</p>

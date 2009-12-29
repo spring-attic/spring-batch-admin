@@ -25,8 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Aggregator for {@link Menu} contributions. Use <code>menu.values</code> to
- * get access to the contributed menu items.
+ * Aggregator for {@link Menu} contributions. Use
+ * <code>menuManager.values</code> to get access to the contributed menu items.
  * 
  * @author Dave Syer
  * 
@@ -34,13 +34,22 @@ import org.springframework.stereotype.Component;
 @Component
 public class MenuManager {
 
+	private List<Menu> menus;
+
+	/**
+	 * The menus to manage. Autowired so the aggregation happens automatically
+	 * by default.
+	 * 
+	 * @param menus the menus to set
+	 */
 	@Autowired
-	private Collection<Menu> values;
+	public void setMenus(Collection<Menu> menus) {
+		this.menus = new ArrayList<Menu>(menus);
+		Collections.sort(this.menus, new MenuComparator());
+	}
 
 	public Collection<Menu> getMenus() {
-		List<Menu> list = new ArrayList<Menu>(values);
-		Collections.sort(list, new MenuComparator());
-		return list;
+		return menus;
 	}
 
 	private static class MenuComparator implements Comparator<Menu> {

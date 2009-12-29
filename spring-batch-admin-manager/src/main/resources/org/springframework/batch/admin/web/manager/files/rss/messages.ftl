@@ -1,7 +1,7 @@
 <#import "/spring.ftl" as spring />
 <channel>
 	<title>Message Feed from SpringSource Batch</title>
-	<#assign url>${baseUrl}<@spring.url relativeUrl="/batch/messages"/></#assign>
+	<#assign url>${baseUrl}<@spring.url relativeUrl="${servletPath}/messages"/></#assign>
 	<link>${url}</link>
 	<description>Recent Messages</description>
 	<#if messages?? && messages?size!=0>
@@ -14,7 +14,7 @@
 		<#list messages as message>
 			<item>
 				<title>${message.headers.$id!}:(${message.payload!})</title>
-				<#assign execution_url>${baseUrl}<@spring.url relativeUrl="/batch/messages"/></#assign>
+				<#assign execution_url>${baseUrl}<@spring.url relativeUrl="${servletPath}/messages"/></#assign>
 				<link>${execution_url}</link>
 				<#if message.headers.timestamp??>
 					<#assign pubdate>${message.headers.timestamp?string("yyyy-MM-dd'T'HH:mm:ssZ")}</#assign>

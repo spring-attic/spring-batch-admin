@@ -1,7 +1,7 @@
 <#import "/spring.ftl" as spring />
 <channel>
 	<title>JobExecution Feed from SpringSource Batch</title>
-	<#assign url>${baseUrl}<@spring.url relativeUrl="/batch/jobs/executions"/></#assign>
+	<#assign url>${baseUrl}<@spring.url relativeUrl="${servletPath}/jobs/executions"/></#assign>
 	<link>${url}</link>
 	<description>Recent and Current Job Executions</description>
 	<#if jobExecutions?? && jobExecutions?size!=0>
@@ -14,7 +14,7 @@
 		<#list jobExecutions as execution>
 			<item>
 				<title>${execution.jobExecution.status}:(${execution.jobId},${execution.name},${execution.duration})</title>
-				<#assign execution_url>${baseUrl}<@spring.url relativeUrl="/batch/jobs/executions/${execution.id?c}"/></#assign>
+				<#assign execution_url>${baseUrl}<@spring.url relativeUrl="${servletPath}/jobs/executions/${execution.id?c}"/></#assign>
 				<link>${execution_url}</link>
 				<#if execution.jobExecution.endTime??>
 					<#assign pubdate>${execution.jobExecution.endTime?string("yyyy-MM-dd'T'HH:mm:ssZ")}</#assign>

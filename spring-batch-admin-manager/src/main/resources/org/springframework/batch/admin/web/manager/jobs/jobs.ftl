@@ -19,7 +19,7 @@
 						<#assign rowClass="name-sublevel1-odd"/>
 					</#if>
 					<tr class="${rowClass}">
-						<#assign job_url><@spring.url relativeUrl="/batch/jobs/${job.name}"/></#assign>
+						<#assign job_url><@spring.url relativeUrl="${servletPath}/jobs/${job.name}"/></#assign>
 						<td><a href="${job_url}">${job.name}</a></td>
 						<td><@spring.messageText code="${job.name}.description" text="No description"/></td>
 						<td>${job.executionCount}</td>

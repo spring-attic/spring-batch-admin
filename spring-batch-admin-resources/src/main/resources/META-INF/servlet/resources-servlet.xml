@@ -59,6 +59,8 @@
 		<property name="attributes">
 			<props merge="true">
 				<prop key="body">/layouts/home.ftl</prop>
+				<!-- Matches the prefix of the servlet mapping in web.xml -->
+				<prop key="servletPath">/batch</prop>
 			</props>
 		</property>
 	</bean>

@@ -2,7 +2,7 @@
 <div id="job">
 	
 	<#if launchable>
-		<#assign launch_url><@spring.url relativeUrl="/batch/jobs/${job.name}"/></#assign>
+		<#assign launch_url><@spring.url relativeUrl="${servletPath}/jobs/${job.name}"/></#assign>
 		<form id="launchForm" action="${launch_url}" method="POST">
 	
 			<#if launchRequest??>
@@ -61,13 +61,13 @@
 						<#else>
 							<#assign rowClass="name-sublevel1-odd"/>
 						</#if>
-						<#assign executions_url><@spring.url relativeUrl="/batch/jobs/${job.name}/${jobInstanceInfo.id?c}/executions"/></#assign>
+						<#assign executions_url><@spring.url relativeUrl="${servletPath}/jobs/${job.name}/${jobInstanceInfo.id?c}/executions"/></#assign>
 						<tr class="${rowClass}">
 							<td>${jobInstanceInfo.id}</td>
 							<td><a href="${executions_url}">executions</a></td>
 							<td>${jobInstanceInfo.jobExecutionCount}</td>
 							<#if jobInstanceInfo.lastJobExecution??>
-								<#assign execution_url><@spring.url relativeUrl="/batch/jobs/executions/${jobInstanceInfo.lastJobExecution.id?c}"/></#assign>
+								<#assign execution_url><@spring.url relativeUrl="${servletPath}/jobs/executions/${jobInstanceInfo.lastJobExecution.id?c}"/></#assign>
 								<td><a href="${execution_url}">${jobInstanceInfo.lastJobExecution.status}</a></td>
 							<#else>
 								<td>?</td>							
@@ -79,7 +79,7 @@
 			</table>
 			<ul class="controlLinks">
 				<li>Rows: ${startJobInstance}-${endJobInstance} of ${totalJobInstances}</li> 
-				<#assign job_url><@spring.url relativeUrl="/batch/jobs/${job.name}"/></#assign>
+				<#assign job_url><@spring.url relativeUrl="${servletPath}/jobs/${job.name}"/></#assign>
 				<#if nextJobInstance??><li><a href="${job_url}?startJobInstance=${nextJobInstance}&pageSize=${pageSize!20}">Next</a></li></#if>
 				<#if previousJobInstance??><li><a href="${job_url}?startJobInstance=${previousJobInstance}&pageSize=${pageSize!20}">Previous</a></li></#if>
 				<!-- TODO: enable pageSize editing -->
