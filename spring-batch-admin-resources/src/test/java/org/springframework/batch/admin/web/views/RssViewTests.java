@@ -32,17 +32,16 @@ import org.springframework.test.context.support.WebApplicationContextLoader;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.View;
 
-
-@ContextConfiguration(loader = WebApplicationContextLoader.class, locations={"AbstractResourceViewTests-context.xml"})
+@ContextConfiguration(loader = WebApplicationContextLoader.class, inheritLocations = false, locations = { "AbstractResourceViewTests-context.xml" })
 @RunWith(SpringJUnit4ClassRunner.class)
 public class RssViewTests extends AbstractResourceViewTests {
 
 	private final HashMap<String, Object> model = new HashMap<String, Object>();
-	
+
 	@Autowired
 	@Qualifier("standard.rss")
 	private View standard;
-	
+
 	@Test
 	public void testDefaultRssView() throws Exception {
 		List<ResourceInfo> resources = new ArrayList<ResourceInfo>();

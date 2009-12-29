@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.View;
 
 
-@ContextConfiguration(loader = WebApplicationContextLoader.class, locations={"AbstractResourceViewTests-context.xml"})
+@ContextConfiguration(loader = WebApplicationContextLoader.class, inheritLocations=false, locations={"AbstractResourceViewTests-context.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
 public class HomeViewTests extends AbstractResourceViewTests {
 
