@@ -61,6 +61,7 @@ public class JobExecutionsViewTests extends AbstractManagerViewTests {
 		// System.err.println(content);
 		assertTrue(content.contains("Recent and Current Job Executions"));
 		assertTrue(content.contains("<a href=\"/batch/jobs/executions/123\">"));
+		assertTrue(content.contains("title=\"RSS Feed\" href=\"/batch/jobs/executions.rss\">"));
 	}
 
 	@Test

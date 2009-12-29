@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 public class JobsMenu extends BaseMenu {
 
 	public JobsMenu() {
-		super("/batch/jobs", "Jobs", 0);
+		super("/jobs", "Jobs", 0);
 	}
 
 }

@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 public class HomeMenu extends BaseMenu {
 
 	public HomeMenu() {
-		super("/batch/home", "Home", Integer.MIN_VALUE);
+		super("/home", "Home", Integer.MIN_VALUE);
 	}
 
 }

@@ -10,10 +10,11 @@
 	
 	<p>
 		Browse to a file containing input data and press the button marked Upload.
-		Uploaded files will be placed in a a temporary directory with a parent
+		Uploaded files will be placed in a temporary directory and with a parent
 		directory given by the "server path" property below.  Once the file is 
-		uploaded a trigger file will be created with the file name of the
-		uploaded file as its contents.
+		uploaded a trigger message will be fired with the file name of the
+		uploaded file as its payload.  Job launchers can subscribe to the input-files
+		channel to get a look at these messages and decide if they can be handled.
 	</p>
 	<#assign url><@spring.url relativeUrl="${servletPath}/files"/></#assign>
 	<form id="registerFileForm" action="${url}" method="POST" enctype="multipart/form-data" encoding="multipart/form-data">

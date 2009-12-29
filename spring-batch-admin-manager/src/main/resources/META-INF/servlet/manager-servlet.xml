@@ -5,7 +5,12 @@
                                  http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
                                  http://www.springframework.org/schema/context
                                  http://www.springframework.org/schema/context/spring-context-2.5.xsd">
-
+                                 
+	<bean class="org.springframework.batch.admin.web.HomeMenu" parent="baseMenu"/>
+	<bean class="org.springframework.batch.admin.web.JobsMenu" parent="baseMenu"/>
+	<bean class="org.springframework.batch.admin.web.ExecutionsMenu" parent="baseMenu"/>
+	<bean class="org.springframework.batch.admin.web.FilesMenu" parent="baseMenu"/>
+	
 	<bean name="jobs" parent="standard">
 		<property name="attributes">
 			<props merge="true">
@@ -30,7 +35,7 @@
 		<property name="attributes">
 			<props merge="true">
 				<prop key="body">/manager/jobs/executions.ftl</prop>
-				<prop key="feedPath">/batch/jobs/executions.rss</prop>
+				<prop key="feedPath">#{servletPath}/jobs/executions.rss</prop>
 				<prop key="titleCode">job.executions.title</prop>
 				<prop key="titleText">Spring Batch Admin: Job Executions</prop>
 			</props>
@@ -38,7 +43,11 @@
 	</bean>
 
 	<bean name="jobs/executions.rss" parent="standard.rss">
-		<property name="attributes" value="body=/manager/jobs/rss/executions.ftl"/>
+		<property name="attributes">
+			<props merge="true">
+				<prop key="body">/manager/jobs/rss/executions.ftl</prop>
+			</props>
+		</property>
 	</bean>
 
 	<bean name="jobs/execution" parent="standard">

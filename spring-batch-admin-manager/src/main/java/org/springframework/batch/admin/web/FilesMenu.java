@@ -15,20 +15,12 @@
  */
 package org.springframework.batch.admin.web;
 
-import org.springframework.batch.admin.web.resources.Menu;
+import org.springframework.batch.admin.web.resources.BaseMenu;
 
-public class FilesMenu implements Menu {
-
-	public String getLabel() {
-		return "Files";
-	}
-
-	public int getOrder() {
-		return 4;
-	}
-
-	public String getUrl() {
-		return "/batch/files";
+public class FilesMenu extends BaseMenu {
+	
+	public FilesMenu() {
+		super("/files", "Files", 4);
 	}
 
 }

@@ -6,8 +6,6 @@
                                  http://www.springframework.org/schema/integration/http http://www.springframework.org/schema/integration/http/spring-integration-http-2.0.xsd
                                  http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-2.0.xsd">
 
-	<bean class="org.springframework.batch.admin.web.FilesMenu"/>
-
 	<bean class="org.springframework.beans.factory.config.CustomEditorConfigurer">
 		<property name="customEditors">
 			<map>
@@ -52,7 +50,11 @@
 	</bean>
 
 	<bean name="messages.rss" parent="standard.rss">
-		<property name="attributes" value="body=/manager/files/rss/messages.ftl" />
+		<property name="attributes">
+			<props merge="true">
+				<prop key="body">/manager/files/rss/messages.ftl</prop>
+			</props>
+		</property>
 	</bean>
 
 	<bean id="messageStoreHandler" name="/messages,/messages.rss" class="org.springframework.batch.admin.web.MessageStoreHandler">
@@ -73,8 +75,8 @@
 	<integration:outbound-channel-adapter ref="messageStoreHandler" channel="job-registrations" />
 
 	<bean id="reload-job-executions" class="org.springframework.web.servlet.view.RedirectView">
-		<property name="url" value="/batch/jobs/executions" />
-		<property name="contextRelative" value="true"/>
+		<property name="url" value="#{servletPath}/jobs/executions" />
+		<property name="contextRelative" value="true" />
 	</bean>
 
 	<http:inbound-channel-adapter name="/job-requests" channel="job-launches" request-mapper="bodyInboundRequestMapper"
@@ -91,13 +93,13 @@
 	</bean>
 
 	<bean name="redirect:messages" class="org.springframework.web.servlet.view.RedirectView">
-		<property name="url" value="/batch/messages" />
-		<property name="contextRelative" value="true"/>
+		<property name="url" value="#{servletPath}/messages" />
+		<property name="contextRelative" value="true" />
 	</bean>
 
 	<bean name="redirect:files" class="org.springframework.web.servlet.view.RedirectView">
-		<property name="url" value="/batch/files" />
-		<property name="contextRelative" value="true"/>
+		<property name="url" value="#{servletPath}/files" />
+		<property name="contextRelative" value="true" />
 	</bean>
 
 	<http:inbound-channel-adapter name="/job-configuration-requests" channel="job-configuration-requests"
@@ -106,8 +108,8 @@
 	<http:inbound-channel-adapter name="/job-configuration-files" channel="job-configuration-files"
 		request-mapper="bodyInboundRequestMapper" view="redirect:messages" />
 
-	<http:inbound-channel-adapter name="/files" channel="file-requests" 
-		request-mapper="inputFileRequestMapper" view="redirect:files" supported-methods="POST"/>
+	<http:inbound-channel-adapter name="/files" channel="file-requests" request-mapper="inputFileRequestMapper"
+		view="redirect:files" supported-methods="POST" />
 
 	<bean id="inputFileRequestMapper" class="org.springframework.integration.http.DataBindingInboundRequestMapper">
 		<property name="targetType" value="org.springframework.batch.admin.integration.FileUploadRequest" />
@@ -117,7 +119,7 @@
 	</bean>
 
 	<integration:service-activator input-channel="file-requests" output-channel="input-files">
-		<bean class="org.springframework.batch.admin.integration.FileUploadRequestToFileAdapter"/>
+		<bean class="org.springframework.batch.admin.integration.FileUploadRequestToFileAdapter" />
 	</integration:service-activator>
 
 </beans>

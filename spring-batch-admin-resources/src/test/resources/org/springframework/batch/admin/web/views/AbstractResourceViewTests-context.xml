@@ -3,6 +3,8 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<import resource="classpath*:/META-INF/servlet/*.xml" />
+	
+	<bean class="org.springframework.batch.admin.web.resources.DummyMenu"/>
 
 	<bean id="secondary" parent="standard">
 		<property name="attributes">

@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 public class ExecutionsMenu extends BaseMenu {
 
 	public ExecutionsMenu() {
-		super("/batch/jobs/executions", "Executions", 1);
+		super("/jobs/executions", "Executions", 1);
 	}
 
 }

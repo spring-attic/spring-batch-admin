@@ -28,6 +28,8 @@ public class BaseMenu implements Menu {
 	private final String label;
 
 	private final int order;
+	
+	private String prefix = "";
 
 	public BaseMenu(String url, String label) {
 		this(url, label, 0);
@@ -39,13 +41,21 @@ public class BaseMenu implements Menu {
 		this.label = label;
 		this.order = order;
 	}
+	
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
+	}
+	
+	public String getPrefix() {
+		return prefix;
+	}
 
 	public String getLabel() {
 		return label;
 	}
 
 	public String getUrl() {
-		return url;
+		return prefix+url;
 	}
 
 	public int getOrder() {

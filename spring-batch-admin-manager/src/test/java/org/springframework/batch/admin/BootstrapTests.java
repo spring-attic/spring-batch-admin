@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.springframework.batch.admin.web.JobController;
+import org.springframework.batch.admin.web.resources.MenuManager;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -54,6 +55,9 @@ public class BootstrapTests {
 		String[] beanNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(context.getBeanFactory(),
 				JobController.class);
 		assertEquals(1, beanNames.length);
+		
+		MenuManager menuManager = context.getBean(MenuManager.class);
+		assertEquals(4, menuManager.getMenus().size());
 
 		context.refresh();
 	}

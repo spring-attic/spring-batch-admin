@@ -31,7 +31,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.WebApplicationContextLoader;
 import org.springframework.web.servlet.View;
 
-@ContextConfiguration(locations = "/META-INF/servlet/resources-servlet.xml", loader = WebApplicationContextLoader.class)
+@ContextConfiguration(locations = "AbstractResourceViewTests-context.xml", loader = WebApplicationContextLoader.class)
 @RunWith(SpringJUnit4ClassRunner.class)
 public class StandardViewTests {
 
