@@ -14,13 +14,6 @@
 	
 	<logging-channel-adapter channel="job-registrations"/>
 
-	<service-activator input-channel="job-operator" output-channel="job-requests">
-		<beans:bean class="org.springframework.batch.admin.integration.RetryJobLaunchRequestGenerator">
-			<beans:property name="jobLocator" ref="jobRegistry" />
-			<beans:property name="jobExplorer" ref="jobExplorer" />
-		</beans:bean>
-	</service-activator>
-
 	<service-activator input-channel="job-configuration-files" output-channel="job-configurations">
 		<beans:bean class="org.springframework.batch.admin.integration.FileToResourceAdapter" />
 	</service-activator>
@@ -35,7 +28,7 @@
 		<beans:bean class="org.springframework.batch.admin.integration.JobConfigurationRequestToResourceAdapter" />
 	</service-activator>
 
-	<file:inbound-channel-adapter directory="target/config" channel="job-configuration-files"
+	<file:inbound-channel-adapter directory="${batch.job.configuration.file.dir}" channel="job-configuration-files"
 		filename-pattern=".*\.xml">
 		<poller max-messages-per-poll="1">
 			<cron-trigger expression="5/1 * * * * *" />
