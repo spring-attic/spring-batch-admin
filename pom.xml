@@ -65,7 +65,7 @@
 										<fail message="Failed integration test of zip distro: dist/* jar file count wrong.">
 											<condition>
 												<not>
-													<resourcecount count="4">
+													<resourcecount count="5">
 														<fileset id="fs" dir="target/it/dist" includes="spring-batch-*.jar" />
 													</resourcecount>
 												</not>
