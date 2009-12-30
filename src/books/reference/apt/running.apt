@@ -42,5 +42,7 @@ Menus
     
     * <Executions> - view and interact with running Job and Step executions.
    
+   	* <Files> - upload and list input files and configuration files for jobs.
+   
   You can learn how to extend the content of the application including the menus
   in a later section.

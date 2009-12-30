@@ -16,6 +16,9 @@
 				<include>
 					org.springframework.batch:spring-batch-admin-manager
 				</include>
+				<include>
+					org.springframework.batch:spring-batch-integration
+				</include>
 			</includes>
 			<sources>
 				<includeModuleDirectory>false</includeModuleDirectory>

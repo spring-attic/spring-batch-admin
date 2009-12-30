@@ -3,7 +3,10 @@
 
 Installing Spring Batch Admin
 
-  There is a sample project in the distribution - it's a regular war file.  
+  There is a sample project in the distribution - it's a regular war file. 
+  The sample can also be created with a couple of clicks in the SpringSource
+  Tool Suite (STS): go to <<<File->New->Spring Template Project>>>, and select the 
+  Spring Batch Admin Webapp from the list (if it isn't there upgrade STS). 
   Once it's deployed, browse with a web browser 
   (e.g. localhost:8080/spring-batch-admin-sample) and check out the features for
   launching jobs and inspecting job executions.
@@ -14,7 +17,7 @@ Installing Spring Batch Admin
   is really easy to build:
     
     * Create a war project with an index.jsp and a web.xml (from the sample or from 
-    the <<<spring-batch-admin-resources.jar>>>).
+    the <<<spring-batch-admin-resources.jar>>> in the package <<<org.springframework.batch.admin.web.resources>>>).
     
     * Include the <<<spring-batch-admin-*.jar>>> files in <<<WEB-INF/lib>>>, plus all their dependencies.  
     In the sample this is done simply by making the WAR depend on those jar files in the Maven pom.
