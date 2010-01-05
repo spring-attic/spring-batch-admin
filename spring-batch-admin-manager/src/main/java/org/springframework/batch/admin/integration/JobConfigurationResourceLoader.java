@@ -17,20 +17,16 @@ package org.springframework.batch.admin.integration;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.configuration.DuplicateJobException;
-import org.springframework.batch.core.configuration.JobFactory;
 import org.springframework.batch.core.configuration.JobRegistry;
+import org.springframework.batch.core.configuration.support.ApplicationContextFactory;
 import org.springframework.batch.core.configuration.support.ClassPathXmlApplicationContextFactory;
-import org.springframework.batch.core.configuration.support.ReferenceJobFactory;
+import org.springframework.batch.core.configuration.support.JobLoader;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.integration.annotation.MessageEndpoint;
 import org.springframework.integration.annotation.ServiceActivator;
@@ -49,18 +45,14 @@ import org.springframework.integration.annotation.ServiceActivator;
 @MessageEndpoint
 public class JobConfigurationResourceLoader implements ApplicationContextAware {
 
-	private static Log logger = LogFactory.getLog(JobConfigurationResourceLoader.class);
-
-	private JobRegistry jobRegistry;
+	private JobLoader jobLoader;
 
 	private ApplicationContext parent;
 
-	private Collection<ConfigurableApplicationContext> contexts = new HashSet<ConfigurableApplicationContext>();
-
-	public void setJobRegistry(JobRegistry jobRegistry) {
-		this.jobRegistry = jobRegistry;
+	public void setJobLoader(JobLoader jobLoader) {
+		this.jobLoader = jobLoader;
 	}
-
+	
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		this.parent = applicationContext;
 	}
@@ -70,18 +62,11 @@ public class JobConfigurationResourceLoader implements ApplicationContextAware {
 
 		Collection<String> result = new ArrayList<String>();
 
-		ConfigurableApplicationContext context = createApplicationContext(parent, resource);
+		ApplicationContextFactory factory = createApplicationContextFactory(parent, resource);
+		Collection<Job> jobs = jobLoader.load(factory);
 
-		contexts.add(context);
-		String[] names = context.getBeanNamesForType(Job.class);
-		for (String name : names) {
-			logger.debug("Registering job: " + name + " from context: " + resource);
-			JobFactory jobFactory = new ReferenceJobFactory((Job) context.getBean(name));
-			// TODO: Deal with name changes in bean post processor
-			if (!jobRegistry.getJobNames().contains(jobFactory.getJobName())) {
-				jobRegistry.register(jobFactory);
-			}
-			result.add(jobFactory.getJobName());
+		for (Job job : jobs) {
+			result.add(job.getName());
 		}
 
 		return "Registered jobs: "+result;
@@ -98,26 +83,13 @@ public class JobConfigurationResourceLoader implements ApplicationContextAware {
 	 * 
 	 * @return an application context containing jobs
 	 */
-	protected ConfigurableApplicationContext createApplicationContext(ApplicationContext parent, Resource resource) {
-		ClassPathXmlApplicationContextFactory applicationContextFactory = new ClassPathXmlApplicationContextFactory() {
-			@Override
-			protected void prepareContext(ConfigurableApplicationContext parent, ConfigurableApplicationContext context) {
-
-				super.prepareContext(parent, context);
-
-				String[] names = context.getBeanNamesForType(Job.class, false, false);
-				for (String name : names) {
-					logger.debug("Unregistering job: " + name + " from context: " + context);
-					jobRegistry.unregister(name);
-				}
-
-			}
-		};
-		applicationContextFactory.setPath(resource);
+	protected ApplicationContextFactory createApplicationContextFactory(ApplicationContext parent, Resource resource) {
+		ClassPathXmlApplicationContextFactory applicationContextFactory = new ClassPathXmlApplicationContextFactory();
+		applicationContextFactory.setResource(resource);
 		if (parent != null) {
 			applicationContextFactory.setApplicationContext(parent);
 		}
-		return applicationContextFactory.createApplicationContext();
+		return applicationContextFactory;
 	}
 
 }

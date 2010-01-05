@@ -34,10 +34,17 @@
 		class="org.springframework.batch.core.explore.support.JobExplorerFactoryBean"
 		p:dataSource-ref="dataSource" />
 
-	<bean id="jobLoader"
-		class="org.springframework.batch.core.configuration.support.ClassPathXmlJobLoader">
-		<property name="jobPaths" value="classpath*:/META-INF/batch/*-context.xml" />
-		<property name="jobRegistry" ref="jobRegistry" />
+	<bean id="jobLoader" class="org.springframework.batch.core.configuration.support.AutomaticJobRegistrar">
+		<property name="applicationContextFactories">
+			<bean class="org.springframework.batch.core.configuration.support.ClasspathXmlApplicationContextsFactoryBean">
+				<property name="resources" value="classpath*:/META-INF/batch/*.xml" />
+			</bean>
+		</property>
+		<property name="jobLoader">
+			<bean class="org.springframework.batch.core.configuration.support.DefaultJobLoader">
+				<property name="jobRegistry" ref="jobRegistry" />
+			</bean>
+		</property>
 	</bean>
 
 	<bean id="jobRegistry"
