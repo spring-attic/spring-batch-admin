@@ -18,12 +18,10 @@ package org.springframework.batch.admin.service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,7 +29,6 @@ import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
-import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.StepExecution;
@@ -179,21 +176,7 @@ public class SimpleJobService implements JobService, DisposableBean {
 		Job job = jobLocator.getJob(jobName);
 
 		if (job.getJobParametersIncrementer() != null) {
-
-			Collection<JobInstance> lastInstances = listJobInstances(jobName, 0, 1);
-			JobInstance lastInstance = null;
-			if (!lastInstances.isEmpty()) {
-				lastInstance = lastInstances.iterator().next();
-			}
-
-			JobParameters oldParameters = new JobParameters();
-			if (lastInstance != null) {
-				oldParameters = lastInstance.getJobParameters();
-			}
-			Map<String, JobParameter> parameters = new HashMap<String, JobParameter>(oldParameters.getParameters());
-			parameters.putAll(jobParameters.getParameters());
-			jobParameters = job.getJobParametersIncrementer().getNext(new JobParameters(parameters));
-
+			jobParameters = job.getJobParametersIncrementer().getNext(jobParameters);
 		}
 
 		JobExecution jobExecution = jobLauncher.run(job, jobParameters);

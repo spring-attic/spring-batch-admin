@@ -23,7 +23,7 @@
 			</script>
 			<ol>
 				<li><label for="jobParameters">Job Parameters (key=value
-				pairs)</label><textarea id="jobParameters" name="jobParameters"></textarea></li>
+				pairs)</label><textarea id="jobParameters" name="jobParameters">${jobParameters}</textarea></li>
 			</ol>
 	
 		</form>
@@ -42,6 +42,7 @@
 	
 	<#if job?? && jobInstances?? && jobInstances?size!=0>
 		
+			<br/>
 			<h2>Job Instances for Job (${job.name})</h2>
 			
 			<table title="Jobs Instances" class="bordered-table">

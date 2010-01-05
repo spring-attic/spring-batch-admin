@@ -70,6 +70,7 @@ public class JobViewTests extends AbstractManagerViewTests {
 		model.put("job", new JobInfo("foo", 1));
 		model.put("jobInstances", Arrays.asList(new JobInstanceInfo(MetaDataInstanceFactory.createJobInstance("foo",
 				1L, "bar=spam"), new ArrayList<JobExecution>())));
+		model.put("jobParameters", "foo=bar");
 		model.put("launchable", true);
 		model.put("startJobInstance", 3);
 		model.put("endJobInstance", 4);
@@ -80,6 +81,7 @@ public class JobViewTests extends AbstractManagerViewTests {
 		String content = response.getContentAsString();
 		// System.err.println(content);
 		assertTrue(content.contains("Job name=foo"));
+		assertTrue(content.contains("foo=bar"));
 		assertTrue(content.contains("<form id=\"launchForm\" action=\"/batch/jobs/foo\" method=\"POST\">"));
 		assertFalse(content.contains("<input type=\"hidden\" name=\"_method\""));
 		assertTrue(content.contains("<th>ID</th>"));

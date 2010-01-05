@@ -55,6 +55,8 @@ public class JobController {
 
 	private final JobService jobService;
 
+	private JobParametersConverter converter = new DefaultJobParametersConverter();
+
 	@Autowired
 	public JobController(JobService jobService) {
 		super();
@@ -69,7 +71,6 @@ public class JobController {
 		launchRequest.setJobName(jobName);
 		String params = launchRequest.jobParameters;
 
-		JobParametersConverter converter = new DefaultJobParametersConverter();
 		Properties properties = PropertiesConverter.stringToProperties(params);
 		JobParameters jobParameters = converter.getJobParameters(properties);
 
@@ -125,6 +126,7 @@ public class JobController {
 			}
 
 			model.addAttribute("jobInstances", jobInstances);
+			model.addAttribute("jobParameters", getLastJobParameters(jobInstances));
 			int total = jobService.countJobInstances(jobName);
 			TableUtils.addPagination(model, total, startJobInstance, pageSize, "JobInstance");
 			int count = jobService.countJobExecutionsForJob(jobName);
@@ -137,6 +139,25 @@ public class JobController {
 
 		return "jobs/job";
 
+	}
+
+	/**
+	 * @param lastInstances the latest job instances
+	 * @return a String representation for rendering the job parameters from the last instance
+	 */
+	private String getLastJobParameters(Collection<JobInstanceInfo> lastInstances) {
+
+		JobInstance lastInstance = null;
+		if (!lastInstances.isEmpty()) {
+			lastInstance = lastInstances.iterator().next().getJobInstance();
+		}
+
+		JobParameters oldParameters = new JobParameters();
+		if (lastInstance != null) {
+			oldParameters = lastInstance.getJobParameters();
+		}
+		
+		return PropertiesConverter.propertiesToString(converter.getProperties(oldParameters));
 	}
 
 	@RequestMapping(value = "/jobs", method = RequestMethod.GET)
