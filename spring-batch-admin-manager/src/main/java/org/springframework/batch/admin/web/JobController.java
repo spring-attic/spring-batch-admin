@@ -176,7 +176,8 @@ public class JobController {
 				// shouldn't happen
 			}
 			boolean launchable = jobService.isLaunchable(name);
-			jobs.add(new JobInfo(name, count, launchable));
+			boolean incrementable = jobService.isIncrementable(name);
+			jobs.add(new JobInfo(name, count, null, launchable, incrementable));
 		}
 		model.addAttribute("jobs", jobs);
 	}

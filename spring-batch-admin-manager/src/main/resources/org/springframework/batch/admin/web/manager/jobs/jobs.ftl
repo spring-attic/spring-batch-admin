@@ -11,6 +11,7 @@
 					<th>Description</th>
 					<th>Execution&nbsp;Count</th>
 					<th>Launchable</th>
+					<th>Incrementable</th>
 				</tr>
 				<#list jobs as job>
 					<#if job_index % 2 == 0>
@@ -24,6 +25,7 @@
 						<td><@spring.messageText code="${job.name}.description" text="No description"/></td>
 						<td>${job.executionCount}</td>
 						<td><#if job.launchable??>${job.launchable?string}<#else>?</#if></td>
+						<td><#if job.incrementable??>${job.incrementable?string}<#else>?</#if></td>
 					</tr>
 				</#list>
 			</table>

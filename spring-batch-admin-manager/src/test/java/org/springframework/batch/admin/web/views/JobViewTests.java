@@ -48,6 +48,15 @@ public class JobViewTests extends AbstractManagerViewTests {
 	@Autowired
 	@Qualifier("jobs/job")
 	private View job;
+	
+	@Test
+	public void testRegex() throws Exception {
+		String pattern = "([\\w\\.-_\\)\\(]+=.*[,\\n])*([\\w\\.-_\\)\\(]+=.*)";
+		assertTrue("foo=bar".matches(pattern));
+		assertTrue("foo=bar,spam=bucket".matches(pattern));
+		assertTrue("foo(long)=bar".matches(pattern));
+		assertTrue("foo=bar\nbar=spam".matches(pattern));
+	}
 
 	@Test
 	public void testListViewWithJobs() throws Exception {

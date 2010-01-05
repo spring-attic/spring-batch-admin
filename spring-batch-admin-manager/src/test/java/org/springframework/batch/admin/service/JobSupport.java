@@ -26,10 +26,16 @@ import org.springframework.batch.core.JobParametersIncrementer;
 public class JobSupport implements Job {
 
 	private String name;
+	private JobParametersIncrementer incrementer;
 
 	public JobSupport(String name) {
+		this(name, null);
+	}
+
+	public JobSupport(String name, JobParametersIncrementer incrementer) {
 		super();
 		this.name = name;
+		this.incrementer = incrementer;
 	}
 
 	/* (non-Javadoc)
@@ -42,7 +48,7 @@ public class JobSupport implements Job {
 	 * @see org.springframework.batch.core.Job#getJobParametersIncrementer()
 	 */
 	public JobParametersIncrementer getJobParametersIncrementer() {
-		return null;
+		return incrementer;
 	}
 
 	/* (non-Javadoc)

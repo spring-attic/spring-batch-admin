@@ -23,9 +23,19 @@
 			</script>
 			<ol>
 				<li><label for="jobParameters">Job Parameters (key=value
-				pairs)</label><textarea id="jobParameters" name="jobParameters">${jobParameters}</textarea></li>
+				pairs)</label><textarea id="jobParameters" name="jobParameters">${jobParameters}</textarea> 
+				(<#if job.incrementable!false>Not incrementable<#else>Incrementable</#if>)</li>
 			</ol>
 	
+			<br/><#if job.incrementable!false>
+			<p>If the parameters are marked as "Incrementable" then the launch button launches the <em>next</em> 
+			instance of the job in the sequence defined by the incrementer.  The old parameters are shown above,
+			and they will passed into the configured incrementer. You can always add new parameters if you want to.</p>
+			<#else>
+			<p>If the parameters are marked as "Not incrementable" then the launch button launches an 
+			instance of the job with the parameters shown.  You can always add new parameters if you want to.</p>
+			</#if>
+
 		</form>
 		<script type="text/javascript">
 		    Spring.addDecoration(new Spring.ElementDecoration({
@@ -33,7 +43,7 @@
 			widgetType : "dijit.form.ValidationTextBox",
 			widgetAttrs : { 
 				invalidMessage : "Invalid job parameters (use name=value with comma or new line separators)!", 
-				regExp : "([\\w\\.-_]+=.*[,\\n])*([\\w\\.-_]+=.*)",  
+				regExp : "([\\w\\.-_\\)\\(]+=.*[,\\n])*([\\w\\.-_\\)\\(]+=.*)",  
 				required : true
 			}
 		    }));
@@ -87,8 +97,8 @@
 				<li>Page Size: ${pageSize!20}</li>
 			</ul>
 	
-			<p>The table above shows all instances, including restarts.  
-			If you want to see all executions for this job <a href="${executions_url}">see here</a>.</p>
+			<p>The table above shows instances of this job with an indication of the status of the last execution.  
+			If you want to look at all executions for <a href="${executions_url}">see here</a>.</p>
 	
 	<#else>
 		<p>There are no job instances for this job.</p>

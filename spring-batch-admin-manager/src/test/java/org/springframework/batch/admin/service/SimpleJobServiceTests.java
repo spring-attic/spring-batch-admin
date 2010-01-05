@@ -28,10 +28,6 @@ import java.util.List;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
-import org.springframework.batch.admin.service.SearchableJobExecutionDao;
-import org.springframework.batch.admin.service.SearchableJobInstanceDao;
-import org.springframework.batch.admin.service.SearchableStepExecutionDao;
-import org.springframework.batch.admin.service.SimpleJobService;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
@@ -40,6 +36,7 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.configuration.ListableJobLocator;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.dao.ExecutionContextDao;
 import org.springframework.batch.item.ExecutionContext;
@@ -103,6 +100,19 @@ public class SimpleJobServiceTests {
 	}
 
 	/**
+	 * Test method for {@link SimpleJobService#isIncrementable(String)}.
+	 */
+	@Test
+	public void testIsIncementable() throws Exception {
+		EasyMock.expect(jobLocator.getJobNames()).andReturn(Arrays.asList("foo", "bar")).anyTimes();
+		EasyMock.expect(jobLocator.getJob("foo")).andReturn(new JobSupport("foo", new RunIdIncrementer())).anyTimes();
+		EasyMock.replay(jobLauncher, jobLocator);
+		assertTrue(service.isIncrementable("foo"));
+		assertFalse(service.isIncrementable("job"));
+		EasyMock.verify(jobLauncher, jobLocator);
+	}
+
+	/**
 	 * Test method for {@link SimpleJobService#launch(String, JobParameters)}.
 	 */
 	@Test
@@ -123,11 +133,13 @@ public class SimpleJobServiceTests {
 	public void testRestart() throws Exception {
 		JobExecution jobExecution = MetaDataInstanceFactory.createJobExecution();
 		EasyMock.expect(jobExecutionDao.getJobExecution(123L)).andReturn(jobExecution);
-		EasyMock.expect(jobInstanceDao.getJobInstance(jobExecution)).andReturn(MetaDataInstanceFactory.createJobInstance());
+		EasyMock.expect(jobInstanceDao.getJobInstance(jobExecution)).andReturn(
+				MetaDataInstanceFactory.createJobInstance());
 		JobParameters jobParameters = new JobParameters();
 		Job job = new JobSupport("job");
 		EasyMock.expect(jobLocator.getJob("job")).andReturn(job);
-		EasyMock.expect(jobLauncher.run(job, jobParameters)).andReturn(MetaDataInstanceFactory.createJobExecution(124L));
+		EasyMock.expect(jobLauncher.run(job, jobParameters))
+				.andReturn(MetaDataInstanceFactory.createJobExecution(124L));
 		EasyMock.replay(jobInstanceDao, jobExecutionDao, jobLauncher, jobLocator);
 		assertNotNull(service.restart(123L));
 		EasyMock.verify(jobInstanceDao, jobExecutionDao, jobLauncher, jobLocator);

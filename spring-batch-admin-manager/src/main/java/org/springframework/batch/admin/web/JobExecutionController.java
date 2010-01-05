@@ -162,7 +162,7 @@ public class JobExecutionController {
 		catch (NoSuchJobException e) {
 			errors.reject("no.such.job", new Object[] { jobName }, "There is no such job (" + jobName + ")");
 		}
-		model.addAttribute(new JobInfo(jobName, result.size(), jobInstanceId, null));
+		model.addAttribute(new JobInfo(jobName, result.size(), jobInstanceId, null, null));
 		model.addAttribute("jobExecutions", result);
 		return "jobs/executions";
 
@@ -250,7 +250,7 @@ public class JobExecutionController {
 				result.add(new JobExecutionInfo(jobExecution, TimeZone.getTimeZone("GMT")));
 			}
 			int count = jobService.countJobExecutionsForJob(jobName);
-			model.addAttribute(new JobInfo(jobName, count));
+			model.addAttribute(new JobInfo(jobName, count, null, jobService.isLaunchable(jobName), jobService.isIncrementable(jobName)));
 			model.addAttribute("jobExecutions", result);
 
 		}

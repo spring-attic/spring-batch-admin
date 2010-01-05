@@ -151,6 +151,16 @@ public class SimpleJobService implements JobService, DisposableBean {
 	public boolean isLaunchable(String jobName) {
 		return jobLocator.getJobNames().contains(jobName);
 	}
+	
+	public boolean isIncrementable(String jobName) {
+		try {
+			return jobLocator.getJobNames().contains(jobName) && jobLocator.getJob(jobName).getJobParametersIncrementer()!=null;
+		}
+		catch (NoSuchJobException e) {
+			// Should not happen
+			throw new IllegalStateException("Unexpected non-existent job: "+jobName);
+		}
+	}
 
 	public JobExecution restart(Long jobExecutionId) throws NoSuchJobExecutionException,
 			JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException,

@@ -21,6 +21,7 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersIncrementer;
 import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepExecution;
@@ -277,5 +278,13 @@ public interface JobService {
 	 * @return the number of executions affected
 	 */
 	int stopAll();
+
+	/**
+	 * Check if a job has a {@link JobParametersIncrementer}.
+	 * 
+	 * @param jobName the job name
+	 * @return true if the job exists and has an incrementer
+	 */
+	boolean isIncrementable(String jobName);
 
 }
