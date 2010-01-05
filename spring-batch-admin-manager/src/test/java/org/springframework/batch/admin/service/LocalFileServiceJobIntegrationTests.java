@@ -47,7 +47,7 @@ public class LocalFileServiceJobIntegrationTests {
 
 	@Test
 	@Ignore
-	// TODO: unignore trigger test
+	// TODO: unignore trigger test when we have time to understand why it fails
 	public void testTrigger() throws Exception {
 		operator.subscribe(new MessageHandler() {
 			public void handleMessage(Message<?> message) throws MessageRejectedException, MessageHandlingException,
