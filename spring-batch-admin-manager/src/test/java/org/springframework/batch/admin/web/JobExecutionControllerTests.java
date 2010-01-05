@@ -101,6 +101,10 @@ public class JobExecutionControllerTests {
 		EasyMock.expectLastCall().andReturn(Arrays.asList(MetaDataInstanceFactory.createJobExecution()));
 		jobService.countJobExecutionsForJob("foo");
 		EasyMock.expectLastCall().andReturn(10);
+		jobService.isLaunchable("foo");
+		EasyMock.expectLastCall().andReturn(true);
+		jobService.isIncrementable("foo");
+		EasyMock.expectLastCall().andReturn(true);
 		EasyMock.replay(jobService);
 
 		ExtendedModelMap model = new ExtendedModelMap();
