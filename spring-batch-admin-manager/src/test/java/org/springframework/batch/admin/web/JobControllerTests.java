@@ -97,6 +97,8 @@ public class JobControllerTests {
 		EasyMock.expectLastCall().andReturn(100);
 		jobService.isLaunchable("job");
 		EasyMock.expectLastCall().andReturn(true);
+		jobService.isIncrementable("job");
+		EasyMock.expectLastCall().andReturn(true);
 		EasyMock.replay(jobService);
 
 		ExtendedModelMap model = new ExtendedModelMap();
