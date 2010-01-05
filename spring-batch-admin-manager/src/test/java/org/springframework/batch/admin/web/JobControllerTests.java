@@ -76,8 +76,8 @@ public class JobControllerTests {
 		controller.launch(model, "foo", request, new BindException(request,
 				"request"), "job");
 		assertEquals("foo", request.getJobName());
-		// Job, JobInstances, JobExecution, total, next, start, end, launchable
-		assertEquals(8, model.size());
+		// Job, JobInstances, jobParameters, JobExecution, total, next, start, end, launchable
+		assertEquals(9, model.size());
 		
 		assertTrue(model.containsKey("jobExecutionInfo"));
 		assertTrue(model.containsKey("job"));
@@ -127,8 +127,8 @@ public class JobControllerTests {
 
 		ExtendedModelMap model = new ExtendedModelMap();
 		controller.details(model, "job", null, null, 10, 20);
-		// Job, JobInstances, total, next, previous, start, end, launchable
-		assertEquals(8, model.size());
+		// Job, JobInstances, jobParameters, total, next, previous, start, end, launchable
+		assertEquals(9, model.size());
 
 		EasyMock.verify(jobService);
 
