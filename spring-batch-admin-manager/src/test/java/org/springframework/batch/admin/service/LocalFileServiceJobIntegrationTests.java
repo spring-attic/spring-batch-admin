@@ -9,7 +9,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.batch.core.BatchStatus;
@@ -46,8 +45,6 @@ public class LocalFileServiceJobIntegrationTests {
 	}
 
 	@Test
-	@Ignore
-	// TODO: unignore trigger test when we have time to understand why it fails
 	public void testTrigger() throws Exception {
 		operator.subscribe(new MessageHandler() {
 			public void handleMessage(Message<?> message) throws MessageRejectedException, MessageHandlingException,
@@ -61,6 +58,7 @@ public class LocalFileServiceJobIntegrationTests {
 		assertTrue(file.exists());
 		service.createTrigger(info);
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
+		Thread.sleep(1000L);
 	}
 
 }

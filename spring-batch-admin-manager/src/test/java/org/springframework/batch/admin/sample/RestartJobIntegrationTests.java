@@ -34,8 +34,8 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.test.JobRepositoryTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.integration.channel.SubscribableChannel;
 import org.springframework.integration.core.MessageChannel;
-import org.springframework.integration.gateway.SimpleMessagingGateway;
 import org.springframework.integration.message.MessageHandlingException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -53,6 +53,10 @@ public class RestartJobIntegrationTests {
 	@Qualifier("job-restarts")
 	private MessageChannel restarts;
 
+	@Autowired
+	@Qualifier("job-operator")
+	private SubscribableChannel replies;
+
 	private JobRepositoryTestUtils jobRepositoryTestUtils;
 
 	@Autowired
@@ -67,12 +71,14 @@ public class RestartJobIntegrationTests {
 	@DirtiesContext
 	public void testLaunchAndRestart() throws Exception {
 
-		SimpleMessagingGateway launch = new SimpleMessagingGateway();
+		TestMessagingGateway launch = new TestMessagingGateway();
 		launch.setRequestChannel(requests);
+		launch.setReplyChannel(replies);
 		launch.afterPropertiesSet();
 
-		SimpleMessagingGateway restart = new SimpleMessagingGateway();
+		TestMessagingGateway restart = new TestMessagingGateway();
 		restart.setRequestChannel(restarts);
+		restart.setReplyChannel(replies);
 		restart.afterPropertiesSet();
 
 		JobExecution result = (JobExecution) launch
@@ -107,8 +113,9 @@ public class RestartJobIntegrationTests {
 
 		jobRepositoryTestUtils.removeJobExecutions();
 
-		SimpleMessagingGateway restart = new SimpleMessagingGateway();
+		TestMessagingGateway restart = new TestMessagingGateway();
 		restart.setRequestChannel(restarts);
+		restart.setReplyChannel(replies);
 		restart.afterPropertiesSet();
 
 		JobExecution result = (JobExecution) restart.sendAndReceive("staging");

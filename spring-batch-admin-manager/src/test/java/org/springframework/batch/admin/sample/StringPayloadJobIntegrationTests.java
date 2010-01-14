@@ -23,8 +23,8 @@ import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.integration.channel.SubscribableChannel;
 import org.springframework.integration.core.MessageChannel;
-import org.springframework.integration.gateway.SimpleMessagingGateway;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -37,12 +37,17 @@ public class StringPayloadJobIntegrationTests {
 	@Qualifier("job-launches")
 	private MessageChannel requests;
 
+	@Autowired
+	@Qualifier("job-operator")
+	private SubscribableChannel replies;
+
 	@Test
 	@DirtiesContext
 	public void testLaunchFromSimpleRequestString() throws Exception {
 
-		SimpleMessagingGateway gateway = new SimpleMessagingGateway();
+		TestMessagingGateway gateway = new TestMessagingGateway();
 		gateway.setRequestChannel(requests);
+		gateway.setReplyChannel(replies);
 		gateway.afterPropertiesSet();
 
 		JobExecution result = (JobExecution) gateway.sendAndReceive("staging[input.file=classpath:data/test.txt,foo=bar]");

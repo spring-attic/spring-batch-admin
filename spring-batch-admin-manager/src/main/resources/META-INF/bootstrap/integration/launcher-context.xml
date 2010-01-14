@@ -12,7 +12,7 @@
 
 	<logging-channel-adapter channel="job-operator" />
 
-	<service-activator input-channel="job-requests">
+	<service-activator input-channel="job-requests" output-channel="job-operator-input">
 		<beans:bean class="org.springframework.batch.integration.launch.JobLaunchingMessageHandler">
 			<beans:constructor-arg ref="jobLauncher" />
 		</beans:bean>

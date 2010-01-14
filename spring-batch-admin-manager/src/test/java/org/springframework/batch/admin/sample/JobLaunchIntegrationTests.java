@@ -27,8 +27,8 @@ import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.integration.launch.JobLaunchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.integration.channel.SubscribableChannel;
 import org.springframework.integration.core.MessageChannel;
-import org.springframework.integration.gateway.SimpleMessagingGateway;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -42,6 +42,10 @@ public class JobLaunchIntegrationTests {
 	private MessageChannel requests;
 
 	@Autowired
+	@Qualifier("job-operator")
+	private SubscribableChannel replies;
+
+	@Autowired
 	@Qualifier("staging")
 	private Job job;
 
@@ -49,15 +53,18 @@ public class JobLaunchIntegrationTests {
 	@DirtiesContext
 	public void testLaunchFromSimpleRequestString() throws Exception {
 
-		SimpleMessagingGateway gateway = new SimpleMessagingGateway();
+		TestMessagingGateway gateway = new TestMessagingGateway();
 		gateway.setRequestChannel(requests);
-		// gateway.setReplyTimeout(500L);
+		gateway.setReplyChannel(replies);
 		gateway.afterPropertiesSet();
+
 
 		JobLaunchRequest jobLaunchRequest = new JobLaunchRequest(job, new JobParametersBuilder().addString(
 				"input.file", "classpath:data/test.txt").addLong("timestamp", System.currentTimeMillis())
 				.toJobParameters());
+
 		JobExecution result = (JobExecution) gateway.sendAndReceive(jobLaunchRequest);
+
 		assertNotNull("Gateway timeout waiting for job execution", result);
 		assertEquals(BatchStatus.COMPLETED, result.getStatus());
 
