@@ -57,7 +57,8 @@
 		</property>
 	</bean>
 
-	<bean id="messageStoreHandler" name="/messages,/messages.rss" class="org.springframework.batch.admin.web.MessageStoreHandler">
+	<bean name="/messages,/messages.rss" class="org.springframework.batch.admin.web.MessagesHolderHttpRequestHandler">
+		<property name="messagesHolder" ref="messagesHolder" />
 		<property name="defaultView" ref="messages" />
 		<property name="feedView" ref="messages.rss" />
 	</bean>
@@ -67,12 +68,6 @@
 	</bean>
 
 	<bean id="bodyInboundRequestMapper" class="org.springframework.batch.admin.web.BodyInboundRequestMapper" />
-
-	<integration:outbound-channel-adapter ref="messageStoreHandler" channel="errorChannel" />
-
-	<integration:outbound-channel-adapter ref="messageStoreHandler" channel="job-operator" />
-
-	<integration:outbound-channel-adapter ref="messageStoreHandler" channel="job-registrations" />
 
 	<bean id="reload-job-executions" class="org.springframework.web.servlet.view.RedirectView">
 		<property name="url" value="#{servletPath}/jobs/executions" />

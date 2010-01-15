@@ -17,35 +17,44 @@ package org.springframework.batch.admin.web;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.batch.admin.integration.MessagesHolder;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.integration.core.Message;
-import org.springframework.integration.handler.AbstractMessageHandler;
 import org.springframework.integration.message.MessageBuilder;
+import org.springframework.util.Assert;
 import org.springframework.web.HttpRequestHandler;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.support.RequestContext;
 
-public class MessageStoreHandler extends AbstractMessageHandler implements HttpRequestHandler {
+public class MessagesHolderHttpRequestHandler implements HttpRequestHandler, InitializingBean {
 
-	private Stack<Message<?>> messages = new Stack<Message<?>>();
+	private MessagesHolder messagesHolder;
 
 	private View defaultView;
 
 	private View feedView;
 
-	private static int MAX_SIZE = 20;
+	public void afterPropertiesSet() throws Exception {
+		Assert.state(messagesHolder != null, "A MessagesHolder must be provided");
+	}
+
+	/**
+	 * @param messages the messages to set
+	 */
+	public void setMessagesHolder(MessagesHolder messages) {
+		this.messagesHolder = messages;
+	}
 
 	public void setDefaultView(View defaultView) {
 		this.defaultView = defaultView;
@@ -60,9 +69,9 @@ public class MessageStoreHandler extends AbstractMessageHandler implements HttpR
 
 		Map<String, Object> model = new HashMap<String, Object>();
 		List<Message<?>> messages = new ArrayList<Message<?>>();
-		for (Message<?> message : this.messages) {
-			message = MessageBuilder.fromMessage(message).setHeaderIfAbsent("timestamp",
-					new Date(message.getHeaders().getTimestamp())).build();
+		for (Message<?> message : messagesHolder.getMessages()) {
+			message = MessageBuilder.withPayload(message.getPayload().toString()).copyHeaders(message.getHeaders())
+					.setHeaderIfAbsent("timestamp", new Date(message.getHeaders().getTimestamp())).build();
 			messages.add(message);
 		}
 		Collections.sort(messages, new MessageTimestampComparator());
@@ -93,21 +102,6 @@ public class MessageStoreHandler extends AbstractMessageHandler implements HttpR
 			throw new ServletException("Could not render view", e);
 		}
 
-	}
-
-	@Override
-	protected void handleMessageInternal(Message<?> message) throws Exception {
-		messages.push(getMessage(message));
-		if (messages.size() > MAX_SIZE) {
-			messages.removeElementAt(MAX_SIZE);
-		}
-	}
-
-	private Message<?> getMessage(Message<?> message) {
-		if (!(message.getPayload() instanceof Collection<?>)) {
-			return message;
-		}
-		return MessageBuilder.withPayload(message.getPayload().toString()).copyHeaders(message.getHeaders()).build();
 	}
 
 	private static class MessageTimestampComparator implements Comparator<Message<?>> {

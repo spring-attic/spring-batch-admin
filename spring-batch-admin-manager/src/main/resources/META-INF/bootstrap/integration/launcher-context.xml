@@ -22,6 +22,12 @@
 		<beans:bean class="org.springframework.batch.admin.integration.JobExecutionDuplicateFilter" />
 	</service-activator>
 
+	<beans:bean id="messagesHolder" class="org.springframework.batch.admin.integration.MessagesHolderHandler"/>
+
+	<outbound-channel-adapter ref="messagesHolder" channel="errorChannel" />
+
+	<outbound-channel-adapter ref="messagesHolder" channel="job-operator" />
+
 	<aop:config>
 		<aop:advisor advice-ref="jobMessagePublishingInterceptor" pointcut="execution(* *..Job+.execute(..)) || execution(* *..JobLauncher+.run(..))" />
 	</aop:config>

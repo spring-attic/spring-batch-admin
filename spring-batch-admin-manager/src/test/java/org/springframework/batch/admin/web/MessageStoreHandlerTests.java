@@ -17,6 +17,7 @@ package org.springframework.batch.admin.web;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -27,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.batch.admin.integration.MessagesHolder;
 import org.springframework.integration.core.Message;
 import org.springframework.integration.message.MessageBuilder;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -38,13 +40,15 @@ import org.springframework.web.servlet.View;
 
 public class MessageStoreHandlerTests {
 
-	private MessageStoreHandler handler = new MessageStoreHandler();
+	private MessagesHolderHttpRequestHandler handler = new MessagesHolderHttpRequestHandler();
 
 	private MockHttpServletRequest request;
 
 	private MockHttpServletResponse response;
 
 	private TextView defaultView = new TextView();
+
+	protected Collection<Message<?>> messages = new ArrayList<Message<?>>();
 
 	@Before
 	public void setUp() {
@@ -57,6 +61,12 @@ public class MessageStoreHandlerTests {
 		request.setAttribute(DispatcherServlet.WEB_APPLICATION_CONTEXT_ATTRIBUTE, context);
 		handler.setDefaultView(defaultView);
 		handler.setFeedView(defaultView);
+		MessagesHolder messagesHolder = new MessagesHolder() {
+			public Collection<Message<?>> getMessages() {
+				return messages;
+			}
+		};
+		handler.setMessagesHolder(messagesHolder);
 	}
 
 	@Test
@@ -68,7 +78,7 @@ public class MessageStoreHandlerTests {
 
 	@Test
 	public void testHandleMessageTimestamp() throws Exception {
-		handler.handleMessageInternal(MessageBuilder.withPayload("foo").setHeader("bar", "spam").build());
+		messages.add(MessageBuilder.withPayload("foo").setHeader("bar", "spam").build());
 		handler.handleRequest(request, response);
 		assertEquals(2, defaultView.getModel().size());
 		@SuppressWarnings("unchecked")
@@ -80,7 +90,7 @@ public class MessageStoreHandlerTests {
 
 	@Test
 	public void testHandleMessageInternalMessage() throws Exception {
-		handler.handleMessageInternal(MessageBuilder.withPayload("foo").setHeader("bar", "spam").build());
+		messages.add(MessageBuilder.withPayload("foo").setHeader("bar", "spam").build());
 		handler.handleRequest(request, response);
 		assertEquals(2, defaultView.getModel().size());
 		@SuppressWarnings("unchecked")
@@ -90,7 +100,7 @@ public class MessageStoreHandlerTests {
 
 	@Test
 	public void testHandleMessageInternalCollectionMessage() throws Exception {
-		handler.handleMessageInternal(MessageBuilder.withPayload(Arrays.asList("foo")).setHeader("bar", "spam").build());
+		messages.add(MessageBuilder.withPayload(Arrays.asList("foo")).setHeader("bar", "spam").build());
 		handler.handleRequest(request, response);
 		@SuppressWarnings("unchecked")
 		Collection<Message<?>> messages = (Collection<Message<?>>) defaultView.getModel().get("messages");
