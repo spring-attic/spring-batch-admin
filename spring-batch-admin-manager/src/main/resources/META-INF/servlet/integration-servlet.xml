@@ -6,6 +6,8 @@
                                  http://www.springframework.org/schema/integration/http http://www.springframework.org/schema/integration/http/spring-integration-http-2.0.xsd
                                  http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-2.0.xsd">
 
+	<bean class="org.springframework.batch.admin.web.MessagesController" />
+
 	<bean class="org.springframework.beans.factory.config.CustomEditorConfigurer">
 		<property name="customEditors">
 			<map>
@@ -23,6 +25,7 @@
 				<prop key="side">/manager/files/side.ftl</prop>
 				<prop key="titleCode">messages.title</prop>
 				<prop key="titleText">Spring Batch Admin: Recent Messages</prop>
+				<prop key="feedPath">#{servletPath}/messages.rss</prop>
 			</props>
 		</property>
 	</bean>
@@ -55,12 +58,6 @@
 				<prop key="body">/manager/files/rss/messages.ftl</prop>
 			</props>
 		</property>
-	</bean>
-
-	<bean name="/messages,/messages.rss" class="org.springframework.batch.admin.web.MessagesHolderHttpRequestHandler">
-		<property name="messagesHolder" ref="messagesHolder" />
-		<property name="defaultView" ref="messages" />
-		<property name="feedView" ref="messages.rss" />
 	</bean>
 
 	<bean id="configurationHandler" name="/configuration" class="org.springframework.batch.admin.web.ViewHandler">
