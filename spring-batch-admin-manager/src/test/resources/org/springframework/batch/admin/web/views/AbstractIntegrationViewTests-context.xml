@@ -19,5 +19,7 @@
 	<integration:channel id="job-registrations"/>
 	<integration:channel id="input-files"/>
 	<integration:channel id="job-operator"/>
+	
+	<bean class="org.springframework.batch.admin.integration.MessagesHolderHandler"/>
 
 </beans>
