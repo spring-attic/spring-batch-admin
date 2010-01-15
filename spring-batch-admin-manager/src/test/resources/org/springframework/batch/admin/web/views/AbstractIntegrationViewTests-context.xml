@@ -7,9 +7,9 @@
                                  http://www.springframework.org/schema/integration/http http://www.springframework.org/schema/integration/http/spring-integration-http-1.0.xsd
                                  http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-2.0.xsd">
 
-	<import resource="classpath*:/META-INF/servlet/resources-servlet.xml"/>
-	<import resource="classpath*:/META-INF/servlet/manager-servlet.xml"/>
-	<import resource="classpath*:/META-INF/servlet/integration-servlet.xml"/>
+	<import resource="classpath*:/META-INF/servlet/resources-context.xml"/>
+	<import resource="classpath*:/META-INF/servlet/manager-context.xml"/>
+	<import resource="classpath*:/META-INF/servlet/integration-context.xml"/>
 	
 	<integration:channel id="job-launches"/>
 	<integration:channel id="job-restarts"/>
@@ -19,7 +19,5 @@
 	<integration:channel id="job-registrations"/>
 	<integration:channel id="input-files"/>
 	<integration:channel id="job-operator"/>
-	
-	<bean class="org.springframework.batch.admin.integration.MessagesHolderHandler"/>
 
 </beans>

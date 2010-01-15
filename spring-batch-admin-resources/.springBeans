@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beansProjectDescription>
 	<version>1</version>
-	<pluginVersion><![CDATA[2.2.7.200910202224-RELEASE]]></pluginVersion>
+	<pluginVersion><![CDATA[2.3.0.200912170948-RELEASE]]></pluginVersion>
 	<configSuffixes>
 		<configSuffix><![CDATA[xml]]></configSuffix>
 	</configSuffixes>
 	<enableImports><![CDATA[true]]></enableImports>
 	<configs>
-		<config>src/main/resources/META-INF/servlet/resources-servlet.xml</config>
 		<config>src/main/resources/org/springframework/batch/admin/web/resources/servlet-config.xml</config>
 		<config>src/main/resources/org/springframework/batch/admin/web/resources/webapp-config.xml</config>
+		<config>src/main/resources/META-INF/servlet/resources-context.xml</config>
 	</configs>
 	<configSets>
 	</configSets>

@@ -12,9 +12,6 @@
 	<bean class="org.springframework.batch.admin.web.FileController"/>
 	<bean class="org.springframework.batch.admin.web.StepExecutionController"/>
 	<bean class="org.springframework.batch.admin.web.JobExecutionController"/>
-
-	<task:annotation-driven scheduler="scheduler" />
-
-	<task:scheduler id="scheduler" pool-size="3" />
+	<bean class="org.springframework.batch.admin.web.MessagesController" />
 
 </beans>
