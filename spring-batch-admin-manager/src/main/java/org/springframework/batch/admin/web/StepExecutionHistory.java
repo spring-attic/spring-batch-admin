@@ -34,6 +34,7 @@ public class StepExecutionHistory {
 	private CumulativeHistory writeSkipCount = new CumulativeHistory();
 	private CumulativeHistory processSkipCount = new CumulativeHistory();
 	private CumulativeHistory duration = new CumulativeHistory();
+	private CumulativeHistory durationPerRead = new CumulativeHistory();
 
 	public StepExecutionHistory(String stepName) {
 		this.stepName = stepName;
@@ -46,7 +47,11 @@ public class StepExecutionHistory {
 		}
 		Date startTime = stepExecution.getStartTime();
 		Date endTime = stepExecution.getEndTime();
-		duration.append(endTime.getTime()-startTime.getTime());
+		long time = endTime.getTime()-startTime.getTime();
+		duration.append(time);
+		if (stepExecution.getReadCount()>0) {
+			durationPerRead.append(time/stepExecution.getReadCount());
+		}
 		count++;
 		commitCount.append(stepExecution.getCommitCount());
 		rollbackCount.append(stepExecution.getRollbackCount());
@@ -100,6 +105,10 @@ public class StepExecutionHistory {
 
 	public CumulativeHistory getDuration() {
 		return duration;
+	}
+	
+	public CumulativeHistory getDurationPerRead() {
+		return durationPerRead;
 	}
 	
 }

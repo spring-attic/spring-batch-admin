@@ -13,6 +13,13 @@
 			<th>Sigma</th>
 		</tr>
 		<tr class="name-sublevel1-odd">
+			<td>Duration per Read</td>
+			<td>${stepExecutionHistory.durationPerRead.min}</td>
+			<td>${stepExecutionHistory.durationPerRead.max}</td>
+			<td>${stepExecutionHistory.durationPerRead.mean}</td>
+			<td>${stepExecutionHistory.durationPerRead.standardDeviation}</td>
+		</tr>
+		<tr class="name-sublevel1-odd">
 			<td>Duration</td>
 			<td>${stepExecutionHistory.duration.min}</td>
 			<td>${stepExecutionHistory.duration.max}</td>
