@@ -28,31 +28,27 @@ public class FileControllerTests {
 			}
 		});
 		controller.setFileService(fileService);
-		FileUtils.deleteDirectory(new File(System.getProperty("java.io.tmpdir",
-				"/tmp"), "batch/files"));
+		FileUtils.deleteDirectory(new File(System.getProperty("java.io.tmpdir", "/tmp"), "batch/files"));
 	}
 
 	@Test
 	public void testUpload() throws Exception {
-		MockMultipartFile file = new MockMultipartFile("foo", "foo.properties",
-				"text/plain", "bar".getBytes());
+		MockMultipartFile file = new MockMultipartFile("foo", "foo.properties", "text/plain", "bar".getBytes());
 		ExtendedModelMap model = new ExtendedModelMap();
 		Date date = new Date();
-		controller.upload("spam", file, model, date, new BindException(date, "date"));
+		controller.upload("spam", file, model, 0, 20, date, new BindException(date, "date"));
 		String uploaded = (String) model.get("uploaded");
 		// System.err.println(uploaded);
-		assertTrue("Wrong filename: " + uploaded, uploaded
-				.matches(".*batch.files.spam.foo.properties\\..*"));
+		assertTrue("Wrong filename: " + uploaded, uploaded.matches("spam.foo.*\\.properties$"));
 	}
 
 	@Test
 	public void testEmptyUpload() throws Exception {
-		MockMultipartFile file = new MockMultipartFile("foo", "foo.properties",
-				"text/plain", "".getBytes());
+		MockMultipartFile file = new MockMultipartFile("foo", "foo.properties", "text/plain", "".getBytes());
 		ExtendedModelMap model = new ExtendedModelMap();
 		Date date = new Date();
 		BindException errors = new BindException(date, "date");
-		controller.upload("spam", file, model, date, errors);
+		controller.upload("spam", file, model, 0, 20, date, errors);
 		assertTrue(errors.hasErrors());
 	}
 
@@ -65,11 +61,10 @@ public class FileControllerTests {
 		assertEquals(0, uploaded.size());
 	}
 
-
 	@Test
 	public void testDeleteAll() throws Exception {
 		ExtendedModelMap model = new ExtendedModelMap();
-		controller.deleteAll(model);
+		controller.delete(model, "**");
 		@SuppressWarnings("unchecked")
 		List<String> uploaded = (List<String>) model.get("files");
 		assertEquals(0, uploaded.size());

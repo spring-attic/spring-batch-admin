@@ -58,8 +58,7 @@ public interface JobService {
 	boolean isLaunchable(String jobName);
 
 	/**
-	 * Launch a job with the parameters provided. The parameters are a comma- or
-	 * newline-separated set of <code>name=value</code> pairs.
+	 * Launch a job with the parameters provided.
 	 * 
 	 * @param jobName the job name
 	 * @param params the {@link JobParameters}
@@ -76,8 +75,18 @@ public interface JobService {
 			JobParametersInvalidException;
 
 	/**
-	 * Launch a job with the parameters provided. The parameters are a comma- or
-	 * newline-separated set of <code>name=value</code> pairs.
+	 * Get the last {@link JobParameters} used to execute a job successfully.
+	 * 
+	 * @param jobName the name of the job
+	 * @return the last parameters used to execute this job or empty if there
+	 * are none
+	 * 
+	 * @throws NoSuchJobException
+	 */
+	JobParameters getLastJobParameters(String jobName) throws NoSuchJobException;
+
+	/**
+	 * Launch a job with the parameters provided.
 	 * 
 	 * @param jobExecutionId the job execution to restart
 	 * @return the resulting {@link JobExecution} if successful

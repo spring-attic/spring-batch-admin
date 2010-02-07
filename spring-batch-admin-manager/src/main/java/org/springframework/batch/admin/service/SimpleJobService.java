@@ -197,6 +197,24 @@ public class SimpleJobService implements JobService, DisposableBean {
 		return jobExecution;
 
 	}
+	
+	public JobParameters getLastJobParameters(String jobName) throws NoSuchJobException {
+		
+		Collection<JobInstance> lastInstances = listJobInstances(jobName, 0, 1);
+
+		JobInstance lastInstance = null;
+		if (!lastInstances.isEmpty()) {
+			lastInstance = lastInstances.iterator().next();
+		}
+
+		JobParameters oldParameters = new JobParameters();
+		if (lastInstance != null) {
+			oldParameters = lastInstance.getJobParameters();
+		}
+
+		return oldParameters;
+
+	}
 
 	public Collection<JobExecution> listJobExecutions(int start, int count) {
 		return jobExecutionDao.getJobExecutions(start, count);

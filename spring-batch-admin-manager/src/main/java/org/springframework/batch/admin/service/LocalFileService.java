@@ -26,12 +26,15 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ResourceLoaderAware;
+import org.springframework.core.io.ContextResource;
 import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternUtils;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 /**
  * An implementation of {@link FileService} that deals with files only in the
@@ -43,6 +46,10 @@ import org.springframework.util.Assert;
  */
 public class LocalFileService implements FileService, InitializingBean, ResourceLoaderAware {
 
+	/**
+	 * @author Dave Syer
+	 * 
+	 */
 	private File outputDir = new File(System.getProperty("java.io.tmpdir", "/tmp"), "batch/files");
 
 	private ResourceLoader resourceLoader = new DefaultResourceLoader();
@@ -52,13 +59,13 @@ public class LocalFileService implements FileService, InitializingBean, Resource
 	public void setResourceLoader(ResourceLoader resourceLoader) {
 		this.resourceLoader = resourceLoader;
 	}
-	
+
 	public void setFileSender(FileSender fileSender) {
 		this.fileSender = fileSender;
 	}
 
 	public void afterPropertiesSet() throws Exception {
-		Assert.state(fileSender!=null, "A FileSender must be provided");
+		Assert.state(fileSender != null, "A FileSender must be provided");
 		if (!outputDir.exists()) {
 			Assert.state(outputDir.mkdirs(), "Cannot create output directory " + outputDir);
 		}
@@ -66,24 +73,48 @@ public class LocalFileService implements FileService, InitializingBean, Resource
 		Assert.state(outputDir.isDirectory(), "Output file is not a directory " + outputDir);
 	}
 
-	public FileInfo createFile(String path, String name) throws IOException {
+	public FileInfo createFile(String path) throws IOException {
 
-		Assert.state(!name.contains("/") && !name.contains("\\"),
-				"The name to create must be a file without a directory (" + name
-						+ ").  Use the path parameter to create a directory.");
-		File directory = new File(outputDir, path);
+		path = sanitize(path);
+
+		String name = path.substring(path.lastIndexOf("/") + 1);
+		String parent = path.substring(0, path.lastIndexOf(name));
+		if (parent.endsWith("/")) {
+			parent = parent.substring(0, parent.length() - 1);
+		}
+
+		File directory = new File(outputDir, parent);
 		directory.mkdirs();
 		Assert.state(directory.exists() && directory.isDirectory(), "Could not create directory: " + directory);
 
-		File dest = File.createTempFile(name + getSuffix(), "", directory);
+		File dest = new File(directory, getFileName(name));
+		dest.createNewFile();
 
-		return new FileInfo(outputDir, dest);
+		return new FileInfo(extractPath(dest));
 
 	}
 
-	public boolean createTrigger(FileInfo dest) throws IOException {
-		File file = new File(dest.getAbsolutePath());
-		fileSender.send(file);
+	/**
+	 * @param name
+	 * @return
+	 */
+	private String getFileName(String name) {
+		String extension = StringUtils.getFilenameExtension(name);
+		String prefix = extension == null ? name : name.substring(0, name.length() - extension.length() - 1);
+		return prefix + getSuffix() + (extension == null ? "" : extension);
+	}
+
+	/**
+	 * @param target the target file
+	 * @return the path to the file from the base output directory
+	 */
+	private String extractPath(File target) {
+		String outputPath = outputDir.getAbsolutePath();
+		return target.getAbsolutePath().substring(outputPath.length() + 1).replace("\\", "/");
+	}
+
+	public boolean publish(FileInfo dest) throws IOException {
+		fileSender.send(getResource(dest.getPath()).getFile());
 		return true;
 	}
 
@@ -97,7 +128,7 @@ public class LocalFileService implements FileService, InitializingBean, Resource
 			Resource resource = resources[i];
 			File file = resource.getFile();
 			if (file.isFile()) {
-				FileInfo info = new FileInfo(outputDir, file);
+				FileInfo info = new FileInfo(extractPath(file));
 				files.add(info);
 			}
 		}
@@ -107,19 +138,38 @@ public class LocalFileService implements FileService, InitializingBean, Resource
 
 	}
 
-	public int deleteAll() throws IOException {
+	public int delete(String pattern) throws IOException {
 
 		ResourcePatternResolver resolver = ResourcePatternUtils.getResourcePatternResolver(resourceLoader);
-		Resource[] resources = resolver.getResources("file:///" + outputDir.getAbsolutePath() + "/**");
+		if (!pattern.startsWith("/")) {
+			pattern = "/" + outputDir.getAbsolutePath() + "/" + pattern;
+		}
+		if (!pattern.startsWith("file:")) {
+			pattern = "file:///" + pattern;
+		}
 
+		Resource[] resources = resolver.getResources(pattern);
+
+		int count = 0;
 		for (Resource resource : resources) {
 			File file = resource.getFile();
 			if (file.isFile()) {
+				count++;
 				FileUtils.deleteQuietly(file);
 			}
 		}
 
-		return resources.length;
+		return count;
+
+	}
+
+	public Resource getResource(String path) {
+
+		path = sanitize(path);
+
+		File file = new File(outputDir, path);
+
+		return new FileServiceResource(file, path);
 
 	}
 
@@ -127,8 +177,46 @@ public class LocalFileService implements FileService, InitializingBean, Resource
 		return outputDir;
 	}
 
+	/**
+	 * Normalize file separators to "/" and strip leading prefix and separators
+	 * to create a simple relative path.
+	 * 
+	 * @param path the raw path
+	 * @return a sanitized version
+	 */
+	private String sanitize(String path) {
+		path = path.replace("\\", "/");
+		if (path.startsWith("files:")) {
+			path = path.substring("files:".length());
+			while (path.startsWith("/")) {
+				path = path.substring(1);
+			}
+		}
+		return path;
+	}
+
+	/**
+	 * Generate a suffix for file names using the current date and time.
+	 * 
+	 * @return a timestamp to use as a unique file suffix
+	 */
 	private String getSuffix() {
-		return "." + (new SimpleDateFormat("yyyyMMdd").format(new Date())) + ".";
+		return "." + (new SimpleDateFormat("yyyyMMdd.HHmmss").format(new Date())) + ".";
+	}
+
+	private static class FileServiceResource extends FileSystemResource implements ContextResource {
+
+		private final String path;
+
+		public FileServiceResource(File file, String path) {
+			super(file);
+			this.path = path;
+		}
+
+		public String getPathWithinContext() {
+			return path;
+		}
+
 	}
 
 }

@@ -12,7 +12,7 @@
 	<gateway id="fileSender" service-interface="org.springframework.batch.admin.service.FileSender"
 		default-request-channel="input-files" />
 
-	<beans:bean class="org.springframework.batch.admin.service.LocalFileService">
+	<beans:bean id="fileService" class="org.springframework.batch.admin.service.LocalFileService">
 		<beans:property name="fileSender" ref="fileSender" />
 	</beans:bean>
 

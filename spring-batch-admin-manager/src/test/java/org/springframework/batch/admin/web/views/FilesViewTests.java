@@ -17,7 +17,6 @@ package org.springframework.batch.admin.web.views;
 
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,13 +45,13 @@ public class FilesViewTests extends AbstractManagerViewTests {
 
 	@Test
 	public void testFiles() throws Exception {
-		File dir = new File(System.getProperty("java.io.tmpdir"));
-		model.put("files", Arrays.asList(new FileInfo(dir, new File(dir, "foo"))));
+		model.put("files", Arrays.asList(new FileInfo("foo")));
 		view.render(model, request, response);
 		String content = response.getContentAsString();
 		// System.err.println(content);
 		assertTrue(content.contains("<div id=\"secondary-navigation\">"));
-		assertTrue(content.matches("(?s).*<td>.*"+dir.getName()+"</td>.*<td></td>.*"));
+		assertTrue(content.matches("(?s).*<td>.*foo.*</td>.*</tr>.*"));
+		assertTrue(content.matches("(?s).*<td>true</td>.*"));
 		assertTrue(content.contains("Upload File"));
 	}
 

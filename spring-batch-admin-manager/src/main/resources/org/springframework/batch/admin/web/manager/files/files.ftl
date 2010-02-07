@@ -32,24 +32,20 @@
 	<p>Uploaded file: ${uploaded}</p>
 	</#if>
 
+	<br/><br/>
+		
 	<#if files?? && files?size!=0>
 
-		<#assign files_url><@spring.url relativeUrl="${servletPath}/files"/></#assign>
-		<form action="${files_url}" method="POST">
-			<#if stoppedCount??>
-				<p>Deleted ${deletedCount} files.</p>
-			</#if>
-			<input type="hidden" name="_method" value="DELETE"/>	
-			<input id="delete" type="submit" value="Delete&nbsp;All" name="delete" />
-		</form>
-		
 		<br/>
+
+		<#assign files_url><@spring.url relativeUrl="${servletPath}/files"/></#assign>
+
+		<h2>Uploaded Files</h2>
 
 		<table title="Uploaded Files" class="bordered-table">
 			<tr>
+				<th>Local</th>
 				<th>Path</th>
-				<th>Upload Directory</th>
-				<th>Host Locator</th>
 			</tr>
 			<#list files as file>
 				<#if file_index % 2 == 0>
@@ -57,10 +53,14 @@
 				<#else>
 					<#assign rowClass="name-sublevel1-odd" />
 				</#if>
+				<#if file.local>
+					<#assign filePath><a href="${files_url}/${file.path}">files://${file.path?html}</a></#assign>
+				<#else>
+					<#assign filePath>files://${file.path?html}</#assign>
+				</#if>
 				<tr class="${rowClass}">
-					<td>${file.path}</td>
-					<td>${file.outputPath}</td>
-					<td>${file.locator!}</td>
+					<td>${file.local?string}</td>
+					<td>${filePath}</td>
 				</tr>
 			</#list>
 		</table>
@@ -72,6 +72,22 @@
 				<!-- TODO: enable pageSize editing -->
 				<li>Page Size: ${pageSize!20}</li>
 			</ul>
+		</#if>
+		
+		<form action="${files_url}" method="POST">
+			<#if stoppedCount??>
+				<p>Deleted ${deletedCount} files.</p>
+			</#if>
+			<label for="pattern">Filename pattern</label>
+			<input id="pattern" type="text" name="pattern" value="**"/>
+			<input type="hidden" name="_method" value="DELETE"/>	
+			<input id="delete" type="submit" value="Delete" name="delete" />
+		</form>
+		
+		<br/><br/>
+		
+		<#if deletedCount??>
+			<p>Deleted ${deletedCount} files.</p>
 		</#if>
 		
 	<#else>

@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.Resource;
 import org.springframework.integration.channel.SubscribableChannel;
 import org.springframework.integration.core.Message;
 import org.springframework.integration.message.MessageDeliveryException;
@@ -34,7 +35,7 @@ public class LocalFileServiceIntegrationTests {
 	@Autowired
 	@Qualifier("input-files")
 	private SubscribableChannel files;
-
+	
 	private static File trigger;
 
 	private static MessageHandler handler = new MessageHandler() {
@@ -54,18 +55,18 @@ public class LocalFileServiceIntegrationTests {
 
 	@Test
 	public void testUpload() throws Exception {
-		FileInfo info = service.createFile("spam", "bucket");
-		File file = new File(info.getAbsolutePath());
+		FileInfo info = service.createFile("spam/bucket");
+		Resource file = service.getResource(info.getPath());
 		assertTrue(file.exists());
-		assertTrue(file.getParentFile().exists());
+		assertTrue(file.getFile().getParentFile().exists());
 	}
 
 	@Test
 	public void testTrigger() throws Exception {
-		FileInfo info = service.createFile("spam/bucket", "crap");
-		File file = new File(info.getAbsolutePath());
+		FileInfo info = service.createFile("spam/bucket/crap");
+		Resource file = service.getResource(info.getPath());
 		assertTrue(file.exists());
-		service.createTrigger(info);
+		service.publish(info);
 		assertNotNull(trigger);
 	}
 

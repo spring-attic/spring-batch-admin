@@ -90,10 +90,11 @@ public class ContentTypeInterceptor extends HandlerInterceptorAdapter {
 		if ((scheme.equals("http") && port != 80) || (scheme.equals("https") && port != 443)) {
 			url.append(":" + port);
 		}
-		
-		modelAndView.addObject("baseUrl", url.toString());
-		modelAndView.addObject("currentTime", new Date());
-		
-	}
 
+		if (modelAndView != null) {
+			modelAndView.addObject("baseUrl", url.toString());
+			modelAndView.addObject("currentTime", new Date());
+		}
+
+	}
 }

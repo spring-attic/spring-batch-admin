@@ -8,7 +8,7 @@
 
 	<bean class="org.springframework.beans.factory.config.CustomEditorConfigurer">
 		<property name="customEditors">
-			<map>
+			<map key-type="java.lang.String" value-type="java.lang.Class">
 				<entry key="org.springframework.web.multipart.MultipartFile" value="org.springframework.web.multipart.support.StringMultipartFileEditor" />
 			</map>
 		</property>

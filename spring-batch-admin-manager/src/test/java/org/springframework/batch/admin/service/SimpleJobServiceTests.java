@@ -376,6 +376,18 @@ public class SimpleJobServiceTests {
 	}
 
 	@Test
+	public void testLastJobParameters() throws Exception {
+		String jobName = "job";
+		EasyMock.expect(jobLocator.getJobNames()).andReturn(Collections.<String> emptyList());
+		EasyMock.expect(jobInstanceDao.countJobInstances(jobName)).andReturn(1);
+		EasyMock.expect(jobInstanceDao.getJobInstances("job", 0, 1)).andReturn(
+				Arrays.asList(MetaDataInstanceFactory.createJobInstance("job", 123L)));
+		EasyMock.replay(jobLocator, jobInstanceDao);
+		assertEquals(0, service.getLastJobParameters("job").getParameters().size());
+		EasyMock.verify(jobLocator, jobInstanceDao);
+	}
+
+	@Test
 	public void testRemoveInactives() throws Exception {
 
 		testLaunch();

@@ -30,12 +30,17 @@
 	</job>
 
 	<chain input-channel="input-files" output-channel="job-requests" xmlns="http://www.springframework.org/schema/integration">
-		<filter expression="payload.parent.name=='sample'" />
+		<filter expression="payload.parentFile.name=='sample'" />
 		<service-activator>
 			<bean class="org.springframework.batch.admin.integration.FileToJobLaunchRequestAdapter" xmlns="http://www.springframework.org/schema/beans">
 				<property name="job" ref="job1" />
 			</bean>
 		</service-activator>
+		<transformer>
+			<bean class="org.springframework.batch.admin.integration.LastJobParametersJobLaunchRequestEnhancer" xmlns="http://www.springframework.org/schema/beans">
+				<property name="jobService" ref="jobService" />
+			</bean>			
+		</transformer>
 	</chain>
 
 	<bean id="simpleJob" class="org.springframework.batch.core.job.SimpleJob" abstract="true">

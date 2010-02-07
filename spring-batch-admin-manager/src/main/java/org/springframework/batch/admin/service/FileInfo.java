@@ -15,53 +15,40 @@
  */
 package org.springframework.batch.admin.service;
 
-import java.io.File;
+
 
 /**
  * @author Dave Syer
- *
+ * 
  */
 public class FileInfo implements Comparable<FileInfo> {
-	
-	private String path;
-	
-	private String name;
-	
-	private String locator;
-	
-	private String outputPath;
 
-	/**
-	 * @param path
-	 */
-	public FileInfo(File outputPath, File file) {
-		this(outputPath, file, "");
-	}	
+	private final String locator;
 
-	/**
-	 * @param path
-	 * @param locator
-	 */
-	public FileInfo(File outputPath, File file, String locator) {
+	private final String path;
+
+	private final boolean local;
+
+	public FileInfo(String path) {
+		this(path, path.replace("/", "|"), true);
+	}
+
+	public FileInfo(String path, String locator, boolean local) {
 		super();
-		this.path = extractPath(outputPath, file);
-		this.name = extractName(file);
-		this.outputPath = extractPath(outputPath);
+		this.path = path.replace("\\", "/");
 		this.locator = locator;
+		this.local = local;
+	}
+	
+	public static FileInfo fromLocator(String locator) {
+		return new FileInfo(locator.replace("|", "/"));
 	}
 
 	/**
-	 * @return the path
+	 * @return the local
 	 */
-	public String getPath() {
-		return path;
-	}
-	
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
+	public boolean isLocal() {
+		return local;
 	}
 
 	/**
@@ -71,32 +58,12 @@ public class FileInfo implements Comparable<FileInfo> {
 		return locator;
 	}
 
-	/**
-	 * @return the outputPath
-	 */
-	public String getOutputPath() {
-		return outputPath;
+	public String getPath() {
+		return path;
 	}
 
-	public String getAbsolutePath() {
-		return outputPath + "/" + path;
-	}
-	
 	public int compareTo(FileInfo o) {
 		return path.compareTo(o.path);
-	}
-
-	private String extractPath(File file) {
-		return file.getAbsolutePath().replace("\\", "/");
-	}
-	
-	private String extractName(File file) {
-		return file.getName();
-	}
-	
-	private String extractPath(File parent, File file) {
-		int start = parent.getAbsolutePath().length();
-		return file.getAbsolutePath().substring(start + 1).replace("\\", "/");
 	}
 
 }

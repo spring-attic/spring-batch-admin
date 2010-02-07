@@ -19,18 +19,22 @@ package org.springframework.batch.admin.service;
 import java.io.IOException;
 import java.util.List;
 
+import org.springframework.core.io.Resource;
+
 /**
  * @author Dave Syer
  *
  */
 public interface FileService {
 	
-	FileInfo createFile(String path, String name) throws IOException;
+	FileInfo createFile(String path) throws IOException;
 	
-	boolean createTrigger(FileInfo dest) throws IOException;
+	boolean publish(FileInfo target) throws IOException;
 	
 	List<FileInfo> getFiles(int startFile, int pageSize) throws IOException;
 	
-	int deleteAll() throws IOException;
+	int delete(String pattern) throws IOException;
+	
+	Resource getResource(String path);
 	
 }

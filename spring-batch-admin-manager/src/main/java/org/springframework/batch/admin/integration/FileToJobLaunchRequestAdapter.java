@@ -49,13 +49,24 @@ public class FileToJobLaunchRequestAdapter implements InitializingBean {
 
 	@ServiceActivator
 	public JobLaunchRequest adapt(File file) throws NoSuchJobException {
+
 		String fileName = file.getAbsolutePath();
+
 		if (!fileName.startsWith("/")) {
 			fileName = "/" + fileName;
 		}
+
 		fileName = "file://" + fileName;
+
 		JobParameters jobParameters = new JobParametersBuilder().addString(
 				"input.file", fileName).toJobParameters();
+
+		if (job.getJobParametersIncrementer() != null) {
+			jobParameters = job.getJobParametersIncrementer().getNext(jobParameters);
+		}
+
 		return new JobLaunchRequest(job, jobParameters);
+
 	}
+
 }

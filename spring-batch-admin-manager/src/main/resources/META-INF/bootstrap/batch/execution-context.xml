@@ -50,11 +50,11 @@
 	<bean id="jobRegistry"
 		class="org.springframework.batch.core.configuration.support.MapJobRegistry" />
 
-	<bean class="org.springframework.batch.admin.service.SimpleJobServiceFactoryBean">
+	<bean id="jobService" class="org.springframework.batch.admin.service.SimpleJobServiceFactoryBean">
 		<property name="jobRepository" ref="jobRepository" />
 		<property name="jobLauncher" ref="jobLauncher" />
 		<property name="jobLocator" ref="jobRegistry" />
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-
+	
 </beans>

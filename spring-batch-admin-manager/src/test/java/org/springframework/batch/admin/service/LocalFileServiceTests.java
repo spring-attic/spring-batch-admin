@@ -11,11 +11,12 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.Resource;
 
 public class LocalFileServiceTests {
 
 	private LocalFileService service = new LocalFileService();
-	
+
 	private File trigger = null;
 
 	@Before
@@ -30,25 +31,41 @@ public class LocalFileServiceTests {
 
 	@Test
 	public void testUpload() throws Exception {
-		FileInfo info = service.createFile("spam", "bucket");
-		File file = new File(info.getAbsolutePath());
+		FileInfo info = service.createFile("spam/bucket");
+		Resource file = service.getResource(info.getPath());
 		assertTrue(file.exists());
-		assertTrue(file.getParentFile().exists());
+		assertTrue(file.getFile().getParentFile().exists());
 	}
 
-	@Test(expected = IllegalStateException.class)
-	public void testUploadFailsForNotAFile() throws Exception {
-		FileInfo info = service.createFile("spam", "bucket/crap");
-		File file = new File(info.getAbsolutePath());
+	@Test
+	public void testUploadWithExtension() throws Exception {
+		FileInfo info = service.createFile("spam/bucket.txt");
+		String path = info.getPath();
+		System.err.println(path);
+		assertTrue("Wrong path: " + path, path.matches("spam/bucket\\.[0-9]*\\.[0-9]*\\.txt"));
+	}
+
+	@Test
+	public void testUploadNoDirectory() throws Exception {
+		FileInfo info = service.createFile("bucket");
+		Resource file = service.getResource(info.getPath());
+		assertTrue(file.exists());
+		assertTrue(file.getFile().getParentFile().exists());
+	}
+
+	@Test
+	public void testUploadFailsForNoFileName() throws Exception {
+		FileInfo info = service.createFile("");
+		Resource file = service.getResource(info.getPath());
 		assertTrue(file.exists());
 	}
 
 	@Test
 	public void testTrigger() throws Exception {
-		FileInfo info = service.createFile("spam/bucket", "crap");
-		File file = new File(info.getAbsolutePath());
+		FileInfo info = service.createFile("spam/bucket/crap");
+		Resource file = service.getResource(info.getPath());
 		assertTrue(file.exists());
-		service.createTrigger(info);
+		service.publish(info);
 		assertNotNull(trigger);
 	}
 
@@ -63,7 +80,10 @@ public class LocalFileServiceTests {
 	@Test
 	public void testDeleteAll() throws Exception {
 		service.setResourceLoader(new DefaultResourceLoader());
+		service.createFile("spam");
+		assertEquals(1, service.getFiles(0, 20).size());
 		service.afterPropertiesSet();
-		service.deleteAll();
+		service.delete("*");
+		assertEquals(0, service.getFiles(0, 20).size());
 	}
 }

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" 
-	xmlns:beans="http://www.springframework.org/schema/beans" 
-	xmlns:integration="http://www.springframework.org/schema/integration"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:integration="http://www.springframework.org/schema/integration" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.1.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-2.0.xsd">
@@ -24,5 +22,17 @@
 			</beans:bean>
 		</service-activator>
 	</chain>
+
+	<bean id="customEditorConfigurer" class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+		<property name="customEditors">
+			<map key-type="java.lang.String" value-type="java.lang.Class">
+				<entry key="org.springframework.core.io.Resource" value="org.springframework.batch.admin.service.FileServiceResourceConverter" />
+			</map>
+		</property>
+	</bean>
+
+	<bean class="org.springframework.batch.admin.service.FileServiceResourceConverter">
+		<property name="fileService" ref="fileService" />
+	</bean>
 
 </beans>

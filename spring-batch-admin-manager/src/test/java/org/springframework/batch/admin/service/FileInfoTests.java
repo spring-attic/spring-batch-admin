@@ -17,8 +17,6 @@ package org.springframework.batch.admin.service;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
-
 import org.junit.Test;
 
 /**
@@ -26,21 +24,18 @@ import org.junit.Test;
  *
  */
 public class FileInfoTests {
-
+	
 	@Test
-	public void testFileInfoFileFileFile() {
-		File dir = new File(System.getProperty("java.io.tmpdir"));
-		FileInfo info = new FileInfo(dir, new File(dir, "foo"));
-		assertEquals(dir, new File(info.getOutputPath()));
-		assertEquals(new File("foo"), new File(info.getPath()));
-		assertEquals("", info.getLocator());
+	public void testFileInfoFromFile() {
+		FileInfo info = new FileInfo("foo");
+		assertEquals("foo", info.getPath());
+		assertEquals("foo", info.getLocator());
 	}
 
 	@Test
 	public void testCompareTo() {
-		File dir = new File(System.getProperty("java.io.tmpdir"));
-		FileInfo info1 = new FileInfo(dir, new File(dir, "foo"));
-		FileInfo info2 = new FileInfo(dir, new File(dir, "bar"));
+		FileInfo info1 = new FileInfo("foo");
+		FileInfo info2 = new FileInfo("bar");
 		assertEquals(4, info1.compareTo(info2));
 	}
 

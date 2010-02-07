@@ -3,8 +3,6 @@ package org.springframework.batch.admin.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -12,9 +10,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.batch.core.BatchStatus;
+import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.Resource;
 import org.springframework.integration.channel.SubscribableChannel;
 import org.springframework.integration.core.Message;
 import org.springframework.integration.message.MessageDeliveryException;
@@ -32,6 +34,13 @@ public class LocalFileServiceJobIntegrationTests {
 
 	@Autowired
 	private LocalFileService service;
+	
+	@Autowired
+	private JobLauncher jobLauncher;
+	
+	@Autowired
+	@Qualifier("staging")
+	private Job job;
 	
 	private JobExecution jobExecution;
 
@@ -53,12 +62,19 @@ public class LocalFileServiceJobIntegrationTests {
 				jobExecution = (JobExecution) message.getPayload();
 			}
 		});
-		FileInfo info = service.createFile("staging", "crap");
-		File file = new File(info.getAbsolutePath());
+		FileInfo info = service.createFile("staging/crap");
+		Resource file = service.getResource(info.getPath());
 		assertTrue(file.exists());
-		service.createTrigger(info);
+		service.publish(info);
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
 		Thread.sleep(1000L);
+	}
+	
+	@Test
+	public void testResourceConverter() throws Exception {
+		FileInfo info = service.createFile("foo/crap");
+		JobExecution jobExecution = jobLauncher.run(job, new JobParametersBuilder().addString("input.file", "files://"+info.getPath()).toJobParameters());
+		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
 	}
 
 }
