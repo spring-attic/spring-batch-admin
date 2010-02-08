@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beansProjectDescription>
 	<version>1</version>
-	<pluginVersion><![CDATA[2.3.0.200912170948-RELEASE]]></pluginVersion>
+	<pluginVersion><![CDATA[2.3.1.201002050658-CI-R3682-B632]]></pluginVersion>
 	<configSuffixes>
 		<configSuffix><![CDATA[xml]]></configSuffix>
 	</configSuffixes>
@@ -28,6 +28,7 @@
 		<config>src/test/resources/org/springframework/batch/admin/service/LocalFileServiceIntegrationTests-context.xml</config>
 		<config>src/main/resources/META-INF/bootstrap/integration/file-context.xml</config>
 		<config>src/main/resources/META-INF/servlet/manager-context.xml</config>
+		<config>src/test/resources/org/springframework/batch/admin/service/job-context.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
