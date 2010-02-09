@@ -16,13 +16,13 @@
 package org.springframework.batch.admin.web;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -117,7 +117,7 @@ public class FileController {
 	}
 
 	@RequestMapping(value = "/files/**", method = RequestMethod.GET)
-	public String get(HttpServletRequest request, OutputStream stream, ModelMap model,
+	public String get(HttpServletRequest request, HttpServletResponse response, ModelMap model,
 			@RequestParam(defaultValue = "0") int startFile, @RequestParam(defaultValue = "20") int pageSize,
 			@ModelAttribute("date") Date date, Errors errors) throws Exception {
 
@@ -130,8 +130,10 @@ public class FileController {
 					"File download failed for missing file at path=" + path);
 			return "files";
 		}
+
+		response.setContentType("application/octet-stream");
 		try {
-			FileCopyUtils.copy(file.getInputStream(), stream);
+			FileCopyUtils.copy(file.getInputStream(), response.getOutputStream());
 		}
 		catch (IOException e) {
 			errors.reject("file.download.failed", new Object[] { path }, "File download failed for path=" + path);

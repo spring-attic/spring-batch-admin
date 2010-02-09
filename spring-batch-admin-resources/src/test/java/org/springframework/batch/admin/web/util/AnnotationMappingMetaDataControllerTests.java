@@ -118,10 +118,40 @@ public class AnnotationMappingMetaDataControllerTests {
 		assertEquals(RequestMethod.DELETE, iterator.next().getMethod());
 	}
 
+	@Test
+	public void testAdapterWithMultipleMethodsAndDifferentMapping() throws Exception {
+		context.registerSingleton("controller", MultiMethodController.class);
+		metaData.afterPropertiesSet();
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		List<ResourceInfo> resources = metaData.getResources(request);
+		Collections.sort(resources);
+		assertEquals(3, resources.size());
+		Iterator<ResourceInfo> iterator = resources.iterator();
+		assertEquals(RequestMethod.GET, iterator.next().getMethod());
+		assertEquals(RequestMethod.GET, iterator.next().getMethod());
+		assertEquals(RequestMethod.PUT, iterator.next().getMethod());
+	}
+
 	@Controller
 	public static class VanillaController {
 		@RequestMapping("/list/{id}")
 		public String list(@PathVariable Long id) {
+			return "foo";
+		}
+	}
+
+	@Controller
+	public static class MultiMethodController {
+		@RequestMapping(value="/list/{id}", method=RequestMethod.GET)
+		public String get(@PathVariable Long id) {
+			return "foo";
+		}
+		@RequestMapping(value="/list/{id}", method=RequestMethod.PUT)
+		public String update(@PathVariable Long id) {
+			return "foo";
+		}
+		@RequestMapping(value="/list", method=RequestMethod.GET)
+		public String list() {
 			return "foo";
 		}
 	}
