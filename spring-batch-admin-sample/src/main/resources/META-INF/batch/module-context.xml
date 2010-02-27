@@ -78,7 +78,7 @@
 
 	<bean id="remoteStep1" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
 		<property name="serviceInterface" value="org.springframework.batch.core.Step" />
-		<property name="serviceUrl" value="${batch.remote.base.url}/steps/step1" />
+		<property name="serviceUrl" value="${batch.remote.base.url}/#{servletPath}/steps/step1" />
 	</bean>
 
 </beans>

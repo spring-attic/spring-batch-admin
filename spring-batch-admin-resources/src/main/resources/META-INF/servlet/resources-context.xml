@@ -8,10 +8,6 @@
 
 	<context:annotation-config />
 
-	<bean id="servletPath" class="java.lang.String">
-		<constructor-arg value="/batch" />
-	</bean>
-
 	<bean id="baseMenu" abstract="true">
 		<property name="prefix" value="#{servletPath}"/>
 	</bean>
