@@ -11,6 +11,10 @@
 	<import resource="classpath*:/META-INF/servlet/manager-context.xml"/>
 	<import resource="classpath*:/META-INF/servlet/integration-context.xml"/>
 	
+	<bean id="servletPath" class="java.lang.String">
+		<constructor-arg value="/batch" />
+	</bean>
+
 	<integration:channel id="job-launches"/>
 	<integration:channel id="job-restarts"/>
 	<integration:channel id="job-executions"/>

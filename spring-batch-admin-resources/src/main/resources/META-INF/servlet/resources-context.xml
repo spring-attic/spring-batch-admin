@@ -79,7 +79,7 @@
 			<props merge="true">
 				<prop key="body">/layouts/rss/home.ftl</prop>
 				<!-- Matches the prefix of the servlet mapping in web.xml -->
-				<prop key="servletPath">/batch</prop>
+				<prop key="servletPath">#{servletPath}</prop>
 			</props>
 		</property>
 		<property name="contentType" value="text/xml" />

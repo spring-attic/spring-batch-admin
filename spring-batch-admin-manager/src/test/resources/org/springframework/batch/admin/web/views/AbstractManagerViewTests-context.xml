@@ -6,4 +6,8 @@
 	<import resource="classpath*:/META-INF/servlet/resources*.xml"/>
 	<import resource="classpath*:/META-INF/servlet/manager*.xml"/>
 
+	<bean id="servletPath" class="java.lang.String">
+		<constructor-arg value="/batch" />
+	</bean>
+
 </beans>
