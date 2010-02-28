@@ -44,7 +44,8 @@ public class ContentTypeInterceptor extends HandlerInterceptorAdapter {
 	/**
 	 * A collection of extensions to append to view names.
 	 * 
-	 * @param extensions the extensions (e.g. [rss, xml, atom])
+	 * @param extensions
+	 *            the extensions (e.g. [rss, xml, atom])
 	 */
 	public void setExtensions(Collection<String> extensions) {
 		this.extensions = new LinkedHashSet<String>(extensions);
@@ -56,13 +57,19 @@ public class ContentTypeInterceptor extends HandlerInterceptorAdapter {
 	 * if it is not already present.
 	 * 
 	 * @see HandlerInterceptorAdapter#postHandle(HttpServletRequest,
-	 * HttpServletResponse, Object, ModelAndView)
+	 *      HttpServletResponse, Object, ModelAndView)
 	 */
 	@Override
-	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+	public void postHandle(HttpServletRequest request,
+			HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
 
-		String path = WebUtils.extractFullFilenameFromUrlPath(request.getPathInfo());
+		if (modelAndView == null) {
+			return;
+		}
+
+		String path = WebUtils.extractFullFilenameFromUrlPath(request
+				.getPathInfo());
 		if (!path.contains(".")) {
 			return;
 		}
@@ -87,14 +94,13 @@ public class ContentTypeInterceptor extends HandlerInterceptorAdapter {
 		StringBuffer url = new StringBuffer(scheme + "://");
 		url.append(request.getServerName());
 		int port = request.getServerPort();
-		if ((scheme.equals("http") && port != 80) || (scheme.equals("https") && port != 443)) {
+		if ((scheme.equals("http") && port != 80)
+				|| (scheme.equals("https") && port != 443)) {
 			url.append(":" + port);
 		}
 
-		if (modelAndView != null) {
-			modelAndView.addObject("baseUrl", url.toString());
-			modelAndView.addObject("currentTime", new Date());
-		}
+		modelAndView.addObject("baseUrl", url.toString());
+		modelAndView.addObject("currentTime", new Date());
 
 	}
 }
