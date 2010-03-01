@@ -15,13 +15,15 @@
  */
 package org.springframework.batch.admin.service;
 
+import java.io.Serializable;
+
 
 
 /**
  * @author Dave Syer
  * 
  */
-public class FileInfo implements Comparable<FileInfo> {
+public class FileInfo implements Comparable<FileInfo>, Serializable {
 
 	private final String locator;
 
