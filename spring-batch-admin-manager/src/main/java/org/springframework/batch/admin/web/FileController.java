@@ -96,8 +96,13 @@ public class FileController {
 			return "files";
 		}
 		catch (Exception e) {
-			String message = "File upload failed downstream processing for " + file.getOriginalFilename();
-			logger.info(message);
+			String message = "File upload failed downstream processing for "
+					+ file.getOriginalFilename();
+			if (logger.isDebugEnabled()) {
+				logger.debug(message, e);
+			} else {
+				logger.info(message);
+			}
 			errors.reject("file.upload.failed.downstream", new Object[] { file.getOriginalFilename() }, message);
 			return "files";
 		}
