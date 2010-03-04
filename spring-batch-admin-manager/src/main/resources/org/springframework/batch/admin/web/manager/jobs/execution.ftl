@@ -92,7 +92,7 @@
 				<td>Start Date</td>
 				<td>${jobExecutionInfo.startDate}</td>
 			</tr>
-			<tr class="name-sublevel1-even>
+			<tr class="name-sublevel1-even">
 				<td>Start Time</td>
 				<td>${jobExecutionInfo.startTime}</td>
 			</tr>

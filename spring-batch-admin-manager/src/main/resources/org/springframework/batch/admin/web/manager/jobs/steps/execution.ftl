@@ -31,7 +31,7 @@
 				<td>Start Date</td>
 				<td>${stepExecutionInfo.startDate}</td>
 			</tr>
-			<tr class="name-sublevel1-even>
+			<tr class="name-sublevel1-even">
 				<td>Start Time</td>
 				<td>${stepExecutionInfo.startTime}</td>
 			</tr>
