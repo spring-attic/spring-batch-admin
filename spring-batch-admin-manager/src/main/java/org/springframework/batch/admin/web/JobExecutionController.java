@@ -32,6 +32,7 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -68,12 +69,23 @@ public class JobExecutionController {
 
 	private JobService jobService;
 
+	private TimeZone timeZone = TimeZone.getDefault();
+
+	/**
+	 * @param timeZone the timeZone to set
+	 */
+	@Autowired(required=false)
+	@Qualifier("userTimeZone")
+	public void setTimeZone(TimeZone timeZone) {
+		this.timeZone = timeZone;
+	}
+
 	@Autowired
 	public JobExecutionController(JobService jobService) {
 		super();
 		this.jobService = jobService;
 	}
-
+	
 	@RequestMapping(value = "/jobs/executions/{jobExecutionId}", method = RequestMethod.DELETE)
 	public String stop(Model model, @ModelAttribute("stopRequest") StopRequest stopRequest, Errors errors,
 			@PathVariable Long jobExecutionId) {
@@ -81,7 +93,7 @@ public class JobExecutionController {
 		stopRequest.jobExecutionId = jobExecutionId;
 		try {
 			JobExecution jobExecution = jobService.stop(jobExecutionId);
-			model.addAttribute(new JobExecutionInfo(jobExecution, TimeZone.getTimeZone("GMT")));
+			model.addAttribute(new JobExecutionInfo(jobExecution, timeZone));
 		}
 		catch (NoSuchJobExecutionException e) {
 			errors.reject("no.such.job.execution", new Object[] { jobExecutionId }, "No job exection with id="
@@ -92,7 +104,7 @@ public class JobExecutionController {
 			JobExecution jobExecution;
 			try {
 				jobExecution = jobService.getJobExecution(jobExecutionId);
-				model.addAttribute(new JobExecutionInfo(jobExecution, TimeZone.getTimeZone("GMT")));
+				model.addAttribute(new JobExecutionInfo(jobExecution, timeZone));
 			}
 			catch (NoSuchJobExecutionException e1) {
 				// safe
@@ -110,7 +122,7 @@ public class JobExecutionController {
 		stopRequest.jobExecutionId = jobExecutionId;
 		try {
 			JobExecution jobExecution = jobService.abandon(jobExecutionId);
-			model.addAttribute(new JobExecutionInfo(jobExecution, TimeZone.getTimeZone("GMT")));
+			model.addAttribute(new JobExecutionInfo(jobExecution, timeZone));
 		}
 		catch (NoSuchJobExecutionException e) {
 			errors.reject("no.such.job.execution", new Object[] { jobExecutionId }, "No job exection with id="
@@ -121,7 +133,7 @@ public class JobExecutionController {
 			JobExecution jobExecution;
 			try {
 				jobExecution = jobService.getJobExecution(jobExecutionId);
-				model.addAttribute(new JobExecutionInfo(jobExecution, TimeZone.getTimeZone("GMT")));
+				model.addAttribute(new JobExecutionInfo(jobExecution, timeZone));
 			}
 			catch (NoSuchJobExecutionException e1) {
 				// safe
@@ -142,7 +154,7 @@ public class JobExecutionController {
 
 		Collection<JobExecutionInfo> result = new ArrayList<JobExecutionInfo>();
 		for (JobExecution jobExecution : jobService.listJobExecutions(startJobExecution, pageSize)) {
-			result.add(new JobExecutionInfo(jobExecution, TimeZone.getTimeZone("GMT")));
+			result.add(new JobExecutionInfo(jobExecution, timeZone));
 		}
 
 		return result;
@@ -156,7 +168,7 @@ public class JobExecutionController {
 		Collection<JobExecutionInfo> result = new ArrayList<JobExecutionInfo>();
 		try {
 			for (JobExecution jobExecution : jobService.getJobExecutionsForJobInstance(jobName, jobInstanceId)) {
-				result.add(new JobExecutionInfo(jobExecution, TimeZone.getTimeZone("GMT")));
+				result.add(new JobExecutionInfo(jobExecution, timeZone));
 			}
 		}
 		catch (NoSuchJobException e) {
@@ -177,14 +189,14 @@ public class JobExecutionController {
 			Collection<JobExecution> jobExecutions = jobService.getJobExecutionsForJobInstance(jobName, jobInstanceId);
 			model.addAttribute(new JobInfo(jobName, jobExecutions.size() + 1));
 			JobExecution jobExecution = jobExecutions.iterator().next();
-			model.addAttribute(new JobExecutionInfo(jobExecution, TimeZone.getTimeZone("GMT")));
+			model.addAttribute(new JobExecutionInfo(jobExecution, timeZone));
 
 			Long jobExecutionId = jobExecution.getId();
 
 			try {
 
 				jobExecution = jobService.restart(jobExecutionId);
-				model.addAttribute(new JobExecutionInfo(jobExecution, TimeZone.getTimeZone("GMT")));
+				model.addAttribute(new JobExecutionInfo(jobExecution, timeZone));
 
 			}
 			catch (NoSuchJobExecutionException e) {
@@ -247,7 +259,7 @@ public class JobExecutionController {
 		try {
 
 			for (JobExecution jobExecution : jobService.listJobExecutionsForJob(jobName, startJobExecution, pageSize)) {
-				result.add(new JobExecutionInfo(jobExecution, TimeZone.getTimeZone("GMT")));
+				result.add(new JobExecutionInfo(jobExecution, timeZone));
 			}
 			int count = jobService.countJobExecutionsForJob(jobName);
 			model.addAttribute(new JobInfo(jobName, count, null, jobService.isLaunchable(jobName), jobService.isIncrementable(jobName)));
@@ -269,7 +281,7 @@ public class JobExecutionController {
 
 		try {
 			JobExecution jobExecution = jobService.getJobExecution(jobExecutionId);
-			model.addAttribute(new JobExecutionInfo(jobExecution, TimeZone.getTimeZone("GMT")));
+			model.addAttribute(new JobExecutionInfo(jobExecution, timeZone));
 		}
 		catch (NoSuchJobExecutionException e) {
 			errors.reject("no.such.job.execution", new Object[] { jobExecutionId }, "There is no such job execution ("

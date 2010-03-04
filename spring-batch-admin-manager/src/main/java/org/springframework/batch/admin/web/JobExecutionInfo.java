@@ -36,6 +36,8 @@ public class JobExecutionInfo {
 
 	private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 
+	private SimpleDateFormat durationFormat = new SimpleDateFormat("HH:mm:ss");
+
 	private Long id;
 
 	private int stepExecutionCount;
@@ -62,9 +64,12 @@ public class JobExecutionInfo {
 
 	private JobParametersConverter converter = new DefaultJobParametersConverter();
 
+	private final TimeZone timeZone;
+
 	public JobExecutionInfo(JobExecution jobExecution, TimeZone timeZone) {
 
 		this.jobExecution = jobExecution;
+		this.timeZone = timeZone;
 		this.id = jobExecution.getId();
 		this.jobId = jobExecution.getJobId();
 		this.stepExecutionCount = jobExecution.getStepExecutions().size();
@@ -84,14 +89,22 @@ public class JobExecutionInfo {
 			this.jobParameters = null;
 		}
 
+		// Duration is always in GMT
+		durationFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+		// The others can be localized
 		timeFormat.setTimeZone(timeZone);
+		dateFormat.setTimeZone(timeZone);
 		if (jobExecution.getStartTime() != null) {
 			this.startDate = dateFormat.format(jobExecution.getStartTime());
 			this.startTime = timeFormat.format(jobExecution.getStartTime());
 			Date endTime = jobExecution.getEndTime() != null ? jobExecution.getEndTime() : new Date();
-			this.duration = timeFormat.format(new Date(endTime.getTime() - jobExecution.getStartTime().getTime()));
+			this.duration = durationFormat.format(new Date(endTime.getTime() - jobExecution.getStartTime().getTime()));
 		}
 
+	}
+	
+	public TimeZone getTimeZone() {
+		return timeZone;
 	}
 
 	public String getName() {

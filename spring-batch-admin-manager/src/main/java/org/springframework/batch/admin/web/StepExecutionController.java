@@ -26,6 +26,7 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.launch.NoSuchJobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -45,6 +46,17 @@ public class StepExecutionController {
 
 	private JobService jobService;
 
+	private TimeZone timeZone = TimeZone.getDefault();
+
+	/**
+	 * @param timeZone the timeZone to set
+	 */
+	@Autowired(required=false)
+	@Qualifier("userTimeZone")
+	public void setTimeZone(TimeZone timeZone) {
+		this.timeZone = timeZone;
+	}
+
 	@Autowired
 	public StepExecutionController(JobService jobService) {
 		super();
@@ -60,7 +72,7 @@ public class StepExecutionController {
 				result.add(new StepExecutionInfo(stepExecution, TimeZone.getTimeZone("GMT")));
 			}
 			JobExecution jobExecution = jobService.getJobExecution(jobExecutionId);
-			model.addAttribute(new JobExecutionInfo(jobExecution, TimeZone.getTimeZone("GMT")));
+			model.addAttribute(new JobExecutionInfo(jobExecution, timeZone));
 		}
 		catch (NoSuchJobExecutionException e) {
 			errors.reject("no.such.job.execution", new Object[] { jobExecutionId }, "There is no such job execution ("

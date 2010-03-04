@@ -30,6 +30,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.launch.JobParametersNotFoundException;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.test.JobRepositoryTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,9 +102,11 @@ public class RestartJobIntegrationTests {
 		thrown.expect(new TypeSafeMatcher<Exception>() {
 			@Override
 			public boolean matchesSafely(Exception item) {
-				StringWriter writer = new StringWriter();
-				item.printStackTrace(new PrintWriter(writer));
-				return writer.toString().matches("(?s).*JobParametersNotFoundException.*");
+//				StringWriter writer = new StringWriter();
+//				item.printStackTrace(new PrintWriter(writer));
+//				return writer.toString().matches("(?s).*JobParametersNotFoundException.*");
+				item.printStackTrace();
+				return item.getCause() instanceof JobParametersNotFoundException;
 			}
 
 			public void describeTo(Description description) {

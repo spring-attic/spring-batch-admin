@@ -35,6 +35,7 @@ import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteExcep
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.batch.support.PropertiesConverter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.Errors;
@@ -57,6 +58,17 @@ public class JobController {
 
 	private JobParametersConverter converter = new DefaultJobParametersConverter();
 
+	private TimeZone timeZone = TimeZone.getDefault();
+
+	/**
+	 * @param timeZone the timeZone to set
+	 */
+	@Autowired(required=false)
+	@Qualifier("userTimeZone")
+	public void setTimeZone(TimeZone timeZone) {
+		this.timeZone = timeZone;
+	}
+
 	@Autowired
 	public JobController(JobService jobService) {
 		super();
@@ -76,7 +88,7 @@ public class JobController {
 
 		try {
 			JobExecution jobExecution = jobService.launch(jobName, jobParameters);
-			model.addAttribute(new JobExecutionInfo(jobExecution, TimeZone.getTimeZone("GMT")));
+			model.addAttribute(new JobExecutionInfo(jobExecution, timeZone));
 		}
 		catch (NoSuchJobException e) {
 			errors.reject("no.such.job", new Object[] { jobName }, "No such job: " + jobName);
