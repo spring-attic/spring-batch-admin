@@ -81,8 +81,7 @@ public class AnnotationMappingMetaDataControllerTests {
 		context.registerSingleton("controller", TypeMappingController.class);
 		metaData.afterPropertiesSet();
 		assertTrue(metaData.getUrlPatterns().contains("/list/{id}/foo/{name}"));
-		assertTrue(metaData.getUrlPatterns().contains("/list"));
-		assertEquals(3, metaData.getUrlPatterns().size());
+		assertEquals(2, metaData.getUrlPatterns().size());
 	}
 
 	@Test
@@ -90,8 +89,7 @@ public class AnnotationMappingMetaDataControllerTests {
 		context.registerSingleton("controller", TypeMappingWithDefaultController.class);
 		metaData.afterPropertiesSet();
 		assertTrue(metaData.getUrlPatterns().contains("/list/{id}"));
-		assertTrue(metaData.getUrlPatterns().contains("/list"));
-		assertEquals(2, metaData.getUrlPatterns().size());
+		assertEquals(1, metaData.getUrlPatterns().size());
 	}
 
 	@Test
