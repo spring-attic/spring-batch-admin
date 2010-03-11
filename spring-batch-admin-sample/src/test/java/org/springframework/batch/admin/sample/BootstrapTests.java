@@ -20,6 +20,13 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.springframework.batch.admin.web.JobController;
+import org.springframework.batch.core.BatchStatus;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.configuration.JobRegistry;
+import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -45,10 +52,10 @@ public class BootstrapTests {
 
 	@Test
 	public void testServletConfiguration() throws Exception {
-		ApplicationContext parent = new ClassPathXmlApplicationContext(
+		ClassPathXmlApplicationContext parent = new ClassPathXmlApplicationContext(
 				"classpath:/org/springframework/batch/admin/web/resources/webapp-config.xml");
-		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new String[] {
-				"classpath:/org/springframework/batch/admin/web/resources/servlet-config.xml"}, parent);
+		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
+				new String[] { "classpath:/org/springframework/batch/admin/web/resources/servlet-config.xml" }, parent);
 
 		assertTrue(context.containsBean("jobRepository"));
 		String[] beanNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(context.getBeanFactory(),
@@ -56,6 +63,18 @@ public class BootstrapTests {
 		assertEquals(1, beanNames.length);
 
 		context.refresh();
+
+		Job job = context.getBean(JobRegistry.class).getJob("job1");
+		JobExecution jobExecution = parent.getBean(JobLauncher.class).run(job,
+				new JobParametersBuilder().addString("fail", "false").toJobParameters());
+
+		Thread.sleep(200);
+
+		context.close();
+		parent.close();
+
+		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
+
 	}
 
 }

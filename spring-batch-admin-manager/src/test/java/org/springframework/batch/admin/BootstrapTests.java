@@ -21,6 +21,11 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.springframework.batch.admin.web.JobController;
 import org.springframework.batch.admin.web.resources.MenuManager;
+import org.springframework.batch.core.BatchStatus;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -46,20 +51,34 @@ public class BootstrapTests {
 
 	@Test
 	public void testServletConfiguration() throws Exception {
-		ApplicationContext parent = new ClassPathXmlApplicationContext(
+		ClassPathXmlApplicationContext parent = new ClassPathXmlApplicationContext(
 				"classpath:/org/springframework/batch/admin/web/resources/webapp-config.xml");
-		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new String[] {
-				"classpath:/org/springframework/batch/admin/web/resources/servlet-config.xml"}, parent);
+		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
+				new String[] { "classpath:/org/springframework/batch/admin/web/resources/servlet-config.xml" }, parent);
 
 		assertTrue(context.containsBean("jobRepository"));
 		String[] beanNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(context.getBeanFactory(),
 				JobController.class);
 		assertEquals(1, beanNames.length);
-		
+
 		MenuManager menuManager = context.getBean(MenuManager.class);
 		assertEquals(4, menuManager.getMenus().size());
 
 		context.refresh();
+
+		ClassPathXmlApplicationContext child = new ClassPathXmlApplicationContext(
+				new String[] { "classpath:/test-job-context.xml" }, parent);
+		Job job = child.getBean(Job.class);
+		JobExecution jobExecution = parent.getBean(JobLauncher.class).run(job, new JobParameters());
+
+		Thread.sleep(200);
+
+		child.close();
+		context.close();
+		parent.close();
+
+		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
+		
 	}
 
 }
