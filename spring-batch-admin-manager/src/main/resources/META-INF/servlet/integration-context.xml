@@ -6,14 +6,6 @@
                                  http://www.springframework.org/schema/integration/http http://www.springframework.org/schema/integration/http/spring-integration-http-2.0.xsd
                                  http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-2.0.xsd">
 
-	<bean class="org.springframework.beans.factory.config.CustomEditorConfigurer">
-		<property name="customEditors">
-			<map key-type="java.lang.String" value-type="java.lang.Class">
-				<entry key="org.springframework.web.multipart.MultipartFile" value="org.springframework.web.multipart.support.StringMultipartFileEditor" />
-			</map>
-		</property>
-	</bean>
-
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
 
 	<bean name="messages" parent="standard">
@@ -76,7 +68,7 @@
 		view="reload-job-executions" />
 
 	<bean id="configurationFileRequestMapper" class="org.springframework.integration.http.DataBindingInboundRequestMapper">
-		<property name="targetType" value="org.springframework.batch.admin.integration.JobConfigurationRequest" />
+		<property name="targetType" value="org.springframework.batch.admin.integration.MultipartJobConfigurationRequest" />
 		<property name="webBindingInitializer">
 			<bean class="org.springframework.batch.admin.web.CustomWebBindingInitializer" />
 		</property>
@@ -92,7 +84,12 @@
 		<property name="contextRelative" value="true" />
 	</bean>
 
-	<http:inbound-channel-adapter name="/job-configuration-requests" channel="job-configuration-requests"
+	<integration:channel id="job-configuration-multipart" />
+
+	<integration:transformer id="multipartToJobConfigurationRequest" input-channel="job-configuration-multipart"
+		output-channel="job-configuration-requests" expression="payload.jobConfigurationRequest"/>
+
+	<http:inbound-channel-adapter name="/job-configuration-requests" channel="job-configuration-multipart"
 		request-mapper="configurationFileRequestMapper" view="redirect:messages" />
 
 	<http:inbound-channel-adapter name="/job-configuration-files" channel="job-configuration-files"

@@ -26,6 +26,8 @@ public class JobConfigurationRequest {
 
 	private String xml;
 
+	private String filename = "unknown-origin.xml";
+
 	public void setXml(String xml) {
 		this.xml = xml;
 	}
@@ -36,9 +38,21 @@ public class JobConfigurationRequest {
 
 	@Override
 	public String toString() {
-		return "xml: "
-				+ (xml == null ? null : xml.substring(0, Math.min(255, xml
-						.length())));
+		return "[filename: " + filename + ", xml: " + (xml == null ? null : xml.substring(0, Math.min(255, xml.length())))+"]";
+	}
+
+	/**
+	 * @param originalFilename
+	 */
+	public void setFileName(String filename) {
+		this.filename = filename;
+	}
+
+	/**
+	 * @return the filename
+	 */
+	public String getFilename() {
+		return filename;
 	}
 
 }

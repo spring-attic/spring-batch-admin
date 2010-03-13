@@ -18,10 +18,8 @@ package org.springframework.batch.admin.integration;
 import org.springframework.batch.core.configuration.DuplicateJobException;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
-import org.springframework.integration.annotation.Header;
 import org.springframework.integration.annotation.MessageEndpoint;
 import org.springframework.integration.annotation.ServiceActivator;
-import org.springframework.integration.http.HttpHeaders;
 import org.springframework.util.StringUtils;
 
 /**
@@ -35,16 +33,13 @@ import org.springframework.util.StringUtils;
 public class JobConfigurationRequestToResourceAdapter {
 
 	@ServiceActivator
-	public Resource adapt(
-			JobConfigurationRequest request,
-			@Header(value = HttpHeaders.REQUEST_URL, required = false) String url)
-			throws DuplicateJobException {
+	public Resource adapt(JobConfigurationRequest request) throws DuplicateJobException {
 
-		url = url == null ? "unknown-request-url" : url;
+		String filename = request.getFilename();
 		if (!StringUtils.hasText(request.getXml())) {
-			return new ByteArrayResource(new byte[0], url + ":empty-string");
+			return new ByteArrayResource(new byte[0], filename + ":empty-string");
 		}
-		return new ByteArrayResource(request.getXml().getBytes(), url);
+		return new ByteArrayResource(request.getXml().getBytes(), filename);
 
 	}
 

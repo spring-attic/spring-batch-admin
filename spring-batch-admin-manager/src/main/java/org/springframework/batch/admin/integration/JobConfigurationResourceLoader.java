@@ -63,7 +63,7 @@ public class JobConfigurationResourceLoader implements ApplicationContextAware {
 		Collection<String> result = new ArrayList<String>();
 
 		ApplicationContextFactory factory = createApplicationContextFactory(parent, resource);
-		Collection<Job> jobs = jobLoader.load(factory);
+		Collection<Job> jobs = jobLoader.reload(factory);
 
 		for (Job job : jobs) {
 			result.add(job.getName());

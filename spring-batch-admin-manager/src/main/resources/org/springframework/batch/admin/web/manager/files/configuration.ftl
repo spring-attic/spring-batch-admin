@@ -8,7 +8,7 @@
 	<#assign url><@spring.url relativeUrl="${servletPath}/job-configuration-requests"/></#assign>
 	<form id="registerFileForm" action="${url}" method="POST" enctype="multipart/form-data" encoding="multipart/form-data">
 
-		<label for="fileXml">Job Configuration File</label><input id="fileXml" type="file" value="Upload" name="xml" />
+		<label for="fileXml">Job Configuration File</label><input id="fileXml" type="file" value="Upload" name="file" />
 		<input id="registerFile" type="submit" value="Upload" name="registerFile" />
 		<!-- Spring JS does not support multipart forms so no Ajax here -->
 
