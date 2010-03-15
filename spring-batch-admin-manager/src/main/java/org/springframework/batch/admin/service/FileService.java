@@ -22,19 +22,24 @@ import java.util.List;
 import org.springframework.core.io.Resource;
 
 /**
+ * Encapsulation of file storage and creation hiding the actual location of the
+ * files, but allowing their contents to be accessed by clients.
+ * 
  * @author Dave Syer
- *
+ * 
  */
 public interface FileService {
-	
+
 	FileInfo createFile(String path) throws IOException;
-	
+
 	boolean publish(FileInfo target) throws IOException;
-	
+
 	List<FileInfo> getFiles(int startFile, int pageSize) throws IOException;
-	
+
+	int countFiles();
+
 	int delete(String pattern) throws IOException;
-	
+
 	Resource getResource(String path);
-	
+
 }

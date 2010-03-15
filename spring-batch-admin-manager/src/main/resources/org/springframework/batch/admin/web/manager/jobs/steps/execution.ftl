@@ -81,7 +81,7 @@
 			</tr>
 			<tr class="name-sublevel1-even">
 				<td>Exit Message</td>
-				<td>${stepExecutionInfo.stepExecution.exitStatus.exitDescription}</td>
+				<td>${stepExecutionInfo.stepExecution.exitStatus.exitDescription!}</td>
 			</tr>
 		</table>
 	

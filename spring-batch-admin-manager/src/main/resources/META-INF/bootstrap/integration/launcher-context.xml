@@ -38,7 +38,7 @@
 			<bean class="org.springframework.integration.aop.MethodNameMappingExpressionSource">
 				<constructor-arg>
 					<map>
-						<entry key="execute" value="#args[execution]" />
+						<entry key="execute" value="#args['execution']" />
 						<entry key="run" value="#return" />
 					</map>
 				</constructor-arg>

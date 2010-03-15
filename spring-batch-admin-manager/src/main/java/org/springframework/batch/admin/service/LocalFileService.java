@@ -117,6 +117,18 @@ public class LocalFileService implements FileService, InitializingBean, Resource
 		fileSender.send(getResource(dest.getPath()).getFile());
 		return true;
 	}
+	
+	public int countFiles() {
+		ResourcePatternResolver resolver = ResourcePatternUtils.getResourcePatternResolver(resourceLoader);
+		Resource[] resources;
+		try {
+			resources = resolver.getResources("file:///" + outputDir.getAbsolutePath() + "/**");
+		}
+		catch (IOException e) {
+			throw new IllegalStateException("Unexpected problem resolving files", e);
+		}
+		return resources.length;
+	}
 
 	public List<FileInfo> getFiles(int startFile, int pageSize) throws IOException {
 

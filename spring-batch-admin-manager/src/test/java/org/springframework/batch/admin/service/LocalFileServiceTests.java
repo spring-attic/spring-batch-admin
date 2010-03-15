@@ -78,6 +78,13 @@ public class LocalFileServiceTests {
 	}
 
 	@Test
+	public void testCount() throws Exception {
+		service.setResourceLoader(new DefaultResourceLoader());
+		service.afterPropertiesSet();
+		assertEquals(0, service.countFiles());
+	}
+
+	@Test
 	public void testDeleteAll() throws Exception {
 		service.setResourceLoader(new DefaultResourceLoader());
 		service.createFile("spam");
