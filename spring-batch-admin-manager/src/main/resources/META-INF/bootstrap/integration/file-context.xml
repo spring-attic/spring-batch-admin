@@ -9,6 +9,8 @@
 	
 	<logging-channel-adapter channel="input-files"/>
 	
+	<outbound-channel-adapter ref="messagesHolder" channel="input-files" />
+
 	<gateway id="fileSender" service-interface="org.springframework.batch.admin.service.FileSender"
 		default-request-channel="input-files" />
 

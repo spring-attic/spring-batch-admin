@@ -33,6 +33,7 @@
 		<config>src/main/resources/META-INF/servlet/integration-context.xml</config>
 		<config>src/test/resources/org/springframework/batch/admin/service/JobLocatorStepLocatorIntegrationTests-context.xml</config>
 		<config>src/test/resources/org/springframework/batch/admin/service/LocalFileServiceJobIntegrationTests-context.xml</config>
+		<config>src/test/resources/org/springframework/batch/admin/web/views/AbstractIntegrationViewTests-context.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
