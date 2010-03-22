@@ -8,4 +8,6 @@
 
 	<import resource="classpath*:/META-INF/bootstrap/integration/file-context.xml" />
 
+	<bean id="messagesHolder" class="org.springframework.batch.admin.integration.MessagesHolderHandler"/>
+
 </beans>
