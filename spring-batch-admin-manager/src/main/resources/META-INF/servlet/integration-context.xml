@@ -3,8 +3,8 @@
 	xmlns:integration="http://www.springframework.org/schema/integration" xmlns:http="http://www.springframework.org/schema/integration/http"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
                                  http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-                                 http://www.springframework.org/schema/integration/http http://www.springframework.org/schema/integration/http/spring-integration-http-2.0.xsd
-                                 http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-2.0.xsd">
+                                 http://www.springframework.org/schema/integration/http http://www.springframework.org/schema/integration/http/spring-integration-http-1.0.xsd
+                                 http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-1.0.xsd">
 
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
 
@@ -28,8 +28,8 @@
 		</property>
 	</bean>
 
-	<bean name="redirect:messages" class="org.springframework.web.servlet.view.RedirectView">
-		<property name="url" value="#{servletPath}/messages" />
+	<bean name="redirect:jobs" class="org.springframework.web.servlet.view.RedirectView">
+		<property name="url" value="#{servletPath}/jobs" />
 		<property name="contextRelative" value="true" />
 	</bean>
 
@@ -41,13 +41,15 @@
 	<integration:channel id="job-configuration-multipart" />
 
 	<integration:transformer id="multipartToJobConfigurationRequest" input-channel="job-configuration-multipart"
-		output-channel="job-configuration-requests" expression="payload.jobConfigurationRequest"/>
+		output-channel="job-configuration-requests">
+		<bean class="org.springframework.batch.admin.integration.MultipartToJobConfigurationRequestTransformer"/>
+	</integration:transformer>
 
 	<http:inbound-channel-adapter name="/job-configuration-requests" channel="job-configuration-multipart"
-		request-mapper="configurationFileRequestMapper" view="redirect:messages" />
+		request-mapper="configurationFileRequestMapper" view="redirect:jobs" supported-methods="POST"/>
 
 	<http:inbound-channel-adapter name="/job-configuration-files" channel="job-configuration-files"
-		request-mapper="bodyInboundRequestMapper" view="redirect:messages" />
+		request-mapper="bodyInboundRequestMapper" view="redirect:jobs" supported-methods="POST"/>
 
 	<http:inbound-channel-adapter name="/files" channel="file-requests" request-mapper="inputFileRequestMapper"
 		view="redirect:files" supported-methods="POST" />

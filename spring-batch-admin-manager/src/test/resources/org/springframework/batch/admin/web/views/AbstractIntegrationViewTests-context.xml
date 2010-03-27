@@ -5,7 +5,7 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
                                  http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
                                  http://www.springframework.org/schema/integration/http http://www.springframework.org/schema/integration/http/spring-integration-http-1.0.xsd
-                                 http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-2.0.xsd">
+                                 http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-1.0.xsd">
 
 	<import resource="classpath*:/META-INF/servlet/resources-context.xml"/>
 	<import resource="classpath*:/META-INF/servlet/manager-context.xml"/>

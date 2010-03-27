@@ -12,6 +12,5 @@
 	<bean class="org.springframework.batch.admin.web.FileController"/>
 	<bean class="org.springframework.batch.admin.web.StepExecutionController"/>
 	<bean class="org.springframework.batch.admin.web.JobExecutionController"/>
-	<bean class="org.springframework.batch.admin.web.MessagesController" />
 
 </beans>

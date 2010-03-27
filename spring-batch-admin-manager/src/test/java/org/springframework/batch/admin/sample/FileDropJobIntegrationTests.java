@@ -82,7 +82,7 @@ public class FileDropJobIntegrationTests {
 
 		FileUtils.copyFile(new File("src/test/resources/data/test.txt"), new File("target/data/drop.txt"));
 
-		JobExecution result = receiver.poll(1000L, TimeUnit.MILLISECONDS);
+		JobExecution result = receiver.poll(2000L, TimeUnit.MILLISECONDS);
 
 		assertNotNull("Timed out waiting for result", result);
 		assertEquals(BatchStatus.COMPLETED, result.getStatus());

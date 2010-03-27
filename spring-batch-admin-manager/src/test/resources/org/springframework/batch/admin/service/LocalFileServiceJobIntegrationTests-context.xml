@@ -3,7 +3,7 @@
 	xmlns:integration="http://www.springframework.org/schema/integration" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.1.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-2.0.xsd">
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-1.0.xsd">
 
 	<import resource="classpath*:/META-INF/bootstrap/batch/*.xml" />
 	<import resource="classpath*:/META-INF/bootstrap/integration/*.xml" />
@@ -15,7 +15,11 @@
 	</bean>
 
 	<chain input-channel="input-files" output-channel="job-requests" xmlns="http://www.springframework.org/schema/integration">
-		<filter expression="payload.parentFile.name=='staging'" />
+		<filter method="filter">
+			<beans:bean class="org.springframework.batch.admin.integration.FileParentDirectoryFilter">
+				<beans:property name="parentName" value="staging" />
+			</beans:bean>
+		</filter>
 		<service-activator>
 			<beans:bean class="org.springframework.batch.admin.integration.FileToJobLaunchRequestAdapter">
 				<beans:property name="job" ref="staging" />

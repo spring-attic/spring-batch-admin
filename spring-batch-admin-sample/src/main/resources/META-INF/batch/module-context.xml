@@ -6,8 +6,8 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
 		http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.1.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-2.0.xsd
-		http://www.springframework.org/schema/integration/file http://www.springframework.org/schema/integration/file/spring-integration-file-2.0.xsd">
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-1.0.xsd
+		http://www.springframework.org/schema/integration/file http://www.springframework.org/schema/integration/file/spring-integration-file-1.0.xsd">
 
 	<job id="job1" parent="simpleJob" xmlns="http://www.springframework.org/schema/batch" incrementer="incrementer">
 		<step id="j1.s1" parent="step1" />
@@ -30,7 +30,11 @@
 	</job>
 
 	<chain input-channel="input-files" output-channel="job-requests" xmlns="http://www.springframework.org/schema/integration">
-		<filter expression="payload.parentFile.name=='sample'" />
+		<filter method="filter">
+			<bean class="org.springframework.batch.admin.integration.FileParentDirectoryFilter" xmlns="http://www.springframework.org/schema/beans">
+				<property name="parentName" value="staging"/>
+			</bean>
+		</filter>
 		<service-activator>
 			<bean class="org.springframework.batch.admin.integration.FileToJobLaunchRequestAdapter" xmlns="http://www.springframework.org/schema/beans">
 				<property name="job" ref="job1" />
@@ -39,7 +43,7 @@
 		<transformer>
 			<bean class="org.springframework.batch.admin.integration.LastJobParametersJobLaunchRequestEnhancer" xmlns="http://www.springframework.org/schema/beans">
 				<property name="jobService" ref="jobService" />
-			</bean>			
+			</bean>
 		</transformer>
 	</chain>
 

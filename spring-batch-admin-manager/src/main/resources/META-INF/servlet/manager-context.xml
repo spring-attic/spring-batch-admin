@@ -102,18 +102,6 @@
 		</property>
 	</bean>
 
-	<bean name="messages" parent="standard">
-		<property name="attributes">
-			<props merge="true">
-				<prop key="body">/manager/files/messages.ftl</prop>
-				<prop key="side">/manager/files/side.ftl</prop>
-				<prop key="titleCode">messages.title</prop>
-				<prop key="titleText">Spring Batch Admin: Recent Messages</prop>
-				<prop key="feedPath">#{servletPath}/messages.rss</prop>
-			</props>
-		</property>
-	</bean>
-
 	<bean name="files" parent="standard">
 		<property name="attributes">
 			<props merge="true">
@@ -132,14 +120,6 @@
 				<prop key="side">/manager/files/side.ftl</prop>
 				<prop key="titleCode">configuration.title</prop>
 				<prop key="titleText">Spring Batch Admin: Job Configuration Upload</prop>
-			</props>
-		</property>
-	</bean>
-
-	<bean name="messages.rss" parent="standard.rss">
-		<property name="attributes">
-			<props merge="true">
-				<prop key="body">/manager/files/rss/messages.ftl</prop>
 			</props>
 		</property>
 	</bean>

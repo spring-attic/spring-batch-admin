@@ -1,3 +1,5 @@
-#Mon Mar 22 17:07:12 GMT 2010
+#Sat Mar 27 12:16:46 GMT 2010
+//com.springsource.sts.config.flow.coordinates\:http\://www.springframework.org/schema/batch\:/spring-batch-admin-manager/src/test/resources/org/springframework/batch/admin/service/JobLocatorStepLocatorIntegrationTests-context.xml=<?xml version\="1.0" encoding\="UTF-8"?>\r\n<graph/>
 //com.springsource.sts.config.flow.coordinates\:http\://www.springframework.org/schema/batch\:/spring-batch-admin-manager/src/test/resources/org/springframework/batch/admin/service/LocalFileServiceIntegrationTests-context.xml=<?xml version\="1.0" encoding\="UTF-8"?>\r\n<graph/>
+//com.springsource.sts.config.flow.coordinates\:http\://www.springframework.org/schema/batch\:/spring-batch-admin-manager/src/test/resources/org/springframework/batch/admin/service/LocalFileServiceJobIntegrationTests-context.xml=<?xml version\="1.0" encoding\="UTF-8"?>\r\n<graph/>
 eclipse.preferences.version=1

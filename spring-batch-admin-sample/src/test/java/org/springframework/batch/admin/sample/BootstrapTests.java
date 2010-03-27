@@ -18,15 +18,18 @@ package org.springframework.batch.admin.sample;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
+
 import org.junit.Test;
 import org.springframework.batch.admin.web.JobController;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.poller.DirectPoller;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -65,10 +68,18 @@ public class BootstrapTests {
 		context.refresh();
 
 		Job job = context.getBean(JobRegistry.class).getJob("job1");
-		JobExecution jobExecution = parent.getBean(JobLauncher.class).run(job,
+		final JobExecution jobExecution = parent.getBean(JobLauncher.class).run(job,
 				new JobParametersBuilder().addString("fail", "false").toJobParameters());
 
-		Thread.sleep(200);
+		new DirectPoller<BatchStatus>(100).poll(new Callable<BatchStatus>() {
+			public BatchStatus call() throws Exception {
+				BatchStatus status = jobExecution.getStatus();
+				if (status.isLessThan(BatchStatus.STOPPED) && status!=BatchStatus.COMPLETED) {
+					return null;
+				}
+				return status;
+			}
+		}).get(2000, TimeUnit.MILLISECONDS);
 
 		context.close();
 		parent.close();

@@ -3,48 +3,18 @@
 	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:p="http://www.springframework.org/schema/p" xmlns:aop="http://www.springframework.org/schema/aop"
 	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-2.0.xsd">
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-1.0.xsd">
 
 	<channel id="job-requests" />
-	<channel id="job-operator-input" />
 	<!-- TODO: filter into success and failure channels -->
 	<publish-subscribe-channel id="job-operator" />
 
 	<logging-channel-adapter channel="job-operator" />
 
-	<service-activator input-channel="job-requests" output-channel="job-operator-input">
+	<service-activator input-channel="job-requests" output-channel="job-operator">
 		<beans:bean class="org.springframework.batch.integration.launch.JobLaunchingMessageHandler">
 			<beans:constructor-arg ref="jobLauncher" />
 		</beans:bean>
 	</service-activator>
-
-	<service-activator input-channel="job-operator-input" output-channel="job-operator">
-		<beans:bean class="org.springframework.batch.admin.integration.JobExecutionDuplicateFilter" />
-	</service-activator>
-
-	<beans:bean id="messagesHolder" class="org.springframework.batch.admin.integration.MessagesHolderHandler"/>
-
-	<outbound-channel-adapter ref="messagesHolder" channel="errorChannel" />
-
-	<outbound-channel-adapter ref="messagesHolder" channel="job-operator" />
-
-	<aop:config>
-		<aop:advisor advice-ref="jobMessagePublishingInterceptor" pointcut="execution(* *..Job+.execute(..)) || execution(* *..JobLauncher+.run(..))" />
-	</aop:config>
-
-	<bean id="jobMessagePublishingInterceptor" class="org.springframework.integration.aop.MessagePublishingInterceptor"
-		xmlns="http://www.springframework.org/schema/beans">
-		<constructor-arg index="0">
-			<bean class="org.springframework.integration.aop.MethodNameMappingExpressionSource">
-				<constructor-arg>
-					<map>
-						<entry key="execute" value="#args['execution']" />
-						<entry key="run" value="#return" />
-					</map>
-				</constructor-arg>
-			</bean>
-		</constructor-arg>
-		<property name="defaultChannel" ref="job-operator-input" />
-	</bean>
 
 </beans:beans>
