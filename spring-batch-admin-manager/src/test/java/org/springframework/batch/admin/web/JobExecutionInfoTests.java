@@ -41,8 +41,12 @@ public class JobExecutionInfoTests {
 		jobExecution.setEndTime(new Date(jobExecution.getStartTime().getTime() + 30000));
 		JobExecutionInfo info = new JobExecutionInfo(jobExecution, TimeZone.getTimeZone("GMT"));
 		assertEquals("00:00:30", info.getDuration());
-		assertEquals(new SimpleDateFormat("HH:mm:ss").format(jobExecution.getStartTime()), info.getStartTime());
-		assertEquals(new SimpleDateFormat("yyyy-MM-dd").format(jobExecution.getStartTime()), info.getStartDate());
+		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+		timeFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+		assertEquals(timeFormat.format(jobExecution.getStartTime()), info.getStartTime());
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+		assertEquals(dateFormat.format(jobExecution.getStartTime()), info.getStartDate());
 	}
 
 	@Test
