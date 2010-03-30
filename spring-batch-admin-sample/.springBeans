@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beansProjectDescription>
 	<version>1</version>
-	<pluginVersion><![CDATA[2.2.8.200911091054-RELEASE]]></pluginVersion>
+	<pluginVersion><![CDATA[2.3.1.201003090936-RELEASE]]></pluginVersion>
 	<configSuffixes>
 		<configSuffix><![CDATA[xml]]></configSuffix>
 	</configSuffixes>
 	<enableImports><![CDATA[true]]></enableImports>
 	<configs>
-		<config>src/main/resources/META-INF/servlet/service-context.xml</config>
 	</configs>
 	<configSets>
 	</configSets>

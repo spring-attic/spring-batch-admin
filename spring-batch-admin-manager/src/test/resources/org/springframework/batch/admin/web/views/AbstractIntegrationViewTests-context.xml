@@ -7,13 +7,11 @@
                                  http://www.springframework.org/schema/integration/http http://www.springframework.org/schema/integration/http/spring-integration-http-1.0.xsd
                                  http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-1.0.xsd">
 
-	<import resource="classpath*:/META-INF/servlet/resources-context.xml"/>
-	<import resource="classpath*:/META-INF/servlet/manager-context.xml"/>
-	<import resource="classpath*:/META-INF/servlet/integration-context.xml"/>
+	<import resource="classpath*:/META-INF/batch/servlet/resources-context.xml"/>
+	<import resource="classpath*:/META-INF/batch/servlet/manager-context.xml"/>
+	<import resource="classpath*:/META-INF/batch/servlet/integration-context.xml"/>
 	
-	<bean id="servletPath" class="java.lang.String">
-		<constructor-arg value="/batch" />
-	</bean>
+	<bean id="resourceService" class="org.springframework.batch.admin.web.resources.DefaultResourceService"/>
 
 	<integration:channel id="job-launches"/>
 	<integration:channel id="job-restarts"/>

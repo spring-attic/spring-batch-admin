@@ -6,6 +6,6 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-1.0.xsd">
 
-	<import resource="classpath*:/META-INF/bootstrap/integration/file-context.xml" />
+	<import resource="classpath*:/META-INF/batch/bootstrap/integration/file-context.xml" />
 
 </beans>

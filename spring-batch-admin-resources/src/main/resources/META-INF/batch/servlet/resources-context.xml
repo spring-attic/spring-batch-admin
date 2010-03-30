@@ -9,7 +9,7 @@
 	<context:annotation-config />
 
 	<bean id="baseMenu" abstract="true">
-		<property name="prefix" value="#{servletPath}"/>
+		<property name="prefix" value="#{resourceService.servletPath}"/>
 	</bean>
 
 	<bean id="menuManager" class="org.springframework.batch.admin.web.resources.MenuManager" />
@@ -68,7 +68,7 @@
 			<props merge="true">
 				<prop key="body">/layouts/home.ftl</prop>
 				<!-- Matches the prefix of the servlet mapping in web.xml -->
-				<prop key="servletPath">#{servletPath}</prop>
+				<prop key="servletPath">#{resourceService.servletPath}</prop>
 			</props>
 		</property>
 	</bean>
@@ -79,7 +79,7 @@
 			<props merge="true">
 				<prop key="body">/layouts/rss/home.ftl</prop>
 				<!-- Matches the prefix of the servlet mapping in web.xml -->
-				<prop key="servletPath">#{servletPath}</prop>
+				<prop key="servletPath">#{resourceService.servletPath}</prop>
 			</props>
 		</property>
 		<property name="contentType" value="text/xml" />

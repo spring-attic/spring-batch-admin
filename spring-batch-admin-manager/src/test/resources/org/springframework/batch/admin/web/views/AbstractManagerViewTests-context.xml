@@ -3,11 +3,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<import resource="classpath*:/META-INF/servlet/resources*.xml"/>
-	<import resource="classpath*:/META-INF/servlet/manager*.xml"/>
+	<import resource="classpath*:/META-INF/batch/servlet/resources*.xml"/>
+	<import resource="classpath*:/META-INF/batch/servlet/manager*.xml"/>
 
-	<bean id="servletPath" class="java.lang.String">
-		<constructor-arg value="/batch" />
-	</bean>
+	<bean id="resourceService" class="org.springframework.batch.admin.web.resources.DefaultResourceService"/>
 
 </beans>

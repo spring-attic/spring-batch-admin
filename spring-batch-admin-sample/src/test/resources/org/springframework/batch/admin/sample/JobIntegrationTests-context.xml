@@ -4,8 +4,9 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-1.0.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-	<import resource="classpath*:/META-INF/bootstrap/batch/*.xml" />
-	<import resource="classpath*:/META-INF/spring/*.xml" />
+	<import resource="classpath*:/META-INF/batch/bootstrap/resources/*.xml" />
+	<import resource="classpath*:/META-INF/batch/bootstrap/manager/*.xml" />
+	<import resource="classpath*:/META-INF/batch/override/*.xml" />
 
 	<integration:channel id="job-requests"/>
 

@@ -3,8 +3,9 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-1.0.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
- 	<import resource="classpath*:/META-INF/bootstrap/batch/*.xml" />
-	<import resource="classpath:/META-INF/batch/*-context.xml" />
+ 	<import resource="classpath*:/META-INF/batch/bootstrap/resources/*.xml" />
+ 	<import resource="classpath*:/META-INF/batch/bootstrap/manager/*.xml" />
+	<import resource="classpath:/META-INF/batch/jobs/*.xml" />
 	
 	<bean id="jobLauncherTaskExecutor" class="org.springframework.core.task.SyncTaskExecutor"/>
 	<!-- prevent loading of other jobs by overriding the loader in the main bootstrap context -->

@@ -42,7 +42,7 @@ public class BootstrapTests {
 
 	@Test
 	public void testBootstrapConfiguration() throws Exception {
-		ApplicationContext context = new ClassPathXmlApplicationContext("classpath:/META-INF/bootstrap/**/*.xml");
+		ApplicationContext context = new ClassPathXmlApplicationContext("classpath:/META-INF/batch/bootstrap/**/*.xml");
 		assertTrue(context.containsBean("jobRepository"));
 	}
 

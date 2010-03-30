@@ -6,8 +6,6 @@
                                  http://www.springframework.org/schema/context
                                  http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
-	<bean id="servletPath" class="java.lang.String">
-		<constructor-arg value="/batch" />
-	</bean>
+	<bean id="resourceService" class="org.springframework.batch.admin.web.resources.DefaultResourceService"/>
 
 </beans>

@@ -11,7 +11,7 @@
 	<bean id="bodyInboundRequestMapper" class="org.springframework.batch.admin.web.BodyInboundRequestMapper" />
 
 	<bean id="reload-job-executions" class="org.springframework.web.servlet.view.RedirectView">
-		<property name="url" value="#{servletPath}/jobs/executions" />
+		<property name="url" value="#{resourceService.servletPath}/jobs/executions" />
 		<property name="contextRelative" value="true" />
 	</bean>
 
@@ -29,12 +29,12 @@
 	</bean>
 
 	<bean name="redirect:jobs" class="org.springframework.web.servlet.view.RedirectView">
-		<property name="url" value="#{servletPath}/jobs" />
+		<property name="url" value="#{resourceService.servletPath}/jobs" />
 		<property name="contextRelative" value="true" />
 	</bean>
 
 	<bean name="redirect:files" class="org.springframework.web.servlet.view.RedirectView">
-		<property name="url" value="#{servletPath}/files" />
+		<property name="url" value="#{resourceService.servletPath}/files" />
 		<property name="contextRelative" value="true" />
 	</bean>
 
