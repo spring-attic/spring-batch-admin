@@ -1,12 +1,22 @@
 package org.springframework.batch.admin.service;
 
+import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.step.StepLocator;
 import org.springframework.beans.factory.FactoryBean;
 
+/**
+ * Convenience factory for {@link Step} instances given a {@link StepLocator}.
+ * Most implementations of {@link Job} implement StepLocator, so that can be a
+ * good starting point.
+ * 
+ * @author Dave Syer
+ * 
+ */
 public class StepLocatorStepFactoryBean implements FactoryBean<Step> {
 
 	public StepLocator stepLocator;
+
 	public String stepName;
 
 	/**
@@ -20,14 +30,13 @@ public class StepLocatorStepFactoryBean implements FactoryBean<Step> {
 	 * @param stepName
 	 */
 	public void setStepName(String stepName) {
-		this.stepName = stepName;	
+		this.stepName = stepName;
 	}
 
 	/**
 	 * 
 	 * @see FactoryBean#getObject()
 	 */
-	@Override
 	public Step getObject() throws Exception {
 		return stepLocator.getStep(stepName);
 	}
@@ -37,7 +46,6 @@ public class StepLocatorStepFactoryBean implements FactoryBean<Step> {
 	 * 
 	 * @see FactoryBean#getObjectType()
 	 */
-	@Override
 	public Class<? extends Step> getObjectType() {
 		return Step.class;
 	}
@@ -47,7 +55,6 @@ public class StepLocatorStepFactoryBean implements FactoryBean<Step> {
 	 * 
 	 * @see FactoryBean#isSingleton()
 	 */
-	@Override
 	public boolean isSingleton() {
 		return true;
 	}
