@@ -37,7 +37,7 @@
 	<bean id="jobLoader" class="org.springframework.batch.core.configuration.support.AutomaticJobRegistrar">
 		<property name="applicationContextFactories">
 			<bean class="org.springframework.batch.core.configuration.support.ClasspathXmlApplicationContextsFactoryBean">
-				<property name="resources" value="classpath*:/META-INF/batch/jobs/*.xml" />
+				<property name="resources" value="classpath*:/META-INF/spring/batch/jobs/*.xml" />
 			</bean>
 		</property>
 		<property name="jobLoader">
