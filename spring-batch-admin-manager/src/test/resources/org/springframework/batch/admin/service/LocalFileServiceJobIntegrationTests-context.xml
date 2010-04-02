@@ -5,8 +5,8 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-1.0.xsd">
 
-	<import resource="classpath*:/META-INF/batch/bootstrap/manager/*.xml" />
-	<import resource="classpath*:/META-INF/batch/bootstrap/integration/*.xml" />
+	<import resource="classpath*:/META-INF/spring/batch/bootstrap/manager/*.xml" />
+	<import resource="classpath*:/META-INF/spring/batch/bootstrap/integration/*.xml" />
 	<import resource="classpath:/staging-context.xml" />
 
 	<!-- Override the job launcher to make sure it is blocking -->
