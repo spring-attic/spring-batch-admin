@@ -7,7 +7,7 @@
 	<version>1.0.0.CI-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<scm>
-		<url>https://fisheye.springframework.org/browse/spring-batch-admin</url>
+		<url>http://static.springframework.org/spring-batch-admin</url>
 		<connection>scm:svn:https://src.springframework.org/svn/spring-batch-admin/trunk</connection>
 		<developerConnection>scm:svn:https://src.springframework.org/svn/spring-batch-admin/trunk</developerConnection>
 	</scm>

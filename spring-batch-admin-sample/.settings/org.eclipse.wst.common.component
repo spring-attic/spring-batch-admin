@@ -4,7 +4,6 @@
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
         <wb-resource deploy-path="/" source-path="/src/main/webapp"/>
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/resources"/>
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/spring-batch-admin-manager/spring-batch-admin-manager">
             <dependency-type>uses</dependency-type>
         </dependent-module>

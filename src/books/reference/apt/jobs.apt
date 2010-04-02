@@ -23,8 +23,8 @@ Add your Own Job Executions
 +---
 <beans ...>
 
-  <import resource="classpath*:/META-INF/bootstrap/*.xml" />
-  <import resource="classpath*:/META-INF/batch/*.xml" />
+  <import resource="classpath*:/META-INF/spring/batch/bootstrap/manager/*.xml" />
+  <import resource="classpath*:/META-INF/spring/batch/jobs/*.xml" />
 
   <!-- ensure job runs in foreground thread -->
   <bean id="jobLauncherTaskExecutor" class="org.springframework.core.task.SyncTaskExecutor"/>
@@ -34,7 +34,7 @@ Add your Own Job Executions
 </beans>
 +---
 
-  With the job defined in <<</META-INF/batch/*.xml>>> you can use the <<<CommandLineJobRunner>>> from 
+  With the job defined in <<</META-INF/spring/batch/jobs/*.xml>>> you can use the <<<CommandLineJobRunner>>> from 
   Spring Batch to load the file above, and launch the job by name, e.g.
   
 +---
@@ -44,7 +44,7 @@ $ java org.springframework.batch.core.launch.support.CommandLineJobRunner \
 
 Add your Own Jobs For Launching
 
-  Include Spring XML files in <<<META-INF/batch>>>.  Each file should be self-contained
+  Include Spring XML files in <<<META-INF/spring/batch/jobs>>>.  Each file should be self-contained
   (except for Batch execution components like the <<<jobRepository>>> which are provided
   centrally), and carry one or more bean definitions for a Spring Batch <<<Job>>>.  When
   the application starts these files are scanned and loaded as child contexts, and then 
@@ -71,6 +71,6 @@ Add your Own Jobs For Launching
     * Include the <<<spring-batch-admin-*.jar>>> files in <<<WEB-INF/lib>>>.  In the sample this is done simply by 
     making the WAR depend on those jar files in the Maven pom.
     
-    * Optionally add your own jobs in the classpath under <<<META-INF/batch/*.xml>>>.
+    * Optionally add your own jobs in the classpath under <<<META-INF/spring/batch/jobs/*.xml>>>.
     
     * Deploy the web app.

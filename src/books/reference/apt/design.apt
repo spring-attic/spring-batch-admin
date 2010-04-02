@@ -12,20 +12,20 @@ Application Context Structure
 
   There is a root or parent application context, and a child context for the UI components.  These
   are both loaded in the standard Spring MVC way following directives in web.xml.  There are also
-  possibly several separate child contexts (of the main root) containing job configurations.
+  possibly several additional child contexts (of the main root) containing job configurations.
   
     * The root context is loaded from a file in the manager JAR, but all that does is import
     from well known locations on the classpath:
     
 +---
-<import resource="classpath*:/META-INF/bootstrap/*.xml"/>
-<import resource="classpath*:/META-INF/spring/*.xml"/>
+<import resource="classpath*:/META-INF/spring/batch/bootstrap/**/*.xml"/>
+<import resource="classpath*:/META-INF/spring/batch/override/**/*.xml"/>
 +---
 
     * The UI child context is loaded in the same way from
     
 +---
-<import resource="classpath*:/META-INF/servlet/*.xml"/>
+<import resource="classpath*:/META-INF/spring/batch/servlet/*.xml"/>
 +---
 
     N.B. the child context by default only loads when you visit the first page in the 
@@ -34,7 +34,7 @@ Application Context Structure
     
     * The job contexts are loaded by a special component (<<<ClasspathXmlJobLoader>>> from 
     Spring Batch) in the parent context.  It looks for individual files in the pattern
-    <<<classpath*/META-INF/batch/*.xml>>> and loads each file individually as its own self-contained
+    <<<classpath*/META-INF/spring/batch/jobs/*.xml>>> and loads each file individually as its own self-contained
     context, registering any instance of Job it finds in the <<<JobRegistry>>> at the top level.
     
   The job contexts are loaded in this way so that you can provide your own jobs in multiple
@@ -51,10 +51,35 @@ Extending the UI
 * Adding a Menu
 
   Create a component of type <<<org.springframework.batch.admin.web.base.Menu>>> in the UI child 
-  context (<<<META-INF/servlet/*.xml>>>).  It has a <<<url>>> property that should point to
+  context (<<<META-INF/spring/batch/servlet/*.xml>>>).  It has a <<<url>>> property that should point to
   a controller mapping (relative to the application root context).  That's it really.
   
   If you want the page you add to show the other menus and links, you will want to 
-  implement the view for the URL that you add in a specific way.  Namely you will
+  implement the view for the URL that you add in a specific way.  That is you will 
   use a Freemarker template to render the body of the page, and insert it in a Spring
-  MVC <<<View>>> definition in your servlet XML configuration.
+  MVC <<<View>>> definition in your servlet XML configuration.  The template can use
+  the standard layout in the application as a parent bean, and that way it inherits the 
+  information architecture (menus and styling).  Look in the manager jar for
+  <<<META-INF/spring/batch/servlet/manager-context.xml>>> where you will find some examples. They 
+  look like this:
+  
++---
+<bean name="jobs" parent="standard">
+	<property name="attributes">
+		<props merge="true">
+			<prop key="body">/manager/jobs/jobs.ftl</prop>
+			<prop key="titleCode">jobs.title</prop>
+			<prop key="titleText">Spring Batch Admin: Jobs</prop>
+		</props>
+	</property>
+</bean>
++---
+
+  The only mandatory property in this is the "body", which is the location of a 
+  Freemarker template for the main body (business content) of the page.  Freemarker
+  templates by default have paths relative to either <<<classpath:/org/springframework/batch/admin/web>>>
+  or <<</WEB-INF/web>>> (either works but the <<<WEB-INF>>> location is dynamically reloadable
+  at development time).  The other
+  properties shown above are to override the page title: the "code" is a key in
+  the Spring <<<MessageSource>>> and the "text" is the default value if the code cannot 
+  be resolved.
