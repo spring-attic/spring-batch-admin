@@ -41,7 +41,7 @@
 		</#if>
 
 		<#if jobExecutionInfo.restartable>
-			<#assign jobs_url><@spring.url relativeUrl="${servletPath}/jobs/${jobExecutionInfo.name}/${jobExecutionInfo.jobId}/executions"/></#assign>
+			<#assign jobs_url><@spring.url relativeUrl="${servletPath}/jobs/${jobExecutionInfo.name}/${jobExecutionInfo.jobId?c}/executions"/></#assign>
 			<form id="restartForm" action="${jobs_url}" method="post">
 
 				<ol>
@@ -80,7 +80,7 @@
 				<td><a href="${job_url}"/>${jobExecutionInfo.name}</a></td>
 			</tr>
 			<tr class="name-sublevel1-odd">
-				<#assign job_url><@spring.url relativeUrl="${servletPath}/jobs/${jobExecutionInfo.name}/${jobExecutionInfo.jobId}/executions"/></#assign>
+				<#assign job_url><@spring.url relativeUrl="${servletPath}/jobs/${jobExecutionInfo.name}/${jobExecutionInfo.jobId?c}/executions"/></#assign>
 				<td>Job Instance</td>
 				<td><a href="${job_url}"/>${jobExecutionInfo.jobId}</a></td>
 			</tr>

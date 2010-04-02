@@ -76,13 +76,15 @@ public class JobExecutionViewTests extends AbstractManagerViewTests {
 
 	@Test
 	public void testLaunchViewWithStopped() throws Exception {
-		JobExecution execution = MetaDataInstanceFactory.createJobExecution("job", 12L, 123L, "foo=bar");
+		JobExecution execution = MetaDataInstanceFactory.createJobExecution("job", 12345L, 1233456L, "foo=bar");
 		execution.setStatus(BatchStatus.STOPPED);
 		model.put("jobExecutionInfo", new JobExecutionInfo(execution, TimeZone.getTimeZone("GMT")));
 		view.render(model, request, response);
 		String content = response.getContentAsString();
 		// System.err.println(content);
 		assertTrue(content.contains("restartForm"));
+		assertTrue(content.contains("/batch/jobs/job/12345/executions"));
+		assertTrue(content.contains("/batch/jobs/executions/1233456/steps"));
 		assertTrue(content.contains("<input id=\"stop\" type=\"submit\" value=\"Abandon\" name=\"abandon\" />"));
 	}
 
@@ -93,7 +95,7 @@ public class JobExecutionViewTests extends AbstractManagerViewTests {
 		model.put("jobExecutionInfo", new JobExecutionInfo(execution, TimeZone.getTimeZone("GMT")));
 		view.render(model, request, response);
 		String content = response.getContentAsString();
-		System.err.println(content);
+		// System.err.println(content);
 		assertFalse(content.contains("restartForm"));
 		assertTrue(content.contains("<input id=\"stop\" type=\"submit\" value=\"Abandon\" name=\"abandon\" />"));
 	}

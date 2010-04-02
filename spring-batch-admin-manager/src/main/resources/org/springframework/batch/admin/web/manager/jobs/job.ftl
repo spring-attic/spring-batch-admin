@@ -91,8 +91,8 @@
 			<ul class="controlLinks">
 				<li>Rows: ${startJobInstance}-${endJobInstance} of ${totalJobInstances}</li> 
 				<#assign job_url><@spring.url relativeUrl="${servletPath}/jobs/${job.name}"/></#assign>
-				<#if nextJobInstance??><li><a href="${job_url}?startJobInstance=${nextJobInstance}&pageSize=${pageSize!20}">Next</a></li></#if>
-				<#if previousJobInstance??><li><a href="${job_url}?startJobInstance=${previousJobInstance}&pageSize=${pageSize!20}">Previous</a></li></#if>
+				<#if nextJobInstance??><li><a href="${job_url}?startJobInstance=${nextJobInstance?c}&pageSize=${pageSize!20}">Next</a></li></#if>
+				<#if previousJobInstance??><li><a href="${job_url}?startJobInstance=${previousJobInstance?c}&pageSize=${pageSize!20}">Previous</a></li></#if>
 				<!-- TODO: enable pageSize editing -->
 				<li>Page Size: ${pageSize!20}</li>
 			</ul>

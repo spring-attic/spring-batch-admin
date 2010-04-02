@@ -58,8 +58,8 @@
 			<ul class="controlLinks">
 				<#assign executions_url><@spring.url relativeUrl="${servletPath}/jobs/executions"/></#assign>
 				<li>Rows: ${startJobExecution}-${endJobExecution} of ${totalJobExecutions}</li> 
-				<#if nextJobExecution??><li><a href="${executions_url}?startJobExecution=${nextJobExecution}&pageSize=${pageSize!20}">Next</a></li></#if>
-				<#if previousJobExecution??><li><a href="${executions_url}?startJobExecution=${previousJobExecution}&pageSize=${pageSize!20}">Previous</a></li></#if>
+				<#if nextJobExecution??><li><a href="${executions_url}?startJobExecution=${nextJobExecution?c}&pageSize=${pageSize!20}">Next</a></li></#if>
+				<#if previousJobExecution??><li><a href="${executions_url}?startJobExecution=${previousJobExecution?c}&pageSize=${pageSize!20}">Previous</a></li></#if>
 				<!-- TODO: enable pageSize editing -->
 				<li>Page Size: ${pageSize!20}</li>
 			</ul>
