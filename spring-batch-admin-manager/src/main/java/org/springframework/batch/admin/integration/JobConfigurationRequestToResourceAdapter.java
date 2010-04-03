@@ -32,12 +32,17 @@ import org.springframework.util.StringUtils;
 @MessageEndpoint
 public class JobConfigurationRequestToResourceAdapter {
 
+	private static final String EMPTY_BEANS = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+			+ "<beans xmlns=\"http://www.springframework.org/schema/beans\""
+			+ " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+			+ " xsi:schemaLocation=\"http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd\"/>";
+
 	@ServiceActivator
 	public Resource adapt(JobConfigurationRequest request) throws DuplicateJobException {
 
 		String filename = request.getFilename();
 		if (!StringUtils.hasText(request.getXml())) {
-			return new ByteArrayResource(new byte[0], filename + ":empty-string");
+			return new ByteArrayResource(EMPTY_BEANS.getBytes(), filename + ":empty-string");
 		}
 		return new ByteArrayResource(request.getXml().getBytes(), filename);
 

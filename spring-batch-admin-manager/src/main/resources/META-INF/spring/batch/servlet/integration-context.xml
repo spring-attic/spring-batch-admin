@@ -45,7 +45,7 @@
 		<bean class="org.springframework.batch.admin.integration.MultipartToJobConfigurationRequestTransformer"/>
 	</integration:transformer>
 
-	<http:inbound-channel-adapter name="/job-configuration-requests" channel="job-configuration-multipart"
+	<http:inbound-channel-adapter name="/job-configuration-multipart" channel="job-configuration-multipart"
 		request-mapper="configurationFileRequestMapper" view="redirect:jobs" supported-methods="POST"/>
 
 	<http:inbound-channel-adapter name="/job-configuration-files" channel="job-configuration-files"

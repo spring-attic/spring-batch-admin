@@ -39,12 +39,12 @@ public class ConfigurationViewTests extends AbstractManagerViewTests {
 	private View view;
 
 	@Test
-	public void testMessages() throws Exception {
+	public void testConfiguration() throws Exception {
 		view.render(model, request, response);
 		String content = response.getContentAsString();
 		// System.err.println(content);
 		assertTrue(content.contains("<div id=\"secondary-navigation\">"));
-		assertTrue(content.contains("Register XML Configuration"));
+		assertTrue(content.contains("Register XML File"));
 	}
 
 }

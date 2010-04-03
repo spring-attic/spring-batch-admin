@@ -51,6 +51,10 @@ public class MultipartJobConfigurationRequest {
 	@Transformer
 	public JobConfigurationRequest getJobConfigurationRequest() {
 		JobConfigurationRequest jobConfigurationRequest = new JobConfigurationRequest();
+		if (file==null) {
+			jobConfigurationRequest.setXml("");
+			return jobConfigurationRequest;
+		}
 		try {
 			jobConfigurationRequest.setXml(new String(file.getBytes()));
 		}
