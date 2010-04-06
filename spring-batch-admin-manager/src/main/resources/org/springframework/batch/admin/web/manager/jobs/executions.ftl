@@ -30,7 +30,6 @@
 				<th>Duration</th>
 				<th>Status</th>
 				<th>ExitCode</th>
-				<th>Steps</th>
 			</tr>
 			<#list jobExecutions as execution>
 				<#if execution_index % 2 == 0>
@@ -48,9 +47,6 @@
 					<td>${execution.duration}</td>
 					<td>${execution.jobExecution.status}</td>
 					<td>${execution.jobExecution.exitStatus.exitCode}</td>
-					<td><#if execution.jobExecution.stepExecutions?size!=0>[<#list execution.jobExecution.stepExecutions as stepExecution><#if stepExecution_index != 0>,</#if>
-					<#assign step_url><@spring.url relativeUrl="${servletPath}/jobs/executions/${execution.id?c}/steps/${stepExecution.id?c}/progress"/></#assign>
-					<a href="${step_url}"/>${stepExecution.stepName}</a></#list>]</#if></td>
 				</tr>
 			</#list>
 		</table>
