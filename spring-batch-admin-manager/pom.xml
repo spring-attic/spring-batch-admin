@@ -99,6 +99,7 @@ visualization of Batch meta data, and also launching and stopping jobs inside th
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>commons-collections</groupId>
