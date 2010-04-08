@@ -90,7 +90,7 @@ public class FileServiceResourceConverter extends PropertyEditorSupport implemen
 	
 	@Override
 	public void setAsText(String text) throws IllegalArgumentException {
-		// TODO remove PropertyEditor support (SPR-6807)
+		// TODO remove PropertyEditor support (SPR-7079)
 		setValue(convert(text));
 	}
 
