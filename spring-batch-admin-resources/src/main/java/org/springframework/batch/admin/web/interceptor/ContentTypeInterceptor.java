@@ -97,7 +97,7 @@ public class ContentTypeInterceptor extends HandlerInterceptorAdapter implements
 				}
 
 				String newViewName = viewName + "." + extension;
-				if (beanFactory.containsBean(newViewName)) {
+				if (beanFactory==null || beanFactory.containsBean(newViewName)) {
 					// Adding a suffix only makes sense for bean name resolution
 					modelAndView.setViewName(newViewName);
 				}
