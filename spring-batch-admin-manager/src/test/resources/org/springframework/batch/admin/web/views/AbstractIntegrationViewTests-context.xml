@@ -7,9 +7,9 @@
                                  http://www.springframework.org/schema/integration/http http://www.springframework.org/schema/integration/http/spring-integration-http-1.0.xsd
                                  http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-1.0.xsd">
 
-	<import resource="classpath*:/META-INF/spring/batch/servlet/resources-context.xml"/>
-	<import resource="classpath*:/META-INF/spring/batch/servlet/manager-context.xml"/>
-	<import resource="classpath*:/META-INF/spring/batch/servlet/integration-context.xml"/>
+	<import resource="classpath*:/META-INF/spring/batch/servlet/resources/*-context.xml"/>
+	<import resource="classpath*:/META-INF/spring/batch/servlet/manager/manager-context.xml"/>
+	<import resource="classpath*:/META-INF/spring/batch/servlet/manager/integration-context.xml"/>
 	
 	<bean id="resourceService" class="org.springframework.batch.admin.web.resources.DefaultResourceService"/>
 

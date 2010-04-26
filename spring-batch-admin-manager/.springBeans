@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beansProjectDescription>
 	<version>1</version>
-	<pluginVersion><![CDATA[2.3.1.201002090815-CI-R3692-B638]]></pluginVersion>
+	<pluginVersion><![CDATA[2.3.3.201004222200-CI-R3763-B719]]></pluginVersion>
 	<configSuffixes>
 		<configSuffix><![CDATA[xml]]></configSuffix>
 	</configSuffixes>
@@ -10,27 +10,17 @@
 		<config>src/test/resources/test-config.xml</config>
 		<config>src/test/resources/test-job-context.xml</config>
 		<config>src/test/resources/org/springframework/batch/admin/web/views/AbstractManagerViewTests-context.xml</config>
-		<config>src/main/resources/META-INF/bootstrap/integration/configuration-context.xml</config>
-		<config>src/main/resources/META-INF/bootstrap/batch/data-source-context.xml</config>
-		<config>src/main/resources/META-INF/bootstrap/batch/env-context.xml</config>
-		<config>src/main/resources/META-INF/bootstrap/batch/execution-context.xml</config>
 		<config>src/test/resources/org/springframework/batch/admin/sample/FileDropJobIntegrationTests-context.xml</config>
 		<config>src/test/resources/org/springframework/batch/admin/sample/JobConfigurationRequestIntegrationTests-context.xml</config>
 		<config>src/test/resources/org/springframework/batch/admin/sample/JobIntegrationTests-context.xml</config>
 		<config>src/test/resources/org/springframework/batch/admin/launch/JobLauncherSynchronizerIntegrationTests-context.xml</config>
 		<config>src/test/resources/org/springframework/batch/admin/sample/JobLaunchIntegrationTests-context.xml</config>
-		<config>src/main/resources/META-INF/bootstrap/integration/launcher-context.xml</config>
-		<config>src/main/resources/META-INF/bootstrap/integration/restart-context.xml</config>
 		<config>src/test/resources/org/springframework/batch/admin/sample/RestartJobIntegrationTests-context.xml</config>
 		<config>src/test/resources/org/springframework/batch/admin/sample/StringPayloadJobIntegrationTests-context.xml</config>
 		<config>src/test/resources/org/springframework/batch/admin/sample/WireTapJobIntegrationTests-context.xml</config>
 		<config>src/test/resources/staging-context.xml</config>
 		<config>src/test/resources/org/springframework/batch/admin/service/LocalFileServiceIntegrationTests-context.xml</config>
-		<config>src/main/resources/META-INF/bootstrap/integration/file-context.xml</config>
-		<config>src/main/resources/META-INF/servlet/manager-context.xml</config>
 		<config>src/test/resources/org/springframework/batch/admin/service/job-context.xml</config>
-		<config>src/main/resources/META-INF/servlet/controller-context.xml</config>
-		<config>src/main/resources/META-INF/servlet/integration-context.xml</config>
 		<config>src/test/resources/org/springframework/batch/admin/service/JobLocatorStepLocatorIntegrationTests-context.xml</config>
 		<config>src/test/resources/org/springframework/batch/admin/service/LocalFileServiceJobIntegrationTests-context.xml</config>
 		<config>src/test/resources/org/springframework/batch/admin/web/views/AbstractIntegrationViewTests-context.xml</config>

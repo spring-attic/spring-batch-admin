@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<import resource="classpath*:/META-INF/spring/batch/bootstrap/**/*.xml" />
-	<import resource="classpath*:/META-INF/spring/batch/servlet/*.xml" />
+	<import resource="classpath*:/META-INF/spring/batch/servlet/resources/*.xml" />
 	
 	<bean class="org.springframework.batch.admin.web.resources.DummyMenu"/>
 

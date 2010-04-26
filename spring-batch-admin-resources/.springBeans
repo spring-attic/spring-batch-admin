@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beansProjectDescription>
 	<version>1</version>
-	<pluginVersion><![CDATA[2.3.0.200912170948-RELEASE]]></pluginVersion>
+	<pluginVersion><![CDATA[2.3.3.201004222200-CI-R3763-B719]]></pluginVersion>
 	<configSuffixes>
 		<configSuffix><![CDATA[xml]]></configSuffix>
 	</configSuffixes>
@@ -9,7 +9,6 @@
 	<configs>
 		<config>src/main/resources/org/springframework/batch/admin/web/resources/servlet-config.xml</config>
 		<config>src/main/resources/org/springframework/batch/admin/web/resources/webapp-config.xml</config>
-		<config>src/main/resources/META-INF/servlet/resources-context.xml</config>
 	</configs>
 	<configSets>
 	</configSets>
