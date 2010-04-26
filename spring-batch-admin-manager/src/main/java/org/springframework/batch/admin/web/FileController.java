@@ -130,7 +130,7 @@ public class FileController {
 
 		String path = request.getPathInfo().substring("/files/".length());
 		Resource file = fileService.getResource(path);
-		if (file == null) {
+		if (file == null || !file.exists()) {
 			errors.reject("file.download.missing", new Object[] { path },
 					"File download failed for missing file at path=" + path);
 			return "files";

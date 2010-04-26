@@ -46,6 +46,7 @@
 			<tr>
 				<th>Local</th>
 				<th>Path</th>
+				<th>Filename</th>
 			</tr>
 			<#list files as file>
 				<#if file_index % 2 == 0>
@@ -61,6 +62,7 @@
 				<tr class="${rowClass}">
 					<td>${file.local?string}</td>
 					<td>${filePath}</td>
+					<td>${file.fileName}</td>
 				</tr>
 			</#list>
 		</table>

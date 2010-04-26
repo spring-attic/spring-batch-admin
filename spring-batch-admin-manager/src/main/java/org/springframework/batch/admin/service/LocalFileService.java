@@ -17,13 +17,14 @@ package org.springframework.batch.admin.service;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.ContextResource;
@@ -34,7 +35,6 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternUtils;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 /**
  * An implementation of {@link FileService} that deals with files only in the
@@ -51,6 +51,8 @@ public class LocalFileService implements FileService, InitializingBean, Resource
 	 * 
 	 */
 	private File outputDir = new File(System.getProperty("java.io.tmpdir", "/tmp"), "batch/files");
+
+	private static final Log logger = LogFactory.getLog(LocalFileService.class);
 
 	private ResourceLoader resourceLoader = new DefaultResourceLoader();
 
@@ -77,6 +79,8 @@ public class LocalFileService implements FileService, InitializingBean, Resource
 
 		path = sanitize(path);
 
+		Assert.hasText(path, "The file path must not be empty");
+
 		String name = path.substring(path.lastIndexOf("/") + 1);
 		String parent = path.substring(0, path.lastIndexOf(name));
 		if (parent.endsWith("/")) {
@@ -87,21 +91,12 @@ public class LocalFileService implements FileService, InitializingBean, Resource
 		directory.mkdirs();
 		Assert.state(directory.exists() && directory.isDirectory(), "Could not create directory: " + directory);
 
-		File dest = new File(directory, getFileName(name));
+		FileInfo result = new FileInfo(path);
+		File dest = new File(outputDir, result.getFileName());
 		dest.createNewFile();
 
-		return new FileInfo(extractPath(dest));
+		return result;
 
-	}
-
-	/**
-	 * @param name
-	 * @return
-	 */
-	private String getFileName(String name) {
-		String extension = StringUtils.getFilenameExtension(name);
-		String prefix = extension == null ? name : name.substring(0, name.length() - extension.length() - 1);
-		return prefix + getSuffix() + (extension == null ? "" : extension);
 	}
 
 	/**
@@ -114,10 +109,11 @@ public class LocalFileService implements FileService, InitializingBean, Resource
 	}
 
 	public boolean publish(FileInfo dest) throws IOException {
-		fileSender.send(getResource(dest.getPath()).getFile());
+		String path = dest.getPath();
+		fileSender.send(getResource(path).getFile());
 		return true;
 	}
-	
+
 	public int countFiles() {
 		ResourcePatternResolver resolver = ResourcePatternUtils.getResourcePatternResolver(resourceLoader);
 		Resource[] resources;
@@ -132,20 +128,58 @@ public class LocalFileService implements FileService, InitializingBean, Resource
 
 	public List<FileInfo> getFiles(int startFile, int pageSize) throws IOException {
 
+		List<FileInfo> files = getFiles("**");
+
+		String path = "";
+		int count = 0;
+		for (FileInfo info : files) {
+			FileInfo shortInfo = info.shortPath();
+			if (!path.equals(shortInfo.getPath())) {
+				files.set(count, shortInfo);
+				path = shortInfo.getPath();
+			}
+			count++;
+		}
+
+		return files.subList(startFile, Math.min(startFile + pageSize, files.size()));
+
+	}
+
+	private List<FileInfo> getFiles(String pattern) {
 		ResourcePatternResolver resolver = ResourcePatternUtils.getResourcePatternResolver(resourceLoader);
-		Resource[] resources = resolver.getResources("file:///" + outputDir.getAbsolutePath() + "/**");
+		List<Resource> resources = new ArrayList<Resource>();
+
+		if (!pattern.startsWith("/")) {
+			pattern = "/" + outputDir.getAbsolutePath() + "/" + pattern;
+		}
+		if (!pattern.startsWith("file:")) {
+			pattern = "file:///" + pattern;
+		}
+
+		try {
+			resources = Arrays.asList(resolver.getResources(pattern));
+		}
+		catch (IOException e) {
+			logger.debug("Cannot locate files " + pattern, e);
+			return Collections.emptyList();
+		}
 
 		List<FileInfo> files = new ArrayList<FileInfo>();
-		for (int i = startFile; i < startFile + pageSize && i < resources.length; i++) {
-			Resource resource = resources[i];
-			File file = resource.getFile();
-			if (file.isFile()) {
-				FileInfo info = new FileInfo(extractPath(file));
-				files.add(info);
+		for (Resource resource : resources) {
+			File file;
+			try {
+				file = resource.getFile();
+				if (file.isFile()) {
+					FileInfo info = new FileInfo(extractPath(file));
+					files.add(info);
+				}
+			}
+			catch (IOException e) {
+				logger.debug("Cannot locate file " + resource, e);
 			}
 		}
-		Collections.sort(files);
 
+		Collections.sort(files);
 		return files;
 
 	}
@@ -178,9 +212,10 @@ public class LocalFileService implements FileService, InitializingBean, Resource
 	public Resource getResource(String path) {
 
 		path = sanitize(path);
-
-		File file = new File(outputDir, path);
-
+		FileInfo pattern = new FileInfo(path);
+		List<FileInfo> files = getFiles(pattern.getPattern());
+		FileInfo info = files.isEmpty() ? pattern : files.get(0);
+		File file = new File(outputDir, info.getFileName());
 		return new FileServiceResource(file, path);
 
 	}
@@ -205,15 +240,6 @@ public class LocalFileService implements FileService, InitializingBean, Resource
 			}
 		}
 		return path;
-	}
-
-	/**
-	 * Generate a suffix for file names using the current date and time.
-	 * 
-	 * @return a timestamp to use as a unique file suffix
-	 */
-	private String getSuffix() {
-		return "." + (new SimpleDateFormat("yyyyMMdd.HHmmss").format(new Date())) + ".";
 	}
 
 	private static class FileServiceResource extends FileSystemResource implements ContextResource {

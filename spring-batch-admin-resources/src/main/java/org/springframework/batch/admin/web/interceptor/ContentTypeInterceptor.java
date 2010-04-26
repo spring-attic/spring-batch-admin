@@ -23,6 +23,9 @@ import java.util.LinkedHashSet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.util.WebUtils;
@@ -37,9 +40,14 @@ import org.springframework.web.util.WebUtils;
  * @author Dave Syer
  * 
  */
-public class ContentTypeInterceptor extends HandlerInterceptorAdapter {
+public class ContentTypeInterceptor extends HandlerInterceptorAdapter implements BeanFactoryAware {
 
 	private Collection<String> extensions = new HashSet<String>();
+	private BeanFactory beanFactory;
+
+	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+		this.beanFactory = beanFactory;
+	}
 
 	/**
 	 * A collection of extensions to append to view names.
@@ -88,7 +96,11 @@ public class ContentTypeInterceptor extends HandlerInterceptorAdapter {
 					viewName = viewName.substring(0, path.indexOf("."));
 				}
 
-				modelAndView.setViewName(viewName + "." + extension);
+				String newViewName = viewName + "." + extension;
+				if (beanFactory.containsBean(newViewName)) {
+					// Adding a suffix only makes sense for bean name resolution
+					modelAndView.setViewName(newViewName);
+				}
 
 			}
 

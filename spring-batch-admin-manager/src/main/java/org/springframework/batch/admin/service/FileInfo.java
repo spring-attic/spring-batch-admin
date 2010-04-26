@@ -16,8 +16,10 @@
 package org.springframework.batch.admin.service;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-
+import org.springframework.util.StringUtils;
 
 /**
  * @author Dave Syer
@@ -25,25 +27,70 @@ import java.io.Serializable;
  */
 public class FileInfo implements Comparable<FileInfo>, Serializable {
 
-	private final String locator;
+	private final static String TIMESTAMP_PATTERN = ".*\\.[0-9]*\\.[0-9]*";
+
+	private final String timestamp;
 
 	private final String path;
+
+	private final String shortPath;
 
 	private final boolean local;
 
 	public FileInfo(String path) {
-		this(path, path.replace("/", "|"), true);
+		this(path, null, true);
 	}
 
-	public FileInfo(String path, String locator, boolean local) {
+	public FileInfo(String path, String timestamp, boolean local) {
 		super();
 		this.path = path.replace("\\", "/");
-		this.locator = locator;
+		this.shortPath = extractPath(path, timestamp);
+		this.timestamp = extractTimestamp(path, timestamp);
 		this.local = local;
 	}
 	
-	public static FileInfo fromLocator(String locator) {
-		return new FileInfo(locator.replace("|", "/"));
+	public FileInfo shortPath() {
+		FileInfo info = new FileInfo(shortPath, timestamp, local);
+		return info;
+	}
+	
+	public String getPattern() {
+		if (path.matches(TIMESTAMP_PATTERN)) {
+			return path;
+		}
+		String extension = StringUtils.getFilenameExtension(path);
+		String prefix = extension == null ? path : path.substring(0, path.length() - extension.length() - 1);
+		if (prefix.matches(TIMESTAMP_PATTERN)) {
+			return path;
+		}
+		return prefix + ".*.*" + (extension==null ? "" : "." + extension);
+	}
+
+	private String extractPath(String path, String timestamp) {
+		if (path.matches(TIMESTAMP_PATTERN)) {
+			return path.substring(0, path.length() - 16);
+		}
+		String extension = StringUtils.getFilenameExtension(path);
+		String prefix = extension == null ? path : path.substring(0, path.length() - extension.length() - 1);
+		if (prefix.matches(TIMESTAMP_PATTERN)) {
+			return prefix.substring(0, prefix.length() - 16) + "." + extension;
+		}
+		return path;
+	}
+
+	private String extractTimestamp(String path, String timestamp) {
+		if (timestamp != null) {
+			return timestamp;
+		}
+		if (path.matches(TIMESTAMP_PATTERN)) {
+			return path.substring(path.length() - 15, path.length());
+		}
+		String extension = StringUtils.getFilenameExtension(path);
+		String prefix = extension == null ? path : path.substring(0, path.length() - extension.length() - 1);
+		if (prefix.matches(TIMESTAMP_PATTERN)) {
+			return prefix.substring(prefix.length() - 15, prefix.length());
+		}
+		return new SimpleDateFormat("yyyyMMdd.HHmmss").format(new Date());
 	}
 
 	/**
@@ -56,16 +103,36 @@ public class FileInfo implements Comparable<FileInfo>, Serializable {
 	/**
 	 * @return the locator
 	 */
-	public String getLocator() {
-		return locator;
+	public String getTimestamp() {
+		return timestamp;
 	}
 
 	public String getPath() {
 		return path;
 	}
 
+	public String getFileName() {
+		if (path.matches(TIMESTAMP_PATTERN)) {
+			return path;
+		}
+		String extension = StringUtils.getFilenameExtension(path);
+		String prefix = extension == null ? path : path.substring(0, path.length() - extension.length() - 1);
+		if (prefix.matches(TIMESTAMP_PATTERN)) {
+			return path;
+		}
+		return prefix + getSuffix() + (extension == null ? "" : "." + extension);
+	}
+
+	private String getSuffix() {
+		return "." + timestamp;
+	}
+
 	public int compareTo(FileInfo o) {
-		return path.compareTo(o.path);
+		return shortPath.equals(o.shortPath) ? -timestamp.compareTo(o.timestamp) : path.compareTo(o.path);
+	}
+
+	public String toString() {
+		return "FileInfo [path=" + path + ", timestamp=" + timestamp + ", local=" + local + "]";
 	}
 
 }
