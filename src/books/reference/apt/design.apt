@@ -25,7 +25,7 @@ Application Context Structure
     * The UI child context is loaded in the same way from
     
 +---
-<import resource="classpath*:/META-INF/spring/batch/servlet/*.xml"/>
+<import resource="classpath*:/META-INF/spring/batch/servlet/**/*.xml"/>
 +---
 
     N.B. the child context by default only loads when you visit the first page in the 
@@ -51,7 +51,7 @@ Extending the UI
 * Adding a Menu
 
   Create a component of type <<<org.springframework.batch.admin.web.base.Menu>>> in the UI child 
-  context (<<<META-INF/spring/batch/servlet/*.xml>>>).  It has a <<<url>>> property that should point to
+  context (<<<META-INF/spring/batch/servlet/**/*.xml>>>).  It has a <<<url>>> property that should point to
   a controller mapping (relative to the application root context).  That's it really.
   
   If you want the page you add to show the other menus and links, you will want to 
@@ -60,7 +60,7 @@ Extending the UI
   MVC <<<View>>> definition in your servlet XML configuration.  The template can use
   the standard layout in the application as a parent bean, and that way it inherits the 
   information architecture (menus and styling).  Look in the manager jar for
-  <<<META-INF/spring/batch/servlet/manager-context.xml>>> where you will find some examples. They 
+  <<<META-INF/spring/batch/servlet/manager/manager-context.xml>>> where you will find some examples. They 
   look like this:
   
 +---
