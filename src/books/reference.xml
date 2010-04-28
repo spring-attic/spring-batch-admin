@@ -28,6 +28,9 @@
 				<section>
 					<id>running</id>
 				</section>
+				<section>
+					<id>configuration</id>
+				</section>
 			</sections>
 		</chapter>
 		<chapter>

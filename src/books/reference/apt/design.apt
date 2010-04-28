@@ -22,6 +22,8 @@ Application Context Structure
 <import resource="classpath*:/META-INF/spring/batch/override/**/*.xml"/>
 +---
 
+     Note that the "override" location has <no> files in it in Spring Batch Admin distribution.  This is a placeholder for users to add their own content.
+
     * The UI child context is loaded in the same way from
     
 +---

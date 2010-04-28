@@ -34,7 +34,7 @@ public class ExampleItemWriter implements ItemWriter<Object> {
 	}
 
 	/**
-	 * @see ItemWriter#write(Object)
+	 * @see ItemWriter#write(List)
 	 */
 	public void write(List<? extends Object> data) throws Exception {
 		log.info(data);

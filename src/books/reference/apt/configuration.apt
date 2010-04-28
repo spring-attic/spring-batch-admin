@@ -1,0 +1,31 @@
+  ------
+  Configuration Upload
+
+Configuration Upload
+  
+  An interesting problem that has no universal good solution is: how do I change the configuration of a running Spring application?  Spring Batch Admin has a configuration upload feature that solves this problem in a particular way.
+
+* Screenshots of the Basic Use Case
+
+[images/jobs-view-before.jpg]Jobs View Before Upload
+
+  We start with a look at the Jobs view in the application.  It shows a list of jobs that are either launchable or monitorable by the web application.
+
+  Now the plan is to upload a new <<<Job>>> configuration and see this view change.  So we start with the "Files" menu in the top navigation, and then click on "Configuration".  This presents a simple form to upload a file.  If we point to a Spring XML configuration file, the view looks like this:
+
+[images/configuration-view.jpg]Configuration View
+
+  We press the "Upload" button and the configuration is uploaded and parsed and the <<<Job>>> instances in the uploaded file are registered for launching:
+
+[images/jobs-view-after.jpg]Jobs View After Upload
+
+  You can see a new entry in the job registry ("test-job") which is launchable in-process because the application has a reference to the <<<Job>>>.  (Jobs which are not launchable were executed out of process, but used the same database for its <<<JobRepository>>>, so they show up with their executions in the UI.)
+
+* Variant of the Basic Use Case
+
+  A common variant of the basic upload use case is to upload a modification of an existing <<<Job>>> configuration, instead of a brand new one.  This is common because one often needs to tweak the runtime parameters, especially when performance testing.  For instance we could change the <a href="http://static.springsource.org/spring-batch/trunk/reference/html/configureStep.html#commitInterval">commit-interval</a> in one of the <<<Steps>>> in a <<<Job>>> so that more (or less) items are grouped in a chunk and committed together during a repetitive item-processing <<<Step>>>.  This might affect performance and the <<<Job>>> might run faster overall because of more efficient use of transactional resources.  We would be able to measure and verify this directly by launching the <<<Job>>> from the application and inspecting the result (because the web interface is resource oriented, this could also be automated using a simple shell script based on <<<curl>>>).
+
+* How Does it Work?
+
+  The secret to the implementation of this use case is that <<<Job>>> configuration files are parsed up into separate Spring <<<ApplicationContext>>> instances, which are tracked by their file name.  The execution environment (<<<JobLauncher>>>, transaction manager, <<<DataSource>>> etc.) are provided by the application as a parent context, and the <<<Jobs>>> all live in child contexts of that environment.  This means that they can be volatile, and their lifecycle can be managed by a service in the application.  The service in question happens to be activated by Spring Integration (as described elsewhere in this guide) via a service activator wrapping a <<<JobLoader>>>. <<<JobLoader>>> is a standard component from Spring Batch which tracks and manages <<<ApplicationContext>>> instances containing <<<Jobs>>>.
+
