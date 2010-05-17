@@ -5,7 +5,7 @@ Add your Own Job Executions
 
   To add job executions from another process just execute a job (e.g. from command line)
   against the same database that is
-  used by Spring Batch Admin, and the UI picks up the meta data from the 
+  used by Spring Batch Admin.  The UI picks up the meta data from the 
   usual Spring Batch tables.
   
 * Create Your Own Standalone Application
@@ -16,7 +16,7 @@ Add your Own Job Executions
   
   If you do that then in particular for a standalone application that runs a single job in 
   its own process, you will want
-  to override the <<<jobLauncherTaskExecutor>>> as descriobed above, and possibly also the <<<jobLoader>>> in
+  to override the <<<jobLauncherTaskExecutor>>> as described above, and possibly also the <<<jobLoader>>> in
   addition to providing data source properties.  Here's an example configuration file to drive a 
   job:
   
@@ -42,7 +42,7 @@ $ java org.springframework.batch.core.launch.support.CommandLineJobRunner \
   -next config/launch-context.xml jobName
 +---
 
-Add your Own Jobs For Launching
+Add your Own Jobs For Launching in the UI
 
   Include Spring XML files in <<<META-INF/spring/batch/jobs>>>.  Each file should be self-contained
   (except for Batch execution components like the <<<jobRepository>>> which are provided
@@ -50,8 +50,7 @@ Add your Own Jobs For Launching
   the application starts these files are scanned and loaded as child contexts, and then 
   the jobs are registered with a <<<JobRegistry>>> in the parent.  Because they are 
   child contexts you don't have to worry about name clashes between different XML files 
-  or different contributing JARs (except for the jobs which must have unique names, at 
-  present, but perhaps not when we get to a release).  
+  or different contributing JARs (except for the jobs which must have unique names).  
   
   As a convenience, the child contexts inherit
   property placeholders and AOP configuration from the parent (this is not the default
