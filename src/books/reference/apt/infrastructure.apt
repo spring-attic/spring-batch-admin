@@ -117,13 +117,15 @@ Overriding Components from Spring Batch Admin
   but if it is contending with other jobs, then they will all eventually run in the thread pool provided
   by the bootstrap (with 600 threads by default).
   
-  The bootstrap pool can be modified by overriding its bean definition <<<poolTaskExecutor>>>, e.g.
+  The throttled executor itself delegates to a pool which can be
+  modified independently by overriding its bean definition
+  <<<poolTaskExecutor>>>, e.g.
 
 +---
 <task:executor id="poolTaskExecutor" pool-size="200" rejection-policy="CALLER_RUNS"/>
 +---
 
-  changes the pool size to 200, limiting all jobs that use it to at most 200 threads.  
+  changes the pool size to 200 (from 600), limiting all jobs that use it to at most 200 threads.  
   
   Your mileage may vary with these thread pool settings depending on the workload that is executed.
   It is worth experimenting with the parameters to see if you can affect the overall throughput
@@ -149,18 +151,22 @@ Overriding Components from Spring Batch Admin
   
     * Changing the path locations maybe (trivial but not that useful).
   
-    * Change
-  the inheritance strategy for post processors.  By default the AOP configuration and the 
-  <<<PropertyPLaceHolderConfigurer>>> instances from the root context are copied into the child context
-  created from the Job configuration files.  You can change this behaviour just by providing your
-  own versions in addition in the child context, or to make global changes you can override the
-  <<<jobLoader>>> with one that copies different post processors down into the child, or one that
-  does something completely different.  
+    * Change the inheritance strategy for post processors.  By default
+    the AOP configuration and the <<<PropertyPLaceHolderConfigurer>>>
+    instances from the root context are copied into the child context
+    created from the Job configuration files.  You can change this
+    behaviour just by providing your own versions in addition in the
+    child context, or to make global changes you can override the
+    <<<jobLoader>>> with one that copies different post processors
+    down into the child, or one that does something completely
+    different.
   
-    * Override it to a dummy bean for the purposes of an integration test, so that it doesn't
-  try to create multiple instances of the Job that you want to test. The sample application
-  has an example.  In <<<JobExecutionTests-context.xml>>> we want to load the Jobs explicitly into the test
-  context, and prevent them from being loaded again by the job loader, so we do this:
+    * Override it to a dummy bean for the purposes of an integration
+    test, so that it doesn't try to create multiple instances of the
+    Job that you want to test. The sample application has an example.
+    In <<<JobExecutionTests-context.xml>>> we want to load the Jobs
+    explicitly into the test context, and prevent them from being
+    loaded again by the job loader, so we do this:
 
 +---
 <!-- prevent loading of other jobs by overriding the loader in the main bootstrap context -->

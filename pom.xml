@@ -4,12 +4,12 @@
 	<groupId>org.springframework.batch</groupId>
 	<artifactId>spring-batch-admin</artifactId>
 	<name>Spring Batch Admin</name>
-	<version>1.0.0.BUILD-SNAPSHOT</version>
+	<version>1.0.0.RELEASE</version>
 	<packaging>pom</packaging>
 	<scm>
-		<url>http://static.springframework.org/spring-batch-admin</url>
-		<connection>scm:svn:https://src.springframework.org/svn/spring-batch-admin/trunk</connection>
-		<developerConnection>scm:svn:https://src.springframework.org/svn/spring-batch-admin/trunk</developerConnection>
+		<url>http://static.springframework.org/spring-batch-admin/tags/1.0.0.RELEASE</url>
+		<connection>scm:svn:https://src.springframework.org/svn/spring-batch-admin/tags/1.0.0.RELEASE</connection>
+		<developerConnection>scm:svn:https://src.springframework.org/svn/spring-batch-admin/tags/1.0.0.RELEASE</developerConnection>
 	</scm>
 	<issueManagement>
 		<system>JIRA</system>
@@ -106,7 +106,7 @@
 			</build>
 		</profile>
 		<profile>
-			<id>dist</id>
+			<id>zip</id>
 			<build>
 				<plugins>
 					<plugin>

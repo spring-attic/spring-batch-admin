@@ -22,7 +22,8 @@ Application Context Structure
 <import resource="classpath*:/META-INF/spring/batch/override/**/*.xml"/>
 +---
 
-     Note that the "override" location has <no> files in it in Spring Batch Admin distribution.  This is a placeholder for users to add their own content.
+     Note that the "override" location has <no> files in it in Spring Batch Admin distribution.  This is a 
+	 placeholder for users to add their own content.
 
     * The UI child context is loaded in the same way from
     
@@ -37,7 +38,7 @@ Application Context Structure
     * The job contexts are loaded by a special component (<<<ClasspathXmlJobLoader>>> from 
     Spring Batch) in the parent context.  It looks for individual files in the pattern
     <<<classpath*/META-INF/spring/batch/jobs/*.xml>>> and loads each file individually as its own self-contained
-    context, registering any instance of Job it finds in the <<<JobRegistry>>> at the top level.
+    context, registering any instance of <<<Job>>> it finds in the <<<JobRegistry>>> at the top level.
     
   The job contexts are loaded in this way so that you can provide your own jobs in multiple
   (possibly many) JAR files included in the application, but you do not have to worry too much about
@@ -52,13 +53,17 @@ Extending the UI
   
 * Adding a Menu
 
-  Create a component of type <<<org.springframework.batch.admin.web.base.Menu>>> in the UI child 
-  context (<<<META-INF/spring/batch/servlet/**/*.xml>>>).  It has a <<<url>>> property that should point to
-  a controller mapping (relative to the application root context).  That's it really.
+  Create a component of type
+  <<<org.springframework.batch.admin.web.base.Menu>>> in the UI child
+  context (<<<META-INF/spring/batch/servlet/**/*.xml>>>).  The
+  <<<Meanu>>> has a <<<url>>> property that should point to a
+  controller mapping (relative to the application root context).
+  That's it really.
   
-  If you want the page you add to show the other menus and links, you will want to 
-  implement the view for the URL that you add in a specific way.  That is you will 
-  use a Freemarker template to render the body of the page, and insert it in a Spring
+  If you also want the page you add to fit in with the information architecture of the application
+  as a whole, i.e. show the other menus and links, you will want to 
+  implement the view for the menu that you add in a specific way.  That is: you will 
+  use a Freemarker template to render the body of the page, and refer to it in a Spring
   MVC <<<View>>> definition in your servlet XML configuration.  The template can use
   the standard layout in the application as a parent bean, and that way it inherits the 
   information architecture (menus and styling).  Look in the manager jar for
