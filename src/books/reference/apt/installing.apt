@@ -11,7 +11,9 @@ Installing Spring Batch Admin
   In STS you can right click on the project and <<<Run As->Run On Server>> choose Tomcat or tc Server, 
   and the app will deploy and open a web browser 
   (e.g. localhost:8080/spring-batch-admin-sample). Check out the features for
-  launching jobs and inspecting job executions.
+  launching jobs and inspecting job executions.  If the STS project looks out of date
+  (look at the version numbers in the pom.xml) then you might be able to upgrade by changing
+  the POM, or else you may have to install a nightly update of STS or wait for the next release.
   
 * Building your own applications:
   
