@@ -55,8 +55,8 @@ Extending the UI
 
   Create a component of type
   <<<org.springframework.batch.admin.web.base.Menu>>> in the UI child
-  context (<<<META-INF/spring/batch/servlet/**/*.xml>>>).  The
-  <<<Meanu>>> has a <<<url>>> property that should point to a
+  context (<<<META-INF/spring/batch/servlet/override/*.xml>>>).  The
+  <<<Menu>>> has a <<<url>>> property that should point to a
   controller mapping (relative to the application root context).
   That's it really.
   
