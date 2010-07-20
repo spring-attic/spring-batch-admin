@@ -33,6 +33,9 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.jmx.export.annotation.ManagedAttribute;
+import org.springframework.jmx.export.annotation.ManagedOperation;
+import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.util.Assert;
 
 /**
@@ -43,6 +46,7 @@ import org.springframework.util.Assert;
  * 
  */
 @Aspect
+@ManagedResource
 public class JobLauncherSynchronizer implements InitializingBean {
 
 	private static final Log logger = LogFactory.getLog(JobLauncherSynchronizer.class);
@@ -78,6 +82,34 @@ public class JobLauncherSynchronizer implements InitializingBean {
 	 */
 	public void setJobNames(Set<String> jobNames) {
 		this.jobNames = jobNames;
+	}
+	
+	/**
+	 * A job name that will be synchronized.
+	 * 
+	 * @param jobName the job name
+	 */
+	@ManagedOperation
+	public void addJobName(String jobName) {
+		this.jobNames.add(jobName);
+	}
+	
+	/**
+	 * Remove a job name from the list to synchronize.
+	 * 
+	 * @param jobName the job name
+	 */
+	@ManagedOperation
+	public void removeJobName(String jobName) {
+		this.jobNames.remove(jobName);
+	}
+	
+	/**
+	 * @return the jobNames
+	 */
+	@ManagedAttribute
+	public Set<String> getJobNames() {
+		return jobNames;
 	}
 
 	public void afterPropertiesSet() throws Exception {

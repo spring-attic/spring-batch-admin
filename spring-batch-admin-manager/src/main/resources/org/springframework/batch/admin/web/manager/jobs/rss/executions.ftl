@@ -1,6 +1,6 @@
 <#import "/spring.ftl" as spring />
 <channel>
-	<title>JobExecution Feed from SpringSource Batch</title>
+	<title>JobExecution Feed from Spring Batch Admin</title>
 	<#assign url>${baseUrl}<@spring.url relativeUrl="${servletPath}/jobs/executions"/></#assign>
 	<link>${url}</link>
 	<description>Recent and Current Job Executions</description>

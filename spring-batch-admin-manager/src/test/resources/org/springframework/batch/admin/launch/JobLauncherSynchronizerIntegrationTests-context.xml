@@ -2,10 +2,20 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:aop="http://www.springframework.org/schema/aop"
-	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xsi:schemaLocation="http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.1.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<import resource="classpath:/test-config.xml" />
+	<import resource="classpath:/META-INF/spring/batch/bootstrap/manager/*.xml" />
+
+	<job id="test-job" xmlns="http://www.springframework.org/schema/batch">
+		<step id="step1">
+			<tasklet>
+				<beans:bean class="org.springframework.batch.admin.sample.ExampleTasklet"/>
+			</tasklet>
+		</step>
+	</job>
 
 	<bean id="jobLauncherSynchronizer" class="org.springframework.batch.admin.launch.JobLauncherSynchronizer">
 		<property name="jobExplorer" ref="jobExplorer"/>
@@ -16,5 +26,10 @@
 	<aop:aspectj-autoproxy>
 		<aop:include name="jobLauncherSynchronizer"/>
 	</aop:aspectj-autoproxy>
+
+	<bean class="org.springframework.batch.test.JobRepositoryTestUtils">
+		<property name="dataSource" ref="dataSource" />
+		<property name="jobRepository" ref="jobRepository" />
+	</bean>
 
 </beans>

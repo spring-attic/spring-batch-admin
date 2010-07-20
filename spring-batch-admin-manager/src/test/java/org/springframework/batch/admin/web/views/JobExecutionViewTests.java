@@ -43,11 +43,11 @@ import org.springframework.web.servlet.View;
 public class JobExecutionViewTests extends AbstractManagerViewTests {
 
 	private final HashMap<String, Object> model = new HashMap<String, Object>();
-
+	
 	@Autowired
 	@Qualifier("jobs/execution")
 	private View view;
-
+	
 	@Test
 	public void testLaunchViewWithJobExecution() throws Exception {
 		model.put("jobExecutionInfo", new JobExecutionInfo(MetaDataInstanceFactory
@@ -61,7 +61,7 @@ public class JobExecutionViewTests extends AbstractManagerViewTests {
 		assertTrue(content.contains("<a href=\"/batch/jobs/executions/123/steps\"/>"));
 		assertTrue(content.contains("<td>ID</td>"));
 	}
-
+	
 	@Test
 	public void testLaunchViewWithNotRestartable() throws Exception {
 		JobExecution execution = MetaDataInstanceFactory.createJobExecution("job", 12L, 123L, "foo=bar");
@@ -73,7 +73,7 @@ public class JobExecutionViewTests extends AbstractManagerViewTests {
 		assertFalse(content.contains("restartForm"));
 		assertTrue(content.contains("<input id=\"stop\" type=\"submit\" value=\"Stop\" name=\"stop\" />"));
 	}
-
+	
 	@Test
 	public void testLaunchViewWithStopped() throws Exception {
 		JobExecution execution = MetaDataInstanceFactory.createJobExecution("job", 12345L, 1233456L, "foo=bar");
@@ -87,7 +87,7 @@ public class JobExecutionViewTests extends AbstractManagerViewTests {
 		assertTrue(content.contains("/batch/jobs/executions/1233456/steps"));
 		assertTrue(content.contains("<input id=\"stop\" type=\"submit\" value=\"Abandon\" name=\"abandon\" />"));
 	}
-
+	
 	@Test
 	public void testLaunchViewWithAbandonable() throws Exception {
 		JobExecution execution = MetaDataInstanceFactory.createJobExecution("job", 12L, 123L, "foo=bar");

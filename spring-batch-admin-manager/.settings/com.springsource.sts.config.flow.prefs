@@ -1,4 +1,5 @@
-#Tue Mar 30 14:20:47 BST 2010
+#Tue Jul 20 09:34:31 BST 2010
+//com.springsource.sts.config.flow.coordinates\:http\://www.springframework.org/schema/batch\:/spring-batch-admin-manager/src/test/resources/org/springframework/batch/admin/launch/JobLauncherSynchronizerIntegrationTests-context.xml=<?xml version\="1.0" encoding\="UTF-8"?>\n<graph>\n<element type\="job">\n<structure end\="906" endstart\="900" start\="690" startend\="761"/>\n<bounds height\="118" width\="103" x\="15" y\="17"/>\n</element>\n</graph>
 //com.springsource.sts.config.flow.coordinates\:http\://www.springframework.org/schema/batch\:/spring-batch-admin-manager/src/test/resources/org/springframework/batch/admin/service/JobLocatorStepLocatorIntegrationTests-context.xml=<?xml version\="1.0" encoding\="UTF-8"?>\r\n<graph/>
 //com.springsource.sts.config.flow.coordinates\:http\://www.springframework.org/schema/batch\:/spring-batch-admin-manager/src/test/resources/org/springframework/batch/admin/service/LocalFileServiceIntegrationTests-context.xml=<?xml version\="1.0" encoding\="UTF-8"?>\n<graph/>
 //com.springsource.sts.config.flow.coordinates\:http\://www.springframework.org/schema/batch\:/spring-batch-admin-manager/src/test/resources/org/springframework/batch/admin/service/LocalFileServiceJobIntegrationTests-context.xml=<?xml version\="1.0" encoding\="UTF-8"?>\n<graph/>

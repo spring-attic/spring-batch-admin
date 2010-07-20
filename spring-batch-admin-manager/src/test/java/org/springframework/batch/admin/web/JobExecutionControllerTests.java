@@ -83,7 +83,7 @@ public class JobExecutionControllerTests {
 		ExtendedModelMap model = new ExtendedModelMap();
 		String result = controller.detail(model, 123L, null, null);
 		// JobExecution
-		assertEquals(1, model.size());
+		assertEquals(2, model.size());
 		assertEquals("jobs/execution", result);
 
 		assertTrue(model.containsKey("jobExecutionInfo"));

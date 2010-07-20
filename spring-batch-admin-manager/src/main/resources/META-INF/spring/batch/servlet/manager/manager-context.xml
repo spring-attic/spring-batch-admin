@@ -60,6 +60,16 @@
 		</property>
 	</bean>
 
+	<bean name="jobs/execution.txt" parent="standard.txt">
+		<property name="attributes">
+			<props merge="true">
+				<prop key="body">/manager/jobs/txt/execution.ftl</prop>
+				<prop key="titleCode">job.execution.title</prop>
+				<prop key="titleText">Spring Batch Admin: Job Execution</prop>
+			</props>
+		</property>
+	</bean>
+
 	<bean name="jobs/executions/steps" parent="standard">
 		<property name="attributes">
 			<props merge="true">

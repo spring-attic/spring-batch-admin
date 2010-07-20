@@ -33,7 +33,7 @@ public abstract class AbstractManagerViewTests {
 	@Before
 	public void setUp() {
 		request = new MockHttpServletRequest();
-		request.setRequestURI("/springsource-batch");
+		request.setRequestURI("/spring-batch");
 		response = new MockHttpServletResponse();
 	}
 
