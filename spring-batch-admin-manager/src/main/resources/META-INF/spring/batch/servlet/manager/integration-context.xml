@@ -18,13 +18,9 @@
 	<http:inbound-channel-adapter name="/job-requests" channel="job-launches" request-mapper="bodyInboundRequestMapper"
 		view="reload-job-executions" />
 		
-	<bean name="/job-requests.txt" parent="/job-requests">
-		<property name="view" ref="jobs/execution.txt"/>
-		<property name="expectReply" value="true"/>
-		<property name="replyKey" value="jobExecution"/>
-		<property name="replyChannel" ref="job-operator"/>
-	</bean>
-
+	<http:inbound-gateway name="/job-requests.txt" request-channel="job-launches" reply-channel="job-operator" request-mapper="bodyInboundRequestMapper"
+		view="jobs/execution.txt" reply-key="jobExecution"/>
+	
 	<http:inbound-channel-adapter name="/job-restarts" channel="job-restarts" request-mapper="bodyInboundRequestMapper"
 		view="reload-job-executions" />
 
