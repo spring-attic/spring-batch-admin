@@ -42,6 +42,14 @@
 		</property>
 	</bean>
 
+	<bean name="jobs/executions.json" parent="standard.json">
+		<property name="attributes">
+			<props merge="true">
+				<prop key="body">/manager/jobs/json/executions.ftl</prop>
+			</props>
+		</property>
+	</bean>
+
 	<bean name="jobs/executions.rss" parent="standard.rss">
 		<property name="attributes">
 			<props merge="true">
@@ -60,10 +68,10 @@
 		</property>
 	</bean>
 
-	<bean name="jobs/execution.txt" parent="standard.txt">
+	<bean name="jobs/execution.json" parent="standard.json">
 		<property name="attributes">
 			<props merge="true">
-				<prop key="body">/manager/jobs/txt/execution.ftl</prop>
+				<prop key="body">/manager/jobs/json/execution.ftl</prop>
 				<prop key="titleCode">job.execution.title</prop>
 				<prop key="titleText">Spring Batch Admin: Job Execution</prop>
 			</props>
@@ -86,6 +94,16 @@
 				<prop key="body">/manager/jobs/steps/execution.ftl</prop>
 				<prop key="titleCode">step.execution.title</prop>
 				<prop key="titleText">Spring Batch Admin: Step Execution Summary</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="jobs/executions/step.json" parent="standard.json">
+		<property name="attributes">
+			<props merge="true">
+				<prop key="body">/manager/jobs/steps/json/execution.ftl</prop>
+				<prop key="titleCode">step.execution.title</prop>
+				<prop key="titleText">Spring Batch Admin: Step Execution</prop>
 			</props>
 		</property>
 	</bean>

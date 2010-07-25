@@ -53,10 +53,7 @@ public class JobLaunchIntegrationTests {
 	@DirtiesContext
 	public void testLaunchFromSimpleRequestString() throws Exception {
 
-		TestMessagingGateway gateway = new TestMessagingGateway();
-		gateway.setRequestChannel(requests);
-		gateway.setReplyChannel(replies);
-		gateway.afterPropertiesSet();
+		TestMessagingGateway gateway = new TestMessagingGateway(requests, replies);
 
 
 		JobLaunchRequest jobLaunchRequest = new JobLaunchRequest(job, new JobParametersBuilder().addString(
@@ -68,7 +65,6 @@ public class JobLaunchIntegrationTests {
 		assertNotNull("Gateway timeout waiting for job execution", result);
 		assertEquals(BatchStatus.COMPLETED, result.getStatus());
 
-		gateway.stop();
 
 	}
 

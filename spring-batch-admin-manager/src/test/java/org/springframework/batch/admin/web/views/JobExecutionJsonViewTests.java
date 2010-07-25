@@ -15,10 +15,12 @@
  */
 package org.springframework.batch.admin.web.views;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.TimeZone;
 
 import org.junit.Test;
@@ -35,40 +37,29 @@ import org.springframework.web.servlet.View;
 
 @ContextConfiguration(loader = WebApplicationContextLoader.class, inheritLocations = false, locations = "AbstractManagerViewTests-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
-public class JobExecutionTxtViewTests extends AbstractManagerViewTests {
+public class JobExecutionJsonViewTests extends AbstractManagerViewTests {
 
 	private final HashMap<String, Object> model = new HashMap<String, Object>();
 
 	@Autowired
-	@Qualifier("jobs/execution.txt")
+	@Qualifier("jobs/execution.json")
 	private View view;
-
-	@Test
-	public void testLaunchViewWithJobExecution() throws Exception {
-		model.put("jobExecution", MetaDataInstanceFactory.createJobExecutionWithStepExecutions(123L, Arrays.asList(
-				"foo", "bar")));
-		model.put("baseUrl", "http://localhost:8080/springsource");
-		view.render(model, request, response);
-		String content = response.getContentAsString();
-		// System.err.println(content);
-		assertTrue(content.contains("Job Execution"));
-		assertTrue(content.contains("Job Execution: link="));
-		assertTrue(content.contains("  status=STARTING"));
-		assertTrue(content
-				.contains("Job Instance: link=http://localhost:8080/springsource/batch/jobs/job/12/executions"));
-	}
 
 	@Test
 	public void testLaunchViewWithJobExecutionInfo() throws Exception {
 		JobExecution jobExecution = MetaDataInstanceFactory.createJobExecutionWithStepExecutions(123L, Arrays.asList(
 				"foo", "bar"));
-		model.put("jobExecution", jobExecution);
 		model.put("jobExecutionInfo", new JobExecutionInfo(jobExecution, TimeZone.getDefault()));
 		model.put("baseUrl", "http://localhost:8080/springsource");
 		view.render(model, request, response);
 		String content = response.getContentAsString();
 		// System.err.println(content);
-		assertTrue(content.contains("  duration=-"));
+		assertTrue(content.contains("\"duration\" : \"\""));
+		JsonWrapper wrapper = new JsonWrapper(content);
+		assertEquals("STARTING", wrapper.get("jobExecution.status"));
+		assertEquals(2, wrapper.get("jobExecution.stepExecutions", Map.class).size());
+		assertEquals("http://localhost:8080/springsource/batch/jobs/executions/123/steps/1235.json", wrapper
+				.get("jobExecution.stepExecutions.bar.resource"));
 	}
 
 }

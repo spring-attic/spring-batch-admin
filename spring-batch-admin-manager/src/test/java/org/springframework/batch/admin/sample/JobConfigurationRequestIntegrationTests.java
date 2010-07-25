@@ -75,7 +75,7 @@ public class JobConfigurationRequestIntegrationTests {
 
 		JobConfigurationRequest request = new JobConfigurationRequest();
 		request.setXml(IOUtils.toString(new ClassPathResource("/staging-context.xml").getInputStream()));
-		gateway.send(request);
+		gateway.sendAndReceive(request);
 		String result = receiver.poll(500L, TimeUnit.MILLISECONDS);
 		assertNotNull("Time out waiting for reply", result);
  		assertEquals("Registered jobs: [staging]", result.toString());

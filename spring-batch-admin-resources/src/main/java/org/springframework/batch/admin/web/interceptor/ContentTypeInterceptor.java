@@ -58,6 +58,25 @@ public class ContentTypeInterceptor extends HandlerInterceptorAdapter implements
 	public void setExtensions(Collection<String> extensions) {
 		this.extensions = new LinkedHashSet<String>(extensions);
 	}
+	
+	@Override
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+
+		String scheme = request.getScheme();
+		StringBuffer url = new StringBuffer(scheme + "://");
+		url.append(request.getServerName());
+		int port = request.getServerPort();
+		if ((scheme.equals("http") && port != 80)
+				|| (scheme.equals("https") && port != 443)) {
+			url.append(":" + port);
+		}
+
+		request.setAttribute("baseUrl", url.toString());
+		request.setAttribute("currentTime", new Date());
+
+		return true;
+
+	}
 
 	/**
 	 * Compare the extension of the request path (if there is one) with the set
@@ -105,18 +124,6 @@ public class ContentTypeInterceptor extends HandlerInterceptorAdapter implements
 			}
 
 		}
-
-		String scheme = request.getScheme();
-		StringBuffer url = new StringBuffer(scheme + "://");
-		url.append(request.getServerName());
-		int port = request.getServerPort();
-		if ((scheme.equals("http") && port != 80)
-				|| (scheme.equals("https") && port != 443)) {
-			url.append(":" + port);
-		}
-
-		modelAndView.addObject("baseUrl", url.toString());
-		modelAndView.addObject("currentTime", new Date());
 
 	}
 }

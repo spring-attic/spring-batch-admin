@@ -34,12 +34,12 @@ import org.springframework.web.servlet.View;
 
 @ContextConfiguration(loader = WebApplicationContextLoader.class, inheritLocations = false, locations = { "AbstractResourceViewTests-context.xml" })
 @RunWith(SpringJUnit4ClassRunner.class)
-public class TxtViewTests extends AbstractResourceViewTests {
+public class JsonViewTests extends AbstractResourceViewTests {
 
 	private final HashMap<String, Object> model = new HashMap<String, Object>();
 
 	@Autowired
-	@Qualifier("standard.txt")
+	@Qualifier("standard.json")
 	private View standard;
 
 	@Test
@@ -51,7 +51,7 @@ public class TxtViewTests extends AbstractResourceViewTests {
 		standard.render(model, request, response);
 		String content = response.getContentAsString();
 		// System.err.println(content);
-		assertTrue(content.contains("Empty Text Feed"));
+		assertTrue(content.contains("Should be overridden by host application"));
 	}
 
 }

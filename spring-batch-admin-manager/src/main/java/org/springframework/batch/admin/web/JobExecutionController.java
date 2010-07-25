@@ -174,6 +174,7 @@ public class JobExecutionController {
 		catch (NoSuchJobException e) {
 			errors.reject("no.such.job", new Object[] { jobName }, "There is no such job (" + jobName + ")");
 		}
+		// TODO: add the JobInstance for access to job parameters
 		model.addAttribute(new JobInfo(jobName, result.size(), jobInstanceId, null, null));
 		model.addAttribute("jobExecutions", result);
 		return "jobs/executions";
@@ -282,7 +283,6 @@ public class JobExecutionController {
 		try {
 			JobExecution jobExecution = jobService.getJobExecution(jobExecutionId);
 			model.addAttribute(new JobExecutionInfo(jobExecution, timeZone));
-			model.addAttribute(jobExecution);
 		}
 		catch (NoSuchJobExecutionException e) {
 			errors.reject("no.such.job.execution", new Object[] { jobExecutionId }, "There is no such job execution ("

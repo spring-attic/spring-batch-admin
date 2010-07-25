@@ -15,13 +15,13 @@
  */
 package org.springframework.batch.admin.web.interceptor;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.batch.admin.web.interceptor.ContentTypeInterceptor;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
@@ -43,12 +43,18 @@ public class ContentTypeInterceptorTests {
 	}
 
 	@Test
+	public void testPreHandleVanilla() throws Exception {
+		interceptor.setExtensions(Collections.singleton("rss"));
+		interceptor.preHandle(request, response, null);
+		assertNotNull(request.getAttribute("currentTime"));
+		assertNotNull(request.getAttribute("baseUrl"));
+	}
+
+	@Test
 	public void testPostHandleVanilla() throws Exception {
 		interceptor.setExtensions(Collections.singleton("rss"));
 		ModelAndView modelAndView = new ModelAndView("foo");
 		interceptor.postHandle(request, response, null, modelAndView);
-		assertTrue(modelAndView.getModel().containsKey("currentTime"));
-		assertTrue(modelAndView.getModel().containsKey("baseUrl"));
 		assertEquals("foo.rss", modelAndView.getViewName());
 	}
 
@@ -57,8 +63,6 @@ public class ContentTypeInterceptorTests {
 		interceptor.setExtensions(Collections.singleton("rss"));
 		ModelAndView modelAndView = new ModelAndView("foo.rss");
 		interceptor.postHandle(request, response, null, modelAndView);
-		assertTrue(modelAndView.getModel().containsKey("currentTime"));
-		assertTrue(modelAndView.getModel().containsKey("baseUrl"));
 		assertEquals("foo.rss", modelAndView.getViewName());
 	}
 

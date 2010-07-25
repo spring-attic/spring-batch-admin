@@ -14,12 +14,18 @@
 		<property name="url" value="#{resourceService.servletPath}/jobs/executions" />
 		<property name="contextRelative" value="true" />
 	</bean>
+	
+	<integration:channel id="job-info"/>
+	
+	<integration:transformer input-channel="job-operator" output-channel="job-info">
+		<bean class="org.springframework.batch.admin.integration.JobExecutionToInfoAdapter"/>
+	</integration:transformer>
 
 	<http:inbound-channel-adapter name="/job-requests" channel="job-launches" request-mapper="bodyInboundRequestMapper"
 		view="reload-job-executions" />
 		
-	<http:inbound-gateway name="/job-requests.txt" request-channel="job-launches" reply-channel="job-operator" request-mapper="bodyInboundRequestMapper"
-		view="jobs/execution.txt" reply-key="jobExecution"/>
+	<http:inbound-gateway name="/job-requests.json" request-channel="job-launches" reply-channel="job-info" request-mapper="bodyInboundRequestMapper"
+		view="jobs/execution.json" reply-key="jobExecutionInfo"/>
 	
 	<http:inbound-channel-adapter name="/job-restarts" channel="job-restarts" request-mapper="bodyInboundRequestMapper"
 		view="reload-job-executions" />

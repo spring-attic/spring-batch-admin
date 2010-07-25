@@ -45,15 +45,10 @@ public class StringPayloadJobIntegrationTests {
 	@DirtiesContext
 	public void testLaunchFromSimpleRequestString() throws Exception {
 
-		TestMessagingGateway gateway = new TestMessagingGateway();
-		gateway.setRequestChannel(requests);
-		gateway.setReplyChannel(replies);
-		gateway.afterPropertiesSet();
+		TestMessagingGateway gateway = new TestMessagingGateway(requests, replies);
 
 		JobExecution result = (JobExecution) gateway.sendAndReceive("staging[input.file=classpath:data/test.txt,foo=bar]");
  		assertEquals(BatchStatus.COMPLETED, result.getStatus());
- 		
- 		gateway.stop();
 
 	}
 

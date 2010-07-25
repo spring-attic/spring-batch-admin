@@ -71,24 +71,15 @@ public class RestartJobIntegrationTests {
 	@DirtiesContext
 	public void testLaunchAndRestart() throws Exception {
 
-		TestMessagingGateway launch = new TestMessagingGateway();
-		launch.setRequestChannel(requests);
-		launch.setReplyChannel(replies);
-		launch.afterPropertiesSet();
+		TestMessagingGateway launch = new TestMessagingGateway(requests, replies);
 
-		TestMessagingGateway restart = new TestMessagingGateway();
-		restart.setRequestChannel(restarts);
-		restart.setReplyChannel(replies);
-		restart.afterPropertiesSet();
+		TestMessagingGateway restart = new TestMessagingGateway(restarts, replies);
 
 		JobExecution result = (JobExecution) launch
 				.sendAndReceive("staging[input.file=classpath:data/bad.txt,foo=bar]");
 		assertEquals(BatchStatus.FAILED, result.getStatus());
 		result = (JobExecution) restart.sendAndReceive("staging");
 		assertEquals(BatchStatus.FAILED, result.getStatus());
-
-		launch.stop();
-		restart.stop();
 
 	}
 
@@ -116,15 +107,10 @@ public class RestartJobIntegrationTests {
 
 		jobRepositoryTestUtils.removeJobExecutions();
 
-		TestMessagingGateway restart = new TestMessagingGateway();
-		restart.setRequestChannel(restarts);
-		restart.setReplyChannel(replies);
-		restart.afterPropertiesSet();
+		TestMessagingGateway restart = new TestMessagingGateway(restarts, replies);
 
 		JobExecution result = (JobExecution) restart.sendAndReceive("staging");
 		assertEquals(BatchStatus.FAILED, result.getStatus());
-
-		restart.stop();
 
 	}
 

@@ -46,11 +46,11 @@ public class JobExecutionInfo {
 
 	private String jobName;
 
-	private String startDate = "-";
+	private String startDate = "";
 
-	private String startTime = "-";
+	private String startTime = "";
 
-	private String duration = "-";
+	private String duration = "";
 
 	private JobExecution jobExecution;
 

@@ -42,6 +42,7 @@
 				<value>rss</value>
 				<value>xml</value>
 				<value>txt</value>
+				<value>json</value>
 				<value>properties</value>
 			</set>
 		</property>
@@ -87,11 +88,11 @@
 		<property name="contentType" value="text/xml" />
 	</bean>
 
-	<bean id="standard.txt" parent="parentLayout">
-		<property name="url" value="/layouts/txt/standard.ftl" />
+	<bean id="standard.json" parent="parentLayout">
+		<property name="url" value="/layouts/json/standard.ftl" />
 		<property name="attributes">
 			<props merge="true">
-				<prop key="body">/layouts/txt/home.ftl</prop>
+				<prop key="body">/layouts/json/home.ftl</prop>
 				<!-- Matches the prefix of the servlet mapping in web.xml -->
 				<prop key="servletPath">#{resourceService.servletPath}</prop>
 			</props>
