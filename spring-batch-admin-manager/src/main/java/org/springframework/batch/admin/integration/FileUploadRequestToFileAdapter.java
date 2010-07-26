@@ -54,7 +54,7 @@ public class FileUploadRequestToFileAdapter implements InitializingBean {
 			throw new IllegalArgumentException("Null input data");
 		}
 
-		File tempFile = File.createTempFile("lead-data-", ".txt");
+		File tempFile = File.createTempFile("batch-data-", ".txt");
 		FileUtils.writeStringToFile(tempFile, request.getData());
 		return tempFile;
 

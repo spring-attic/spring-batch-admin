@@ -18,7 +18,6 @@ package org.springframework.batch.admin.integration;
 
 import java.io.IOException;
 
-import org.springframework.integration.annotation.Transformer;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -48,7 +47,6 @@ public class MultipartJobConfigurationRequest {
 	 * 
 	 * @return a {@link JobConfigurationRequest}
 	 */
-	@Transformer
 	public JobConfigurationRequest getJobConfigurationRequest() {
 		JobConfigurationRequest jobConfigurationRequest = new JobConfigurationRequest();
 		if (file==null) {
