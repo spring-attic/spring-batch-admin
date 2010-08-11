@@ -19,14 +19,14 @@ package org.springframework.batch.admin.sample;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.springframework.batch.core.JobExecution;
-import org.springframework.integration.channel.SubscribableChannel;
-import org.springframework.integration.core.Message;
+import org.springframework.integration.Message;
+import org.springframework.integration.MessageDeliveryException;
+import org.springframework.integration.MessageHandlingException;
+import org.springframework.integration.MessageRejectedException;
+import org.springframework.integration.core.GenericMessage;
 import org.springframework.integration.core.MessageChannel;
-import org.springframework.integration.message.GenericMessage;
-import org.springframework.integration.message.MessageDeliveryException;
-import org.springframework.integration.message.MessageHandler;
-import org.springframework.integration.message.MessageHandlingException;
-import org.springframework.integration.message.MessageRejectedException;
+import org.springframework.integration.core.MessageHandler;
+import org.springframework.integration.core.SubscribableChannel;
 
 /**
  * @author Dave Syer

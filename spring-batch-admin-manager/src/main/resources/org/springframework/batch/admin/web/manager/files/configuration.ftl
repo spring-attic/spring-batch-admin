@@ -5,7 +5,7 @@
 	<p>
 		Browse to a file containing Spring Batch XML configuration and press the button marked Upload.
 	</p>
-	<#assign url><@spring.url relativeUrl="${servletPath}/job-configuration-multipart"/></#assign>
+	<#assign url><@spring.url relativeUrl="${servletPath}/job-configuration"/></#assign>
 	<form id="registerFileForm" action="${url}" method="POST" enctype="multipart/form-data" encoding="multipart/form-data">
 
 		<label for="fileXml">Job Configuration File</label><input id="fileXml" type="file" value="Upload" name="file" />

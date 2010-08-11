@@ -3,39 +3,27 @@
 	xmlns:integration="http://www.springframework.org/schema/integration" xmlns:http="http://www.springframework.org/schema/integration/http"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
                                  http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-                                 http://www.springframework.org/schema/integration/http http://www.springframework.org/schema/integration/http/spring-integration-http-1.0.xsd
-                                 http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-1.0.xsd">
+                                 http://www.springframework.org/schema/integration/http http://www.springframework.org/schema/integration/http/spring-integration-http-2.0.xsd
+                                 http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd">
 
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
-
-	<bean id="bodyInboundRequestMapper" class="org.springframework.batch.admin.web.BodyInboundRequestMapper" />
 
 	<bean id="reload-job-executions" class="org.springframework.web.servlet.view.RedirectView">
 		<property name="url" value="#{resourceService.servletPath}/jobs/executions" />
 		<property name="contextRelative" value="true" />
 	</bean>
-	
-	<integration:channel id="job-info"/>
-	
+
+	<integration:channel id="job-info" />
+
 	<integration:transformer input-channel="job-operator" output-channel="job-info">
-		<bean class="org.springframework.batch.admin.integration.JobExecutionToInfoAdapter"/>
+		<bean class="org.springframework.batch.admin.integration.JobExecutionToInfoAdapter" />
 	</integration:transformer>
 
-	<http:inbound-channel-adapter name="/job-requests" channel="job-launches" request-mapper="bodyInboundRequestMapper"
-		view="reload-job-executions" />
-		
-	<http:inbound-gateway name="/job-requests.json" request-channel="job-launches" reply-channel="job-info" request-mapper="bodyInboundRequestMapper"
-		view="jobs/execution.json" reply-key="jobExecutionInfo"/>
-	
-	<http:inbound-channel-adapter name="/job-restarts" channel="job-restarts" request-mapper="bodyInboundRequestMapper"
-		view="reload-job-executions" />
+	<http:inbound-gateway name="/job-requests.json" request-channel="job-launches" reply-channel="job-info"
+		view-name="jobs/execution" reply-key="jobExecutionInfo" />
 
-	<bean id="configurationFileRequestMapper" class="org.springframework.integration.http.DataBindingInboundRequestMapper">
-		<property name="targetType" value="org.springframework.batch.admin.integration.MultipartJobConfigurationRequest" />
-		<property name="webBindingInitializer">
-			<bean class="org.springframework.batch.admin.web.CustomWebBindingInitializer" />
-		</property>
-	</bean>
+	<http:inbound-gateway name="/job-restarts.json" request-channel="job-restarts" reply-channel="job-info"
+		view-name="jobs/execution" reply-key="jobExecutionInfo" />
 
 	<bean name="redirect:jobs" class="org.springframework.web.servlet.view.RedirectView">
 		<property name="url" value="#{resourceService.servletPath}/jobs" />
@@ -51,23 +39,30 @@
 
 	<integration:transformer id="multipartToJobConfigurationRequest" input-channel="job-configuration-multipart"
 		output-channel="job-configuration-requests">
-		<bean class="org.springframework.batch.admin.integration.MultipartToJobConfigurationRequestTransformer"/>
+		<bean class="org.springframework.batch.admin.integration.MultipartToJobConfigurationRequestTransformer" />
 	</integration:transformer>
 
-	<http:inbound-channel-adapter name="/job-configuration-multipart" channel="job-configuration-multipart"
-		request-mapper="configurationFileRequestMapper" view="redirect:jobs" supported-methods="POST"/>
+	<http:inbound-channel-adapter name="/job-configuration" channel="job-configuration-multipart"
+		request-payload-type="org.springframework.batch.admin.integration.MultipartJobConfigurationRequest" view-name="redirect:jobs"
+		supported-methods="POST" message-converters="multipartJobConfigurationRequestHttpMessageConverter" />
 
-	<http:inbound-channel-adapter name="/job-configuration-files" channel="job-configuration-files"
-		request-mapper="bodyInboundRequestMapper" view="redirect:jobs" supported-methods="POST"/>
+	<!-- TODO: make this a JSON URL -->
+	<http:inbound-channel-adapter name="/job-configuration-string" channel="job-configurations"
+		request-payload-type="org.springframework.core.io.Resource" view-name="redirect:jobs" supported-methods="POST"
+		message-converters="resourceHttpMessageConverter" />
 
-	<http:inbound-channel-adapter name="/files" channel="file-requests" request-mapper="inputFileRequestMapper"
-		view="redirect:files" supported-methods="POST" />
+	<http:inbound-channel-adapter name="/files" channel="file-requests"
+		request-payload-type="org.springframework.batch.admin.integration.FileUploadRequest" view-name="redirect:files"
+		supported-methods="POST" message-converters="fileUploadRequestHttpMessageConverter" />
 
-	<bean id="inputFileRequestMapper" class="org.springframework.integration.http.DataBindingInboundRequestMapper">
+	<bean id="fileUploadRequestHttpMessageConverter" class="org.springframework.batch.admin.web.BindingHttpMessageConverter">
 		<property name="targetType" value="org.springframework.batch.admin.integration.FileUploadRequest" />
-		<property name="webBindingInitializer">
-			<bean class="org.springframework.batch.admin.web.CustomWebBindingInitializer" />
-		</property>
+	</bean>
+
+	<bean id="resourceHttpMessageConverter" class="org.springframework.http.converter.ResourceHttpMessageConverter" />
+
+	<bean id="multipartJobConfigurationRequestHttpMessageConverter" class="org.springframework.batch.admin.web.BindingHttpMessageConverter">
+		<property name="targetType" value="org.springframework.batch.admin.integration.MultipartJobConfigurationRequest" />
 	</bean>
 
 	<integration:service-activator input-channel="file-requests" output-channel="input-files">
