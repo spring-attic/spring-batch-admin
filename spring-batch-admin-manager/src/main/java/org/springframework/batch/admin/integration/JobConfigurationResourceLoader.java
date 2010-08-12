@@ -18,12 +18,15 @@ package org.springframework.batch.admin.integration;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.springframework.batch.admin.service.JobService;
+import org.springframework.batch.admin.web.JobInfo;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.configuration.DuplicateJobException;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.configuration.support.ApplicationContextFactory;
 import org.springframework.batch.core.configuration.support.ClassPathXmlApplicationContextFactory;
 import org.springframework.batch.core.configuration.support.JobLoader;
+import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -47,10 +50,16 @@ public class JobConfigurationResourceLoader implements ApplicationContextAware {
 
 	private JobLoader jobLoader;
 
+	private JobService jobService;
+
 	private ApplicationContext parent;
 
 	public void setJobLoader(JobLoader jobLoader) {
 		this.jobLoader = jobLoader;
+	}
+	
+	public void setJobService(JobService jobService) {
+		this.jobService = jobService;
 	}
 	
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -58,18 +67,28 @@ public class JobConfigurationResourceLoader implements ApplicationContextAware {
 	}
 
 	@ServiceActivator
-	public String loadJobs(Resource resource) throws DuplicateJobException {
+	public Collection<JobInfo> loadJobs(Resource resource) throws DuplicateJobException {
 
-		Collection<String> result = new ArrayList<String>();
+		Collection<JobInfo> result = new ArrayList<JobInfo>();
 
 		ApplicationContextFactory factory = createApplicationContextFactory(parent, resource);
 		Collection<Job> jobs = jobLoader.reload(factory);
 
 		for (Job job : jobs) {
-			result.add(job.getName());
+			String name = job.getName();
+			int count = 0;
+			try {
+				count = jobService.countJobExecutionsForJob(name);
+			}
+			catch (NoSuchJobException e) {
+				// shouldn't happen
+			}
+			boolean launchable = jobService.isLaunchable(name);
+			boolean incrementable = jobService.isIncrementable(name);
+			result.add(new JobInfo(name, count, null, launchable, incrementable));
 		}
 
-		return "Registered jobs: "+result;
+		return result;
 
 	}
 

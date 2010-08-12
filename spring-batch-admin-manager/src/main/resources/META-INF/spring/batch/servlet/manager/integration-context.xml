@@ -30,6 +30,11 @@
 		<property name="contextRelative" value="true" />
 	</bean>
 
+	<bean name="redirect:jobs.json" class="org.springframework.web.servlet.view.RedirectView">
+		<property name="url" value="#{resourceService.servletPath}/jobs.json" />
+		<property name="contextRelative" value="true" />
+	</bean>
+
 	<bean name="redirect:files" class="org.springframework.web.servlet.view.RedirectView">
 		<property name="url" value="#{resourceService.servletPath}/files" />
 		<property name="contextRelative" value="true" />
@@ -46,9 +51,8 @@
 		request-payload-type="org.springframework.batch.admin.integration.MultipartJobConfigurationRequest" view-name="redirect:jobs"
 		supported-methods="POST" message-converters="multipartJobConfigurationRequestHttpMessageConverter" />
 
-	<!-- TODO: make this a JSON URL -->
-	<http:inbound-channel-adapter name="/job-configuration-string" channel="job-configurations"
-		request-payload-type="org.springframework.core.io.Resource" view-name="redirect:jobs" supported-methods="POST"
+	<http:inbound-gateway name="/job-configuration.json" request-channel="job-configurations" reply-channel="job-registrations"
+		request-payload-type="org.springframework.core.io.Resource" view-name="jobs" supported-methods="POST"
 		message-converters="resourceHttpMessageConverter" />
 
 	<http:inbound-channel-adapter name="/files" channel="file-requests"

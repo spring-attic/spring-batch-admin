@@ -21,6 +21,14 @@
 		</property>
 	</bean>
 
+	<bean name="jobs.json" parent="standard.json">
+		<property name="attributes">
+			<props merge="true">
+				<prop key="body">/manager/jobs/json/jobs.ftl</prop>
+			</props>
+		</property>
+	</bean>
+
 	<bean name="jobs/job" parent="standard">
 		<property name="attributes">
 			<props merge="true">
