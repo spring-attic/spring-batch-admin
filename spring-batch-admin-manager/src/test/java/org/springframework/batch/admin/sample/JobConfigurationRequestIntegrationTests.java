@@ -55,7 +55,7 @@ public class JobConfigurationRequestIntegrationTests {
 
 	private MessageHandler handler = new MessageHandler() {
 		public void handleMessage(Message<?> message) {
-			receiver.add((String) message.getPayload());
+			receiver.add((String) message.getPayload().toString());
 		}
 	};
 
@@ -78,7 +78,7 @@ public class JobConfigurationRequestIntegrationTests {
 		gateway.sendAndReceive(request);
 		String result = receiver.poll(500L, TimeUnit.MILLISECONDS);
 		assertNotNull("Time out waiting for reply", result);
- 		assertEquals("Registered jobs: [staging]", result.toString());
+ 		assertEquals("[staging]", result.toString());
  		
  		gateway.stop();
 

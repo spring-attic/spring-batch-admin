@@ -18,6 +18,7 @@
 	<integration:channel id="job-executions"/>
 	<integration:channel id="job-configuration-files"/>
 	<integration:channel id="job-configuration-requests"/>
+	<integration:channel id="job-configurations"/>
 	<integration:channel id="job-registrations"/>
 	<integration:channel id="input-files"/>
 	<integration:channel id="job-operator"/>

@@ -25,6 +25,7 @@
 					<property name="jobRegistry" ref="jobRegistry"/>
 				</bean>
 			</property>
+			<property name="jobService" ref="jobService" />
 		</bean>
 	</service-activator>
 

@@ -15,10 +15,17 @@
  */
 package org.springframework.batch.admin.integration;
 
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 
+import java.util.Collection;
+
+import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.batch.admin.service.JobService;
+import org.springframework.batch.admin.web.JobInfo;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParametersIncrementer;
@@ -31,17 +38,24 @@ import org.springframework.core.io.ByteArrayResource;
 public class JobConfigurationRequestLoaderTests {
 
 	private JobConfigurationResourceLoader loader = new JobConfigurationResourceLoader();
+	
+	private JobService jobService = EasyMock.createMock(JobService.class);
 
 	@Before
-	public void setUp() {
+	public void setUp() throws Exception {
 		loader.setJobLoader(new DefaultJobLoader(new MapJobRegistry()));
+		loader.setJobService(jobService);
+		expect(jobService.countJobExecutionsForJob("job")).andReturn(2);
+		expect(jobService.isIncrementable("job")).andReturn(true);
+		expect(jobService.isLaunchable("job")).andReturn(true);
+		replay(jobService);
 	}
 
 	@Test
 	public void testLoadJobs() throws Exception {
-		String jobNames = loader.loadJobs(new ByteArrayResource(JOB_XML.getBytes(),
+		Collection<JobInfo> jobNames = loader.loadJobs(new ByteArrayResource(JOB_XML.getBytes(),
 				"http://localhost/jobs/configurations"));
-		assertEquals("Registered jobs: [job]", jobNames.toString());
+		assertEquals("[job]", jobNames.toString());
 	}
 
 	@Test
@@ -49,9 +63,9 @@ public class JobConfigurationRequestLoaderTests {
 		StaticApplicationContext parent = new StaticApplicationContext();
 		parent.refresh();
 		loader.setApplicationContext(parent);
-		String jobNames = loader.loadJobs(new ByteArrayResource(JOB_XML.getBytes(),
+		Collection<JobInfo> jobNames = loader.loadJobs(new ByteArrayResource(JOB_XML.getBytes(),
 				"http://localhost/jobs/configurations"));
-		assertEquals("Registered jobs: [job]", jobNames.toString());
+		assertEquals("[job]", jobNames.toString());
 	}
 
 	private static final String JOB_XML = String

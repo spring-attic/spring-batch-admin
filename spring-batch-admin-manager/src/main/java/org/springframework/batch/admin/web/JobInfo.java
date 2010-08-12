@@ -65,5 +65,10 @@ public class JobInfo {
 	public Boolean getIncrementable() {
 		return incrementable;
 	}
+	
+	@Override
+	public String toString() {
+		return name;
+	}
 
 }
