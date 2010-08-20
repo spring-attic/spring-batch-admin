@@ -46,7 +46,7 @@ public class JobJsonViewTests extends AbstractManagerViewTests {
 	private View jobs;
 
 	@Autowired
-	@Qualifier("job.json")
+	@Qualifier("jobs/job.json")
 	private View job;
 
 	@Test
