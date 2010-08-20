@@ -12,8 +12,24 @@
 	<gateway id="fileSender" service-interface="org.springframework.batch.admin.service.FileSender"
 		default-request-channel="input-files" />
 
-	<beans:bean id="fileService" class="org.springframework.batch.admin.service.LocalFileService">
-		<beans:property name="fileSender" ref="fileSender" />
-	</beans:bean>
+	<bean id="fileService" class="org.springframework.batch.admin.service.LocalFileService"
+			xmlns="http://www.springframework.org/schema/beans">
+		<property name="fileSender" ref="fileSender" />
+	</bean>
+
+	<bean id="customEditorConfigurer" class="org.springframework.beans.factory.config.CustomEditorConfigurer"
+			xmlns="http://www.springframework.org/schema/beans">
+		<property name="customEditors">
+			<map key-type="java.lang.String" value-type="java.lang.Class">
+				<entry key="org.springframework.core.io.Resource" value="org.springframework.batch.admin.service.FileServiceResourceConverter" />
+			</map>
+		</property>
+	</bean>
+
+	<!-- Anonymous bean just to allow PropertyEditor to be wired -->
+	<bean class="org.springframework.batch.admin.service.FileServiceResourceConverter"
+			xmlns="http://www.springframework.org/schema/beans">
+		<property name="fileService" ref="fileService" />
+	</bean>
 
 </beans:beans>

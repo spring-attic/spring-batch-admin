@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beansProjectDescription>
 	<version>1</version>
-	<pluginVersion><![CDATA[2.3.3.201004222200-CI-R3763-B719]]></pluginVersion>
+	<pluginVersion><![CDATA[2.3.3.201005102200-CI-R3771-B739]]></pluginVersion>
 	<configSuffixes>
 		<configSuffix><![CDATA[xml]]></configSuffix>
 	</configSuffixes>
@@ -24,6 +24,15 @@
 		<config>src/test/resources/org/springframework/batch/admin/service/JobLocatorStepLocatorIntegrationTests-context.xml</config>
 		<config>src/test/resources/org/springframework/batch/admin/service/LocalFileServiceJobIntegrationTests-context.xml</config>
 		<config>src/test/resources/org/springframework/batch/admin/web/views/AbstractIntegrationViewTests-context.xml</config>
+		<config>target/classes/META-INF/spring/batch/bootstrap/integration/configuration-context.xml</config>
+		<config>target/classes/META-INF/spring/batch/bootstrap/integration/file-context.xml</config>
+		<config>target/classes/META-INF/spring/batch/bootstrap/integration/launcher-context.xml</config>
+		<config>target/classes/META-INF/spring/batch/bootstrap/integration/restart-context.xml</config>
+		<config>target/classes/META-INF/spring/batch/bootstrap/manager/data-source-context.xml</config>
+		<config>target/classes/META-INF/spring/batch/bootstrap/manager/env-context.xml</config>
+		<config>target/classes/META-INF/spring/batch/bootstrap/manager/execution-context.xml</config>
+		<config>target/classes/META-INF/spring/batch/servlet/manager/integration-context.xml</config>
+		<config>target/classes/META-INF/spring/batch/servlet/manager/manager-context.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
