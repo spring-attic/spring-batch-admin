@@ -6,7 +6,7 @@
 <#if jobs?? && jobs?size!=0>
     <#list jobs as job>
         "${job.name}" : {
-            <#assign job_url><@spring.url relativeUrl="${servletPath}/jobs/${job.name}"/></#assign>
+            <#assign job_url><@spring.url relativeUrl="${servletPath}/jobs/${job.name}.json"/></#assign>
             "name" : "${job.name}",
             "resource" : "${baseUrl}${job_url}",
             "description" : "<@spring.messageText code="${job.name}.description" text="No description"/>",

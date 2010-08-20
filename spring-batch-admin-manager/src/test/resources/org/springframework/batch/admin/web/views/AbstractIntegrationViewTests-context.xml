@@ -10,6 +10,7 @@
 	<import resource="classpath*:/META-INF/spring/batch/servlet/resources/*-context.xml"/>
 	<import resource="classpath*:/META-INF/spring/batch/servlet/manager/manager-context.xml"/>
 	<import resource="classpath*:/META-INF/spring/batch/servlet/manager/integration-context.xml"/>
+	<import resource="classpath*:/META-INF/spring/batch/bootstrap/integration/file-context.xml"/>
 	
 	<bean id="resourceService" class="org.springframework.batch.admin.web.resources.DefaultResourceService"/>
 
@@ -20,7 +21,6 @@
 	<integration:channel id="job-configuration-requests"/>
 	<integration:channel id="job-configurations"/>
 	<integration:channel id="job-registrations"/>
-	<integration:channel id="input-files"/>
 	<integration:channel id="job-operator"/>
 
 </beans>

@@ -14,7 +14,7 @@
 	<bean name="jobs" parent="standard">
 		<property name="attributes">
 			<props merge="true">
-				<prop key="body">/manager/jobs/jobs.ftl</prop>
+				<prop key="body">/manager/jobs/html/jobs.ftl</prop>
 				<prop key="titleCode">jobs.title</prop>
 				<prop key="titleText">Spring Batch Admin: Jobs</prop>
 			</props>
@@ -32,9 +32,17 @@
 	<bean name="jobs/job" parent="standard">
 		<property name="attributes">
 			<props merge="true">
-				<prop key="body">/manager/jobs/job.ftl</prop>
+				<prop key="body">/manager/jobs/html/job.ftl</prop>
 				<prop key="titleCode">job.title</prop>
 				<prop key="titleText">Spring Batch Admin: Job Summary</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="jobs/job.json" parent="standard.json">
+		<property name="attributes">
+			<props merge="true">
+				<prop key="body">/manager/jobs/json/job.ftl</prop>
 			</props>
 		</property>
 	</bean>
@@ -42,7 +50,7 @@
 	<bean name="jobs/executions" parent="standard">
 		<property name="attributes">
 			<props merge="true">
-				<prop key="body">/manager/jobs/executions.ftl</prop>
+				<prop key="body">/manager/jobs/html/executions.ftl</prop>
 				<prop key="feedPath">#{resourceService.servletPath}/jobs/executions.rss</prop>
 				<prop key="titleCode">job.executions.title</prop>
 				<prop key="titleText">Spring Batch Admin: Job Executions</prop>
@@ -69,7 +77,7 @@
 	<bean name="jobs/execution" parent="standard">
 		<property name="attributes">
 			<props merge="true">
-				<prop key="body">/manager/jobs/execution.ftl</prop>
+				<prop key="body">/manager/jobs/html/execution.ftl</prop>
 				<prop key="titleCode">job.execution.title</prop>
 				<prop key="titleText">Spring Batch Admin: Job Execution</prop>
 			</props>
@@ -89,7 +97,7 @@
 	<bean name="jobs/executions/steps" parent="standard">
 		<property name="attributes">
 			<props merge="true">
-				<prop key="body">/manager/jobs/steps/executions.ftl</prop>
+				<prop key="body">/manager/steps/html/executions.ftl</prop>
 				<prop key="titleCode">step.executions.title</prop>
 				<prop key="titleText">Spring Batch Admin: Step Executions</prop>
 			</props>
@@ -99,7 +107,7 @@
 	<bean name="jobs/executions/step" parent="standard">
 		<property name="attributes">
 			<props merge="true">
-				<prop key="body">/manager/jobs/steps/execution.ftl</prop>
+				<prop key="body">/manager/steps/html/execution.ftl</prop>
 				<prop key="titleCode">step.execution.title</prop>
 				<prop key="titleText">Spring Batch Admin: Step Execution Summary</prop>
 			</props>
@@ -109,7 +117,7 @@
 	<bean name="jobs/executions/step.json" parent="standard.json">
 		<property name="attributes">
 			<props merge="true">
-				<prop key="body">/manager/jobs/steps/json/execution.ftl</prop>
+				<prop key="body">/manager/steps/json/execution.ftl</prop>
 				<prop key="titleCode">step.execution.title</prop>
 				<prop key="titleText">Spring Batch Admin: Step Execution</prop>
 			</props>
@@ -119,7 +127,7 @@
 	<bean name="jobs/executions/step/history" parent="standard">
 		<property name="attributes">
 			<props merge="true">
-				<prop key="body">/manager/jobs/steps/history.ftl</prop>
+				<prop key="body">/manager/steps/html/history.ftl</prop>
 				<prop key="titleCode">step.history.title</prop>
 				<prop key="titleText">Spring Batch Admin: Step Execution History</prop>
 			</props>
@@ -129,9 +137,9 @@
 	<bean name="jobs/executions/step/progress" parent="standard">
 		<property name="attributes">
 			<props merge="true">
-				<prop key="body">/manager/jobs/steps/progress.ftl</prop>
-				<prop key="history">/manager/jobs/steps/history.ftl</prop>
-				<prop key="execution">/manager/jobs/steps/execution.ftl</prop>
+				<prop key="body">/manager/steps/html/progress.ftl</prop>
+				<prop key="history">/manager/steps/html/history.ftl</prop>
+				<prop key="execution">/manager/steps/html/execution.ftl</prop>
 				<prop key="titleCode">step.progress.title</prop>
 				<prop key="titleText">Spring Batch Admin: Step Execution Progress</prop>
 			</props>
@@ -141,8 +149,8 @@
 	<bean name="files" parent="standard">
 		<property name="attributes">
 			<props merge="true">
-				<prop key="body">/manager/files/files.ftl</prop>
-				<prop key="side">/manager/files/side.ftl</prop>
+				<prop key="body">/manager/files/html/files.ftl</prop>
+				<prop key="side">/manager/files/html/side.ftl</prop>
 				<prop key="titleCode">files.title</prop>
 				<prop key="titleText">Spring Batch Admin: Input File Uploads</prop>
 			</props>
@@ -160,8 +168,8 @@
 	<bean name="configuration" parent="standard">
 		<property name="attributes">
 			<props merge="true">
-				<prop key="body">/manager/files/configuration.ftl</prop>
-				<prop key="side">/manager/files/side.ftl</prop>
+				<prop key="body">/manager/files/html/configuration.ftl</prop>
+				<prop key="side">/manager/files/html/side.ftl</prop>
 				<prop key="titleCode">configuration.title</prop>
 				<prop key="titleText">Spring Batch Admin: Job Configuration Upload</prop>
 			</props>

@@ -66,10 +66,10 @@
 	</bean>
 
 	<bean id="standard" parent="parentLayout">
-		<property name="url" value="/layouts/standard.ftl" />
+		<property name="url" value="/layouts/html/standard.ftl" />
 		<property name="attributes">
 			<props merge="true">
-				<prop key="body">/layouts/home.ftl</prop>
+				<prop key="body">/layouts/html/home.ftl</prop>
 				<!-- Matches the prefix of the servlet mapping in web.xml -->
 				<prop key="servletPath">#{resourceService.servletPath}</prop>
 			</props>

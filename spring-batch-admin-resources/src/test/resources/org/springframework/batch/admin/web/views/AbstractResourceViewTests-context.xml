@@ -10,8 +10,8 @@
 	<bean id="secondary" parent="standard">
 		<property name="attributes">
 			<props merge="true">
-				<prop key="body">/layouts/home.ftl</prop>
-				<prop key="side">/layouts/side.ftl</prop>
+				<prop key="body">/layouts/html/home.ftl</prop>
+				<prop key="side">/layouts/html/side.ftl</prop>
 			</props>
 		</property>
 	</bean>

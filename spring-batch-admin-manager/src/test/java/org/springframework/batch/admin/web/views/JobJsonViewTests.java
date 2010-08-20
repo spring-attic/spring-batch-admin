@@ -17,6 +17,7 @@ package org.springframework.batch.admin.web.views;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +25,9 @@ import java.util.Map;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.batch.admin.web.JobInfo;
+import org.springframework.batch.admin.web.JobInstanceInfo;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.test.MetaDataInstanceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
@@ -40,6 +44,36 @@ public class JobJsonViewTests extends AbstractManagerViewTests {
 	@Autowired
 	@Qualifier("jobs.json")
 	private View jobs;
+
+	@Autowired
+	@Qualifier("job.json")
+	private View job;
+
+	@Test
+	public void testViewWithJob() throws Exception {
+		model.put("job", new JobInfo("foo", 1));
+		model.put("jobInstances", Arrays.asList(new JobInstanceInfo(MetaDataInstanceFactory.createJobInstance("foo",
+				1L, "bar=spam"), new ArrayList<JobExecution>())));
+		model.put("baseUrl", "http://localhost:8080/springsource");
+		job.render(model, request, response);
+		String content = response.getContentAsString();
+		// System.err.println(content);
+		JsonWrapper wrapper = new JsonWrapper(content);
+		assertEquals(1, wrapper.get("job.jobInstances", Map.class).size());
+	}
+
+	@Test
+	public void testViewWithJobAnExecutions() throws Exception {
+		model.put("job", new JobInfo("foo", 1));
+		model.put("jobInstances", Arrays.asList(new JobInstanceInfo(MetaDataInstanceFactory.createJobInstance("foo",
+				123456789L, "bar=spam"), Arrays.asList(MetaDataInstanceFactory.createJobExecution()))));
+		model.put("baseUrl", "http://localhost:8080/springsource");
+		job.render(model, request, response);
+		String content = response.getContentAsString();
+		// System.err.println(content);
+		JsonWrapper wrapper = new JsonWrapper(content);
+		assertEquals("STARTING", wrapper.get("job.jobInstances[123456789].lastJobExecutionStatus", String.class));
+	}
 
 	@Test
 	public void testListViewWithJobs() throws Exception {
