@@ -149,6 +149,14 @@
 		</property>
 	</bean>
 
+	<bean name="files.json" parent="standard.json">
+		<property name="attributes">
+			<props merge="true">
+				<prop key="body">/manager/files/json/files.ftl</prop>
+			</props>
+		</property>
+	</bean>
+
 	<bean name="configuration" parent="standard">
 		<property name="attributes">
 			<props merge="true">

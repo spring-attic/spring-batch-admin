@@ -35,11 +35,6 @@
 		<property name="contextRelative" value="true" />
 	</bean>
 
-	<bean name="redirect:files" class="org.springframework.web.servlet.view.RedirectView">
-		<property name="url" value="#{resourceService.servletPath}/files" />
-		<property name="contextRelative" value="true" />
-	</bean>
-
 	<integration:channel id="job-configuration-multipart" />
 
 	<integration:transformer id="multipartToJobConfigurationRequest" input-channel="job-configuration-multipart"
@@ -51,17 +46,12 @@
 		request-payload-type="org.springframework.batch.admin.integration.MultipartJobConfigurationRequest" view-name="redirect:jobs"
 		supported-methods="POST" message-converters="multipartJobConfigurationRequestHttpMessageConverter" />
 
-	<http:inbound-gateway name="/job-configuration.json" request-channel="job-configurations" reply-channel="job-registrations"
-		request-payload-type="org.springframework.core.io.Resource" view-name="jobs" supported-methods="POST"
-		message-converters="resourceHttpMessageConverter" />
+	<http:inbound-gateway name="/job-configuration.json" request-channel="job-configurations"
+		reply-key="jobs" reply-channel="job-registrations" request-payload-type="org.springframework.core.io.Resource"
+		view-name="jobs" supported-methods="POST" message-converters="resourceHttpMessageConverter" />
 
-	<http:inbound-channel-adapter name="/files" channel="file-requests"
-		request-payload-type="org.springframework.batch.admin.integration.FileUploadRequest" view-name="redirect:files"
-		supported-methods="POST" message-converters="fileUploadRequestHttpMessageConverter" />
-
-	<bean id="fileUploadRequestHttpMessageConverter" class="org.springframework.batch.admin.web.BindingHttpMessageConverter">
-		<property name="targetType" value="org.springframework.batch.admin.integration.FileUploadRequest" />
-	</bean>
+	<http:inbound-gateway name="/file-upload.json" request-channel="file-uploads" reply-key="files"
+		request-payload-type="java.lang.String" view-name="files" supported-methods="POST" />
 
 	<bean id="resourceHttpMessageConverter" class="org.springframework.http.converter.ResourceHttpMessageConverter" />
 
@@ -69,8 +59,10 @@
 		<property name="targetType" value="org.springframework.batch.admin.integration.MultipartJobConfigurationRequest" />
 	</bean>
 
-	<integration:service-activator input-channel="file-requests" output-channel="input-files">
-		<bean class="org.springframework.batch.admin.integration.FileUploadRequestToFileAdapter" />
+	<integration:service-activator input-channel="file-uploads">
+		<bean class="org.springframework.batch.admin.integration.StringToFileAdapter">
+			<property name="fileService" ref="fileService" />
+		</bean>
 	</integration:service-activator>
 
 </beans>

@@ -16,11 +16,16 @@
 package org.springframework.batch.admin.integration;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.Collection;
 
 import org.apache.commons.io.FileUtils;
+import org.springframework.batch.admin.service.FileInfo;
+import org.springframework.batch.admin.service.FileService;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.integration.annotation.MessageEndpoint;
 import org.springframework.integration.annotation.ServiceActivator;
+import org.springframework.util.Assert;
 
 /**
  * Adapt a {@link FileUploadRequest} to a {@link File} by writing it out to a
@@ -30,33 +35,36 @@ import org.springframework.integration.annotation.ServiceActivator;
  * 
  */
 @MessageEndpoint
-public class FileUploadRequestToFileAdapter implements InitializingBean {
+public class StringToFileAdapter implements InitializingBean {
 
-	private File directory = new File("target/data");
+	private FileService fileService;
 
-	public void setDirectory(File directory) {
-		this.directory = directory;
+	/**
+	 * The service used to manage file lists and uploads.
+	 * 
+	 * @param fileService the {@link FileService} to set
+	 */
+	public void setFileService(FileService fileService) {
+		this.fileService = fileService;
 	}
 
 	public void afterPropertiesSet() {
-		if (!directory.exists()) {
-			if (!directory.mkdirs()) {
-				throw new IllegalStateException("Cannot delete directory "
-						+ directory);
-			}
-		}
+		Assert.state(fileService!=null, "FileService must be provided");
 	}
 
 	@ServiceActivator
-	public File convert(FileUploadRequest request) throws Exception {
+	public Collection<FileInfo> convert(String request) throws Exception {
 
-		if (request.getData() == null) {
+		if (request == null) {
 			throw new IllegalArgumentException("Null input data");
 		}
 
-		File tempFile = File.createTempFile("batch-data-", ".txt");
-		FileUtils.writeStringToFile(tempFile, request.getData());
-		return tempFile;
+		String path = "upload.txt";
+		FileInfo dest = fileService.createFile(path);
+		FileUtils.writeStringToFile(fileService.getResource(dest.getPath()).getFile(), request);
+		fileService.publish(dest);
+
+		return Arrays.asList(dest);
 
 	}
 
