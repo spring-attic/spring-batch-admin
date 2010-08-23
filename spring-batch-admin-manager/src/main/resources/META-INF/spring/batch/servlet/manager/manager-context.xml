@@ -146,6 +146,11 @@
 		</property>
 	</bean>
 
+	<bean name="redirect:files" class="org.springframework.web.servlet.view.RedirectView">
+		<property name="url" value="#{resourceService.servletPath}/files" />
+		<property name="contextRelative" value="true" />
+	</bean>
+
 	<bean name="files" parent="standard">
 		<property name="attributes">
 			<props merge="true">

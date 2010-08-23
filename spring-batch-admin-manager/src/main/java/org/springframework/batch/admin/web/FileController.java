@@ -76,11 +76,10 @@ public class FileController {
 			@RequestParam(defaultValue = "0") int startFile, @RequestParam(defaultValue = "20") int pageSize,
 			@ModelAttribute("date") Date date, Errors errors) throws Exception {
 
-		list(model, startFile, pageSize);
-
 		if (file.isEmpty()) {
 			errors.reject("file.upload.empty", new Object[] { file.getOriginalFilename() },
 					"File upload was empty for filename=[" + file.getOriginalFilename() + "]");
+			list(model, startFile, pageSize);
 			return "files";
 		}
 
@@ -93,7 +92,6 @@ public class FileController {
 		catch (IOException e) {
 			errors.reject("file.upload.failed", new Object[] { file.getOriginalFilename() }, "File upload failed for "
 					+ file.getOriginalFilename());
-			return "files";
 		}
 		catch (Exception e) {
 			String message = "File upload failed downstream processing for "
@@ -104,7 +102,11 @@ public class FileController {
 				logger.info(message);
 			}
 			errors.reject("file.upload.failed.downstream", new Object[] { file.getOriginalFilename() }, message);
-			return "files";
+		}
+		
+		if (errors.hasErrors()) {
+			list(model, startFile, pageSize);
+			return "files";			
 		}
 
 		return "redirect:files";

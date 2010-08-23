@@ -15,7 +15,7 @@
 	<logging-channel-adapter channel="job-registrations" />
 
 	<service-activator input-channel="job-configuration-files" output-channel="job-configurations">
-		<beans:bean class="org.springframework.batch.admin.integration.FileToResourceAdapter" />
+		<beans:bean class="org.springframework.batch.admin.integration.FileToResourceAdapter"/>
 	</service-activator>
 
 	<service-activator input-channel="job-configurations" output-channel="job-registrations">
