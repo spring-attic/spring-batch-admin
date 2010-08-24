@@ -66,6 +66,15 @@ public class LocalFileService implements FileService, InitializingBean, Resource
 		this.fileSender = fileSender;
 	}
 
+	/**
+	 * The output directory to store new files. Defaults to
+	 * <code>${java.io.tmpdir}/batch/files</code>.
+	 * @param outputDir the output directory to set
+	 */
+	public void setOutputDir(File outputDir) {
+		this.outputDir = outputDir;
+	}
+
 	public void afterPropertiesSet() throws Exception {
 		Assert.state(fileSender != null, "A FileSender must be provided");
 		if (!outputDir.exists()) {
@@ -141,7 +150,7 @@ public class LocalFileService implements FileService, InitializingBean, Resource
 			count++;
 		}
 
-		return files.subList(startFile, Math.min(startFile + pageSize, files.size()));
+		return new ArrayList<FileInfo>(files.subList(startFile, Math.min(startFile + pageSize, files.size())));
 
 	}
 
@@ -161,7 +170,7 @@ public class LocalFileService implements FileService, InitializingBean, Resource
 		}
 		catch (IOException e) {
 			logger.debug("Cannot locate files " + pattern, e);
-			return Collections.emptyList();
+			return new ArrayList<FileInfo>();
 		}
 
 		List<FileInfo> files = new ArrayList<FileInfo>();
@@ -180,7 +189,7 @@ public class LocalFileService implements FileService, InitializingBean, Resource
 		}
 
 		Collections.sort(files);
-		return files;
+		return new ArrayList<FileInfo>(files);
 
 	}
 

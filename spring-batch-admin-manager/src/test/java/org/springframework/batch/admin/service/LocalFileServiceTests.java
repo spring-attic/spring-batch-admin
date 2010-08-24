@@ -12,6 +12,7 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.batch.support.SerializationUtils;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 
@@ -117,6 +118,19 @@ public class LocalFileServiceTests {
 		service.createFile("bar");
 		service.createFile("spam");
 		List<FileInfo> files = service.getFiles(0, 20);
+		assertEquals(3, files.size());
+		assertEquals("bar", files.get(0).getPath());
+	}
+
+	@Test
+	public void testGetFilesSerializable() throws Exception {
+		service.setResourceLoader(new DefaultResourceLoader());
+		service.afterPropertiesSet();
+		service.createFile("foo");
+		service.createFile("bar");
+		service.createFile("spam");
+		@SuppressWarnings("unchecked")
+		List<FileInfo> files = (List<FileInfo>) SerializationUtils.deserialize(SerializationUtils.serialize(service.getFiles(0, 20)));
 		assertEquals(3, files.size());
 		assertEquals("bar", files.get(0).getPath());
 	}
