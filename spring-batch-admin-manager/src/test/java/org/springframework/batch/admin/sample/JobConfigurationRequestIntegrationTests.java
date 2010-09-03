@@ -18,11 +18,10 @@ package org.springframework.batch.admin.sample;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,10 +30,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.integration.Message;
-import org.springframework.integration.core.MessageChannel;
+import org.springframework.integration.MessageChannel;
+import org.springframework.integration.MessagingException;
 import org.springframework.integration.core.MessageHandler;
+import org.springframework.integration.core.MessagingTemplate;
 import org.springframework.integration.core.SubscribableChannel;
-import org.springframework.integration.gateway.SimpleMessagingGateway;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -51,36 +51,39 @@ public class JobConfigurationRequestIntegrationTests {
 	@Qualifier("job-registrations")
 	private SubscribableChannel replies;
 
-	private BlockingQueue<String> receiver = new ArrayBlockingQueue<String>(1);
+	private List<String> result;
 
-	private MessageHandler handler = new MessageHandler() {
-		public void handleMessage(Message<?> message) {
-			receiver.add((String) message.getPayload().toString());
+	private MessageHandler handler = new MessageHandler() {	
+		@SuppressWarnings("unchecked")
+		public void handleMessage(Message<?> message) throws MessagingException {
+			result = (List<String>) message.getPayload();
 		}
 	};
-
+	
 	@Before
-	public void start() {
+	public void init() {
 		replies.subscribe(handler);
 	}
-	
+
+	@After
+	public void close() {
+		replies.unsubscribe(handler);
+	}
+
 	@Test
 	@DirtiesContext
 	public void testRegisterFromSimpleRequestString() throws Exception {
 
-		SimpleMessagingGateway gateway = new SimpleMessagingGateway();
-		gateway.setRequestChannel(requests);
-		gateway.setReplyTimeout(500L);
+		MessagingTemplate gateway = new MessagingTemplate();
+		gateway.setReceiveTimeout(500L);
 		gateway.afterPropertiesSet();
 
 		JobConfigurationRequest request = new JobConfigurationRequest();
 		request.setXml(IOUtils.toString(new ClassPathResource("/staging-context.xml").getInputStream()));
-		gateway.sendAndReceive(request);
-		String result = receiver.poll(500L, TimeUnit.MILLISECONDS);
+		gateway.convertAndSend(requests, request);
 		assertNotNull("Time out waiting for reply", result);
  		assertEquals("[staging]", result.toString());
  		
- 		gateway.stop();
-
 	}
+
 }

@@ -65,8 +65,6 @@ public class BootstrapTests {
 				JobController.class);
 		assertEquals(1, beanNames.length);
 
-		context.refresh();
-
 		Job job = context.getBean(JobRegistry.class).getJob("job1");
 		final JobExecution jobExecution = parent.getBean(JobLauncher.class).run(job,
 				new JobParametersBuilder().addString("fail", "false").toJobParameters());
