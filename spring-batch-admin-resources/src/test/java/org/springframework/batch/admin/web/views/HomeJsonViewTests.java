@@ -15,11 +15,13 @@
  */
 package org.springframework.batch.admin.web.views;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,7 +36,7 @@ import org.springframework.web.servlet.View;
 
 @ContextConfiguration(loader = WebApplicationContextLoader.class, inheritLocations = false, locations = { "AbstractResourceViewTests-context.xml" })
 @RunWith(SpringJUnit4ClassRunner.class)
-public class JsonViewTests extends AbstractResourceViewTests {
+public class HomeJsonViewTests extends AbstractResourceViewTests {
 
 	private final HashMap<String, Object> model = new HashMap<String, Object>();
 
@@ -48,10 +50,13 @@ public class JsonViewTests extends AbstractResourceViewTests {
 		resources.add(new ResourceInfo("/local", RequestMethod.GET));
 		resources.add(new ResourceInfo("/jobs/{jobName}", RequestMethod.GET));
 		model.put("resources", resources);
+		model.put("baseUrl", "http://localhost:8080/springsource");
 		standard.render(model, request, response);
 		String content = response.getContentAsString();
 		// System.err.println(content);
-		assertTrue(content.contains("Should be overridden by host application"));
+		assertTrue(content.contains("\"http://localhost:8080/springsource/batch/jobs/{jobName}\""));
+		JsonWrapper wrapper = new JsonWrapper(content);
+		assertEquals(2, wrapper.get("feed.resources", Map.class).size());
 	}
 
 }
