@@ -15,10 +15,11 @@
 			</#if>
 			<tr class="${rowClass}">
 				<#assign key>${resource.url}</#assign>
+				<#assign code>${resource.method}${resource.url}</#assign>
 				<#assign base_url><@spring.url relativeUrl="${servletPath}${key}"/></#assign>
 				<td><#if !key?contains("{") && !key?contains("**") && resource.method=="GET"><a href="${base_url}">${key}</a><#else>${key}</#if></td>
 				<td>${resource.method}</td>
-				<td> </td>
+				<td><@spring.messageText code=code text=resource.description!""/></td>
 			</tr>
 		</#list>
 	</table>

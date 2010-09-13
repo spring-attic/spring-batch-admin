@@ -18,12 +18,18 @@ package org.springframework.batch.admin;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.springframework.batch.admin.web.JobController;
 import org.springframework.batch.admin.web.resources.MenuManager;
+import org.springframework.batch.admin.web.util.HomeController;
+import org.springframework.batch.admin.web.util.ResourceInfo;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
@@ -33,6 +39,8 @@ import org.springframework.batch.poller.DirectPoller;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.util.StringUtils;
 
 /**
  * @author Dave Syer
@@ -84,6 +92,23 @@ public class BootstrapTests {
 				return status;
 			}
 		}).get(2000, TimeUnit.MILLISECONDS);
+		
+		HomeController metaData = new HomeController();
+		metaData.setApplicationContext(context);
+		metaData.afterPropertiesSet();
+		List<ResourceInfo> resources = metaData.getResources(new MockHttpServletRequest());
+		StringBuilder content = new StringBuilder();
+		for (ResourceInfo resourceInfo : resources) {
+			content.append(resourceInfo.getMethod()+resourceInfo.getUrl()+"=\n");
+		}
+		FileUtils.writeStringToFile(new File("target/resources.properties"), content.toString());
+		
+		HomeController home = context.getBean(HomeController.class);
+		// System.err.println(home.getUrlPatterns());
+		assertTrue(home.getUrlPatterns().contains("/jobs/{jobName}"));
+		
+		String message = context.getMessage("GET/jobs/{jobName}", new Object[0], Locale.getDefault());
+		assertTrue("No message for /jobs/{jobName}", StringUtils.hasText(message));
 
 		child.close();
 		context.close();

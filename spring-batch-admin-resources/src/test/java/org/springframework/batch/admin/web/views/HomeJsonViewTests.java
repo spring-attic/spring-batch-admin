@@ -48,15 +48,17 @@ public class HomeJsonViewTests extends AbstractResourceViewTests {
 	public void testDefaultTxtView() throws Exception {
 		List<ResourceInfo> resources = new ArrayList<ResourceInfo>();
 		resources.add(new ResourceInfo("/local", RequestMethod.GET));
-		resources.add(new ResourceInfo("/jobs/{jobName}", RequestMethod.GET));
+		resources.add(new ResourceInfo("/jobs/{jobName}.json", RequestMethod.GET, "foo"));
 		model.put("resources", resources);
 		model.put("baseUrl", "http://localhost:8080/springsource");
 		standard.render(model, request, response);
 		String content = response.getContentAsString();
 		// System.err.println(content);
-		assertTrue(content.contains("\"http://localhost:8080/springsource/batch/jobs/{jobName}\""));
+		assertTrue(content.contains("\"http://localhost:8080/springsource/batch/jobs/{jobName}.json\""));
 		JsonWrapper wrapper = new JsonWrapper(content);
 		assertEquals(2, wrapper.get("feed.resources", Map.class).size());
+		assertEquals("foo", wrapper.get("feed.resources['/jobs/{jobName}'].description"));
+		assertEquals("The local resource description", wrapper.get("feed.resources['/local'].description"));
 	}
 
 }

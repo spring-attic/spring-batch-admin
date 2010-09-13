@@ -21,11 +21,10 @@ import static org.junit.Assert.assertTrue;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.batch.admin.web.util.AnnotationMappingMetaDataController;
-import org.springframework.batch.admin.web.util.ResourceInfo;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.stereotype.Controller;
@@ -34,9 +33,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 
-public class AnnotationMappingMetaDataControllerTests {
+public class HomeControllerTests {
 
-	private AnnotationMappingMetaDataController metaData = new AnnotationMappingMetaDataController();
+	private HomeController metaData = new HomeController();
 
 	private StaticApplicationContext context = new StaticApplicationContext();
 
@@ -51,6 +50,46 @@ public class AnnotationMappingMetaDataControllerTests {
 		metaData.afterPropertiesSet();
 		assertTrue(metaData.getUrlPatterns().contains("/list/{id}"));
 		assertEquals(1, metaData.getUrlPatterns().size());
+	}
+
+	@Test
+	public void testInjectedMapping() throws Exception {
+		Properties props= new Properties();
+		props.setProperty("GET/list/{id}", "");
+		metaData.setDefaultResources(props);
+		metaData.afterPropertiesSet();
+		assertTrue(metaData.getUrlPatterns().contains("/list/{id}"));
+		assertEquals(1, metaData.getUrlPatterns().size());
+	}
+
+	@Test
+	public void testInjectedJsonMapping() throws Exception {
+		Properties props = new Properties();
+		props.setProperty("GET/list/{id}", "");
+		metaData.setDefaultResources(props);
+		Properties json = new Properties();
+		json.setProperty("GET/list/{id}.json", "");
+		metaData.setJsonResources(json);
+		metaData.afterPropertiesSet();
+		// System.err.println(metaData.getUrlPatterns());
+		assertTrue(metaData.getUrlPatterns().contains("/list/{id}"));
+		assertEquals(2, metaData.getResources(new MockHttpServletRequest()).size());
+	}
+
+	@Test
+	public void testJsonURI() throws Exception {
+		Properties props = new Properties();
+		props.setProperty("GET/list/{id}", "foo");
+		metaData.setDefaultResources(props);
+		Properties json = new Properties();
+		json.setProperty("GET/list/{id}.json", "");
+		metaData.setJsonResources(json);
+		metaData.afterPropertiesSet();
+		assertTrue(metaData.getUrlPatterns().contains("/list/{id}"));
+		List<ResourceInfo> resources = metaData.getResources(new MockHttpServletRequest("GET", "foo.json"));
+		// System.err.println(resources);
+		assertEquals(1, resources.size());
+		assertEquals("", resources.get(0).getDescription());
 	}
 
 	@Test(expected=IllegalStateException.class)

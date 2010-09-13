@@ -23,9 +23,16 @@ public class ResourceInfo implements Comparable<ResourceInfo> {
 
 	private final RequestMethod method;
 
+	private final String description;
+
 	public ResourceInfo(String url, RequestMethod method) {
+		this(url, method, "");
+	}
+
+	public ResourceInfo(String url, RequestMethod method, String description) {
 		this.url = url;
 		this.method = method;
+		this.description = description == null ? "" : description;
 	}
 
 	public String getUrl() {
@@ -36,6 +43,10 @@ public class ResourceInfo implements Comparable<ResourceInfo> {
 		return method;
 	}
 
+	public String getDescription() {
+		return description;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof ResourceInfo)) {
@@ -44,15 +55,20 @@ public class ResourceInfo implements Comparable<ResourceInfo> {
 		ResourceInfo other = (ResourceInfo) obj;
 		return method.equals(other.getMethod()) && url.equals(other.getUrl());
 	}
-	
+
 	@Override
 	public int hashCode() {
-		return 127 + 23*url.hashCode() + 17*method.hashCode();
+		return 127 + 23 * url.hashCode() + 17 * method.hashCode();
 	}
 
 	public int compareTo(ResourceInfo o) {
 		int urls = url.compareTo(o.url);
 		return urls != 0 ? urls : method.compareTo(o.method);
+	}
+
+	@Override
+	public String toString() {
+		return "ResourceInfo [method=" + method + ", url=" + url + ", " + "description=" + description + "]";
 	}
 
 }

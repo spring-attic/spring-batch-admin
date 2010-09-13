@@ -19,10 +19,13 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -55,17 +58,23 @@ import org.springframework.web.util.UrlPathHelper;
  * 
  */
 @Controller
-public class AnnotationMappingMetaDataController implements ApplicationContextAware, InitializingBean {
+public class HomeController implements ApplicationContextAware, InitializingBean {
 
-	private static Log logger = LogFactory.getLog(AnnotationMappingMetaDataController.class);
+	private static Log logger = LogFactory.getLog(HomeController.class);
 
 	private ApplicationContext applicationContext;
 
 	private Set<String> urls;
 
-	private List<ResourceInfo> resources;
+	private List<ResourceInfo> defaultResources;
+
+	private List<ResourceInfo> jsonResources;
 
 	private String servletPath;
+
+	private Properties defaultProperties = null;
+
+	private Properties jsonProperties = null;
 
 	/**
 	 * 
@@ -87,12 +96,85 @@ public class AnnotationMappingMetaDataController implements ApplicationContextAw
 	}
 
 	/**
+	 * Pre-configured mapping from url path to description for default (HTML)
+	 * resources.
+	 * 
+	 * @param defaultResources the default resources to set
+	 */
+	public void setDefaultResources(Properties defaultResources) {
+		this.defaultProperties = defaultResources;
+	}
+
+	/**
+	 * Pre-configured mapping from url path to description for JSON resources.
+	 * If empty the description will be replaced with the one from the
+	 * {@link #setDefaultResources(Properties) default resources}.
+	 * 
+	 * @param jsonResources the json resources to set
+	 */
+	public void setJsonResources(Properties jsonResources) {
+		this.jsonProperties = jsonResources;
+	}
+
+	/**
 	 * Create the meta data by querying the context for mappings.
 	 * 
 	 * @see InitializingBean#afterPropertiesSet()
 	 */
 	public void afterPropertiesSet() throws Exception {
+		if (defaultProperties == null || defaultProperties.isEmpty()) {
+			findResources();
+		}
+		else {
+			this.urls = buildUrlsFromProperties(defaultProperties);
+			this.defaultResources = buildResourcesFromProperties(defaultProperties, defaultProperties);
+			this.jsonResources = buildResourcesFromProperties(jsonProperties, defaultProperties);
+		}
+	}
 
+	/**
+	 * @param properties
+	 * 
+	 */
+	private List<ResourceInfo> buildResourcesFromProperties(Properties properties, Properties defaults) {
+		Set<ResourceInfo> resources = new TreeSet<ResourceInfo>();
+		if (properties == null) {
+			if (defaults == null) {
+				return new ArrayList<ResourceInfo>();
+			}
+			properties = defaults;
+		}
+		for (Enumeration<?> iterator = properties.propertyNames(); iterator.hasMoreElements();) {
+			String key = (String) iterator.nextElement();
+			String method = key.substring(0, key.indexOf("/"));
+			String url = key.substring(key.indexOf("/"));
+			String description = properties.getProperty(key, defaults.getProperty(key));
+			resources.add(new ResourceInfo(url, RequestMethod.valueOf(method), description));
+		}
+		return new ArrayList<ResourceInfo>(resources);
+	}
+
+	/**
+	 * @param properties
+	 * 
+	 */
+	private Set<String> buildUrlsFromProperties(Properties properties) {
+		Set<String> urls = new HashSet<String>();
+		if (properties == null) {
+			return urls;
+		}
+		for (Enumeration<?> iterator = properties.propertyNames(); iterator.hasMoreElements();) {
+			String key = (String) iterator.nextElement();
+			String url = key.substring(key.indexOf("/"));
+			urls.add(url);
+		}
+		return urls;
+	}
+
+	/**
+	 * 
+	 */
+	private void findResources() {
 		Map<String, Object> handlerMap = new HashMap<String, Object>();
 
 		DefaultAnnotationHandlerMapping annotationMapping = new DefaultAnnotationHandlerMapping();
@@ -106,7 +188,15 @@ public class AnnotationMappingMetaDataController implements ApplicationContextAw
 		handlerMap.putAll(beanMapping.getHandlerMap());
 
 		this.urls = findUniqueUrls(handlerMap.keySet());
-		this.resources = findMethods(handlerMap, this.urls);
+		this.defaultResources = findMethods(handlerMap, this.urls);
+		this.jsonResources = new ArrayList<ResourceInfo>();
+		for (Iterator<ResourceInfo> iterator = this.defaultResources.iterator(); iterator.hasNext();) {
+			ResourceInfo info = (ResourceInfo) iterator.next();
+			if (info.getUrl().endsWith(".json")) {
+				iterator.remove();
+				this.jsonResources.add(info);
+			}
+		}
 
 	}
 
@@ -217,6 +307,11 @@ public class AnnotationMappingMetaDataController implements ApplicationContextAw
 			servletPath = new UrlPathHelper().getServletPath(request);
 		}
 		request.setAttribute("servletPath", servletPath);
+		List<ResourceInfo> resources = new ArrayList<ResourceInfo>();
+		if (!request.getRequestURI().endsWith(".json")) {
+			resources.addAll(defaultResources);
+		}
+		resources.addAll(jsonResources);
 		return resources;
 	}
 
