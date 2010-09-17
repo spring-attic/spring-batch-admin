@@ -54,6 +54,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class JobController {
 
+	private static final String LINE_SEPARATOR = System.getProperty("line.separator");
+
 	private final JobService jobService;
 
 	private JobParametersConverter converter = new DefaultJobParametersConverter();
@@ -157,7 +159,7 @@ public class JobController {
 	 * @param lastInstances the latest job instances
 	 * @return a String representation for rendering the job parameters from the last instance
 	 */
-	private String getLastJobParameters(Collection<JobInstanceInfo> lastInstances) {
+	protected String getLastJobParameters(Collection<JobInstanceInfo> lastInstances) {
 
 		JobInstance lastInstance = null;
 		if (!lastInstances.isEmpty()) {
@@ -169,7 +171,12 @@ public class JobController {
 			oldParameters = lastInstance.getJobParameters();
 		}
 		
-		return PropertiesConverter.propertiesToString(converter.getProperties(oldParameters));
+		String properties = PropertiesConverter.propertiesToString(converter.getProperties(oldParameters));
+		if (properties.startsWith("#")) {
+			properties = properties.substring(properties.indexOf(LINE_SEPARATOR) + LINE_SEPARATOR.length());
+		}
+		properties = properties.replace("\\:", ":");
+		return properties;
 	}
 
 	@RequestMapping(value = "/jobs", method = RequestMethod.GET)
