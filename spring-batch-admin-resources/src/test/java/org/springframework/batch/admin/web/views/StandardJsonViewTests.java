@@ -16,65 +16,29 @@
 package org.springframework.batch.admin.web.views;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.batch.admin.web.util.ResourceInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.WebApplicationContextLoader;
 import org.springframework.validation.BindException;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.View;
 
 @ContextConfiguration(loader = WebApplicationContextLoader.class, inheritLocations = false, locations = { "AbstractResourceViewTests-context.xml" })
 @RunWith(SpringJUnit4ClassRunner.class)
-public class HomeJsonViewTests extends AbstractResourceViewTests {
+public class StandardJsonViewTests extends AbstractResourceViewTests {
 
 	private final HashMap<String, Object> model = new HashMap<String, Object>();
 
 	@Autowired
-	@Qualifier("home.json")
+	@Qualifier("standard.json")
 	private View standard;
-
-	@Test
-	public void testDefaultJsonView() throws Exception {
-		List<ResourceInfo> resources = new ArrayList<ResourceInfo>();
-		resources.add(new ResourceInfo("/local", RequestMethod.GET));
-		resources.add(new ResourceInfo("/jobs/{jobName}.json", RequestMethod.GET, "foo"));
-		model.put("resources", resources);
-		model.put("baseUrl", "http://localhost:8080/springsource");
-		standard.render(model, request, response);
-		String content = response.getContentAsString();
-		// System.err.println(content);
-		assertTrue(content.contains("\"http://localhost:8080/springsource/batch/jobs/{jobName}.json\""));
-		JsonWrapper wrapper = new JsonWrapper(content);
-		assertEquals(2, wrapper.get("feed.resources", Map.class).size());
-		assertEquals("foo", wrapper.get("feed.resources['/jobs/{jobName}'].description"));
-		assertEquals("The local resource description", wrapper.get("feed.resources['/local'].description"));
-	}
-
-	@Test
-	public void testErrorsJsonView() throws Exception {
-		BindException errors = new BindException(new Object(), "baseUrl");
-		errors.reject("no.resources", "No Resources");
-		model.put("errors", errors);
-		model.put("baseUrl", "http://localhost:8080/springsource");
-		standard.render(model, request, response);
-		String content = response.getContentAsString();
-		// System.err.println(content);
-		JsonWrapper wrapper = new JsonWrapper(content);
-		assertEquals(0, wrapper.get("feed.resources", Map.class).size());
-		assertEquals("No Resources", wrapper.get("errors['no.resources']"));
-	}
 
 	@Test
 	public void testEmptyJsonView() throws Exception {
@@ -83,7 +47,20 @@ public class HomeJsonViewTests extends AbstractResourceViewTests {
 		String content = response.getContentAsString();
 		// System.err.println(content);
 		JsonWrapper wrapper = new JsonWrapper(content);
-		assertEquals(0, wrapper.get("feed.resources", Map.class).size());
+		assertEquals("{}", wrapper.toString());
+	}
+
+	@Test
+	public void testErrorsJsonView() throws Exception {
+		BindException errors = new BindException(new Object(), "baseUrl");
+		errors.reject("foo", "Foo");
+		model.put("errors", errors);
+		model.put("baseUrl", "http://localhost:8080/springsource");
+		standard.render(model, request, response);
+		String content = response.getContentAsString();
+		// System.err.println(content);
+		JsonWrapper wrapper = new JsonWrapper(content);
+		assertEquals(1, wrapper.get("errors", Map.class).size());
 	}
 
 }

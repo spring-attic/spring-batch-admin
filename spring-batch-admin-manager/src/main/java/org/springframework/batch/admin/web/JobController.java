@@ -46,7 +46,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
- * Controller for launching jobs.
+ * Controller for listing and launching jobs.
  * 
  * @author Dave Syer
  * 
@@ -65,7 +65,7 @@ public class JobController {
 	/**
 	 * @param timeZone the timeZone to set
 	 */
-	@Autowired(required=false)
+	@Autowired(required = false)
 	@Qualifier("userTimeZone")
 	public void setTimeZone(TimeZone timeZone) {
 		this.timeZone = timeZone;
@@ -80,7 +80,7 @@ public class JobController {
 	@RequestMapping(value = "/jobs/{jobName}", method = RequestMethod.POST)
 	public String launch(ModelMap model, @PathVariable String jobName,
 			@ModelAttribute("launchRequest") LaunchRequest launchRequest, Errors errors,
-			@RequestParam(defaultValue = "job") String origin) {
+			@RequestParam(defaultValue = "execution") String origin) {
 
 		launchRequest.setJobName(jobName);
 		String params = launchRequest.jobParameters;
@@ -110,10 +110,12 @@ public class JobController {
 			errors.reject("job.parameters.invalid", "The job parameters are invalid according to the configuration.");
 		}
 
-		if ("execution".equals(origin)) {
+		if (!"job".equals(origin)) {
+			// if the origin is not specified we are probably not a UI client
 			return "jobs/execution";
 		}
 		else {
+			// In the UI we show the same page again... 
 			return details(model, jobName, new Date(), errors, 0, 20);
 		}
 
@@ -170,7 +172,7 @@ public class JobController {
 		if (lastInstance != null) {
 			oldParameters = lastInstance.getJobParameters();
 		}
-		
+
 		String properties = PropertiesConverter.propertiesToString(converter.getProperties(oldParameters));
 		if (properties.startsWith("#")) {
 			properties = properties.substring(properties.indexOf(LINE_SEPARATOR) + LINE_SEPARATOR.length());

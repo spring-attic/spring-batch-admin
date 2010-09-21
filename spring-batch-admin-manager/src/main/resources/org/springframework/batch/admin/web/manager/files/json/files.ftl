@@ -1,6 +1,6 @@
 <#import "/spring.ftl" as spring />
 <#assign url><@spring.url relativeUrl="${servletPath}/files"/></#assign>
-{ "files" : {
+"files" : {
       "resource" : "${baseUrl}${url}",
       "uploaded" : {
 <#if files?? && files?size!=0>
@@ -14,4 +14,3 @@
 </#if>
       }
    }
-}

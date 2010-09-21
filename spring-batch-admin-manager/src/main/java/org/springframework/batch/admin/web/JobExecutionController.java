@@ -161,7 +161,7 @@ public class JobExecutionController {
 
 	}
 
-	@RequestMapping(value = "/jobs/{jobName}/{jobInstanceId}/executions", method = RequestMethod.GET)
+	@RequestMapping(value = { "/jobs/{jobName}/{jobInstanceId}/executions", "/jobs/{jobName}/{jobInstanceId}"}, method = RequestMethod.GET)
 	public String listForInstance(Model model, @PathVariable String jobName, @PathVariable long jobInstanceId,
 			@ModelAttribute("date") Date date, Errors errors) {
 

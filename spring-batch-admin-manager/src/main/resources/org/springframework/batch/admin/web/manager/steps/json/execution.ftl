@@ -1,6 +1,6 @@
 <#import "/spring.ftl" as spring />
 <#assign url><@spring.url relativeUrl="${servletPath}/jobs/executions/${stepExecutionInfo.jobExecutionId?c}/steps/${stepExecutionInfo.id?c}/progress"/></#assign>
-{ "stepExecution" : { 
+"stepExecution" : { 
     "resource" : "${baseUrl}${url}",
     "status" : "${stepExecutionInfo.stepExecution.status}",
     "startTime" : "${stepExecutionInfo.startTime}",
@@ -18,4 +18,3 @@
   },
 <#assign url><@spring.url relativeUrl="${servletPath}/jobs/executions/${stepExecutionInfo.jobExecutionId?c}.json"/></#assign>
   "jobExecution" : { "resource" : "${baseUrl}${url}" }
-}

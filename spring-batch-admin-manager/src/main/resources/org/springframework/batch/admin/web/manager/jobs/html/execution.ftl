@@ -47,7 +47,6 @@
 				<ol>
 					<li>
 					<input id="restart" type="submit" value="Restart" name="restart" />
-					<input type="hidden" name="origin" value="execution"/>
 					</li>
 				</ol>
 				<script type="text/javascript">

@@ -14,12 +14,12 @@
 	<bean id="menuManager" class="org.springframework.batch.admin.web.resources.MenuManager" />
 
 	<bean class="org.springframework.batch.admin.web.util.HomeController">
-		<property name="defaultResources" ref="defaultResources"/>
-		<property name="jsonResources" ref="jsonResources"/>
+		<property name="defaultResources" ref="defaultResources" />
+		<property name="jsonResources" ref="jsonResources" />
 	</bean>
-	
-	<util:properties id="defaultResources"/>
-	<util:properties id="jsonResources"/>
+
+	<util:properties id="defaultResources" />
+	<util:properties id="jsonResources" />
 
 	<!-- freemarker config -->
 	<bean id="freemarkerConfig" class="org.springframework.batch.admin.web.freemarker.HippyFreeMarkerConfigurer">
@@ -97,7 +97,6 @@
 		<property name="url" value="/layouts/json/standard.ftl" />
 		<property name="attributes">
 			<props merge="true">
-				<prop key="body">/layouts/json/home.ftl</prop>
 				<!-- Matches the prefix of the servlet mapping in web.xml -->
 				<prop key="servletPath">#{resourceService.servletPath}</prop>
 			</props>
@@ -107,6 +106,12 @@
 
 	<bean id="home" parent="standard" />
 
-	<bean id="home.json" parent="standard.json" />
+	<bean id="home.json" parent="standard.json">
+		<property name="attributes">
+			<props merge="true">
+				<prop key="body">/layouts/json/home.ftl</prop>
+			</props>
+		</property>
+	</bean>
 
 </beans>

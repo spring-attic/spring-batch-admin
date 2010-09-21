@@ -1,6 +1,7 @@
 <#import "/spring.ftl" as spring />
+<#if jobExecutionInfo??>
 <#assign url><@spring.url relativeUrl="${servletPath}/jobs/executions/${jobExecutionInfo.id?c}.json"/></#assign>
-{ "jobExecution" : { 
+"jobExecution" : { 
     "resource" : "${baseUrl}${url}",
     "status" : "${jobExecutionInfo.jobExecution.status}",
     "startTime" : "${jobExecutionInfo.startTime}",
@@ -13,4 +14,4 @@
         "${stepExecution.stepName}" : { "resource" : "${baseUrl}${steps_url}"}<#if stepExecution_index != jobExecutionInfo.jobExecution.stepExecutions?size-1>,</#if></#list>
     }
   }
-}
+</#if>

@@ -1,5 +1,4 @@
 <#import "/spring.ftl" as spring />
-{
   "feed" : {
 <#assign url><@spring.url relativeUrl="${servletPath}/home.json"/></#assign>
 	"link" : "${baseUrl}${url}",
@@ -26,4 +25,3 @@
 </#if>
 	}
   }
-}

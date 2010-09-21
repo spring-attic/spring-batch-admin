@@ -36,6 +36,7 @@
 			instance of the job with the parameters shown.  You can always add new parameters if you want to.</p>
 			</#if>
 
+			<input type="hidden" name="origin" value="job"/>
 		</form>
 		<script type="text/javascript">
 		    Spring.addDecoration(new Spring.ElementDecoration({

@@ -1,6 +1,7 @@
 <#import "/spring.ftl" as spring />
+<#if job??>
 <#assign url><@spring.url relativeUrl="${servletPath}/jobs/${job.name}.json"/></#assign>
-{ "job" : { 
+"job" : { 
     "resource" : "${baseUrl}${url}",
     "name" : "${job.name}",
     "jobInstances" : {
@@ -23,4 +24,4 @@
 </#if>
      }
   }
-}
+</#if>

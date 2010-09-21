@@ -46,5 +46,10 @@ public class JsonWrapper {
 	public <T> T get(String expression, Class<T> type) throws Exception {
 		return (T) parser.parseExpression(expression).getValue(context, target);
 	}
+	
+	@Override
+	public String toString() {
+		return target.toString();
+	}
 
 }

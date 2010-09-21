@@ -33,6 +33,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.WebApplicationContextLoader;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.web.servlet.View;
 
 @ContextConfiguration(loader = WebApplicationContextLoader.class, inheritLocations = false, locations = "AbstractManagerViewTests-context.xml")
@@ -49,8 +52,11 @@ public class JobJsonViewTests extends AbstractManagerViewTests {
 	@Qualifier("jobs/job.json")
 	private View job;
 
+	private Errors errors = new BindException(new Object(), "launchRequest");
+
 	@Test
 	public void testViewWithJob() throws Exception {
+		model.put(BindingResult.MODEL_KEY_PREFIX + "launchRequest", errors);
 		model.put("job", new JobInfo("foo", 1));
 		model.put("jobInstances", Arrays.asList(new JobInstanceInfo(MetaDataInstanceFactory.createJobInstance("foo",
 				1L, "bar=spam"), new ArrayList<JobExecution>())));
@@ -63,7 +69,37 @@ public class JobJsonViewTests extends AbstractManagerViewTests {
 	}
 
 	@Test
-	public void testViewWithJobAnExecutions() throws Exception {
+	public void testViewWithNoSuchJob() throws Exception {
+		BindException errors = new BindException(new Object(), "launchRequest");
+		model.put("errors", errors);
+		errors.reject("no.such.job", "No such Job");
+		model.put("baseUrl", "http://localhost:8080/springsource");
+		job.render(model, request, response);
+		String content = response.getContentAsString();
+		// System.err.println(content);
+		JsonWrapper wrapper = new JsonWrapper(content);
+		assertEquals(1, wrapper.get("errors", Map.class).size());
+		assertEquals("No such Job", wrapper.get("errors['no.such.job']"));
+	}
+
+	@Test
+	public void testViewWithLaunchErrors() throws Exception {
+		model.put("job", new JobInfo("foo", 1));
+		BindException errors = new BindException(new Object(), "launchRequest");
+		model.put("errors", errors);
+		errors.reject("job.already.complete", "Already complete");
+		model.put("baseUrl", "http://localhost:8080/springsource");
+		job.render(model, request, response);
+		String content = response.getContentAsString();
+		// System.err.println(content);
+		JsonWrapper wrapper = new JsonWrapper(content);
+		assertEquals(1, wrapper.get("errors", Map.class).size());
+		assertEquals("Already complete", wrapper.get("errors['job.already.complete']"));
+	}
+
+	@Test
+	public void testViewWithJobAndExecutions() throws Exception {
+		model.put(BindingResult.MODEL_KEY_PREFIX + "launchRequest", errors);
 		model.put("job", new JobInfo("foo", 1));
 		model.put("jobInstances", Arrays.asList(new JobInstanceInfo(MetaDataInstanceFactory.createJobInstance("foo",
 				123456789L, "bar=spam"), Arrays.asList(MetaDataInstanceFactory.createJobExecution()))));

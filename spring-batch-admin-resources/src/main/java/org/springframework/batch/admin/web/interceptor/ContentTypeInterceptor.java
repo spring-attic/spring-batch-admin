@@ -26,16 +26,18 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindException;
+import org.springframework.validation.Errors;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.util.WebUtils;
 
 /**
- * Interceptor that looks for an extension on the request path and adds it to
- * the view name if it matches a list provided. This can be used to do simple
- * content negotiation based on request path extensions, as is usual with
- * browsers (the view that is finally resolved could have a different content
- * type than the original request).
+ * Interceptor that looks for an extension on the request path and adds it to the view name if it matches a list
+ * provided. This can be used to do simple content negotiation based on request path extensions, as is usual with
+ * browsers (the view that is finally resolved could have a different content type than the original request).
  * 
  * @author Dave Syer
  * 
@@ -43,6 +45,7 @@ import org.springframework.web.util.WebUtils;
 public class ContentTypeInterceptor extends HandlerInterceptorAdapter implements BeanFactoryAware {
 
 	private Collection<String> extensions = new HashSet<String>();
+
 	private BeanFactory beanFactory;
 
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
@@ -52,13 +55,12 @@ public class ContentTypeInterceptor extends HandlerInterceptorAdapter implements
 	/**
 	 * A collection of extensions to append to view names.
 	 * 
-	 * @param extensions
-	 *            the extensions (e.g. [rss, xml, atom])
+	 * @param extensions the extensions (e.g. [rss, xml, atom])
 	 */
 	public void setExtensions(Collection<String> extensions) {
 		this.extensions = new LinkedHashSet<String>(extensions);
 	}
-	
+
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
@@ -66,8 +68,7 @@ public class ContentTypeInterceptor extends HandlerInterceptorAdapter implements
 		StringBuffer url = new StringBuffer(scheme + "://");
 		url.append(request.getServerName());
 		int port = request.getServerPort();
-		if ((scheme.equals("http") && port != 80)
-				|| (scheme.equals("https") && port != 443)) {
+		if ((scheme.equals("http") && port != 80) || (scheme.equals("https") && port != 443)) {
 			url.append(":" + port);
 		}
 
@@ -79,19 +80,16 @@ public class ContentTypeInterceptor extends HandlerInterceptorAdapter implements
 	}
 
 	/**
-	 * Compare the extension of the request path (if there is one) with the set
-	 * provided, and if it matches then add the same extension to the view name,
-	 * if it is not already present.
+	 * Compare the extension of the request path (if there is one) with the set provided, and if it matches then add the
+	 * same extension to the view name, if it is not already present.
 	 * 
-	 * @see HandlerInterceptorAdapter#postHandle(HttpServletRequest,
-	 *      HttpServletResponse, Object, ModelAndView)
+	 * @see HandlerInterceptorAdapter#postHandle(HttpServletRequest, HttpServletResponse, Object, ModelAndView)
 	 */
 	@Override
-	public void postHandle(HttpServletRequest request,
-			HttpServletResponse response, Object handler,
+	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
-		
-		if (modelAndView==null) {
+
+		if (modelAndView == null) {
 			return;
 		}
 
@@ -99,12 +97,13 @@ public class ContentTypeInterceptor extends HandlerInterceptorAdapter implements
 			return;
 		}
 
-		String path = WebUtils.extractFullFilenameFromUrlPath(request
-				.getPathInfo());
+		String path = WebUtils.extractFullFilenameFromUrlPath(request.getPathInfo());
 		if (!path.contains(".")) {
 			return;
 		}
 		String extension = path.substring(path.indexOf(".") + 1);
+
+		exposeErrors(modelAndView.getModelMap());
 
 		if (extensions.contains(extension)) {
 
@@ -116,7 +115,7 @@ public class ContentTypeInterceptor extends HandlerInterceptorAdapter implements
 				}
 
 				String newViewName = viewName + "." + extension;
-				if (beanFactory==null || beanFactory.containsBean(newViewName)) {
+				if (beanFactory == null || beanFactory.containsBean(newViewName)) {
 					// Adding a suffix only makes sense for bean name resolution
 					modelAndView.setViewName(newViewName);
 				}
@@ -125,5 +124,24 @@ public class ContentTypeInterceptor extends HandlerInterceptorAdapter implements
 
 		}
 
+	}
+
+	private void exposeErrors(ModelMap modelMap) {
+		if (modelMap.containsAttribute("errors")) {
+			return;
+		}
+		BindException errors = new BindException(new Object(), "target");
+		boolean hasErrors = false;
+		for (Object value : modelMap.values()) {
+			if (value instanceof Errors) {
+				for (ObjectError error : ((Errors) value).getGlobalErrors()) {
+					errors.addError(error);
+					hasErrors = true;
+				}
+			}
+		}
+		if (hasErrors) {
+			modelMap.addAttribute("errors", errors);
+		}
 	}
 }
