@@ -159,8 +159,7 @@ public class SimpleJobServiceTests {
 	}
 
 	/**
-	 * Test method for {@link SimpleJobService#countJobExecutions() throws
-	 * Exception}.
+	 * Test method for {@link SimpleJobService#countJobExecutions() throws Exception}.
 	 */
 	@Test
 	public void testCountJobExecutions() throws Exception {
@@ -235,8 +234,7 @@ public class SimpleJobServiceTests {
 	}
 
 	/**
-	 * Test method for {@link SimpleJobService#countJobExecutionsForJob(String)}
-	 * .
+	 * Test method for {@link SimpleJobService#countJobExecutionsForJob(String)} .
 	 */
 	@Test
 	public void testCountJobExecutionsForJob() throws Exception {
@@ -280,9 +278,26 @@ public class SimpleJobServiceTests {
 		EasyMock.verify(stepExecutionDao, jobExecutionDao, jobInstanceDao, executionContextDao);
 	}
 
+	@Test
+	public void testGetJobExecutionWithUnserializableExecutionContext() throws Exception {
+		JobExecution jobExecution = MetaDataInstanceFactory.createJobExecution(123L);
+		JobInstance jobInstance = jobExecution.getJobInstance();
+		jobExecution.setJobInstance(null);
+		EasyMock.expect(jobExecutionDao.getJobExecution(123L)).andReturn(jobExecution);
+		EasyMock.expect(jobInstanceDao.getJobInstance(jobExecution)).andReturn(jobInstance);
+		EasyMock.expect(executionContextDao.getExecutionContext(jobExecution)).andThrow(new IllegalStateException("Planned"));
+		stepExecutionDao.addStepExecutions(jobExecution);
+		EasyMock.expectLastCall();
+		EasyMock.replay(stepExecutionDao, jobExecutionDao, jobInstanceDao, executionContextDao);
+		JobExecution result = service.getJobExecution(123L);
+		assertNotNull(result);
+		assertNotNull(result.getJobInstance());
+		assertNotNull(result.getExecutionContext());
+		EasyMock.verify(stepExecutionDao, jobExecutionDao, jobInstanceDao, executionContextDao);
+	}
+
 	/**
-	 * Test method for
-	 * {@link SimpleJobService#getJobExecutionsForJobInstance(String, Long)}.
+	 * Test method for {@link SimpleJobService#getJobExecutionsForJobInstance(String, Long)}.
 	 */
 	@Test
 	public void testGetJobExecutionsForJobInstance() throws Exception {
@@ -322,6 +337,27 @@ public class SimpleJobServiceTests {
 	}
 
 	@Test
+	public void testGetStepExecutionWithUnserializableExecutionContent() throws Exception {
+		JobExecution jobExecution = MetaDataInstanceFactory.createJobExecutionWithStepExecutions(123L, Arrays
+				.asList("step1"));
+		EasyMock.expect(jobExecutionDao.getJobExecution(123L)).andReturn(jobExecution);
+		EasyMock.expect(jobInstanceDao.getJobInstance(jobExecution)).andReturn(null);
+		EasyMock.expect(executionContextDao.getExecutionContext(jobExecution)).andReturn(new ExecutionContext());
+		stepExecutionDao.addStepExecutions(jobExecution);
+		StepExecution stepExecution = jobExecution.getStepExecutions().iterator().next();
+		Long stepExecutionId = stepExecution.getId();
+		EasyMock.expect(stepExecutionDao.getStepExecution(jobExecution, stepExecutionId)).andReturn(stepExecution);
+		EasyMock.expect(executionContextDao.getExecutionContext(stepExecution)).andThrow(
+				new IllegalStateException("Expected"));
+		EasyMock.replay(jobExecutionDao, stepExecutionDao, executionContextDao, jobInstanceDao);
+		StepExecution result = service.getStepExecution(123L, 1234L);
+		assertNotNull(result);
+		// If there is a problem extracting the execution context it will be empty
+		assertNotNull(result.getExecutionContext());
+		EasyMock.verify(jobExecutionDao, stepExecutionDao, executionContextDao, jobInstanceDao);
+	}
+
+	@Test
 	public void testCountStepExecutions() throws Exception {
 		stepExecutionDao.countStepExecutions("step");
 		EasyMock.expectLastCall().andReturn(2);
@@ -342,8 +378,7 @@ public class SimpleJobServiceTests {
 	}
 
 	/**
-	 * Test method for
-	 * {@link SimpleJobService#listJobExecutionsForJob(String, int, int)}.
+	 * Test method for {@link SimpleJobService#listJobExecutionsForJob(String, int, int)}.
 	 */
 	@Test
 	public void testListJobExecutionsForJob() throws Exception {
@@ -359,8 +394,7 @@ public class SimpleJobServiceTests {
 	}
 
 	/**
-	 * Test method for
-	 * {@link SimpleJobService#listJobInstances(String, int, int)}.
+	 * Test method for {@link SimpleJobService#listJobInstances(String, int, int)}.
 	 */
 	@Test
 	public void testListJobInstances() throws Exception {

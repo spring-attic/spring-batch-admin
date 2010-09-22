@@ -49,8 +49,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.scheduling.annotation.Scheduled;
 
 /**
- * Implementation of {@link JobService} that delegates most of its work to other
- * off-the-shelf components.
+ * Implementation of {@link JobService} that delegates most of its work to other off-the-shelf components.
  * 
  * @author Dave Syer
  * 
@@ -152,14 +151,15 @@ public class SimpleJobService implements JobService, DisposableBean {
 	public boolean isLaunchable(String jobName) {
 		return jobLocator.getJobNames().contains(jobName);
 	}
-	
+
 	public boolean isIncrementable(String jobName) {
 		try {
-			return jobLocator.getJobNames().contains(jobName) && jobLocator.getJob(jobName).getJobParametersIncrementer()!=null;
+			return jobLocator.getJobNames().contains(jobName)
+					&& jobLocator.getJob(jobName).getJobParametersIncrementer() != null;
 		}
 		catch (NoSuchJobException e) {
 			// Should not happen
-			throw new IllegalStateException("Unexpected non-existent job: "+jobName);
+			throw new IllegalStateException("Unexpected non-existent job: " + jobName);
 		}
 	}
 
@@ -198,9 +198,9 @@ public class SimpleJobService implements JobService, DisposableBean {
 		return jobExecution;
 
 	}
-	
+
 	public JobParameters getLastJobParameters(String jobName) throws NoSuchJobException {
-		
+
 		Collection<JobInstance> lastInstances = listJobInstances(jobName, 0, 1);
 
 		JobInstance lastInstance = null;
@@ -299,7 +299,12 @@ public class SimpleJobService implements JobService, DisposableBean {
 			throw new NoSuchJobExecutionException("There is no JobExecution with id=" + jobExecutionId);
 		}
 		jobExecution.setJobInstance(jobInstanceDao.getJobInstance(jobExecution));
-		jobExecution.setExecutionContext(executionContextDao.getExecutionContext(jobExecution));
+		try {
+			jobExecution.setExecutionContext(executionContextDao.getExecutionContext(jobExecution));
+		}
+		catch (Exception e) {
+			logger.info("Cannot load execution context for job execution: " + jobExecution);
+		}
 		stepExecutionDao.addStepExecutions(jobExecution);
 		return jobExecution;
 	}
@@ -323,7 +328,12 @@ public class SimpleJobService implements JobService, DisposableBean {
 			throw new NoSuchStepExecutionException("There is no StepExecution with jobExecutionId=" + jobExecutionId
 					+ " and id=" + stepExecutionId);
 		}
-		stepExecution.setExecutionContext(executionContextDao.getExecutionContext(stepExecution));
+		try {
+			stepExecution.setExecutionContext(executionContextDao.getExecutionContext(stepExecution));
+		}
+		catch (Exception e) {
+			logger.info("Cannot load execution context for step execution: " + stepExecution);
+		}
 		return stepExecution;
 	}
 
@@ -348,7 +358,7 @@ public class SimpleJobService implements JobService, DisposableBean {
 	public int countStepExecutionsForStep(String stepName) throws NoSuchStepException {
 		return stepExecutionDao.countStepExecutions(stepName);
 	}
-	
+
 	public JobInstance getJobInstance(long jobInstanceId) throws NoSuchJobInstanceException {
 		return jobInstanceDao.getJobInstance(jobInstanceId);
 	}
@@ -372,8 +382,7 @@ public class SimpleJobService implements JobService, DisposableBean {
 	}
 
 	/**
-	 * Stop all the active jobs and wait for them (up to a time out) to finish
-	 * processing.
+	 * Stop all the active jobs and wait for them (up to a time out) to finish processing.
 	 */
 	public void destroy() throws Exception {
 
@@ -411,10 +420,9 @@ public class SimpleJobService implements JobService, DisposableBean {
 	}
 
 	/**
-	 * Check all the active executions and see if they are still actually
-	 * running. Remove the ones that have completed.
+	 * Check all the active executions and see if they are still actually running. Remove the ones that have completed.
 	 */
-	@Scheduled(fixedDelay=60000)
+	@Scheduled(fixedDelay = 60000)
 	public void removeInactiveExecutions() {
 
 		for (Iterator<JobExecution> iterator = activeExecutions.iterator(); iterator.hasNext();) {
