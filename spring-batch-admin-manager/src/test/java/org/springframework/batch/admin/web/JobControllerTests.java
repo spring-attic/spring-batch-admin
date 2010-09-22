@@ -141,7 +141,7 @@ public class JobControllerTests {
 		String output = controller.getLastJobParameters(Arrays.asList(new JobInstanceInfo(MetaDataInstanceFactory
 				.createJobInstance("job", 12L, jobParameters), Collections.<JobExecution> emptySet())));
 		output = output.replace("\n", ",");
-		output = output.replace("\r", ",");
+		output = output.replace("\r", "");
 		if (output.endsWith(",")) {
 			output = output.substring(0, output.lastIndexOf(","));
 		}

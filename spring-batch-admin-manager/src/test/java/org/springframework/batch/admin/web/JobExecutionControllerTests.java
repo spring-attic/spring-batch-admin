@@ -28,9 +28,9 @@ import java.util.TimeZone;
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.springframework.batch.admin.service.JobService;
-import org.springframework.batch.admin.web.JobExecutionController;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.launch.NoSuchJobInstanceException;
 import org.springframework.batch.test.MetaDataInstanceFactory;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.validation.BindException;
@@ -122,18 +122,55 @@ public class JobExecutionControllerTests {
 	@Test
 	public void testListForJobInstanceSunnyDay() throws Exception {
 
+		jobService.getJobInstance(11L);
+		EasyMock.expectLastCall().andReturn(MetaDataInstanceFactory.createJobInstance("foo", 11L));
 		jobService.getJobExecutionsForJobInstance("foo", 11L);
 		EasyMock.expectLastCall().andReturn(Arrays.asList(MetaDataInstanceFactory.createJobExecution()));
 		EasyMock.replay(jobService);
 
 		ExtendedModelMap model = new ExtendedModelMap();
 		String result = controller.listForInstance(model, "foo", 11L, null, null);
-		// JobExecutions, Job
-		assertEquals(2, model.size());
+		// JobExecutions, Job, JobInstance
+		assertEquals(3, model.size());
 		assertEquals("jobs/executions", result);
 
 		assertTrue(model.containsKey("jobInfo"));
+		assertTrue(model.containsKey("jobInstanceInfo"));
 
+		EasyMock.verify(jobService);
+
+	}
+
+	@Test
+	public void testListForJobInstanceNoSuchJobInstance() throws Exception {
+
+		jobService.getJobInstance(11L);
+		EasyMock.expectLastCall().andThrow(new NoSuchJobInstanceException("Foo"));
+		EasyMock.replay(jobService);
+
+		ExtendedModelMap model = new ExtendedModelMap();
+		BindException errors = new BindException("target", "target");
+		String result = controller.listForInstance(model, "foo", 11L, null, errors);
+		assertEquals(1, errors.getAllErrors().size());
+		assertEquals("jobs/executions", result);
+		
+		EasyMock.verify(jobService);
+
+	}
+
+	@Test
+	public void testListForJobInstanceWrongJobName() throws Exception {
+
+		jobService.getJobInstance(11L);
+		EasyMock.expectLastCall().andReturn(MetaDataInstanceFactory.createJobInstance("bar", 11L));
+		EasyMock.replay(jobService);
+
+		ExtendedModelMap model = new ExtendedModelMap();
+		BindException errors = new BindException("target", "target");
+		String result = controller.listForInstance(model, "foo", 11L, null, errors);
+		assertEquals(1, errors.getAllErrors().size());
+		assertEquals("jobs/executions", result);
+		
 		EasyMock.verify(jobService);
 
 	}

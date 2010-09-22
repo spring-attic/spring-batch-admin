@@ -37,6 +37,7 @@ import org.springframework.batch.core.launch.JobExecutionNotRunningException;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.batch.core.launch.NoSuchJobExecutionException;
+import org.springframework.batch.core.launch.NoSuchJobInstanceException;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRepository;
@@ -346,6 +347,10 @@ public class SimpleJobService implements JobService, DisposableBean {
 
 	public int countStepExecutionsForStep(String stepName) throws NoSuchStepException {
 		return stepExecutionDao.countStepExecutions(stepName);
+	}
+	
+	public JobInstance getJobInstance(long jobInstanceId) throws NoSuchJobInstanceException {
+		return jobInstanceDao.getJobInstance(jobInstanceId);
 	}
 
 	public Collection<JobInstance> listJobInstances(String jobName, int start, int count) throws NoSuchJobException {

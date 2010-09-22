@@ -28,6 +28,7 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.launch.JobExecutionNotRunningException;
 import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.batch.core.launch.NoSuchJobExecutionException;
+import org.springframework.batch.core.launch.NoSuchJobInstanceException;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRepository;
@@ -148,6 +149,15 @@ public interface JobService {
 	 * @return the total number of jobs
 	 */
 	int countJobs();
+
+	/**
+	 * Get a {@link JobInstance job instance} by id.
+	 * 
+	 * @param jobInstanceId the id of the instance
+	 * @return a {@link JobInstance job instance}
+	 * @throws NoSuchJobException
+	 */
+	JobInstance getJobInstance(long jobInstanceId) throws NoSuchJobInstanceException;
 
 	/**
 	 * List the {@link JobInstance job instances} in descending order of

@@ -1,7 +1,10 @@
 <#import "/spring.ftl" as spring />
 <#if jobInfo?? && jobInfo.jobInstanceId??>"jobInstance" : {
     "id" : ${jobInfo.jobInstanceId?c}, 
-    "jobName" : "${jobInfo.name}"
+    "jobName" : "${jobInfo.name}"<#if jobInstanceInfo??>,
+    "jobParameters" : {<#assign params=jobInstanceInfo.jobInstance.jobParameters.parameters/><#list params?keys as param>
+        "${param}" : "${params[param]}"<#if param_index != params?size-1>,</#if></#list>
+      }</#if>
     },</#if>
     <#if jobExecutions?? && jobExecutions?size!=0>
     "jobExecutions" : {<#list jobExecutions as jobExecutionInfo><#assign url><@spring.url relativeUrl="${servletPath}/jobs/executions/${jobExecutionInfo.id?c}.json"/></#assign>

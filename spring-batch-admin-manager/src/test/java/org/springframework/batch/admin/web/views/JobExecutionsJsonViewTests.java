@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.batch.admin.web.JobExecutionInfo;
 import org.springframework.batch.admin.web.JobInfo;
+import org.springframework.batch.admin.web.JobInstanceInfo;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.test.MetaDataInstanceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,16 +50,19 @@ public class JobExecutionsJsonViewTests extends AbstractManagerViewTests {
 
 	@Test
 	public void testJobExecutionsForInstance() throws Exception {
-		model.put("jobExecutions", Arrays.asList(new JobExecutionInfo(MetaDataInstanceFactory.createJobExecution(),
-				TimeZone.getTimeZone("GMT"))));
+		JobExecution jobExecution = MetaDataInstanceFactory.createJobExecution();
+		model.put("jobExecutions", Arrays.asList(new JobExecutionInfo(jobExecution, TimeZone.getTimeZone("GMT"))));
 		model.put("baseUrl", "http://localhost:8080/springsource");
 		model.put("jobInfo", new JobInfo("foo", 1, 123L, false, false));
+		model.put("jobInstanceInfo", new JobInstanceInfo(MetaDataInstanceFactory.createJobInstance("job", 112L,
+				"foo=bar,spam=foo"), Arrays.asList(jobExecution)));
 		view.render(model, request, response);
 		String content = response.getContentAsString();
 		// System.err.println(content);
 		assertTrue(content.contains("jobInstance"));
 		JsonWrapper wrapper = new JsonWrapper(content);
-		assertEquals(2, wrapper.get("jobInstance", Map.class).size());
+		assertEquals(3, wrapper.get("jobInstance", Map.class).size());
+		assertEquals(2, wrapper.get("jobInstance.jobParameters", Map.class).size());
 	}
 
 	@Test
@@ -67,9 +71,8 @@ public class JobExecutionsJsonViewTests extends AbstractManagerViewTests {
 		JobExecution jobExecution2 = MetaDataInstanceFactory.createJobExecution(13L);
 		jobExecution2.setEndTime(new Date());
 		model.put("baseUrl", "http://localhost:8080/springsource");
-		model.put("jobExecutions", Arrays.asList(new JobExecutionInfo(jobExecution1,
-				TimeZone.getTimeZone("GMT")), new JobExecutionInfo(jobExecution2,
-						TimeZone.getTimeZone("GMT"))));
+		model.put("jobExecutions", Arrays.asList(new JobExecutionInfo(jobExecution1, TimeZone.getTimeZone("GMT")),
+				new JobExecutionInfo(jobExecution2, TimeZone.getTimeZone("GMT"))));
 		model.put("currentTime", new Date());
 		view.render(model, request, response);
 		String content = response.getContentAsString();

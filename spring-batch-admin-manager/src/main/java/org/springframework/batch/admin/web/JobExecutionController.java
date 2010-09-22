@@ -24,10 +24,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.admin.service.JobService;
 import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.launch.JobExecutionNotRunningException;
 import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.batch.core.launch.NoSuchJobExecutionException;
+import org.springframework.batch.core.launch.NoSuchJobInstanceException;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
@@ -74,7 +76,7 @@ public class JobExecutionController {
 	/**
 	 * @param timeZone the timeZone to set
 	 */
-	@Autowired(required=false)
+	@Autowired(required = false)
 	@Qualifier("userTimeZone")
 	public void setTimeZone(TimeZone timeZone) {
 		this.timeZone = timeZone;
@@ -85,7 +87,7 @@ public class JobExecutionController {
 		super();
 		this.jobService = jobService;
 	}
-	
+
 	@RequestMapping(value = "/jobs/executions/{jobExecutionId}", method = RequestMethod.DELETE)
 	public String stop(Model model, @ModelAttribute("stopRequest") StopRequest stopRequest, Errors errors,
 			@PathVariable Long jobExecutionId) {
@@ -161,22 +163,40 @@ public class JobExecutionController {
 
 	}
 
-	@RequestMapping(value = { "/jobs/{jobName}/{jobInstanceId}/executions", "/jobs/{jobName}/{jobInstanceId}"}, method = RequestMethod.GET)
+	@RequestMapping(value = { "/jobs/{jobName}/{jobInstanceId}/executions", "/jobs/{jobName}/{jobInstanceId}" }, method = RequestMethod.GET)
 	public String listForInstance(Model model, @PathVariable String jobName, @PathVariable long jobInstanceId,
 			@ModelAttribute("date") Date date, Errors errors) {
 
-		Collection<JobExecutionInfo> result = new ArrayList<JobExecutionInfo>();
+		JobInstance jobInstance = null;
 		try {
-			for (JobExecution jobExecution : jobService.getJobExecutionsForJobInstance(jobName, jobInstanceId)) {
-				result.add(new JobExecutionInfo(jobExecution, timeZone));
+			jobInstance = jobService.getJobInstance(jobInstanceId);
+			if (!jobInstance.getJobName().equals(jobName)) {
+				errors.reject("wrong.job.name", new Object[] { jobInstanceId, jobInstance.getJobName(), jobName },
+						"The JobInstance with id=" + jobInstanceId + " has the wrong name (" + jobInstance.getJobName()
+								+ " not " + jobName);
 			}
 		}
-		catch (NoSuchJobException e) {
-			errors.reject("no.such.job", new Object[] { jobName }, "There is no such job (" + jobName + ")");
+		catch (NoSuchJobInstanceException e) {
+			errors.reject("no.such.job.instance", new Object[] { jobInstanceId }, "There is no such job instance ("
+					+ jobInstanceId + ")");
 		}
-		// TODO: add the JobInstance for access to job parameters
-		model.addAttribute(new JobInfo(jobName, result.size(), jobInstanceId, null, null));
-		model.addAttribute("jobExecutions", result);
+		if (jobInstance != null && (errors==null || !errors.hasErrors())) {
+			Collection<JobExecutionInfo> result = new ArrayList<JobExecutionInfo>();
+			try {
+				Collection<JobExecution> jobExecutions = jobService.getJobExecutionsForJobInstance(jobName,
+						jobInstanceId);
+				for (JobExecution jobExecution : jobExecutions) {
+					result.add(new JobExecutionInfo(jobExecution, timeZone));
+				}
+				// Add the JobInstance for access to job parameters
+				model.addAttribute(new JobInstanceInfo(jobInstance, jobExecutions));
+			}
+			catch (NoSuchJobException e) {
+				errors.reject("no.such.job", new Object[] { jobName }, "There is no such job (" + jobName + ")");
+			}
+			model.addAttribute(new JobInfo(jobName, result.size(), jobInstanceId, null, null));
+			model.addAttribute("jobExecutions", result);
+		}
 		return "jobs/executions";
 
 	}
@@ -263,7 +283,8 @@ public class JobExecutionController {
 				result.add(new JobExecutionInfo(jobExecution, timeZone));
 			}
 			int count = jobService.countJobExecutionsForJob(jobName);
-			model.addAttribute(new JobInfo(jobName, count, null, jobService.isLaunchable(jobName), jobService.isIncrementable(jobName)));
+			model.addAttribute(new JobInfo(jobName, count, null, jobService.isLaunchable(jobName), jobService
+					.isIncrementable(jobName)));
 			model.addAttribute("jobExecutions", result);
 
 		}
