@@ -22,6 +22,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -35,10 +36,12 @@ import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.configuration.ListableJobLocator;
+import org.springframework.batch.core.job.SimpleJob;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.dao.ExecutionContextDao;
+import org.springframework.batch.core.step.tasklet.TaskletStep;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.test.MetaDataInstanceFactory;
 
@@ -279,13 +282,44 @@ public class SimpleJobServiceTests {
 	}
 
 	@Test
+	public void testGetStepNamesFromJobExecution() throws Exception {
+		EasyMock.expect(jobLocator.getJob("job")).andReturn(null);
+		EasyMock.expect(jobLocator.getJobNames()).andReturn(Collections.<String> emptyList());
+		EasyMock.expect(jobInstanceDao.countJobInstances("job")).andReturn(1);
+		EasyMock.expect(jobExecutionDao.getJobExecutions("job", 0, 100)).andReturn(
+				Arrays.asList(MetaDataInstanceFactory.createJobExecutionWithStepExecutions(123L, Arrays.asList("foo",
+						"bar")), MetaDataInstanceFactory.createJobExecutionWithStepExecutions(124L, Arrays
+						.asList("bar"))));
+		stepExecutionDao.addStepExecutions(EasyMock.isA(JobExecution.class));
+		stepExecutionDao.addStepExecutions(EasyMock.isA(JobExecution.class));
+		EasyMock.replay(jobLocator, stepExecutionDao, jobExecutionDao, jobInstanceDao, executionContextDao);
+		Collection<String> result = service.getStepNamesForJob("job");
+		assertNotNull(result);
+		assertEquals("[foo, bar]", result.toString());
+		EasyMock.verify(jobLocator, stepExecutionDao, jobExecutionDao, jobInstanceDao, executionContextDao);
+	}
+
+	@Test
+	public void testGetStepNamesFromStepLocator() throws Exception {
+		SimpleJob job = new SimpleJob("job");
+		job.addStep(new TaskletStep("foo"));
+		EasyMock.expect(jobLocator.getJob("job")).andReturn(job);
+		EasyMock.replay(jobLocator);
+		Collection<String> result = service.getStepNamesForJob("job");
+		assertNotNull(result);
+		assertEquals("[foo]", result.toString());
+		EasyMock.verify(jobLocator);
+	}
+
+	@Test
 	public void testGetJobExecutionWithUnserializableExecutionContext() throws Exception {
 		JobExecution jobExecution = MetaDataInstanceFactory.createJobExecution(123L);
 		JobInstance jobInstance = jobExecution.getJobInstance();
 		jobExecution.setJobInstance(null);
 		EasyMock.expect(jobExecutionDao.getJobExecution(123L)).andReturn(jobExecution);
 		EasyMock.expect(jobInstanceDao.getJobInstance(jobExecution)).andReturn(jobInstance);
-		EasyMock.expect(executionContextDao.getExecutionContext(jobExecution)).andThrow(new IllegalStateException("Planned"));
+		EasyMock.expect(executionContextDao.getExecutionContext(jobExecution)).andThrow(
+				new IllegalStateException("Planned"));
 		stepExecutionDao.addStepExecutions(jobExecution);
 		EasyMock.expectLastCall();
 		EasyMock.replay(stepExecutionDao, jobExecutionDao, jobInstanceDao, executionContextDao);

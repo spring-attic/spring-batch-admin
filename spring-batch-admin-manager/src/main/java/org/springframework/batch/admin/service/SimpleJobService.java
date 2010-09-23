@@ -360,12 +360,35 @@ public class SimpleJobService implements JobService, DisposableBean {
 	}
 
 	public JobInstance getJobInstance(long jobInstanceId) throws NoSuchJobInstanceException {
-		return jobInstanceDao.getJobInstance(jobInstanceId);
+		JobInstance jobInstance = jobInstanceDao.getJobInstance(jobInstanceId);
+		if (jobInstance == null) {
+			throw new NoSuchJobInstanceException("JobInstance with id="+jobInstanceId+ " does not exist");
+		}
+		return jobInstance;
 	}
 
 	public Collection<JobInstance> listJobInstances(String jobName, int start, int count) throws NoSuchJobException {
 		checkJobExists(jobName);
 		return jobInstanceDao.getJobInstances(jobName, start, count);
+	}
+
+	public Collection<String> getStepNamesForJob(String jobName) throws NoSuchJobException {
+		try {
+			Job job = jobLocator.getJob(jobName);
+			if (job instanceof StepLocator) {
+				return ((StepLocator) job).getStepNames();
+			}
+		}
+		catch (NoSuchJobException e) {
+			// ignore
+		}
+		Collection<String> stepNames = new LinkedHashSet<String>();
+		for (JobExecution jobExecution : listJobExecutionsForJob(jobName, 0, 100)) {
+			for (StepExecution stepExecution : jobExecution.getStepExecutions()) {
+				stepNames.add(stepExecution.getStepName());
+			}
+		}
+		return Collections.unmodifiableList(new ArrayList<String>(stepNames));
 	}
 
 	/**

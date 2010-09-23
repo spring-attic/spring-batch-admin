@@ -108,16 +108,49 @@
 				<td>${jobExecutionInfo.jobExecution.exitStatus.exitCode}</td>
 			</tr>
 			<tr class="name-sublevel1-even">
+				<#assign url><@spring.url relativeUrl="${servletPath}/jobs/executions/${jobExecutionInfo.id?c}/steps"/></#assign>
 				<td>Step Executions Count</td>
-				<td>${jobExecutionInfo.stepExecutionCount}</td>
-			</tr>
-			<tr class="name-sublevel1-even">
-				<#assign executions_url><@spring.url relativeUrl="${servletPath}/jobs/executions/${jobExecutionInfo.id?c}/steps"/></#assign>
-				<td><a href="${executions_url}"/>Step Executions</a></td>
-				<td>[<#list jobExecutionInfo.jobExecution.stepExecutions as stepExecution><#assign steps_url><@spring.url relativeUrl="${servletPath}/jobs/executions/${jobExecutionInfo.id?c}/steps/${stepExecution.id?c}/progress"/></#assign><#if stepExecution_index != 0>,</#if><a href="${steps_url}"/>${stepExecution.stepName}</a></#list>]</td>
+				<td><a href="${url}"/>${jobExecutionInfo.stepExecutionCount}</a></td>
 			</tr>
 		</table>
 	
+<#if stepExecutionInfos?? && stepExecutionInfos?size != 0>
+		<br/>
+		<table title="Step Execution Status"
+			class="bordered-table">
+			<tr>
+				<th>StepName</th>
+				<th>Reads</th>
+				<th>Writes</th>
+				<th>Commits</th>
+				<th>Rollbacks</th>
+				<th>Duration</th>
+				<th>Status</th>
+			</tr>
+			<#list stepExecutionInfos as execution>
+				<#if execution_index % 2 == 0>
+					<#assign rowClass="name-sublevel1-even" />
+				<#else>
+					<#assign rowClass="name-sublevel1-odd" />
+				</#if>
+				<tr class="${rowClass}">
+					<td>${execution.name}</td>
+					<td>${execution.stepExecution.readCount}</td>
+					<td>${execution.stepExecution.writeCount}</td>
+					<td>${execution.stepExecution.commitCount}</td>
+					<td>${execution.stepExecution.rollbackCount}</td>
+					<td>${execution.duration}</td>
+					<td>
+						<#if execution.status == "NONE">${execution.status}<#else>
+						<#assign url><@spring.url relativeUrl="${servletPath}/jobs/executions/${jobExecutionInfo.id?c}/steps/${execution.id?c}"/></#assign>
+						<a href="${url}"/>${execution.status}</a>
+						</#if>
+					</td>
+				</tr>
+			</#list>
+		</table>
+</#if>
+
 	<#else>
 		<p>There is no job execution to display.</p>
 	</#if>

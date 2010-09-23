@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
 
 public class StepExecutionInfo {
@@ -29,6 +30,8 @@ public class StepExecutionInfo {
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 	private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+
+	private SimpleDateFormat durationFormat = new SimpleDateFormat("HH:mm:ss");
 
 	private Long id;
 
@@ -48,6 +51,13 @@ public class StepExecutionInfo {
 
 	private long durationMillis;
 
+	public StepExecutionInfo(String jobName, Long jobExecutionId, String name, TimeZone timeZone) {
+		this.jobName = jobName;
+		this.jobExecutionId = jobExecutionId;
+		this.name = name;
+		this.stepExecution = new StepExecution(name, new JobExecution(jobExecutionId));
+	}
+
 	public StepExecutionInfo(StepExecution stepExecution, TimeZone timeZone) {
 
 		this.stepExecution = stepExecution;
@@ -57,13 +67,16 @@ public class StepExecutionInfo {
 				|| stepExecution.getJobExecution().getJobInstance() == null ? "?" : stepExecution.getJobExecution()
 				.getJobInstance().getJobName();
 		this.jobExecutionId = stepExecution.getJobExecutionId();
+		// Duration is always in GMT
+		durationFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 		timeFormat.setTimeZone(timeZone);
+		dateFormat.setTimeZone(timeZone);
 		if (stepExecution.getStartTime() != null) {
 			this.startDate = dateFormat.format(stepExecution.getStartTime());
 			this.startTime = timeFormat.format(stepExecution.getStartTime());
 			Date endTime = stepExecution.getEndTime() != null ? stepExecution.getEndTime() : new Date();
 			this.durationMillis = endTime.getTime() - stepExecution.getStartTime().getTime();
-			this.duration = timeFormat.format(new Date(durationMillis));
+			this.duration = durationFormat.format(new Date(durationMillis));
 		}
 
 	}
@@ -79,7 +92,7 @@ public class StepExecutionInfo {
 	public String getName() {
 		return name;
 	}
-	
+
 	public String getJobName() {
 		return jobName;
 	}
@@ -95,9 +108,16 @@ public class StepExecutionInfo {
 	public String getDuration() {
 		return duration;
 	}
-	
+
 	public long getDurationMillis() {
 		return durationMillis;
+	}
+	
+	public String getStatus() {
+		if (id!=null) {
+			return stepExecution.getStatus().toString();
+		}
+		return "NONE";
 	}
 
 	public StepExecution getStepExecution() {

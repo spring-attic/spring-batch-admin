@@ -18,6 +18,7 @@ package org.springframework.batch.admin.web;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.TimeZone;
 
 import org.apache.commons.logging.Log;
@@ -26,6 +27,7 @@ import org.springframework.batch.admin.service.JobService;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParametersInvalidException;
+import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.launch.JobExecutionNotRunningException;
 import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.batch.core.launch.NoSuchJobExecutionException;
@@ -180,7 +182,7 @@ public class JobExecutionController {
 			errors.reject("no.such.job.instance", new Object[] { jobInstanceId }, "There is no such job instance ("
 					+ jobInstanceId + ")");
 		}
-		if (jobInstance != null && (errors==null || !errors.hasErrors())) {
+		if (jobInstance != null && (errors == null || !errors.hasErrors())) {
 			Collection<JobExecutionInfo> result = new ArrayList<JobExecutionInfo>();
 			try {
 				Collection<JobExecution> jobExecutions = jobService.getJobExecutionsForJobInstance(jobName,
@@ -304,9 +306,32 @@ public class JobExecutionController {
 		try {
 			JobExecution jobExecution = jobService.getJobExecution(jobExecutionId);
 			model.addAttribute(new JobExecutionInfo(jobExecution, timeZone));
+			String jobName = jobExecution.getJobInstance().getJobName();
+			Collection<String> stepNames = jobService.getStepNamesForJob(jobName);
+			Collection<StepExecution> stepExecutions = new ArrayList<StepExecution>(jobExecution.getStepExecutions());
+			Collection<StepExecutionInfo> stepExecutionInfos = new ArrayList<StepExecutionInfo>();
+			for (String name : stepNames) {
+				boolean found = false;
+				for (Iterator<StepExecution> iterator = stepExecutions.iterator(); iterator.hasNext();) {
+					StepExecution stepExecution = iterator.next();
+					if (stepExecution.getStepName().equals(name)) {
+						stepExecutionInfos.add(new StepExecutionInfo(stepExecution, timeZone));
+						iterator.remove();
+						found = true;
+					}
+				}
+				if (!found) {
+					stepExecutionInfos.add(new StepExecutionInfo(jobName, jobExecutionId, name, timeZone));
+				}
+			}
+			model.addAttribute("stepExecutionInfos", stepExecutionInfos);
 		}
 		catch (NoSuchJobExecutionException e) {
 			errors.reject("no.such.job.execution", new Object[] { jobExecutionId }, "There is no such job execution ("
+					+ jobExecutionId + ")");
+		}
+		catch (NoSuchJobException e) {
+			errors.reject("no.such.job", new Object[] { jobExecutionId }, "There is no such job with exeuction id ("
 					+ jobExecutionId + ")");
 		}
 

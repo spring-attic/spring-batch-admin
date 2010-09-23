@@ -26,6 +26,7 @@ import java.util.TimeZone;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.batch.admin.web.JobExecutionInfo;
+import org.springframework.batch.admin.web.StepExecutionInfo;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.test.MetaDataInstanceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +61,25 @@ public class JobExecutionJsonViewTests extends AbstractManagerViewTests {
 		assertEquals(2, wrapper.get("jobExecution.stepExecutions", Map.class).size());
 		assertEquals("http://localhost:8080/springsource/batch/jobs/executions/123/steps/1235.json", wrapper
 				.get("jobExecution.stepExecutions.bar.resource"));
+	}
+
+	@Test
+	public void testLaunchViewWithJobAndStepExecutionInfo() throws Exception {
+		JobExecution jobExecution = MetaDataInstanceFactory.createJobExecutionWithStepExecutions(123L, Arrays.asList(
+				"foo", "bar"));
+		model.put("jobExecutionInfo", new JobExecutionInfo(jobExecution, TimeZone.getDefault()));
+		model.put("stepExecutionInfos", Arrays.asList(new StepExecutionInfo(jobExecution.getStepExecutions().iterator()
+				.next(), TimeZone.getTimeZone("GMT")), new StepExecutionInfo("job", 123L, "bar", TimeZone.getTimeZone("GMT"))));
+		model.put("baseUrl", "http://localhost:8080/springsource");
+		view.render(model, request, response);
+		String content = response.getContentAsString();
+		System.err.println(content);
+		assertTrue(content.contains("\"duration\" : \"\""));
+		JsonWrapper wrapper = new JsonWrapper(content);
+		assertEquals("STARTING", wrapper.get("jobExecution.status"));
+		assertEquals(2, wrapper.get("jobExecution.stepExecutions", Map.class).size());
+		assertEquals("http://localhost:8080/springsource/batch/jobs/executions/123/steps/1234.json", wrapper
+				.get("jobExecution.stepExecutions.foo.resource"));
 	}
 
 }

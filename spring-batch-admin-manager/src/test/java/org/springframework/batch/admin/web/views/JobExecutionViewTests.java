@@ -25,6 +25,7 @@ import java.util.TimeZone;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.batch.admin.web.JobExecutionInfo;
+import org.springframework.batch.admin.web.StepExecutionInfo;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.test.MetaDataInstanceFactory;
@@ -37,21 +38,23 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
 import org.springframework.web.servlet.View;
 
-
 @ContextConfiguration(loader = WebApplicationContextLoader.class, inheritLocations = false, locations = "AbstractManagerViewTests-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
 public class JobExecutionViewTests extends AbstractManagerViewTests {
 
 	private final HashMap<String, Object> model = new HashMap<String, Object>();
-	
+
 	@Autowired
 	@Qualifier("jobs/execution")
 	private View view;
-	
+
 	@Test
 	public void testLaunchViewWithJobExecution() throws Exception {
-		model.put("jobExecutionInfo", new JobExecutionInfo(MetaDataInstanceFactory
-				.createJobExecutionWithStepExecutions(123L, Arrays.asList("foo", "bar")), TimeZone.getTimeZone("GMT")));
+		JobExecution jobExecution = MetaDataInstanceFactory.createJobExecutionWithStepExecutions(123L, Arrays.asList(
+				"foo", "bar"));
+		model.put("jobExecutionInfo", new JobExecutionInfo(jobExecution, TimeZone.getTimeZone("GMT")));
+		model.put("stepExecutionInfos", Arrays.asList(new StepExecutionInfo(jobExecution.getStepExecutions().iterator()
+				.next(), TimeZone.getTimeZone("GMT")), new StepExecutionInfo("job", 123L, "bar", TimeZone.getTimeZone("GMT"))));
 		model.put(BindingResult.MODEL_KEY_PREFIX + "stopRequest", new MapBindingResult(model, "stopRequest"));
 		view.render(model, request, response);
 		String content = response.getContentAsString();
@@ -59,9 +62,10 @@ public class JobExecutionViewTests extends AbstractManagerViewTests {
 		assertTrue(content.contains("Details for Job Execution"));
 		assertTrue(content.contains("<input type=\"hidden\" name=\"_method\" value=\"DELETE\"/>"));
 		assertTrue(content.contains("<a href=\"/batch/jobs/executions/123/steps\"/>"));
+		assertTrue(content.contains("<a href=\"/batch/jobs/executions/123/steps/1234\"/>"));
 		assertTrue(content.contains("<td>ID</td>"));
 	}
-	
+
 	@Test
 	public void testLaunchViewWithNotRestartable() throws Exception {
 		JobExecution execution = MetaDataInstanceFactory.createJobExecution("job", 12L, 123L, "foo=bar");
@@ -73,7 +77,7 @@ public class JobExecutionViewTests extends AbstractManagerViewTests {
 		assertFalse(content.contains("restartForm"));
 		assertTrue(content.contains("<input id=\"stop\" type=\"submit\" value=\"Stop\" name=\"stop\" />"));
 	}
-	
+
 	@Test
 	public void testLaunchViewWithStopped() throws Exception {
 		JobExecution execution = MetaDataInstanceFactory.createJobExecution("job", 12345L, 1233456L, "foo=bar");
@@ -87,7 +91,7 @@ public class JobExecutionViewTests extends AbstractManagerViewTests {
 		assertTrue(content.contains("/batch/jobs/executions/1233456/steps"));
 		assertTrue(content.contains("<input id=\"stop\" type=\"submit\" value=\"Abandon\" name=\"abandon\" />"));
 	}
-	
+
 	@Test
 	public void testLaunchViewWithAbandonable() throws Exception {
 		JobExecution execution = MetaDataInstanceFactory.createJobExecution("job", 12L, 123L, "foo=bar");
