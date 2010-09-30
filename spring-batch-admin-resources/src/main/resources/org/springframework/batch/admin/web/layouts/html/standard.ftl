@@ -3,31 +3,27 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title><@spring.messageText code=titleCode!"title" text=titleText!"Spring Batch Admin"/></title>
-<#assign url><@spring.url relativeUrl="/resources/dijit/themes/tundra/tundra.css"/></#assign>
-<link rel="stylesheet" href="${url}" type="text/css"></link>
 <#assign url><@spring.url relativeUrl="/resources/styles/main.css"/></#assign>
 <link rel="stylesheet" href="${url}" type="text/css"></link>
 <#assign url><@spring.url relativeUrl="/resources/styles/colors.css"/></#assign>
-<link rel="stylesheet" href="${url}" typ="${url}"ext/css"></link>
+<link rel="stylesheet" href="${url}" type="text/css"></link>
 <#assign url><@spring.url relativeUrl="/resources/styles/local.css"/></#assign>
 <link rel="stylesheet" href="${url}" type="text/css"></link>
 <#assign url><@spring.url relativeUrl="/resources/styles/print.css"/></#assign>
 <link rel="stylesheet" href="${url}" type="text/css" media="print"></link>
-<#assign url><@spring.url relativeUrl="/resources/dojo/dojo.js"/></#assign>
-<script type="text/javascript" src="${url}"></script>
-<#assign url><@spring.url relativeUrl="/resources/spring/Spring.js"/></#assign>
-<script type="text/javascript" src="${url}"></script>
-<#assign url><@spring.url relativeUrl="/resources/spring/Spring-Dojo.js"/></#assign>
-<script type="text/javascript" src="${url}"></script>
 <#if feedPath??>
 <#assign url><@spring.url relativeUrl=feedPath/></#assign>
 	<link rel="alternate" type="application/rss+xml" title="RSS Feed" href="${url}">
 </#if>
+<#assign url><@spring.url relativeUrl="/resources/js/jquery-1.4.2.min.js"/></#assign>
+<script src="${url}" type="text/javascript"></script>
+<#assign url><@spring.url relativeUrl="/resources/js/jquery.validate-1.7.0.min.js"/></#assign>
+<script src="${url}" type="text/javascript"></script>
 <!-- 
 Some icons from Silk icon set 1.3 by Mark James, http://www.famfamfam.com/lab/icons/silk/
  -->
 </head>
-<body class="main tundra">
+<body class="main">
 <div id="page"><#include "header.ftl"> <#include "navigation.ftl">
 <div id="container">
 <#if side??>
@@ -42,22 +38,5 @@ Some icons from Silk icon set 1.3 by Mark James, http://www.famfamfam.com/lab/ic
 <!-- /content --></div>
 <!-- /container --> <#include "footer.ftl"></div>
 <!-- /page -->
-<script type="text/javascript">
-			dojo.require("dojo.NodeList-fx");
-			dojo.addOnLoad(function(){
-				<#assign url><@spring.url relativeUrl="/resources/images/ajax-loader.gif"/></#assign>
-				var loadingImg = "<img id='loading_indicator' src='${url}' alt='Loading...' />";
-				var parentNode = dojo.query("#content h1").slice(0,1);
-				parentNode.addClass('loading_indicator_parent');
-				parentNode.addContent(loadingImg);
-				var loadingNode = dojo.query('#loading_indicator');
-				var fadeInAnimation = loadingNode.fadeIn();
-				var fadeOutAnimation = loadingNode.fadeOut();
-				dojo.connect(Spring.remoting, "getResource", fadeInAnimation, "play");
-				dojo.connect(Spring.remoting, "submitForm", fadeInAnimation, "play");
-				dojo.connect(Spring.remoting, "handleResponse", fadeOutAnimation, "play");
-				dojo.connect(Spring.remoting, "handleError", fadeOutAnimation, "play");
-			});
-		</script>
 </body>
 </html>

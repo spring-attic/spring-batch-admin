@@ -11,19 +11,9 @@
 			</#if>
 	
 			<label for="launch">Job name=${job.name}</label><input id="launch" type="submit" value="Launch" name="launch" />
-			<script type="text/javascript">
-				Spring.addDecoration(new Spring.AjaxEventDecoration({
-					elementId : "launch",
-					event : "onclick",
-					formId: "launchForm",
-					params : {
-						fragments: "body"
-					}
-				}));
-			</script>
 			<ol>
 				<li><label for="jobParameters">Job Parameters (key=value
-				pairs)</label><textarea id="jobParameters" name="jobParameters">${jobParameters}</textarea> 
+				pairs)</label><textarea id="jobParameters" name="jobParameters" class="jobParameters">${jobParameters}</textarea> 
 				(<#if job.incrementable!false>Not incrementable<#else>Incrementable</#if>)</li>
 			</ol>
 	
@@ -38,19 +28,8 @@
 
 			<input type="hidden" name="origin" value="job"/>
 		</form>
-		<script type="text/javascript">
-		    Spring.addDecoration(new Spring.ElementDecoration({
-			elementId : "jobParameters",
-			widgetType : "dijit.form.ValidationTextBox",
-			widgetAttrs : { 
-				invalidMessage : "Invalid job parameters (use name=value with comma or new line separators)!", 
-				regExp : "([\\w\\.-_\\)\\(]+=.*[,\\n])*([\\w\\.-_\\)\\(]+=.*)",  
-				required : true
-			}
-		    }));
-		</script>
 	</#if>
-	
+		
 	<#if job?? && jobInstances?? && jobInstances?size!=0>
 		
 			<br/>

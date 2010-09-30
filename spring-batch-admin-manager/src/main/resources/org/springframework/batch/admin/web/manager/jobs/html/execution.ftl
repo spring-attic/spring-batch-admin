@@ -26,16 +26,6 @@
 					<input type="hidden" name="_method" value="DELETE"/>
 					</li>
 				</ol>
-				<script type="text/javascript">
-					Spring.addDecoration(new Spring.AjaxEventDecoration({
-						elementId : "stop",
-						event : "onclick",
-						formId: "stopForm",
-						params : {
-							fragments: "body"
-						}
-					}));
-				</script>
 			
 			</form>
 		</#if>
@@ -49,16 +39,6 @@
 					<input id="restart" type="submit" value="Restart" name="restart" />
 					</li>
 				</ol>
-				<script type="text/javascript">
-					Spring.addDecoration(new Spring.AjaxEventDecoration({
-						elementId : "restart",
-						event : "onclick",
-						formId: "restartForm",
-						params : {
-							fragments: "body"
-						}
-					}));
-				</script>
 			
 			</form>
 		</#if>
