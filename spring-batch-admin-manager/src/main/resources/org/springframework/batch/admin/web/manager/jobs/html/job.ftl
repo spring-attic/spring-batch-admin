@@ -28,6 +28,15 @@
 
 			<input type="hidden" name="origin" value="job"/>
 		</form>
+		<script type="text/javascript">
+			<#assign message><@spring.messageText code="invalid.job.parameters" text="Invalid Job Parameters (use comma or new-line separator)"/></#assign>
+			$.validator.addMethod('jobParameters', function (value) { 
+			    return /([\w\.-_\)\(]+=[^,\n]*[,\n])*([\w\.-_\)\(]+=[^,]*$)/m.test(value); 
+			}, '${message}');
+			$(document).ready(function(){
+			   $("#launchForm").validate();
+			});
+		</script>
 	</#if>
 		
 	<#if job?? && jobInstances?? && jobInstances?size!=0>
