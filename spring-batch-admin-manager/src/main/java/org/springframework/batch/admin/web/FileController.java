@@ -40,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.HtmlUtils;
 
 /**
  * Controller for uploading and managing files.
@@ -76,32 +77,33 @@ public class FileController {
 			@RequestParam(defaultValue = "0") int startFile, @RequestParam(defaultValue = "20") int pageSize,
 			@ModelAttribute("date") Date date, Errors errors) throws Exception {
 
+		String originalFilename = file.getOriginalFilename();
 		if (file.isEmpty()) {
-			errors.reject("file.upload.empty", new Object[] { file.getOriginalFilename() },
-					"File upload was empty for filename=[" + file.getOriginalFilename() + "]");
+			errors.reject("file.upload.empty", new Object[] { originalFilename },
+					"File upload was empty for filename=[" + HtmlUtils.htmlEscape(originalFilename) + "]");
 			list(model, startFile, pageSize);
 			return "files";
 		}
 
 		try {
-			FileInfo dest = fileService.createFile(path + "/" + file.getOriginalFilename());
+			FileInfo dest = fileService.createFile(path + "/" + originalFilename);
 			file.transferTo(fileService.getResource(dest.getPath()).getFile());
 			fileService.publish(dest);
 			model.put("uploaded", dest.getPath());
 		}
 		catch (IOException e) {
-			errors.reject("file.upload.failed", new Object[] { file.getOriginalFilename() }, "File upload failed for "
-					+ file.getOriginalFilename());
+			errors.reject("file.upload.failed", new Object[] { originalFilename }, "File upload failed for "
+					+ HtmlUtils.htmlEscape(originalFilename));
 		}
 		catch (Exception e) {
 			String message = "File upload failed downstream processing for "
-					+ file.getOriginalFilename();
+					+ HtmlUtils.htmlEscape(originalFilename);
 			if (logger.isDebugEnabled()) {
 				logger.debug(message, e);
 			} else {
 				logger.info(message);
 			}
-			errors.reject("file.upload.failed.downstream", new Object[] { file.getOriginalFilename() }, message);
+			errors.reject("file.upload.failed.downstream", new Object[] { originalFilename }, message);
 		}
 		
 		if (errors.hasErrors()) {
@@ -134,7 +136,7 @@ public class FileController {
 		Resource file = fileService.getResource(path);
 		if (file == null || !file.exists()) {
 			errors.reject("file.download.missing", new Object[] { path },
-					"File download failed for missing file at path=" + path);
+					"File download failed for missing file at path=" + HtmlUtils.htmlEscape(path));
 			return "files";
 		}
 
@@ -143,7 +145,7 @@ public class FileController {
 			FileCopyUtils.copy(file.getInputStream(), response.getOutputStream());
 		}
 		catch (IOException e) {
-			errors.reject("file.download.failed", new Object[] { path }, "File download failed for path=" + path);
+			errors.reject("file.download.failed", new Object[] { path }, "File download failed for path=" + HtmlUtils.htmlEscape(path));
 			logger.info("File download failed for path=" + path, e);
 			return "files";
 		}

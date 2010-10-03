@@ -18,6 +18,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.validation.BindException;
+import org.springframework.validation.ObjectError;
 
 public class FileControllerTests {
 
@@ -67,6 +68,20 @@ public class FileControllerTests {
 		controller.get(request, response, model, 0, 20, date, errors);
 		assertFalse(errors.hasErrors());
 		assertEquals("application/octet-stream", response.getContentType());
+	}
+
+	@Test
+	public void testDownloadWithScript() throws Exception {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		MockHttpServletResponse response = new MockHttpServletResponse();
+		ExtendedModelMap model = new ExtendedModelMap();
+		Date date = new Date();
+		BindException errors = new BindException(date, "date");
+		request.setPathInfo("/files/><script>alert(45530)</script>");
+		controller.get(request, response, model, 0, 20, date, errors);
+		assertTrue(errors.hasErrors());
+		ObjectError error = (ObjectError) errors.getAllErrors().get(0);
+		assertTrue("Wrong message: "+error.getDefaultMessage(), error.getDefaultMessage().contains("&gt;&lt;script"));
 	}
 
 	@Test
