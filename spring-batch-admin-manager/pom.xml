@@ -74,6 +74,10 @@ visualization of Batch meta data, and also launching and stopping jobs inside th
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.integration</groupId>
+			<artifactId>spring-integration-jmx</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.integration</groupId>
 			<artifactId>spring-integration-http</artifactId>
 		</dependency>
 		<dependency>

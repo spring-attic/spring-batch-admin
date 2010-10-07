@@ -37,7 +37,6 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.poller.DirectPoller;
 import org.springframework.beans.factory.BeanFactoryUtils;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.util.StringUtils;
@@ -50,15 +49,17 @@ public class BootstrapTests {
 
 	@Test
 	public void testBootstrapConfiguration() throws Exception {
-		ApplicationContext context = new ClassPathXmlApplicationContext("classpath:/META-INF/spring/batch/bootstrap/**/*.xml");
+		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("classpath:/META-INF/spring/batch/bootstrap/**/*.xml");
 		assertTrue(context.containsBean("jobRepository"));
+		context.close();
 	}
 
 	@Test
 	public void testWebappRootConfiguration() throws Exception {
-		ApplicationContext context = new ClassPathXmlApplicationContext(
+		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
 				"classpath:/org/springframework/batch/admin/web/resources/webapp-config.xml");
 		assertTrue(context.containsBean("jobRepository"));
+		context.close();
 	}
 
 	@Test
