@@ -12,7 +12,7 @@
 
 	<int-jmx:mbean-export id="integrationMBeanExporter" default-domain="spring.application" server="mbeanServer"/>
 
-	<bean id="batchMBeanExporter" class="org.springframework.batch.admin.monitor.BatchMBeanExporter">
+	<bean id="batchMBeanExporter" class="org.springframework.batch.admin.jmx.BatchMBeanExporter">
 		<property name="server" ref="mbeanServer" />
 		<property name="jobService" ref="jobService" />
 		<property name="defaultDomain" value="spring.application"/>

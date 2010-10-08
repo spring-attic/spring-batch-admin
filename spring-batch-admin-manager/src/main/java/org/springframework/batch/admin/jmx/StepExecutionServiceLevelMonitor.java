@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.batch.admin.monitor;
+package org.springframework.batch.admin.jmx;
 
 import java.util.Date;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.management.Notification;
@@ -37,6 +36,11 @@ import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.util.StopWatch;
 
 /**
+ * Monitors executions of a given step and sends JMX notifications if it takes too long. 
+ * 
+ * TODO: use messaging instead of notifications?
+ * TODO: use JMX monitor instead of AOP?
+ * 
  * @author Dave Syer
  * 
  */
@@ -55,6 +59,8 @@ public class StepExecutionServiceLevelMonitor implements NotificationPublisherAw
 
 	private int overruns = 0;
 
+	private TaskScheduler taskScheduler = new ConcurrentTaskScheduler(Executors.newSingleThreadScheduledExecutor());
+
 	public void setTimeout(long timeout) {
 		this.timeout = timeout;
 	}
@@ -63,22 +69,26 @@ public class StepExecutionServiceLevelMonitor implements NotificationPublisherAw
 		this.warningMargin = warningMargin;
 	}
 
+	/**
+	 * A scheduler that can be used to poll a step execution in a background thread.
+	 * 
+	 * @param taskScheduler the task scheduler to set
+	 */
+	public void setTaskScheduler(TaskScheduler taskScheduler) {
+		this.taskScheduler = taskScheduler;
+	}
+
 	public void invoke(ProceedingJoinPoint joinPoint, final StepExecution stepExecution, Step step) throws Throwable {
 
 		final AtomicBoolean finished = new AtomicBoolean(false);
 		final StopWatch timer = new StopWatch(stepExecution.getStepName() + ":execution");
-
-		// TODO: make ScheduledExecutorService configurable somehow
-		ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-		TaskScheduler taskScheduler = new ConcurrentTaskScheduler(scheduler);
 
 		try {
 
 			if (timeout > 0) {
 
 				if (notificationPublisher != null) {
-					Notification notification = new Notification("INFO", this, sequence++, "Starting:"
-							+ stepExecution);
+					Notification notification = new Notification("INFO", this, sequence++, "Starting:" + stepExecution);
 					notificationPublisher.sendNotification(notification);
 				}
 
@@ -93,11 +103,12 @@ public class StepExecutionServiceLevelMonitor implements NotificationPublisherAw
 							logger.debug("Sending warning (step not complete after " + threshold + " ms): "
 									+ stepExecution);
 							if (notificationPublisher != null) {
-								Notification notification = new Notification("WARN", StepExecutionServiceLevelMonitor.this, sequence++,
-										"Warning:" + stepExecution);
+								Notification notification = new Notification("WARN",
+										StepExecutionServiceLevelMonitor.this, sequence++, "Warning:" + stepExecution);
 								notificationPublisher.sendNotification(notification);
 							}
-						} else {
+						}
+						else {
 							logger.debug("No warning necessary for " + stepExecution);
 						}
 					}
@@ -107,13 +118,14 @@ public class StepExecutionServiceLevelMonitor implements NotificationPublisherAw
 
 			joinPoint.proceed();
 
-		} finally {
+		}
+		finally {
 
 			finished.set(true);
 
 			if (timeout > 0) {
 				timer.stop();
-				scheduler.shutdown();
+				Executors.newSingleThreadScheduledExecutor().shutdown();
 				if (timer.getLastTaskTimeMillis() > timeout) {
 					overruns++;
 					logger.debug("Notifying overrun " + stepExecution);
@@ -129,7 +141,7 @@ public class StepExecutionServiceLevelMonitor implements NotificationPublisherAw
 
 	}
 
-	@ManagedMetric(metricType = MetricType.COUNTER, displayName = "Step Execution Overruns", description = "rate=1h")
+	@ManagedMetric(metricType = MetricType.COUNTER, displayName = "Step Execution Overruns")
 	public int getTotalOverruns() {
 		return overruns;
 	}

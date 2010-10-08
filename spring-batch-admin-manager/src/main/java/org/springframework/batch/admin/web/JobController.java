@@ -38,12 +38,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.util.HtmlUtils;
 
 /**
  * Controller for listing and launching jobs.
@@ -102,9 +104,7 @@ public class JobController {
 			errors.reject("job.could.not.restart", "The job was not able to restart.");
 		}
 		catch (JobInstanceAlreadyCompleteException e) {
-			errors
-					.reject("job.already.complete",
-							"A job with this name and parameters already completed successfully.");
+			errors.reject("job.already.complete", "A job with this name and parameters already completed successfully.");
 		}
 		catch (JobParametersInvalidException e) {
 			errors.reject("job.parameters.invalid", "The job parameters are invalid according to the configuration.");
@@ -115,7 +115,7 @@ public class JobController {
 			return "jobs/execution";
 		}
 		else {
-			// In the UI we show the same page again... 
+			// In the UI we show the same page again...
 			return details(model, jobName, new Date(), errors, 0, 20);
 		}
 
@@ -129,6 +129,8 @@ public class JobController {
 	public String details(ModelMap model, @PathVariable String jobName, @ModelAttribute("date") Date date,
 			Errors errors, @RequestParam(defaultValue = "0") int startJobInstance,
 			@RequestParam(defaultValue = "20") int pageSize) {
+
+		jobName = findJobName(jobName);
 
 		model.addAttribute("launchable", jobService.isLaunchable(jobName));
 
@@ -150,11 +152,33 @@ public class JobController {
 
 		}
 		catch (NoSuchJobException e) {
-			errors.reject("no.such.job", new Object[] { jobName }, "There is no such job (" + jobName + ")");
+			errors.reject("no.such.job", new Object[] { jobName },
+					"There is no such job (" + HtmlUtils.htmlEscape(jobName) + ")");
 		}
 
 		return "jobs/job";
 
+	}
+
+	private String findJobName(String jobName) {
+		String bare = jobName;
+		String truncated = StringUtils.stripFilenameExtension(jobName);
+		int start = 0;
+		int count = 100;
+		Collection<String> jobs;
+		do {
+			jobs = jobService.listJobs(start, count);
+			if (jobs.contains(bare)) {
+				// prefer a full match
+				return bare;
+			}
+			if (jobs.contains(truncated)) {
+				// but allow a truncated match (e.g. if using .html or .json)
+				return truncated;
+			}
+			start += count;
+		} while (!jobs.isEmpty());
+		return jobName;
 	}
 
 	/**
