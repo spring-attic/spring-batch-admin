@@ -17,7 +17,6 @@ package org.springframework.batch.admin.jmx;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
@@ -25,8 +24,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.admin.service.JobService;
-import org.springframework.batch.admin.util.CumulativeHistory;
-import org.springframework.batch.admin.web.StepExecutionHistory;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.launch.NoSuchJobException;
@@ -107,7 +104,7 @@ public class BatchMBeanExporter extends MBeanExporter implements SmartLifecycle 
 						stepKeys.add(stepName);
 						String beanKey = getBeanKeyForStepExecution(jobName, stepName);
 						logger.info("Registering step execution " + stepName);
-						registerBeanNameOrInstance(new StepExecutionMonitor(jobService, stepName), beanKey);
+						registerBeanNameOrInstance(new SimpleStepExecutionMetrics(jobService, stepName), beanKey);
 					}
 				}
 			}
@@ -119,7 +116,7 @@ public class BatchMBeanExporter extends MBeanExporter implements SmartLifecycle 
 			if (!jobKeys.contains(jobName)) {
 				jobKeys.add(jobName);
 				logger.info("Registering job execution " + jobName);
-				registerBeanNameOrInstance(new JobExecutionMonitor(jobService, jobName),
+				registerBeanNameOrInstance(new SimpleJobExecutionMetrics(jobService, jobName),
 						getBeanKeyForJobExecution(jobName));
 			}
 		}
@@ -250,191 +247,6 @@ public class BatchMBeanExporter extends MBeanExporter implements SmartLifecycle 
 	protected void doStart() {
 		registerJobs();
 		registerSteps();
-	}
-
-	@ManagedResource
-	public static class StepExecutionMonitor {
-
-		private final JobService jobService;
-
-		private final String stepName;
-
-		public StepExecutionMonitor(JobService jobService, String stepName) {
-			this.jobService = jobService;
-			this.stepName = stepName;
-		}
-
-		@ManagedMetric(metricType = MetricType.COUNTER, displayName = "Step Execution Count")
-		public int getStepExecutionCount() {
-			return jobService.countStepExecutionsForStep(stepName);
-		}
-
-		@ManagedMetric(metricType = MetricType.COUNTER, displayName = "Step Execution Failure Count")
-		public int getStepExecutionFailureCount() {
-			int count = 0;
-			int start = 0;
-			int pageSize = 100;
-			Collection<StepExecution> stepExecutions;
-			do {
-				stepExecutions = jobService.listStepExecutionsForStep(stepName, start, pageSize);
-				start += pageSize;
-				for (StepExecution stepExecution : stepExecutions) {
-					if (stepExecution.getStatus().isUnsuccessful()) {
-						count++;
-					}
-				}
-			} while (!stepExecutions.isEmpty());
-			return count;
-		}
-
-		@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Latest Duration")
-		public double getLatestStepExecutionDuration() {
-			return computeHistory(stepName, 1).getDuration().getMean();
-		}
-
-		@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Mean Duration")
-		public double getMeanStepExecutionDuration() {
-			StepExecutionHistory history = computeHistory(stepName);
-			return history.getDuration().getMean();
-		}
-
-		@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Max Duration")
-		public double getMaxStepExecutionDuration() {
-			StepExecutionHistory history = computeHistory(stepName);
-			return history.getDuration().getMax();
-		}
-
-		private StepExecutionHistory computeHistory(String stepName) {
-			// Running average over last 10 executions...
-			return computeHistory(stepName, 10);
-		}
-
-		private StepExecutionHistory computeHistory(String stepName, int total) {
-			StepExecutionHistory stepExecutionHistory = new StepExecutionHistory(stepName);
-			for (StepExecution stepExecution : jobService.listStepExecutionsForStep(stepName, 0, total)) {
-				stepExecutionHistory.append(stepExecution);
-			}
-			return stepExecutionHistory;
-		}
-
-	}
-
-	@ManagedResource
-	public static class JobExecutionMonitor {
-
-		private final JobService jobService;
-
-		private final String jobName;
-
-		public JobExecutionMonitor(JobService jobService, String stepName) {
-			this.jobService = jobService;
-			this.jobName = stepName;
-		}
-
-		@ManagedMetric(metricType = MetricType.COUNTER, displayName = "Job Execution Count")
-		public int getJobExecutionCount() {
-			try {
-				return jobService.countJobExecutionsForJob(jobName);
-			}
-			catch (NoSuchJobException e) {
-				throw new IllegalStateException("Cannot locate job=" + jobName, e);
-			}
-		}
-
-		@ManagedMetric(metricType = MetricType.COUNTER, displayName = "Job Execution Failure Count")
-		public int getJobExecutionFailureCount() {
-
-			int pageSize = 100;
-			int start = 0;
-			int count = 0;
-
-			Collection<JobExecution> jobExecutions;
-			do {
-
-				try {
-					jobExecutions = jobService.listJobExecutionsForJob(jobName, start, pageSize);
-					start += pageSize;
-				}
-				catch (NoSuchJobException e) {
-					throw new IllegalStateException("Cannot locate job=" + jobName, e);
-				}
-				for (JobExecution jobExecution : jobExecutions) {
-					if (jobExecution.getStatus().isUnsuccessful()) {
-						count++;
-					}
-				}
-			} while (!jobExecutions.isEmpty());
-
-			return count;
-
-		}
-
-		@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Latest Duration")
-		public double getLatestJobExecutionDuration() {
-			return computeHistory(jobName, 1).getDuration().getMean();
-		}
-
-		@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Mean Duration")
-		public double getMeanJobExecutionDuration() {
-			JobExecutionHistory history = computeHistory(jobName);
-			return history.getDuration().getMean();
-		}
-
-		@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Max Duration")
-		public double getMaxJobExecutionDuration() {
-			JobExecutionHistory history = computeHistory(jobName);
-			return history.getDuration().getMax();
-		}
-
-		private JobExecutionHistory computeHistory(String jobName) {
-			// Running average over last 10 executions...
-			return computeHistory(jobName, 10);
-		}
-
-		private JobExecutionHistory computeHistory(String jobName, int total) {
-			JobExecutionHistory jobExecutionHistory = new JobExecutionHistory(jobName);
-			try {
-				for (JobExecution jobExecution : jobService.listJobExecutionsForJob(jobName, 0, total)) {
-					jobExecutionHistory.append(jobExecution);
-				}
-			}
-			catch (NoSuchJobException e) {
-				throw new IllegalStateException("Cannot locate job=" + jobName, e);
-			}
-			return jobExecutionHistory;
-		}
-
-	}
-
-	public static class JobExecutionHistory {
-
-		private final String jobName;
-
-		private CumulativeHistory duration = new CumulativeHistory();
-
-		public JobExecutionHistory(String jobName) {
-			this.jobName = jobName;
-		}
-
-		public String getJobName() {
-			return jobName;
-		}
-
-		public CumulativeHistory getDuration() {
-			return duration;
-		}
-
-		public void append(JobExecution jobExecution) {
-			if (jobExecution.getEndTime() == null) {
-				// ignore unfinished executions
-				return;
-			}
-			Date startTime = jobExecution.getStartTime();
-			Date endTime = jobExecution.getEndTime();
-			long time = endTime.getTime() - startTime.getTime();
-			duration.append(time);
-		}
-
 	}
 
 }
