@@ -93,10 +93,6 @@ public class ContentTypeInterceptor extends HandlerInterceptorAdapter implements
 			return;
 		}
 
-		if (modelAndView == null) {
-			return;
-		}
-
 		String path = WebUtils.extractFullFilenameFromUrlPath(request.getPathInfo());
 		if (!path.contains(".")) {
 			return;
