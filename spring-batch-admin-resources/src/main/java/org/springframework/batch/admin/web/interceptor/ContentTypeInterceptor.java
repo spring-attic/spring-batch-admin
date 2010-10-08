@@ -97,7 +97,7 @@ public class ContentTypeInterceptor extends HandlerInterceptorAdapter implements
 		if (!path.contains(".")) {
 			return;
 		}
-		String extension = path.substring(path.indexOf(".") + 1);
+		String extension = path.substring(path.lastIndexOf(".") + 1);
 
 		exposeErrors(modelAndView.getModelMap());
 
@@ -107,7 +107,7 @@ public class ContentTypeInterceptor extends HandlerInterceptorAdapter implements
 
 				String viewName = modelAndView.getViewName();
 				if (viewName.contains(".")) {
-					viewName = viewName.substring(0, path.indexOf("."));
+					viewName = viewName.substring(0, path.lastIndexOf("."));
 				}
 
 				String newViewName = viewName + "." + extension;

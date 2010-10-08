@@ -66,4 +66,13 @@ public class ContentTypeInterceptorTests {
 		assertEquals("foo.rss", modelAndView.getViewName());
 	}
 
+	@Test
+	public void testPostHandleWithDoubleExtension() throws Exception {
+		interceptor.setExtensions(Collections.singleton("rss"));
+		request.setPathInfo("/bar/foo.1.rss");
+		ModelAndView modelAndView = new ModelAndView("foo.1");
+		interceptor.postHandle(request, response, null, modelAndView);
+		assertEquals("foo.1.rss", modelAndView.getViewName());
+	}
+
 }
