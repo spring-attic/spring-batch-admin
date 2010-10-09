@@ -100,11 +100,12 @@ public class BatchMBeanExporter extends MBeanExporter implements SmartLifecycle 
 			for (JobExecution jobExecution : jobExecutions) {
 				for (StepExecution stepExecution : jobExecution.getStepExecutions()) {
 					String stepName = stepExecution.getStepName();
-					if (!stepKeys.contains(stepName)) {
-						stepKeys.add(stepName);
-						String beanKey = getBeanKeyForStepExecution(jobName, stepName);
-						logger.info("Registering step execution " + stepName);
-						registerBeanNameOrInstance(new SimpleStepExecutionMetrics(jobService, stepName), beanKey);
+					String stepKey = String.format("%s/%s", jobName, stepName);
+					String beanKey = getBeanKeyForStepExecution(stepName);
+					if (!stepKeys.contains(stepKey)) {
+						stepKeys.add(stepKey);
+						logger.info("Registering step execution " + stepKey);
+						registerBeanNameOrInstance(new SimpleStepExecutionMetrics(jobService, jobName, stepName), beanKey);
 					}
 				}
 			}
@@ -123,11 +124,11 @@ public class BatchMBeanExporter extends MBeanExporter implements SmartLifecycle 
 	}
 
 	private String getBeanKeyForJobExecution(String jobName) {
-		return String.format(domain + ":type=JobExecution,name=%s", jobName);
+		return String.format("%s:type=JobExecution,name=%s", domain, jobName);
 	}
 
-	private String getBeanKeyForStepExecution(String jobName, String stepName) {
-		return String.format(domain + ":type=StepExecution,name=%s/%s", jobName, stepName);
+	private String getBeanKeyForStepExecution(String stepName) {
+		return String.format("%s:type=StepExecution,name=%s", domain, stepName);
 	}
 
 	@ManagedMetric(metricType = MetricType.COUNTER, displayName = "Step Count")

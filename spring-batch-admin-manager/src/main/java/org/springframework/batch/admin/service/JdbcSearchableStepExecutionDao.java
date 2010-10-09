@@ -107,35 +107,50 @@ public class JdbcSearchableStepExecutionDao extends JdbcStepExecutionDao impleme
 
 	}
 
-	public Collection<StepExecution> findStepExecutions(String stepName, int start, int count) {
+	public Collection<StepExecution> findStepExecutions(String jobName, String stepName, int start, int count) {
 
-		String whereClause = "STEP_NAME = ?";
+		String whereClause;
+
+		if (jobName.contains("*")) {
+			whereClause = "JOB_NAME like ?";
+			jobName = jobName.replace("*", "%");
+		}
+		else {
+			whereClause = "JOB_NAME = ?";
+		}
 
 		if (stepName.contains("*")) {
-			whereClause = "STEP_NAME like ?";
+			whereClause = whereClause + " AND STEP_NAME like ?";
 			stepName = stepName.replace("*", "%");
+		}
+		else {
+			whereClause = whereClause + " AND STEP_NAME = ?";
 		}
 
 		PagingQueryProvider queryProvider = getPagingQueryProvider(whereClause);
 
+		List<StepExecution> stepExecutions;
 		if (start <= 0) {
-			return getJdbcTemplate().query(queryProvider.generateFirstPageQuery(count), new StepExecutionRowMapper(),
-					stepName);
+			stepExecutions = getJdbcTemplate().query(queryProvider.generateFirstPageQuery(count),
+					new StepExecutionRowMapper(), jobName, stepName);
 		}
-		try {
-			Long startAfterValue = getJdbcTemplate().queryForLong(queryProvider.generateJumpToItemQuery(start, count),
-					stepName);
+		else {
+			try {
+				Long startAfterValue = getJdbcTemplate().queryForLong(queryProvider.generateJumpToItemQuery(start, count),
+					jobName, stepName);
+				stepExecutions = getJdbcTemplate().query(queryProvider.generateRemainingPagesQuery(count),
+						new StepExecutionRowMapper(), jobName, stepName, startAfterValue);
+			}
+			catch (IncorrectResultSizeDataAccessException e) {
+				return Collections.emptyList();
+			}
+		}
 
-			return getJdbcTemplate().query(queryProvider.generateRemainingPagesQuery(count),
-					new StepExecutionRowMapper(), stepName, startAfterValue);
-		}
-		catch (IncorrectResultSizeDataAccessException e) {
-			return Collections.emptyList();
-		}
+		return stepExecutions;
 
 	}
 
-	public int countStepExecutions(String stepName) {
+	public int countStepExecutions(String jobName, String stepName) {
 		if (stepName.contains("*")) {
 			return getJdbcTemplate().queryForInt(getQuery(COUNT_STEP_EXECUTIONS_FOR_STEP_PATTERN),
 					stepName.replace("*", "%"));
@@ -150,12 +165,13 @@ public class JdbcSearchableStepExecutionDao extends JdbcStepExecutionDao impleme
 	private PagingQueryProvider getPagingQueryProvider(String whereClause) {
 		SqlPagingQueryProviderFactoryBean factory = new SqlPagingQueryProviderFactoryBean();
 		factory.setDataSource(dataSource);
-		factory.setFromClause(getQuery("%PREFIX%STEP_EXECUTION"));
+		factory.setFromClause(getQuery("%PREFIX%STEP_EXECUTION S, %PREFIX%JOB_EXECUTION J, %PREFIX%JOB_INSTANCE I"));
 		factory.setSelectClause(FIELDS);
 		factory.setSortKey("STEP_EXECUTION_ID");
 		factory.setAscending(false);
 		if (whereClause != null) {
-			factory.setWhereClause(whereClause);
+			factory.setWhereClause(whereClause
+					+ " AND S.JOB_EXECUTION_ID = J.JOB_EXECUTION_ID AND J.JOB_INSTANCE_ID = I.JOB_INSTANCE_ID");
 		}
 		try {
 			return (PagingQueryProvider) factory.getObject();

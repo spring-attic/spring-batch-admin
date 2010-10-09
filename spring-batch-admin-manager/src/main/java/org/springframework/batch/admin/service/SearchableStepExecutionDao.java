@@ -46,23 +46,25 @@ public interface SearchableStepExecutionDao extends StepExecutionDao {
 	/**
 	 * Find all the step executions for a given step name, or step name pattern
 	 * (with wildcards specified as '*') sorted in descending order of id.
-	 * 
+	 * @param jobName the job name or pattern
 	 * @param stepName
 	 *            the step name or pattern
 	 * @param start
 	 *            the start index of the step executions to return
 	 * @param count
 	 *            the maximum number of step executions to return
+	 * 
 	 * @return a collection of step executions
 	 */
-	Collection<StepExecution> findStepExecutions(String stepName, int start,
-			int count);
+	Collection<StepExecution> findStepExecutions(String jobName, String stepName,
+			int start, int count);
 	
 	/**
 	 * Count all the step executions for a given step name pattern.
-	 * 
+	 * @param jobName the job name pattern
 	 * @param stepName the step name pattern.
+	 * 
 	 * @return the total number of step executions in the repository matching the pattern
 	 */
-	int countStepExecutions(String stepName);
+	int countStepExecutions(String jobName, String stepName);
 }

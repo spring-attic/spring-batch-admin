@@ -3,6 +3,6 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
 	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:p="http://www.springframework.org/schema/p">
 
-	<import resource="classpath:/META-INF/spring/batch/bootstrap/integration/*-context.xml" />
+	<import resource="classpath:/META-INF/spring/batch/bootstrap/integration/configuration-context.xml" />
 
 </beans>

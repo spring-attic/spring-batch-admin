@@ -61,12 +61,12 @@ public class StepExecutionControllerTests {
 		jobService.getStepExecution(123L, 1234L);
 		EasyMock.expectLastCall().andReturn(
 				MetaDataInstanceFactory.createStepExecution());
-		jobService.countStepExecutionsForStep("step");
+		jobService.countStepExecutionsForStep(jobName, "step");
 		EasyMock.expectLastCall().andReturn(1200);
-		jobService.listStepExecutionsForStep("step", 0, 1000);
+		jobService.listStepExecutionsForStep("job", "step", 0, 1000);
 		EasyMock.expectLastCall().andReturn(
 				Arrays.asList(MetaDataInstanceFactory.createStepExecution()));
-		jobService.listStepExecutionsForStep("step", 1000, 1000);
+		jobService.listStepExecutionsForStep("job", "step", 1000, 1000);
 		EasyMock.expectLastCall().andReturn(
 				Arrays.asList(MetaDataInstanceFactory.createStepExecution()));
 		EasyMock.replay(jobService);
@@ -89,12 +89,12 @@ public class StepExecutionControllerTests {
 		jobService.getStepExecution(123L, 1234L);
 		EasyMock.expectLastCall().andReturn(
 				MetaDataInstanceFactory.createStepExecution("step:partition1", 0L));
-		jobService.countStepExecutionsForStep("step:partition*");
+		jobService.countStepExecutionsForStep(jobName, "step:partition*");
 		EasyMock.expectLastCall().andReturn(1200);
-		jobService.listStepExecutionsForStep("step:partition*", 0, 1000);
+		jobService.listStepExecutionsForStep("job", "step:partition*", 0, 1000);
 		EasyMock.expectLastCall().andReturn(
 				Arrays.asList(MetaDataInstanceFactory.createStepExecution()));
-		jobService.listStepExecutionsForStep("step:partition*", 1000, 1000);
+		jobService.listStepExecutionsForStep("job", "step:partition*", 1000, 1000);
 		EasyMock.expectLastCall().andReturn(
 				Arrays.asList(MetaDataInstanceFactory.createStepExecution()));
 		EasyMock.replay(jobService);

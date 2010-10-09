@@ -85,31 +85,31 @@ public class JdbcSearchableStepExecutionDaoTests {
 	@Test
 	@Transactional
 	public void testFindStepExecutionsByName() {
-		assertEquals(1, dao.findStepExecutions("step", 2, 2).size());
+		assertEquals(1, dao.findStepExecutions("job", "step", 2, 2).size());
 	}
 
 	@Test
 	@Transactional
 	public void testFindStepExecutionsByPattern() {
-		assertEquals(1, dao.findStepExecutions("s*", 2, 2).size());
+		assertEquals(1, dao.findStepExecutions("job", "s*", 2, 2).size());
 	}
 
 	@Test
 	@Transactional
 	public void testFindStepExecutionsPastEnd() {
-		assertEquals(0, dao.findStepExecutions("step", 100, 100).size());
+		assertEquals(0, dao.findStepExecutions("job", "step", 100, 100).size());
 	}
 
 	@Test
 	@Transactional
 	public void testCountStepExecutionsByName() {
-		assertEquals(3, dao.countStepExecutions("step"));
+		assertEquals(3, dao.countStepExecutions("job", "step"));
 	}
 
 	@Test
 	@Transactional
 	public void testCountStepExecutionsByPattern() {
-		assertEquals(3, dao.countStepExecutions("s*"));
+		assertEquals(3, dao.countStepExecutions("job", "s*"));
 	}
 
 }

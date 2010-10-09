@@ -347,16 +347,16 @@ public class SimpleJobService implements JobService, DisposableBean {
 		return jobExecutions;
 	}
 
-	public Collection<StepExecution> listStepExecutionsForStep(String stepName, int start, int count)
+	public Collection<StepExecution> listStepExecutionsForStep(String jobName, String stepName, int start, int count)
 			throws NoSuchStepException {
-		if (stepExecutionDao.countStepExecutions(stepName) == 0) {
+		if (stepExecutionDao.countStepExecutions(jobName, stepName) == 0) {
 			throw new NoSuchStepException("No step executions exist with this step name: " + stepName);
 		}
-		return stepExecutionDao.findStepExecutions(stepName, start, count);
+		return stepExecutionDao.findStepExecutions(jobName, stepName, start, count);
 	}
 
-	public int countStepExecutionsForStep(String stepName) throws NoSuchStepException {
-		return stepExecutionDao.countStepExecutions(stepName);
+	public int countStepExecutionsForStep(String jobName, String stepName) throws NoSuchStepException {
+		return stepExecutionDao.countStepExecutions(jobName, stepName);
 	}
 
 	public JobInstance getJobInstance(long jobInstanceId) throws NoSuchJobInstanceException {

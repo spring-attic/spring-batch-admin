@@ -242,24 +242,26 @@ public interface JobService {
 	/**
 	 * List the {@link StepExecution step executions} for a step in descending order of creation (usually close to
 	 * execution order).
-	 * 
+	 * @param jobName the name of the job associated with the step (or a pattern with wildcards)
 	 * @param stepName the step name (or a pattern with wildcards)
 	 * @param start the start index of the first execution
 	 * @param count the maximum number of executions to return
+	 * 
 	 * @return a collection of {@link StepExecution}
 	 * @throws NoSuchStepException
 	 */
-	Collection<StepExecution> listStepExecutionsForStep(String stepName, int start, int count)
+	Collection<StepExecution> listStepExecutionsForStep(String jobName, String stepName, int start, int count)
 			throws NoSuchStepException;
 
 	/**
 	 * Count the step executions in the repository for a given step name (or pattern).
-	 * 
+	 * @param jobName the job name  (or a pattern with wildcards)
 	 * @param stepName the step name (or a pattern with wildcards)
+	 * 
 	 * @return the number of executions
 	 * @throws NoSuchStepException
 	 */
-	int countStepExecutionsForStep(String stepName) throws NoSuchStepException;
+	int countStepExecutionsForStep(String jobName, String stepName) throws NoSuchStepException;
 
 	/**
 	 * Locate a {@link StepExecution} from its id and that of its parent {@link JobExecution}.

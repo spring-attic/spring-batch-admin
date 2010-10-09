@@ -117,7 +117,8 @@ public class StepExecutionController {
 				// assume we want to compare all partitions
 				stepName = stepName.replaceAll("(:partition).*", "$1*");
 			}
-			StepExecutionHistory stepExecutionHistory = computeHistory(stepName);
+			String jobName = stepExecution.getJobExecution().getJobInstance().getJobName();
+			StepExecutionHistory stepExecutionHistory = computeHistory(jobName, stepName);
 			model.addAttribute(stepExecutionHistory);
 			model.addAttribute(new StepExecutionProgress(stepExecution, stepExecutionHistory));
 		}
@@ -134,11 +135,11 @@ public class StepExecutionController {
 
 	}
 
-	private StepExecutionHistory computeHistory(String stepName) {
-		int total = jobService.countStepExecutionsForStep(stepName);
+	private StepExecutionHistory computeHistory(String jobName, String stepName) {
+		int total = jobService.countStepExecutionsForStep(jobName, stepName);
 		StepExecutionHistory stepExecutionHistory = new StepExecutionHistory(stepName);
 		for (int i = 0; i < total; i += 1000) {
-			for (StepExecution stepExecution : jobService.listStepExecutionsForStep(stepName, i, 1000)) {
+			for (StepExecution stepExecution : jobService.listStepExecutionsForStep(jobName, stepName, i, 1000)) {
 				stepExecutionHistory.append(stepExecution);
 			}
 		}

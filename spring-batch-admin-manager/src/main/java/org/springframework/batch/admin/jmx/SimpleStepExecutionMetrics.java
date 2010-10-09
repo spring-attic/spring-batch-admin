@@ -31,14 +31,17 @@ public class SimpleStepExecutionMetrics implements StepExecutionMetrics {
 
 	private final String stepName;
 
-	public SimpleStepExecutionMetrics(JobService jobService, String stepName) {
+	private final String jobName;
+
+	public SimpleStepExecutionMetrics(JobService jobService, String jobName, String stepName) {
 		this.jobService = jobService;
+		this.jobName = jobName;
 		this.stepName = stepName;
 	}
 
 	@ManagedMetric(metricType = MetricType.COUNTER, displayName = "Step Execution Count")
 	public int getStepExecutionCount() {
-		return jobService.countStepExecutionsForStep(stepName);
+		return jobService.countStepExecutionsForStep(jobName, stepName);
 	}
 
 	@ManagedMetric(metricType = MetricType.COUNTER, displayName = "Step Execution Failure Count")
@@ -48,7 +51,7 @@ public class SimpleStepExecutionMetrics implements StepExecutionMetrics {
 		int pageSize = 100;
 		Collection<StepExecution> stepExecutions;
 		do {
-			stepExecutions = jobService.listStepExecutionsForStep(stepName, start, pageSize);
+			stepExecutions = jobService.listStepExecutionsForStep(jobName, stepName, start, pageSize);
 			start += pageSize;
 			for (StepExecution stepExecution : stepExecutions) {
 				if (stepExecution.getStatus().isUnsuccessful()) {
@@ -83,7 +86,7 @@ public class SimpleStepExecutionMetrics implements StepExecutionMetrics {
 
 	private StepExecutionHistory computeHistory(String stepName, int total) {
 		StepExecutionHistory stepExecutionHistory = new StepExecutionHistory(stepName);
-		for (StepExecution stepExecution : jobService.listStepExecutionsForStep(stepName, 0, total)) {
+		for (StepExecution stepExecution : jobService.listStepExecutionsForStep(jobName, stepName, 0, total)) {
 			stepExecutionHistory.append(stepExecution);
 		}
 		return stepExecutionHistory;

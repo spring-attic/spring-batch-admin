@@ -64,6 +64,8 @@ public class JobControllerTests {
 				.andReturn(Arrays.asList(MetaDataInstanceFactory.createJobExecution("foo", 11L, 123L)));
 		jobService.countJobInstances("foo");
 		EasyMock.expectLastCall().andReturn(100);
+		jobService.listJobs(0, 100);
+		EasyMock.expectLastCall().andReturn(Arrays.asList("foo"));
 		jobService.countJobExecutionsForJob("foo");
 		EasyMock.expectLastCall().andReturn(1);
 		jobService.isLaunchable("foo");
@@ -120,6 +122,10 @@ public class JobControllerTests {
 		EasyMock.expectLastCall().andReturn(12);
 		jobService.countJobInstances("job");
 		EasyMock.expectLastCall().andReturn(100);
+		jobService.listJobs(0, 100);
+		EasyMock.expectLastCall().andReturn(Arrays.asList("foo"));
+		jobService.listJobs(100, 100);
+		EasyMock.expectLastCall().andReturn(Collections.emptyList());
 		jobService.isLaunchable("job");
 		EasyMock.expectLastCall().andReturn(true);
 		EasyMock.replay(jobService);
