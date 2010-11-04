@@ -18,6 +18,7 @@ package org.springframework.batch.admin.service;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -29,6 +30,7 @@ import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.repository.dao.JdbcJobExecutionDao;
 import org.springframework.batch.item.database.PagingQueryProvider;
 import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.jdbc.support.incrementer.AbstractDataFieldMaxValueIncrementer;
@@ -38,8 +40,7 @@ import org.springframework.util.Assert;
  * @author Dave Syer
  * 
  */
-public class JdbcSearchableJobExecutionDao extends JdbcJobExecutionDao
-		implements SearchableJobExecutionDao {
+public class JdbcSearchableJobExecutionDao extends JdbcJobExecutionDao implements SearchableJobExecutionDao {
 
 	private static final String GET_COUNT = "SELECT COUNT(1) from %PREFIX%JOB_EXECUTION";
 
@@ -49,8 +50,7 @@ public class JdbcSearchableJobExecutionDao extends JdbcJobExecutionDao
 	private static final String FIELDS = "E.JOB_EXECUTION_ID, E.START_TIME, E.END_TIME, E.STATUS, E.EXIT_CODE, E.EXIT_MESSAGE, "
 			+ "E.CREATE_TIME, E.LAST_UPDATED, E.VERSION, I.JOB_INSTANCE_ID, I.JOB_NAME";
 
-	private static final String GET_RUNNING_EXECUTIONS = "SELECT "
-			+ FIELDS
+	private static final String GET_RUNNING_EXECUTIONS = "SELECT " + FIELDS
 			+ " from %PREFIX%JOB_EXECUTION E, %PREFIX%JOB_INSTANCE I "
 			+ "where E.JOB_INSTANCE_ID=I.JOB_INSTANCE_ID and E.END_TIME is NULL";
 
@@ -61,8 +61,7 @@ public class JdbcSearchableJobExecutionDao extends JdbcJobExecutionDao
 	private DataSource dataSource;
 
 	/**
-	 * @param dataSource
-	 *            the dataSource to set
+	 * @param dataSource the dataSource to set
 	 */
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
@@ -73,10 +72,10 @@ public class JdbcSearchableJobExecutionDao extends JdbcJobExecutionDao
 	 */
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		
-		Assert.state(dataSource!=null, "DataSource must be provided");
 
-		if (getJdbcTemplate()==null) {
+		Assert.state(dataSource != null, "DataSource must be provided");
+
+		if (getJdbcTemplate() == null) {
 			setJdbcTemplate(new SimpleJdbcTemplate(dataSource));
 		}
 		setJobExecutionIncrementer(new AbstractDataFieldMaxValueIncrementer() {
@@ -102,32 +101,26 @@ public class JdbcSearchableJobExecutionDao extends JdbcJobExecutionDao
 	}
 
 	/**
-	 * @return a {@link PagingQueryProvider} for all job executions with the
-	 *         provided where clause
+	 * @return a {@link PagingQueryProvider} for all job executions with the provided where clause
 	 * @throws Exception
 	 */
-	private PagingQueryProvider getPagingQueryProvider(String whereClause)
-			throws Exception {
+	private PagingQueryProvider getPagingQueryProvider(String whereClause) throws Exception {
 		return getPagingQueryProvider(null, whereClause);
 	}
 
 	/**
-	 * @return a {@link PagingQueryProvider} with a where clause to narrow the
-	 *         query
+	 * @return a {@link PagingQueryProvider} with a where clause to narrow the query
 	 * @throws Exception
 	 */
-	private PagingQueryProvider getPagingQueryProvider(String fromClause,
-			String whereClause) throws Exception {
+	private PagingQueryProvider getPagingQueryProvider(String fromClause, String whereClause) throws Exception {
 		SqlPagingQueryProviderFactoryBean factory = new SqlPagingQueryProviderFactoryBean();
 		factory.setDataSource(dataSource);
-		fromClause = "%PREFIX%JOB_EXECUTION E, %PREFIX%JOB_INSTANCE I"
-				+ (fromClause == null ? "" : ", " + fromClause);
+		fromClause = "%PREFIX%JOB_EXECUTION E, %PREFIX%JOB_INSTANCE I" + (fromClause == null ? "" : ", " + fromClause);
 		factory.setFromClause(getQuery(fromClause));
 		factory.setSelectClause(FIELDS);
 		factory.setSortKey("E.JOB_EXECUTION_ID");
 		factory.setAscending(false);
-		whereClause = "E.JOB_INSTANCE_ID=I.JOB_INSTANCE_ID"
-				+ (whereClause == null ? "" : " and " + whereClause);
+		whereClause = "E.JOB_INSTANCE_ID=I.JOB_INSTANCE_ID" + (whereClause == null ? "" : " and " + whereClause);
 		if (whereClause != null) {
 			factory.setWhereClause(whereClause);
 		}
@@ -145,36 +138,33 @@ public class JdbcSearchableJobExecutionDao extends JdbcJobExecutionDao
 	 * @see SearchableJobExecutionDao#countJobExecutions(String)
 	 */
 	public int countJobExecutions(String jobName) {
-		return getJdbcTemplate().queryForInt(getQuery(GET_COUNT_BY_JOB_NAME),
-				jobName);
+		return getJdbcTemplate().queryForInt(getQuery(GET_COUNT_BY_JOB_NAME), jobName);
 	}
 
 	/**
 	 * @see SearchableJobExecutionDao#getRunningJobExecutions()
 	 */
 	public Collection<JobExecution> getRunningJobExecutions() {
-		return getJdbcTemplate().query(getQuery(GET_RUNNING_EXECUTIONS),
-				new JobExecutionRowMapper());
+		return getJdbcTemplate().query(getQuery(GET_RUNNING_EXECUTIONS), new JobExecutionRowMapper());
 	}
 
 	/**
 	 * @see SearchableJobExecutionDao#getJobExecutions(String, int, int)
 	 */
-	public List<JobExecution> getJobExecutions(String jobName, int start,
-			int count) {
+	public List<JobExecution> getJobExecutions(String jobName, int start, int count) {
 		if (start <= 0) {
-			return getJdbcTemplate().query(
-					byJobNamePagingQueryProvider.generateFirstPageQuery(count),
+			return getJdbcTemplate().query(byJobNamePagingQueryProvider.generateFirstPageQuery(count),
 					new JobExecutionRowMapper(), jobName);
 		}
-		Long startAfterValue = getJdbcTemplate().queryForLong(
-				byJobNamePagingQueryProvider.generateJumpToItemQuery(start,
-						count), jobName);
-		return getJdbcTemplate()
-				.query(
-						byJobNamePagingQueryProvider
-								.generateRemainingPagesQuery(count),
-						new JobExecutionRowMapper(), jobName, startAfterValue);
+		try {
+			Long startAfterValue = getJdbcTemplate().queryForLong(
+					byJobNamePagingQueryProvider.generateJumpToItemQuery(start, count), jobName);
+			return getJdbcTemplate().query(byJobNamePagingQueryProvider.generateRemainingPagesQuery(count),
+					new JobExecutionRowMapper(), jobName, startAfterValue);
+		}
+		catch (IncorrectResultSizeDataAccessException e) {
+			return Collections.emptyList();
+		}
 	}
 
 	/**
@@ -182,36 +172,33 @@ public class JdbcSearchableJobExecutionDao extends JdbcJobExecutionDao
 	 */
 	public List<JobExecution> getJobExecutions(int start, int count) {
 		if (start <= 0) {
-			return getJdbcTemplate().query(
-					allExecutionsPagingQueryProvider
-							.generateFirstPageQuery(count),
+			return getJdbcTemplate().query(allExecutionsPagingQueryProvider.generateFirstPageQuery(count),
 					new JobExecutionRowMapper());
 		}
-		Long startAfterValue = getJdbcTemplate().queryForLong(
-				allExecutionsPagingQueryProvider.generateJumpToItemQuery(start,
-						count));
-		return getJdbcTemplate().query(
-				allExecutionsPagingQueryProvider
-						.generateRemainingPagesQuery(count),
-				new JobExecutionRowMapper(), startAfterValue);
+		try {
+			Long startAfterValue = getJdbcTemplate().queryForLong(
+					allExecutionsPagingQueryProvider.generateJumpToItemQuery(start, count));
+			return getJdbcTemplate().query(allExecutionsPagingQueryProvider.generateRemainingPagesQuery(count),
+					new JobExecutionRowMapper(), startAfterValue);
+		}
+		catch (IncorrectResultSizeDataAccessException e) {
+			return Collections.emptyList();
+		}
 	}
 
 	@Override
 	public void saveJobExecution(JobExecution jobExecution) {
-		throw new UnsupportedOperationException(
-				"SearchableJobExecutionDao is read only");
+		throw new UnsupportedOperationException("SearchableJobExecutionDao is read only");
 	}
 
 	@Override
 	public void synchronizeStatus(JobExecution jobExecution) {
-		throw new UnsupportedOperationException(
-				"SearchableJobExecutionDao is read only");
+		throw new UnsupportedOperationException("SearchableJobExecutionDao is read only");
 	}
 
 	@Override
 	public void updateJobExecution(JobExecution jobExecution) {
-		throw new UnsupportedOperationException(
-				"SearchableJobExecutionDao is read only");
+		throw new UnsupportedOperationException("SearchableJobExecutionDao is read only");
 	}
 
 	/**
@@ -220,26 +207,22 @@ public class JdbcSearchableJobExecutionDao extends JdbcJobExecutionDao
 	 * @author Dave Syer
 	 * 
 	 */
-	protected static class JobExecutionRowMapper implements
-			RowMapper<JobExecution> {
+	protected static class JobExecutionRowMapper implements RowMapper<JobExecution> {
 
 		public JobExecutionRowMapper() {
 		}
 
-		public JobExecution mapRow(ResultSet rs, int rowNum)
-				throws SQLException {
+		public JobExecution mapRow(ResultSet rs, int rowNum) throws SQLException {
 			Long id = rs.getLong(1);
 			JobExecution jobExecution;
 
-			JobInstance jobInstance = new JobInstance(rs.getLong(10), null, rs
-					.getString(11));
+			JobInstance jobInstance = new JobInstance(rs.getLong(10), null, rs.getString(11));
 			jobExecution = new JobExecution(jobInstance, id);
 
 			jobExecution.setStartTime(rs.getTimestamp(2));
 			jobExecution.setEndTime(rs.getTimestamp(3));
 			jobExecution.setStatus(BatchStatus.valueOf(rs.getString(4)));
-			jobExecution.setExitStatus(new ExitStatus(rs.getString(5), rs
-					.getString(6)));
+			jobExecution.setExitStatus(new ExitStatus(rs.getString(5), rs.getString(6)));
 			jobExecution.setCreateTime(rs.getTimestamp(7));
 			jobExecution.setLastUpdated(rs.getTimestamp(8));
 			jobExecution.setVersion(rs.getInt(9));

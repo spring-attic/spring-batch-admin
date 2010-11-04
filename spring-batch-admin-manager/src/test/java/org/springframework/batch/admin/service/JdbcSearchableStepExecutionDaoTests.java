@@ -96,6 +96,12 @@ public class JdbcSearchableStepExecutionDaoTests {
 
 	@Test
 	@Transactional
+	public void testFindStepExecutionsPastEnd() {
+		assertEquals(0, dao.findStepExecutions("step", 100, 100).size());
+	}
+
+	@Test
+	@Transactional
 	public void testCountStepExecutionsByName() {
 		assertEquals(3, dao.countStepExecutions("step"));
 	}

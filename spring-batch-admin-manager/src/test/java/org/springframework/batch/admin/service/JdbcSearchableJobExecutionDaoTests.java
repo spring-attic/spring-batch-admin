@@ -108,4 +108,18 @@ public class JdbcSearchableJobExecutionDaoTests {
 		assertEquals(list.get(0), jobExecutions.get(0));
 	}
 
+	@Test
+	@Transactional
+	public void testGetJobExecutionsPastEnd() {
+		List<JobExecution> jobExecutions = dao.getJobExecutions("job", 100, 100);
+		assertEquals(0, jobExecutions.size());
+	}
+
+	@Test
+	@Transactional
+	public void testGetJobExecutionsByNamePastEnd() {
+		List<JobExecution> jobExecutions = dao.getJobExecutions(100, 100);
+		assertEquals(0, jobExecutions.size());
+	}
+
 }

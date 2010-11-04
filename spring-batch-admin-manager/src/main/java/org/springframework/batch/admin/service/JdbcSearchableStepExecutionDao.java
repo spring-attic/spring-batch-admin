@@ -18,6 +18,7 @@ package org.springframework.batch.admin.service;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -33,6 +34,7 @@ import org.springframework.batch.core.repository.dao.JdbcStepExecutionDao;
 import org.springframework.batch.item.database.PagingQueryProvider;
 import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
 import org.springframework.batch.support.PatternMatcher;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.jdbc.support.incrementer.AbstractDataFieldMaxValueIncrementer;
@@ -42,8 +44,7 @@ import org.springframework.util.Assert;
  * @author Dave Syer
  * 
  */
-public class JdbcSearchableStepExecutionDao extends JdbcStepExecutionDao
-		implements SearchableStepExecutionDao {
+public class JdbcSearchableStepExecutionDao extends JdbcStepExecutionDao implements SearchableStepExecutionDao {
 
 	private static final String STEP_EXECUTIONS_FOR_JOB = "SELECT distinct STEP_NAME from %PREFIX%STEP_EXECUTION S, %PREFIX%JOB_EXECUTION E, %PREFIX%JOB_INSTANCE I "
 			+ "where S.JOB_EXECUTION_ID = E.JOB_EXECUTION_ID AND E.JOB_INSTANCE_ID = E.JOB_INSTANCE_ID AND I.JOB_NAME = ?";
@@ -58,8 +59,7 @@ public class JdbcSearchableStepExecutionDao extends JdbcStepExecutionDao
 	private DataSource dataSource;
 
 	/**
-	 * @param dataSource
-	 *            the dataSource to set
+	 * @param dataSource the dataSource to set
 	 */
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
@@ -71,9 +71,9 @@ public class JdbcSearchableStepExecutionDao extends JdbcStepExecutionDao
 	@Override
 	public void afterPropertiesSet() throws Exception {
 
-		Assert.state(dataSource!=null, "DataSource must be provided");
+		Assert.state(dataSource != null, "DataSource must be provided");
 
-		if (getJdbcTemplate()==null) {
+		if (getJdbcTemplate() == null) {
 			setJdbcTemplate(new SimpleJdbcTemplate(dataSource));
 		}
 		setStepExecutionIncrementer(new AbstractDataFieldMaxValueIncrementer() {
@@ -87,20 +87,16 @@ public class JdbcSearchableStepExecutionDao extends JdbcStepExecutionDao
 
 	}
 
-	public Collection<String> findStepNamesForJobExecution(String jobName,
-			String excludesPattern) {
+	public Collection<String> findStepNamesForJobExecution(String jobName, String excludesPattern) {
 
-		List<String> list = getJdbcTemplate().query(
-				getQuery(STEP_EXECUTIONS_FOR_JOB), new RowMapper<String>() {
-					public String mapRow(java.sql.ResultSet rs, int rowNum)
-							throws java.sql.SQLException {
-						return rs.getString(1);
-					}
-				}, jobName);
+		List<String> list = getJdbcTemplate().query(getQuery(STEP_EXECUTIONS_FOR_JOB), new RowMapper<String>() {
+			public String mapRow(java.sql.ResultSet rs, int rowNum) throws java.sql.SQLException {
+				return rs.getString(1);
+			}
+		}, jobName);
 
 		Set<String> stepNames = new LinkedHashSet<String>(list);
-		for (Iterator<String> iterator = stepNames.iterator(); iterator
-				.hasNext();) {
+		for (Iterator<String> iterator = stepNames.iterator(); iterator.hasNext();) {
 			String name = iterator.next();
 			if (PatternMatcher.match(excludesPattern, name)) {
 				iterator.remove();
@@ -111,8 +107,7 @@ public class JdbcSearchableStepExecutionDao extends JdbcStepExecutionDao
 
 	}
 
-	public Collection<StepExecution> findStepExecutions(String stepName,
-			int start, int count) {
+	public Collection<StepExecution> findStepExecutions(String stepName, int start, int count) {
 
 		String whereClause = "STEP_NAME = ?";
 
@@ -124,32 +119,32 @@ public class JdbcSearchableStepExecutionDao extends JdbcStepExecutionDao
 		PagingQueryProvider queryProvider = getPagingQueryProvider(whereClause);
 
 		if (start <= 0) {
-			return getJdbcTemplate().query(
-					queryProvider.generateFirstPageQuery(count),
-					new StepExecutionRowMapper(), stepName);
+			return getJdbcTemplate().query(queryProvider.generateFirstPageQuery(count), new StepExecutionRowMapper(),
+					stepName);
 		}
-		Long startAfterValue = getJdbcTemplate().queryForLong(
-				queryProvider.generateJumpToItemQuery(start, count), stepName);
+		try {
+			Long startAfterValue = getJdbcTemplate().queryForLong(queryProvider.generateJumpToItemQuery(start, count),
+					stepName);
 
-		return getJdbcTemplate().query(
-				queryProvider.generateRemainingPagesQuery(count),
-				new StepExecutionRowMapper(), stepName, startAfterValue);
+			return getJdbcTemplate().query(queryProvider.generateRemainingPagesQuery(count),
+					new StepExecutionRowMapper(), stepName, startAfterValue);
+		}
+		catch (IncorrectResultSizeDataAccessException e) {
+			return Collections.emptyList();
+		}
 
 	}
 
 	public int countStepExecutions(String stepName) {
 		if (stepName.contains("*")) {
-			return getJdbcTemplate().queryForInt(
-					getQuery(COUNT_STEP_EXECUTIONS_FOR_STEP_PATTERN),
+			return getJdbcTemplate().queryForInt(getQuery(COUNT_STEP_EXECUTIONS_FOR_STEP_PATTERN),
 					stepName.replace("*", "%"));
 		}
-		return getJdbcTemplate().queryForInt(
-				getQuery(COUNT_STEP_EXECUTIONS_FOR_STEP), stepName);
+		return getJdbcTemplate().queryForInt(getQuery(COUNT_STEP_EXECUTIONS_FOR_STEP), stepName);
 	}
 
 	/**
-	 * @return a {@link PagingQueryProvider} with a where clause to narrow the
-	 *         query
+	 * @return a {@link PagingQueryProvider} with a where clause to narrow the query
 	 * @throws Exception
 	 */
 	private PagingQueryProvider getPagingQueryProvider(String whereClause) {
@@ -164,19 +159,16 @@ public class JdbcSearchableStepExecutionDao extends JdbcStepExecutionDao
 		}
 		try {
 			return (PagingQueryProvider) factory.getObject();
-		} catch (Exception e) {
-			throw new IllegalStateException(
-					"Unexpected exception creating paging query provide", e);
+		}
+		catch (Exception e) {
+			throw new IllegalStateException("Unexpected exception creating paging query provide", e);
 		}
 	}
 
-	private static class StepExecutionRowMapper implements
-			RowMapper<StepExecution> {
+	private static class StepExecutionRowMapper implements RowMapper<StepExecution> {
 
-		public StepExecution mapRow(ResultSet rs, int rowNum)
-				throws SQLException {
-			StepExecution stepExecution = new StepExecution(rs.getString(2),
-					null);
+		public StepExecution mapRow(ResultSet rs, int rowNum) throws SQLException {
+			StepExecution stepExecution = new StepExecution(rs.getString(2), null);
 			stepExecution.setId(rs.getLong(1));
 			stepExecution.setStartTime(rs.getTimestamp(3));
 			stepExecution.setEndTime(rs.getTimestamp(4));
@@ -185,8 +177,7 @@ public class JdbcSearchableStepExecutionDao extends JdbcStepExecutionDao
 			stepExecution.setReadCount(rs.getInt(7));
 			stepExecution.setFilterCount(rs.getInt(8));
 			stepExecution.setWriteCount(rs.getInt(9));
-			stepExecution.setExitStatus(new ExitStatus(rs.getString(10), rs
-					.getString(11)));
+			stepExecution.setExitStatus(new ExitStatus(rs.getString(10), rs.getString(11)));
 			stepExecution.setReadSkipCount(rs.getInt(12));
 			stepExecution.setWriteSkipCount(rs.getInt(13));
 			stepExecution.setProcessSkipCount(rs.getInt(14));
