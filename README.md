@@ -1,0 +1,3 @@
+Web application and API for managing and monitoring Spring Batch jobs.  See the main [project website](http://static.springsource.org/spring-batch-admin) for more details.
+
+Spring Batch Admin has a separate JIRA project to [Spring Batch](https://jira.springframework.org/browse/BATCHADM), but shares a [community forum](http://forum.springsource.org/forumdisplay.php?f=41) if you want to ask questions or share knowledge.

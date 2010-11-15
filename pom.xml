@@ -8,8 +8,8 @@
 	<packaging>pom</packaging>
 	<scm>
 		<url>http://static.springframework.org/spring-batch-admin</url>
-		<connection>scm:svn:https://src.springframework.org/svn/spring-batch-admin/trunk</connection>
-		<developerConnection>scm:svn:https://src.springframework.org/svn/spring-batch-admin/trunk</developerConnection>
+		<connection>scm:git:git://github.com/SpringSource/spring-batch-admin.git</connection>
+		<developerConnection>scm:git:git://github.com:SpringSource/spring-batch-admin.git</developerConnection>
 	</scm>
 	<issueManagement>
 		<system>JIRA</system>
