@@ -142,7 +142,7 @@
 					<td>${execution.duration}</td>
 					<td>
 						<#if execution.status == "NONE">${execution.status}<#else>
-						<#assign url><@spring.url relativeUrl="${servletPath}/jobs/executions/${jobExecutionInfo.id?c}/steps/${execution.id?c}"/></#assign>
+						<#assign url><@spring.url relativeUrl="${servletPath}/jobs/executions/${jobExecutionInfo.id?c}/steps/${execution.id?c}/progress"/></#assign>
 						<a href="${url}"/>${execution.status}</a>
 						</#if>
 					</td>

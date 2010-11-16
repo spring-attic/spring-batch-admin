@@ -47,11 +47,13 @@ import org.springframework.util.Assert;
 public class JdbcSearchableStepExecutionDao extends JdbcStepExecutionDao implements SearchableStepExecutionDao {
 
 	private static final String STEP_EXECUTIONS_FOR_JOB = "SELECT distinct STEP_NAME from %PREFIX%STEP_EXECUTION S, %PREFIX%JOB_EXECUTION E, %PREFIX%JOB_INSTANCE I "
-			+ "where S.JOB_EXECUTION_ID = E.JOB_EXECUTION_ID AND E.JOB_INSTANCE_ID = E.JOB_INSTANCE_ID AND I.JOB_NAME = ?";
+			+ "where S.JOB_EXECUTION_ID = E.JOB_EXECUTION_ID AND E.JOB_INSTANCE_ID = I.JOB_INSTANCE_ID AND I.JOB_NAME = ?";
 
-	private static final String COUNT_STEP_EXECUTIONS_FOR_STEP = "SELECT COUNT(STEP_EXECUTION_ID) from %PREFIX%STEP_EXECUTION where STEP_NAME = ?";
+	private static final String COUNT_STEP_EXECUTIONS_FOR_STEP = "SELECT COUNT(STEP_EXECUTION_ID) from %PREFIX%STEP_EXECUTION S, %PREFIX%JOB_EXECUTION E, %PREFIX%JOB_INSTANCE I " +
+			"where S.JOB_EXECUTION_ID = E.JOB_EXECUTION_ID AND E.JOB_INSTANCE_ID = I.JOB_INSTANCE_ID AND I.JOB_NAME = ? AND S.STEP_NAME = ?";
 
-	private static final String COUNT_STEP_EXECUTIONS_FOR_STEP_PATTERN = "SELECT COUNT(STEP_EXECUTION_ID) from %PREFIX%STEP_EXECUTION where STEP_NAME like ?";
+	private static final String COUNT_STEP_EXECUTIONS_FOR_STEP_PATTERN = "SELECT COUNT(STEP_EXECUTION_ID) from %PREFIX%STEP_EXECUTION S, %PREFIX%JOB_EXECUTION E, %PREFIX%JOB_INSTANCE I" +
+			" where S.JOB_EXECUTION_ID = E.JOB_EXECUTION_ID AND E.JOB_INSTANCE_ID = I.JOB_INSTANCE_ID AND I.JOB_NAME = ? AND S.STEP_NAME like ?";
 
 	private static final String FIELDS = "STEP_EXECUTION_ID, STEP_NAME, START_TIME, END_TIME, STATUS, COMMIT_COUNT,"
 			+ " READ_COUNT, FILTER_COUNT, WRITE_COUNT, EXIT_CODE, EXIT_MESSAGE, READ_SKIP_COUNT, WRITE_SKIP_COUNT, PROCESS_SKIP_COUNT, ROLLBACK_COUNT, LAST_UPDATED, VERSION";
@@ -152,10 +154,10 @@ public class JdbcSearchableStepExecutionDao extends JdbcStepExecutionDao impleme
 
 	public int countStepExecutions(String jobName, String stepName) {
 		if (stepName.contains("*")) {
-			return getJdbcTemplate().queryForInt(getQuery(COUNT_STEP_EXECUTIONS_FOR_STEP_PATTERN),
+			return getJdbcTemplate().queryForInt(getQuery(COUNT_STEP_EXECUTIONS_FOR_STEP_PATTERN), jobName, 
 					stepName.replace("*", "%"));
 		}
-		return getJdbcTemplate().queryForInt(getQuery(COUNT_STEP_EXECUTIONS_FOR_STEP), stepName);
+		return getJdbcTemplate().queryForInt(getQuery(COUNT_STEP_EXECUTIONS_FOR_STEP), jobName, stepName);
 	}
 
 	/**

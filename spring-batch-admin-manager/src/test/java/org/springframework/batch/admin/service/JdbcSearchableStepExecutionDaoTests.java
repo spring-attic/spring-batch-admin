@@ -78,6 +78,13 @@ public class JdbcSearchableStepExecutionDaoTests {
 
 	@Test
 	@Transactional
+	public void testFindStepNamesWithMoreJobs() throws Exception {
+		list.addAll(jobRepositoryUtils.createJobExecutions("other", new String[] {"step"}, 2));
+		assertEquals("[step]", dao.findStepNamesForJobExecution("job", "-").toString());
+	}
+
+	@Test
+	@Transactional
 	public void testFindStepNamesWithMatch() {
 		assertEquals("[]", dao.findStepNamesForJobExecution("job", "*").toString());
 	}
@@ -85,6 +92,13 @@ public class JdbcSearchableStepExecutionDaoTests {
 	@Test
 	@Transactional
 	public void testFindStepExecutionsByName() {
+		assertEquals(1, dao.findStepExecutions("job", "step", 2, 2).size());
+	}
+
+	@Test
+	@Transactional
+	public void testFindStepExecutionsByNameWithMoreJobs() throws Exception {
+		list.addAll(jobRepositoryUtils.createJobExecutions("other", new String[] {"step"}, 2));
 		assertEquals(1, dao.findStepExecutions("job", "step", 2, 2).size());
 	}
 
@@ -108,7 +122,21 @@ public class JdbcSearchableStepExecutionDaoTests {
 
 	@Test
 	@Transactional
+	public void testCountStepExecutionsByNameWithMoreJobs() throws Exception {
+		list.addAll(jobRepositoryUtils.createJobExecutions("other", new String[] {"step"}, 2));
+		assertEquals(3, dao.countStepExecutions("job", "step"));
+	}
+
+	@Test
+	@Transactional
 	public void testCountStepExecutionsByPattern() {
+		assertEquals(3, dao.countStepExecutions("job", "s*"));
+	}
+
+	@Test
+	@Transactional
+	public void testCountStepExecutionsByPatternWithMoreJobs() throws Exception {
+		list.addAll(jobRepositoryUtils.createJobExecutions("other", new String[] {"step"}, 2));
 		assertEquals(3, dao.countStepExecutions("job", "s*"));
 	}
 

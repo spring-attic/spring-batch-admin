@@ -10,22 +10,18 @@
 		http://www.springframework.org/schema/integration/file http://www.springframework.org/schema/integration/file/spring-integration-file-1.0.xsd">
 
 	<job id="job1" xmlns="http://www.springframework.org/schema/batch" incrementer="incrementer">
-		<step id="j1.s1" parent="step1" />
+		<step id="step1" parent="step" />
 	</job>
 
 	<job id="job2" xmlns="http://www.springframework.org/schema/batch">
-		<step id="j2.s1">
-			<partition step="step1" partitioner="partitioner">
+		<step id="job2.step1">
+			<partition step="step" partitioner="partitioner">
 				<handler grid-size="2" task-executor="taskExecutor" />
 			</partition>
 		</step>
 	</job>
 
-	<job id="infinite" xmlns="http://www.springframework.org/schema/batch" incrementer="incrementer">
-		<step id="infinite.s1" parent="step1" next="infinite.s1" />
-	</job>
-
-	<step id="step1" xmlns="http://www.springframework.org/schema/batch">
+	<step id="step" xmlns="http://www.springframework.org/schema/batch">
 		<tasklet start-limit="100">
 			<chunk commit-interval="1" reader="itemReader" writer="itemWriter" />
 		</tasklet>
@@ -59,11 +55,12 @@
 
 	<bean id="itemWriter" class="org.springframework.batch.admin.sample.ExampleItemWriter" p:fail="#{jobParameters['fail']}"
 		scope="step" />
+
 	<bean id="itemReader" class="org.springframework.batch.admin.sample.ExampleItemReader" scope="step" />
 
 	<bean id="remoteStep1" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
 		<property name="serviceInterface" value="org.springframework.batch.core.Step" />
-		<property name="serviceUrl" value="${batch.remote.base.url}/#{resourceService.servletPath}/steps/step1" />
+		<property name="serviceUrl" value="${batch.remote.base.url}/#{resourceService.servletPath}/steps/step" />
 	</bean>
 
 </beans>

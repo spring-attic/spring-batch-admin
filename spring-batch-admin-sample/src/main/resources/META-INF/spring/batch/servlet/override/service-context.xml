@@ -15,7 +15,7 @@
 				<property name="jobLocator" ref="jobRegistry"/>
 			</bean>
 		</property>
-		<property name="stepName" value="job1/j1.s1"/>
+		<property name="stepName" value="job1/step1"/>
 	</bean>
 
 </beans>
