@@ -102,7 +102,12 @@
 			If you want to look at all executions for <a href="${executions_url}">see here</a>.</p>
 	
 	<#else>
-		<p>There are no job instances for this job.</p>
+		<#if jobName??>
+			<@spring.bind path="jobName" />
+			<@spring.showErrors separator="<br/>" classOrStyle="error" /><br/>
+		<#else>
+			<p>There are no job instances for this job.</p>
+		</#if>
 	</#if>
 	
 </div><!-- jobs -->

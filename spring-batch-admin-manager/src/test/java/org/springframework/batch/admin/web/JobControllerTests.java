@@ -31,6 +31,7 @@ import org.springframework.batch.admin.service.JobService;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.test.MetaDataInstanceFactory;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
@@ -40,6 +41,27 @@ public class JobControllerTests {
 	private JobService jobService = EasyMock.createMock(JobService.class);
 
 	private JobController controller = new JobController(jobService);
+
+	@Test
+	public void testJobNameSunnyDay() throws Exception {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.setPathInfo("foo/bar/jobs/spam");
+		assertEquals("spam", controller.getJobName(request));
+	}
+
+	@Test
+	public void testJobNameWithExtension() throws Exception {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.setPathInfo("foo/bar/jobs/spam.html");
+		assertEquals("spam", controller.getJobName(request));
+	}
+
+	@Test
+	public void testJobNameWithPeriod() throws Exception {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.setPathInfo("foo/bar/jobs/spam.bucket");
+		assertEquals("spam.bucket", controller.getJobName(request));
+	}
 
 	@Test
 	public void testTimeFormat() throws Exception {
@@ -58,16 +80,14 @@ public class JobControllerTests {
 		jobService.launch("foo", new JobParameters());
 		EasyMock.expectLastCall().andReturn(MetaDataInstanceFactory.createJobExecution());
 		jobService.listJobInstances("foo", 0, 20);
-		EasyMock.expectLastCall().andReturn(Arrays.asList(MetaDataInstanceFactory.createJobInstance("foo", 11L)));
-		jobService.getJobExecutionsForJobInstance("foo", 11L);
+		EasyMock.expectLastCall().andReturn(Arrays.asList(MetaDataInstanceFactory.createJobInstance()));
+		jobService.getJobExecutionsForJobInstance("foo", 12L);
 		EasyMock.expectLastCall()
-				.andReturn(Arrays.asList(MetaDataInstanceFactory.createJobExecution("foo", 11L, 123L)));
+				.andReturn(Arrays.asList(MetaDataInstanceFactory.createJobExecution("foo", 12L, 123L)));
+		jobService.countJobExecutionsForJob("foo");
+		EasyMock.expectLastCall().andReturn(12);
 		jobService.countJobInstances("foo");
 		EasyMock.expectLastCall().andReturn(100);
-		jobService.listJobs(0, 100);
-		EasyMock.expectLastCall().andReturn(Arrays.asList("foo"));
-		jobService.countJobExecutionsForJob("foo");
-		EasyMock.expectLastCall().andReturn(1);
 		jobService.isLaunchable("foo");
 		EasyMock.expectLastCall().andReturn(true);
 		EasyMock.replay(jobService);
@@ -122,16 +142,12 @@ public class JobControllerTests {
 		EasyMock.expectLastCall().andReturn(12);
 		jobService.countJobInstances("job");
 		EasyMock.expectLastCall().andReturn(100);
-		jobService.listJobs(0, 100);
-		EasyMock.expectLastCall().andReturn(Arrays.asList("foo"));
-		jobService.listJobs(100, 100);
-		EasyMock.expectLastCall().andReturn(Collections.emptyList());
 		jobService.isLaunchable("job");
 		EasyMock.expectLastCall().andReturn(true);
 		EasyMock.replay(jobService);
 
 		ExtendedModelMap model = new ExtendedModelMap();
-		controller.details(model, "job", null, null, 10, 20);
+		controller.details(model, "job", null, 10, 20);
 		// Job, JobInstances, jobParameters, total, next, previous, start, end,
 		// launchable
 		assertEquals(9, model.size());

@@ -16,11 +16,15 @@
 package org.springframework.batch.admin.web;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.TimeZone;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.batch.admin.service.JobService;
 import org.springframework.batch.core.JobExecution;
@@ -41,7 +45,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -60,9 +63,21 @@ public class JobController {
 
 	private final JobService jobService;
 
+	private Collection<String> extensions = new HashSet<String>();
+
 	private JobParametersConverter converter = new DefaultJobParametersConverter();
 
 	private TimeZone timeZone = TimeZone.getDefault();
+
+	/**
+	 * A collection of extensions that may be appended to request urls aimed at
+	 * this controller.
+	 * 
+	 * @param extensions the extensions (e.g. [rss, xml, atom])
+	 */
+	public void setExtensions(Collection<String> extensions) {
+		this.extensions = new LinkedHashSet<String>(extensions);
+	}
 
 	/**
 	 * @param timeZone the timeZone to set
@@ -77,10 +92,32 @@ public class JobController {
 	public JobController(JobService jobService) {
 		super();
 		this.jobService = jobService;
+		extensions.addAll(Arrays.asList(".html", ".json", ".rss"));
+	}
+
+	@ModelAttribute("jobName")
+	public String getJobName(HttpServletRequest request) {
+		String path = request.getPathInfo();
+		int index = path.lastIndexOf("jobs/") + 5;
+		if (index >= 0) {
+			path = path.substring(index);
+		}
+		if (!path.contains(".")) {
+			return path;
+		}
+		for (String extension : extensions) {
+			if (path.endsWith(extension)) {
+				path = StringUtils.stripFilenameExtension(path);
+				// Only remove one extension so a job can be called job.html and
+				// still be addressed
+				break;
+			}
+		}
+		return path;
 	}
 
 	@RequestMapping(value = "/jobs/{jobName}", method = RequestMethod.POST)
-	public String launch(ModelMap model, @PathVariable String jobName,
+	public String launch(ModelMap model, @ModelAttribute("jobName") String jobName,
 			@ModelAttribute("launchRequest") LaunchRequest launchRequest, Errors errors,
 			@RequestParam(defaultValue = "execution") String origin) {
 
@@ -116,7 +153,7 @@ public class JobController {
 		}
 		else {
 			// In the UI we show the same page again...
-			return details(model, jobName, new Date(), errors, 0, 20);
+			return details(model, jobName, errors, 0, 20);
 		}
 
 		// Not a redirect because normally it is requested by an Ajax call so
@@ -126,11 +163,8 @@ public class JobController {
 	}
 
 	@RequestMapping(value = "/jobs/{jobName}", method = RequestMethod.GET)
-	public String details(ModelMap model, @PathVariable String jobName, @ModelAttribute("date") Date date,
-			Errors errors, @RequestParam(defaultValue = "0") int startJobInstance,
-			@RequestParam(defaultValue = "20") int pageSize) {
-
-		jobName = findJobName(jobName);
+	public String details(ModelMap model, @ModelAttribute("jobName") String jobName, Errors errors,
+			@RequestParam(defaultValue = "0") int startJobInstance, @RequestParam(defaultValue = "20") int pageSize) {
 
 		model.addAttribute("launchable", jobService.isLaunchable(jobName));
 
@@ -160,30 +194,10 @@ public class JobController {
 
 	}
 
-	private String findJobName(String jobName) {
-		String bare = jobName;
-		String truncated = StringUtils.stripFilenameExtension(jobName);
-		int start = 0;
-		int count = 100;
-		Collection<String> jobs;
-		do {
-			jobs = jobService.listJobs(start, count);
-			if (jobs.contains(bare)) {
-				// prefer a full match
-				return bare;
-			}
-			if (jobs.contains(truncated)) {
-				// but allow a truncated match (e.g. if using .html or .json)
-				return truncated;
-			}
-			start += count;
-		} while (!jobs.isEmpty());
-		return jobName;
-	}
-
 	/**
 	 * @param lastInstances the latest job instances
-	 * @return a String representation for rendering the job parameters from the last instance
+	 * @return a String representation for rendering the job parameters from the
+	 * last instance
 	 */
 	protected String getLastJobParameters(Collection<JobInstanceInfo> lastInstances) {
 
