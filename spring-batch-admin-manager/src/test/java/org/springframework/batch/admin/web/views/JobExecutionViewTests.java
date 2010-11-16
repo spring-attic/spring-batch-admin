@@ -62,7 +62,7 @@ public class JobExecutionViewTests extends AbstractManagerViewTests {
 		assertTrue(content.contains("Details for Job Execution"));
 		assertTrue(content.contains("<input type=\"hidden\" name=\"_method\" value=\"DELETE\"/>"));
 		assertTrue(content.contains("<a href=\"/batch/jobs/executions/123/steps\"/>"));
-		assertTrue(content.contains("<a href=\"/batch/jobs/executions/123/steps/1234\"/>"));
+		assertTrue(content.contains("<a href=\"/batch/jobs/executions/123/steps/1234/progress\"/>"));
 		assertTrue(content.contains("<td>ID</td>"));
 	}
 
