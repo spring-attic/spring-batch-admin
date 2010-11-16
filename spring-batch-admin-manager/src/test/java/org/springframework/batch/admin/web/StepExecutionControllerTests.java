@@ -61,7 +61,7 @@ public class StepExecutionControllerTests {
 		jobService.getStepExecution(123L, 1234L);
 		EasyMock.expectLastCall().andReturn(
 				MetaDataInstanceFactory.createStepExecution());
-		jobService.countStepExecutionsForStep(jobName, "step");
+		jobService.countStepExecutionsForStep("job", "step");
 		EasyMock.expectLastCall().andReturn(1200);
 		jobService.listStepExecutionsForStep("job", "step", 0, 1000);
 		EasyMock.expectLastCall().andReturn(
@@ -89,7 +89,7 @@ public class StepExecutionControllerTests {
 		jobService.getStepExecution(123L, 1234L);
 		EasyMock.expectLastCall().andReturn(
 				MetaDataInstanceFactory.createStepExecution("step:partition1", 0L));
-		jobService.countStepExecutionsForStep(jobName, "step:partition*");
+		jobService.countStepExecutionsForStep("job", "step:partition*");
 		EasyMock.expectLastCall().andReturn(1200);
 		jobService.listStepExecutionsForStep("job", "step:partition*", 0, 1000);
 		EasyMock.expectLastCall().andReturn(

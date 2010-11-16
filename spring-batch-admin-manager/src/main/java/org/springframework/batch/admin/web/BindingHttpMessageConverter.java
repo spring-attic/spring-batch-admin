@@ -36,7 +36,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
-import org.springframework.integration.http.MultipartAwareFormHttpMessageConverter;
+import org.springframework.integration.http.converter.MultipartAwareFormHttpMessageConverter;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 

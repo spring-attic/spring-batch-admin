@@ -393,16 +393,16 @@ public class SimpleJobServiceTests {
 
 	@Test
 	public void testCountStepExecutions() throws Exception {
-		stepExecutionDao.countStepExecutions(jobName, "step");
+		stepExecutionDao.countStepExecutions("job", "step");
 		EasyMock.expectLastCall().andReturn(2);
 		EasyMock.replay(jobExecutionDao, stepExecutionDao);
-		service.countStepExecutionsForStep(jobName, "step");
+		service.countStepExecutionsForStep("job", "step");
 		EasyMock.verify(jobExecutionDao, stepExecutionDao);
 	}
 
 	@Test
 	public void testListStepExecutions() throws Exception {
-		stepExecutionDao.countStepExecutions(jobName, "step");
+		stepExecutionDao.countStepExecutions("job", "step");
 		EasyMock.expectLastCall().andReturn(2);
 		stepExecutionDao.findStepExecutions("job", "step", 0, 20);
 		EasyMock.expectLastCall().andReturn(new ArrayList<StepExecution>());
