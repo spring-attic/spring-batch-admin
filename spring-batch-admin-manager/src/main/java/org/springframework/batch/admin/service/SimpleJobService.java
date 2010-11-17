@@ -49,7 +49,8 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.scheduling.annotation.Scheduled;
 
 /**
- * Implementation of {@link JobService} that delegates most of its work to other off-the-shelf components.
+ * Implementation of {@link JobService} that delegates most of its work to other
+ * off-the-shelf components.
  * 
  * @author Dave Syer
  * 
@@ -186,7 +187,16 @@ public class SimpleJobService implements JobService, DisposableBean {
 
 		Job job = jobLocator.getJob(jobName);
 
-		if (job.getJobParametersIncrementer() != null) {
+		JobExecution lastJobExecution = jobRepository.getLastJobExecution(jobName, jobParameters);
+		boolean restart = false;
+		if (lastJobExecution != null) {
+			BatchStatus status = lastJobExecution.getStatus();
+			if (status.isUnsuccessful() && status!=BatchStatus.ABANDONED) {
+				restart = true;
+			}
+		}
+
+		if (job.getJobParametersIncrementer() != null && !restart) {
 			jobParameters = job.getJobParametersIncrementer().getNext(jobParameters);
 		}
 
@@ -362,7 +372,7 @@ public class SimpleJobService implements JobService, DisposableBean {
 	public JobInstance getJobInstance(long jobInstanceId) throws NoSuchJobInstanceException {
 		JobInstance jobInstance = jobInstanceDao.getJobInstance(jobInstanceId);
 		if (jobInstance == null) {
-			throw new NoSuchJobInstanceException("JobInstance with id="+jobInstanceId+ " does not exist");
+			throw new NoSuchJobInstanceException("JobInstance with id=" + jobInstanceId + " does not exist");
 		}
 		return jobInstance;
 	}
@@ -405,7 +415,8 @@ public class SimpleJobService implements JobService, DisposableBean {
 	}
 
 	/**
-	 * Stop all the active jobs and wait for them (up to a time out) to finish processing.
+	 * Stop all the active jobs and wait for them (up to a time out) to finish
+	 * processing.
 	 */
 	public void destroy() throws Exception {
 
@@ -443,7 +454,8 @@ public class SimpleJobService implements JobService, DisposableBean {
 	}
 
 	/**
-	 * Check all the active executions and see if they are still actually running. Remove the ones that have completed.
+	 * Check all the active executions and see if they are still actually
+	 * running. Remove the ones that have completed.
 	 */
 	@Scheduled(fixedDelay = 60000)
 	public void removeInactiveExecutions() {

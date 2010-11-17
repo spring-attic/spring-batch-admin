@@ -126,7 +126,7 @@ public class JobController {
 
 		Properties properties = PropertiesConverter.stringToProperties(params);
 		JobParameters jobParameters = converter.getJobParameters(properties);
-
+		
 		try {
 			JobExecution jobExecution = jobService.launch(jobName, jobParameters);
 			model.addAttribute(new JobExecutionInfo(jobExecution, timeZone));
