@@ -34,6 +34,7 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersIncrementer;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.configuration.ListableJobLocator;
 import org.springframework.batch.core.job.SimpleJob;
@@ -127,6 +128,48 @@ public class SimpleJobServiceTests {
 		EasyMock.replay(jobLauncher, jobLocator);
 		assertNotNull(service.launch("job", jobParameters));
 		EasyMock.verify(jobLauncher, jobLocator);
+	}
+
+	/**
+	 * Test method for {@link SimpleJobService#launch(String, JobParameters)}.
+	 */
+	@Test
+	public void testLaunchWithIncrementer() throws Exception {
+		JobParameters jobParameters = new JobParameters();
+		JobParameters nextJobParameters = new RunIdIncrementer().getNext(jobParameters);
+		Job job = new JobSupport("job") {
+			@Override
+			public JobParametersIncrementer getJobParametersIncrementer() {
+				return new RunIdIncrementer();
+			}
+		};
+		EasyMock.expect(jobLocator.getJob("job")).andReturn(job);
+		EasyMock.expect(jobLauncher.run(job, nextJobParameters)).andReturn(MetaDataInstanceFactory.createJobExecution());
+		EasyMock.replay(jobLauncher, jobLocator);
+		assertNotNull(service.launch("job", jobParameters));
+		EasyMock.verify(jobLauncher, jobLocator);
+	}
+
+	/**
+	 * Test method for {@link SimpleJobService#launch(String, JobParameters)}.
+	 */
+	@Test
+	public void testLaunchFailedExecution() throws Exception {
+		JobParameters jobParameters = new JobParameters();
+		Job job = new JobSupport("job") {
+			@Override
+			public JobParametersIncrementer getJobParametersIncrementer() {
+				return new RunIdIncrementer();
+			}
+		};
+		EasyMock.expect(jobLocator.getJob("job")).andReturn(job);
+		JobExecution failed = MetaDataInstanceFactory.createJobExecution();
+		failed.setStatus(BatchStatus.FAILED);
+		EasyMock.expect(jobRepository.getLastJobExecution("job", jobParameters)).andReturn(failed);
+		EasyMock.expect(jobLauncher.run(job, jobParameters)).andReturn(MetaDataInstanceFactory.createJobExecution());
+		EasyMock.replay(jobLauncher, jobLocator, jobRepository);
+		assertNotNull(service.launch("job", jobParameters));
+		EasyMock.verify(jobLauncher, jobLocator, jobRepository);
 	}
 
 	/**
