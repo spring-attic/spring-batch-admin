@@ -22,10 +22,7 @@ import org.springframework.batch.admin.service.JobService;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.launch.NoSuchJobException;
-import org.springframework.jmx.export.annotation.ManagedAttribute;
-import org.springframework.jmx.export.annotation.ManagedMetric;
 import org.springframework.jmx.export.annotation.ManagedResource;
-import org.springframework.jmx.support.MetricType;
 
 @ManagedResource
 public class SimpleJobExecutionMetrics implements JobExecutionMetrics {
@@ -39,7 +36,6 @@ public class SimpleJobExecutionMetrics implements JobExecutionMetrics {
 		this.jobName = jobName;
 	}
 
-	@ManagedMetric(metricType = MetricType.COUNTER, displayName = "Job Execution Count")
 	public int getExecutionCount() {
 		try {
 			return jobService.countJobExecutionsForJob(jobName);
@@ -49,7 +45,6 @@ public class SimpleJobExecutionMetrics implements JobExecutionMetrics {
 		}
 	}
 
-	@ManagedMetric(metricType = MetricType.COUNTER, displayName = "Job Execution Failure Count")
 	public int getFailureCount() {
 
 		int pageSize = 100;
@@ -77,54 +72,45 @@ public class SimpleJobExecutionMetrics implements JobExecutionMetrics {
 
 	}
 
-	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Latest Duration")
 	public double getLatestDuration() {
 		return computeHistory(jobName, 1).getDuration().getMean();
 	}
 
-	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Mean Duration")
 	public double getMeanDuration() {
 		JobExecutionHistory history = computeHistory(jobName);
 		return history.getDuration().getMean();
 	}
 
-	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Max Duration")
 	public double getMaxDuration() {
 		JobExecutionHistory history = computeHistory(jobName);
 		return history.getDuration().getMax();
 	}
 
-	@ManagedAttribute(description = "Latest Start Time")
 	public Date getLatestStartTime() {
 		JobExecution jobExecution = getLatestJobExecution(jobName);
 		return jobExecution==null ? null : jobExecution.getStartTime();
 	}
 
-	@ManagedAttribute(description = "Latest End Time")
 	public Date getLatestEndTime() {
 		JobExecution jobExecution = getLatestJobExecution(jobName);
 		return jobExecution==null ? null : jobExecution.getEndTime();
 	}
 
-	@ManagedAttribute(description = "Latest Exit Code")
 	public String getLatestExitCode() {
 		JobExecution jobExecution = getLatestJobExecution(jobName);
 		return jobExecution==null ? "NONE" : jobExecution.getExitStatus().getExitCode();
 	}
 
-	@ManagedAttribute(description = "Latest Status")
 	public String getLatestStatus() {
 		JobExecution jobExecution = getLatestJobExecution(jobName);
 		return jobExecution==null ? "NONE" : jobExecution.getStatus().toString();
 	}
 
-	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Latest Job Execution ID")
 	public long getLatestExecutionId() {
 		JobExecution jobExecution = getLatestJobExecution(jobName);
 		return jobExecution==null ? -1 : jobExecution.getId();
 	}
 
-	@ManagedAttribute(description = "Latest Step Execution Exit Decription")
 	public String getLatestStepExitDescription() {
 		JobExecution jobExecution = getLatestJobExecution(jobName);
 		Collection<StepExecution> stepExecutions = jobExecution.getStepExecutions();
@@ -143,7 +129,6 @@ public class SimpleJobExecutionMetrics implements JobExecutionMetrics {
 		return stepExecution==null ? "" : stepExecution.getExitStatus().getExitDescription();
 	}
 
-	@ManagedAttribute(description = "Check if there is a Running Job Execution")
 	public boolean isJobRunning() {
 		JobExecution jobExecution = getLatestJobExecution(jobName);
 		return jobExecution==null ? false : jobExecution.isRunning();

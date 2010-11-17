@@ -25,40 +25,40 @@ import org.springframework.jmx.support.MetricType;
  */
 public interface StepExecutionMetrics {
 
-	@ManagedMetric(metricType = MetricType.COUNTER, displayName = "Step Execution Count")
+	@ManagedMetric(metricType = MetricType.COUNTER, description = "Step Execution Count")
 	int getExecutionCount();
 
-	@ManagedMetric(metricType = MetricType.COUNTER, displayName = "Step Execution Failure Count")
+	@ManagedMetric(metricType = MetricType.COUNTER, description = "Step Execution Failure Count")
 	int getFailureCount();
 
-	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Latest Duration")
+	@ManagedMetric(metricType = MetricType.GAUGE, description = "Latest Duration Milliseconds")
 	double getLatestDuration();
 
-	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Mean Duration")
+	@ManagedMetric(metricType = MetricType.GAUGE, description = "Mean Duration Milliseconds")
 	double getMeanDuration();
 
-	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Max Duration")
+	@ManagedMetric(metricType = MetricType.GAUGE, description = "Max Duration Milliseconds")
 	double getMaxDuration();
 
-	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Latest Step Execution ID")
+	@ManagedMetric(metricType = MetricType.GAUGE, description = "Latest Step Execution ID")
 	long getLatestExecutionId();
 
-	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Latest Read Count")
+	@ManagedMetric(metricType = MetricType.GAUGE, description = "Latest Read Count")
 	int getLatestReadCount();
 
-	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Latest Write Count")
+	@ManagedMetric(metricType = MetricType.GAUGE, description = "Latest Write Count")
 	int getLatestWriteCount();
 
-	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Latest Filter Count")
+	@ManagedMetric(metricType = MetricType.GAUGE, description = "Latest Filter Count")
 	int getLatestFilterCount();
 
-	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Latest Skip Count")
+	@ManagedMetric(metricType = MetricType.GAUGE, description = "Latest Skip Count")
 	int getLatestSkipCount();
 
-	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Latest Commit Count")
+	@ManagedMetric(metricType = MetricType.GAUGE, description = "Latest Commit Count")
 	int getLatestCommitCount();
 
-	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Latest Rollback Count")
+	@ManagedMetric(metricType = MetricType.GAUGE, description = "Latest Rollback Count")
 	int getLatestRollbackCount();
 
 	@ManagedAttribute(description  = "Latest Status")

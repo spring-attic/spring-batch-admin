@@ -27,19 +27,19 @@ import org.springframework.jmx.support.MetricType;
  */
 public interface JobExecutionMetrics {
 
-	@ManagedMetric(metricType = MetricType.COUNTER, displayName = "Job Execution Count")
+	@ManagedMetric(metricType = MetricType.COUNTER, description = "Job Execution Count")
 	int getExecutionCount();
 
-	@ManagedMetric(metricType = MetricType.COUNTER, displayName = "Job Execution Failure Count")
+	@ManagedMetric(metricType = MetricType.COUNTER, description = "Job Execution Failure Count")
 	int getFailureCount();
 
-	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Latest Duration")
+	@ManagedMetric(metricType = MetricType.GAUGE, description = "Latest Duration Milliseconds")
 	double getLatestDuration();
 
-	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Mean Duration")
+	@ManagedMetric(metricType = MetricType.GAUGE, description = "Mean Duration Milliseconds")
 	double getMeanDuration();
 
-	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Max Duration")
+	@ManagedMetric(metricType = MetricType.GAUGE, description = "Max Duration Milliseconds")
 	double getMaxDuration();
 
 	@ManagedAttribute(description = "Latest Job Execution ID")
