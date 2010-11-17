@@ -15,6 +15,9 @@
  */
 package org.springframework.batch.admin.jmx;
 
+import java.util.Date;
+
+import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedMetric;
 import org.springframework.jmx.support.MetricType;
 
@@ -25,18 +28,39 @@ import org.springframework.jmx.support.MetricType;
 public interface JobExecutionMetrics {
 
 	@ManagedMetric(metricType = MetricType.COUNTER, displayName = "Job Execution Count")
-	int getJobExecutionCount();
+	int getExecutionCount();
 
 	@ManagedMetric(metricType = MetricType.COUNTER, displayName = "Job Execution Failure Count")
-	int getJobExecutionFailureCount();
+	int getFailureCount();
 
 	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Latest Duration")
-	double getLatestJobExecutionDuration();
+	double getLatestDuration();
 
 	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Mean Duration")
-	double getMeanJobExecutionDuration();
+	double getMeanDuration();
 
 	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Max Duration")
-	double getMaxJobExecutionDuration();
+	double getMaxDuration();
+
+	@ManagedAttribute(description = "Latest Job Execution ID")
+	long getLatestExecutionId();
+
+	@ManagedAttribute(description = "Latest Start Time")
+	Date getLatestStartTime();
+
+	@ManagedAttribute(description = "Latest End Time")
+	Date getLatestEndTime();
+
+	@ManagedAttribute(description = "Latest Exit Code")
+	String getLatestExitCode();
+
+	@ManagedAttribute(description = "Latest Status")
+	String getLatestStatus();
+
+	@ManagedAttribute(description = "Latest Step Execution Exit Description")
+	String getLatestStepExitDescription();
+
+	@ManagedAttribute(description = "Check if there is a Running Job Execution")
+	boolean isJobRunning();
 
 }

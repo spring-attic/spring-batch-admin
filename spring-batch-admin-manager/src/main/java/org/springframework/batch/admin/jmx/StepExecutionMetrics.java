@@ -15,28 +15,59 @@
  */
 package org.springframework.batch.admin.jmx;
 
+import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedMetric;
 import org.springframework.jmx.support.MetricType;
 
 /**
- * @author dsyer
+ * @author Dave Syer
  *
  */
 public interface StepExecutionMetrics {
 
 	@ManagedMetric(metricType = MetricType.COUNTER, displayName = "Step Execution Count")
-	int getStepExecutionCount();
+	int getExecutionCount();
 
 	@ManagedMetric(metricType = MetricType.COUNTER, displayName = "Step Execution Failure Count")
-	int getStepExecutionFailureCount();
+	int getFailureCount();
 
 	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Latest Duration")
-	double getLatestStepExecutionDuration();
+	double getLatestDuration();
 
 	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Mean Duration")
-	double getMeanStepExecutionDuration();
+	double getMeanDuration();
 
 	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Max Duration")
-	double getMaxStepExecutionDuration();
+	double getMaxDuration();
+
+	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Latest Step Execution ID")
+	long getLatestExecutionId();
+
+	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Latest Read Count")
+	int getLatestReadCount();
+
+	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Latest Write Count")
+	int getLatestWriteCount();
+
+	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Latest Filter Count")
+	int getLatestFilterCount();
+
+	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Latest Skip Count")
+	int getLatestSkipCount();
+
+	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Latest Commit Count")
+	int getLatestCommitCount();
+
+	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Latest Rollback Count")
+	int getLatestRollbackCount();
+
+	@ManagedAttribute(description  = "Latest Status")
+	String getLatestStatus();
+
+	@ManagedAttribute(description  = "Latest Exit Code")
+	String getLatestExitCode();
+
+	@ManagedAttribute(description  = "Latest Exit Description")
+	String getLatestExitDescription();
 
 }

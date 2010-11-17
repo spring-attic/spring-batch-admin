@@ -101,7 +101,7 @@ public class BatchMBeanExporter extends MBeanExporter implements SmartLifecycle 
 				for (StepExecution stepExecution : jobExecution.getStepExecutions()) {
 					String stepName = stepExecution.getStepName();
 					String stepKey = String.format("%s/%s", jobName, stepName);
-					String beanKey = getBeanKeyForStepExecution(stepName);
+					String beanKey = getBeanKeyForStepExecution(stepKey);
 					if (!stepKeys.contains(stepKey)) {
 						stepKeys.add(stepKey);
 						logger.info("Registering step execution " + stepKey);

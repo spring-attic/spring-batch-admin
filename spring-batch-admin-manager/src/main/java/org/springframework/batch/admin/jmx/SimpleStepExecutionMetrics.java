@@ -20,6 +20,7 @@ import java.util.Collection;
 import org.springframework.batch.admin.service.JobService;
 import org.springframework.batch.admin.web.StepExecutionHistory;
 import org.springframework.batch.core.StepExecution;
+import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedMetric;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.jmx.support.MetricType;
@@ -40,12 +41,12 @@ public class SimpleStepExecutionMetrics implements StepExecutionMetrics {
 	}
 
 	@ManagedMetric(metricType = MetricType.COUNTER, displayName = "Step Execution Count")
-	public int getStepExecutionCount() {
+	public int getExecutionCount() {
 		return jobService.countStepExecutionsForStep(jobName, stepName);
 	}
 
 	@ManagedMetric(metricType = MetricType.COUNTER, displayName = "Step Execution Failure Count")
-	public int getStepExecutionFailureCount() {
+	public int getFailureCount() {
 		int count = 0;
 		int start = 0;
 		int pageSize = 100;
@@ -63,25 +64,93 @@ public class SimpleStepExecutionMetrics implements StepExecutionMetrics {
 	}
 
 	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Latest Duration")
-	public double getLatestStepExecutionDuration() {
+	public double getLatestDuration() {
 		return computeHistory(stepName, 1).getDuration().getMean();
 	}
 
 	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Mean Duration")
-	public double getMeanStepExecutionDuration() {
+	public double getMeanDuration() {
 		StepExecutionHistory history = computeHistory(stepName);
 		return history.getDuration().getMean();
 	}
 
 	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Max Duration")
-	public double getMaxStepExecutionDuration() {
+	public double getMaxDuration() {
 		StepExecutionHistory history = computeHistory(stepName);
 		return history.getDuration().getMax();
+	}
+
+	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Latest Read Count")
+	public int getLatestReadCount() {
+		StepExecution stepExecution = getLatestStepExecution(stepName);
+		return stepExecution == null ? 0 : stepExecution.getReadCount();
+	}
+
+	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Latest Write Count")
+	public int getLatestWriteCount() {
+		StepExecution stepExecution = getLatestStepExecution(stepName);
+		return stepExecution == null ? 0 : stepExecution.getWriteCount();
+	}
+
+	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Latest Filter Count")
+	public int getLatestFilterCount() {
+		StepExecution stepExecution = getLatestStepExecution(stepName);
+		return stepExecution == null ? 0 : stepExecution.getFilterCount();
+	}
+
+	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Latest Skip Count")
+	public int getLatestSkipCount() {
+		StepExecution stepExecution = getLatestStepExecution(stepName);
+		return stepExecution == null ? 0 : stepExecution.getSkipCount();
+	}
+
+	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Latest Commit Count")
+	public int getLatestCommitCount() {
+		StepExecution stepExecution = getLatestStepExecution(stepName);
+		return stepExecution == null ? 0 : stepExecution.getCommitCount();
+	}
+
+	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Latest Rollback Count")
+	public int getLatestRollbackCount() {
+		StepExecution stepExecution = getLatestStepExecution(stepName);
+		return stepExecution == null ? 0 : stepExecution.getRollbackCount();
+	}
+
+	@ManagedMetric(metricType = MetricType.GAUGE, displayName = "Latest Step Execution ID")
+	public long getLatestExecutionId() {
+		StepExecution stepExecution = getLatestStepExecution(stepName);
+		return stepExecution == null ? -1 : stepExecution.getId();
+	}
+
+	@ManagedAttribute(description = "Latest Status")
+	public String getLatestStatus() {
+		StepExecution stepExecution = getLatestStepExecution(stepName);
+		return stepExecution == null ? "NON" : stepExecution.getStatus().toString();
+	}
+
+	@ManagedAttribute(description = "Latest Exit Code")
+	public String getLatestExitCode() {
+		StepExecution stepExecution = getLatestStepExecution(stepName);
+		return stepExecution == null ? "NONE" : stepExecution.getExitStatus().getExitCode();
+	}
+
+	@ManagedAttribute(description = "Latest Exit Description")
+	public String getLatestExitDescription() {
+		StepExecution stepExecution = getLatestStepExecution(stepName);
+		return stepExecution == null ? "" : stepExecution.getExitStatus().getExitDescription();
 	}
 
 	private StepExecutionHistory computeHistory(String stepName) {
 		// Running average over last 10 executions...
 		return computeHistory(stepName, 10);
+	}
+
+	private StepExecution getLatestStepExecution(String stepName) {
+		Collection<StepExecution> stepExecutions = jobService.listStepExecutionsForStep(jobName, stepName, 0, 1);
+		if (stepExecutions.isEmpty()) {
+			return null;
+		}
+		return stepExecutions.iterator().next();
 	}
 
 	private StepExecutionHistory computeHistory(String stepName, int total) {
