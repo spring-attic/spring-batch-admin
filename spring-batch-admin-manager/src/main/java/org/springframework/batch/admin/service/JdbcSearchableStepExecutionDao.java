@@ -49,14 +49,15 @@ public class JdbcSearchableStepExecutionDao extends JdbcStepExecutionDao impleme
 	private static final String STEP_EXECUTIONS_FOR_JOB = "SELECT distinct STEP_NAME from %PREFIX%STEP_EXECUTION S, %PREFIX%JOB_EXECUTION E, %PREFIX%JOB_INSTANCE I "
 			+ "where S.JOB_EXECUTION_ID = E.JOB_EXECUTION_ID AND E.JOB_INSTANCE_ID = I.JOB_INSTANCE_ID AND I.JOB_NAME = ?";
 
-	private static final String COUNT_STEP_EXECUTIONS_FOR_STEP = "SELECT COUNT(STEP_EXECUTION_ID) from %PREFIX%STEP_EXECUTION S, %PREFIX%JOB_EXECUTION E, %PREFIX%JOB_INSTANCE I " +
-			"where S.JOB_EXECUTION_ID = E.JOB_EXECUTION_ID AND E.JOB_INSTANCE_ID = I.JOB_INSTANCE_ID AND I.JOB_NAME = ? AND S.STEP_NAME = ?";
+	private static final String COUNT_STEP_EXECUTIONS_FOR_STEP = "SELECT COUNT(STEP_EXECUTION_ID) from %PREFIX%STEP_EXECUTION S, %PREFIX%JOB_EXECUTION E, %PREFIX%JOB_INSTANCE I "
+			+ "where S.JOB_EXECUTION_ID = E.JOB_EXECUTION_ID AND E.JOB_INSTANCE_ID = I.JOB_INSTANCE_ID AND I.JOB_NAME = ? AND S.STEP_NAME = ?";
 
-	private static final String COUNT_STEP_EXECUTIONS_FOR_STEP_PATTERN = "SELECT COUNT(STEP_EXECUTION_ID) from %PREFIX%STEP_EXECUTION S, %PREFIX%JOB_EXECUTION E, %PREFIX%JOB_INSTANCE I" +
-			" where S.JOB_EXECUTION_ID = E.JOB_EXECUTION_ID AND E.JOB_INSTANCE_ID = I.JOB_INSTANCE_ID AND I.JOB_NAME = ? AND S.STEP_NAME like ?";
+	private static final String COUNT_STEP_EXECUTIONS_FOR_STEP_PATTERN = "SELECT COUNT(STEP_EXECUTION_ID) from %PREFIX%STEP_EXECUTION S, %PREFIX%JOB_EXECUTION E, %PREFIX%JOB_INSTANCE I"
+			+ " where S.JOB_EXECUTION_ID = E.JOB_EXECUTION_ID AND E.JOB_INSTANCE_ID = I.JOB_INSTANCE_ID AND I.JOB_NAME = ? AND S.STEP_NAME like ?";
 
-	private static final String FIELDS = "STEP_EXECUTION_ID, STEP_NAME, START_TIME, END_TIME, STATUS, COMMIT_COUNT,"
-			+ " READ_COUNT, FILTER_COUNT, WRITE_COUNT, EXIT_CODE, EXIT_MESSAGE, READ_SKIP_COUNT, WRITE_SKIP_COUNT, PROCESS_SKIP_COUNT, ROLLBACK_COUNT, LAST_UPDATED, VERSION";
+	private static final String FIELDS = "S.STEP_EXECUTION_ID, S.STEP_NAME, S.START_TIME, S.END_TIME, S.STATUS, S.COMMIT_COUNT,"
+			+ " S.READ_COUNT, S.FILTER_COUNT, S.WRITE_COUNT, S.EXIT_CODE, S.EXIT_MESSAGE, S.READ_SKIP_COUNT, S.WRITE_SKIP_COUNT,"
+			+ " S.PROCESS_SKIP_COUNT, S.ROLLBACK_COUNT, S.LAST_UPDATED, S.VERSION";
 
 	private DataSource dataSource;
 
@@ -138,8 +139,8 @@ public class JdbcSearchableStepExecutionDao extends JdbcStepExecutionDao impleme
 		}
 		else {
 			try {
-				Long startAfterValue = getJdbcTemplate().queryForLong(queryProvider.generateJumpToItemQuery(start, count),
-					jobName, stepName);
+				Long startAfterValue = getJdbcTemplate().queryForLong(
+						queryProvider.generateJumpToItemQuery(start, count), jobName, stepName);
 				stepExecutions = getJdbcTemplate().query(queryProvider.generateRemainingPagesQuery(count),
 						new StepExecutionRowMapper(), jobName, stepName, startAfterValue);
 			}
@@ -154,14 +155,15 @@ public class JdbcSearchableStepExecutionDao extends JdbcStepExecutionDao impleme
 
 	public int countStepExecutions(String jobName, String stepName) {
 		if (stepName.contains("*")) {
-			return getJdbcTemplate().queryForInt(getQuery(COUNT_STEP_EXECUTIONS_FOR_STEP_PATTERN), jobName, 
+			return getJdbcTemplate().queryForInt(getQuery(COUNT_STEP_EXECUTIONS_FOR_STEP_PATTERN), jobName,
 					stepName.replace("*", "%"));
 		}
 		return getJdbcTemplate().queryForInt(getQuery(COUNT_STEP_EXECUTIONS_FOR_STEP), jobName, stepName);
 	}
 
 	/**
-	 * @return a {@link PagingQueryProvider} with a where clause to narrow the query
+	 * @return a {@link PagingQueryProvider} with a where clause to narrow the
+	 * query
 	 * @throws Exception
 	 */
 	private PagingQueryProvider getPagingQueryProvider(String whereClause) {
