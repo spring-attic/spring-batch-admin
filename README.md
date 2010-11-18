@@ -11,7 +11,7 @@ Web application and API for managing and monitoring [Spring Batch](http://static
 
 # Getting Help
 
-Read the main project [website](http://www.springsource.org/spring-batch-admin) and the [User Guide](http://www.springsource.org/spring-batch-admin/reference). Look at teh source code and the Javadocs.  For more detailed questions, use the [forum](http://forum.springsource.org/forumdisplay.php?f=41).  If you are new to Spring as well as to Spring Batch, look for information about [Spring projects](http://www.springsource.org/projects).
+Read the main project [website](http://www.springsource.org/spring-batch-admin) and the [User Guide](http://www.springsource.org/spring-batch-admin/reference). Look at the source code and the Javadocs.  For more detailed questions, use the [forum](http://forum.springsource.org/forumdisplay.php?f=41).  If you are new to Spring as well as to Spring Batch, look for information about [Spring projects](http://www.springsource.org/projects).
 
 # Contributing to Spring Batch Admin
 
