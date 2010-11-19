@@ -8,7 +8,7 @@ visualization of Batch meta data, and also launching and stopping jobs inside th
 	<parent>
 		<artifactId>spring-batch-admin-parent</artifactId>
 		<groupId>org.springframework.batch</groupId>
-		<version>1.2.0.M1</version>
+		<version>1.2.0.BUILD-SNAPSHOT</version>
 		<relativePath>../spring-batch-admin-parent</relativePath>
 	</parent>
 	<name>Manager</name>
