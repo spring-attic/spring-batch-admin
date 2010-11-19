@@ -9,7 +9,7 @@
 	<scm>
 		<url>http://static.springframework.org/spring-batch-admin</url>
 		<connection>scm:git:git://github.com/SpringSource/spring-batch-admin.git</connection>
-		<developerConnection>scm:git:git://github.com:SpringSource/spring-batch-admin.git</developerConnection>
+		<developerConnection>scm:git:git://github.com/SpringSource/spring-batch-admin.git</developerConnection>
 	</scm>
 	<issueManagement>
 		<system>JIRA</system>
