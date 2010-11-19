@@ -79,7 +79,7 @@ public class JdbcSearchableStepExecutionDaoTests {
 	@Test
 	@Transactional
 	public void testFindStepNamesWithMoreJobs() throws Exception {
-		list.addAll(jobRepositoryUtils.createJobExecutions("other", new String[] {"step"}, 2));
+		list.addAll(jobRepositoryUtils.createJobExecutions("other", new String[] {"step"}, 1));
 		assertEquals("[step]", dao.findStepNamesForJobExecution("job", "-").toString());
 	}
 

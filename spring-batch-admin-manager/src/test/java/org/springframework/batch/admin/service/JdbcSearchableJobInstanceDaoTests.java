@@ -56,6 +56,8 @@ public class JdbcSearchableJobInstanceDaoTests {
 		dao.afterPropertiesSet();
 	}
 
+	// Need to use @BeforeTransaction because the job repository defaults to
+	// propagation=REQUIRES_NEW for createJobExecution()
 	@BeforeTransaction
 	public void prepareExecutions() throws Exception {
 		list = jobRepositoryUtils.createJobExecutions(3);

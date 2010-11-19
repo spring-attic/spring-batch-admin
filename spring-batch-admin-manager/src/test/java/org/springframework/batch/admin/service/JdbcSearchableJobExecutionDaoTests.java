@@ -90,6 +90,24 @@ public class JdbcSearchableJobExecutionDaoTests {
 
 	@Test
 	@Transactional
+	public void testGetJobExecutionsLatest() throws Exception {
+		list.addAll(jobRepositoryUtils.createJobExecutions("other", new String[] {"step"}, 1));
+		List<JobExecution> jobExecutions = dao.getJobExecutions(0, 10);
+		assertEquals(4, jobExecutions.size());
+		assertEquals(list.get(list.size()-1), jobExecutions.get(0));
+	}
+
+	@Test
+	@Transactional
+	public void testGetJobExecutionsLatestForJob() throws Exception {
+		list.addAll(jobRepositoryUtils.createJobExecutions("job", new String[] {"step"}, 1));
+		List<JobExecution> jobExecutions = dao.getJobExecutions("job", 0, 1);
+		assertEquals(1, jobExecutions.size());
+		assertEquals(list.get(list.size()-1), jobExecutions.get(0));
+	}
+
+	@Test
+	@Transactional
 	public void testGetJobExecutionsByName() {
 		assertEquals(3, dao.getJobExecutions("job", 0, 10).size());
 	}

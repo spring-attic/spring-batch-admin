@@ -20,9 +20,9 @@ import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
+import org.springframework.batch.admin.service.ActiveProfileSuite.ActiveProfile;
 import org.springframework.batch.admin.service.JdbcDaoIntegrationTests.DerbyTest;
 import org.springframework.batch.admin.service.JdbcDaoIntegrationTests.HsqlTest;
-import org.springframework.batch.admin.service.ActiveProfileSuite.ActiveProfile;
 
 /**
  * @author Dave Syer
