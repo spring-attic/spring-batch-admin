@@ -4,7 +4,7 @@
 	<groupId>org.springframework.batch</groupId>
 	<artifactId>spring-batch-admin</artifactId>
 	<name>Spring Batch Admin</name>
-	<version>1.2.0.BUILD-SNAPSHOT</version>
+	<version>1.2.0.M1</version>
 	<packaging>pom</packaging>
 	<scm>
 		<url>http://static.springframework.org/spring-batch-admin</url>
