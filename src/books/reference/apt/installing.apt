@@ -8,7 +8,7 @@ Installing Spring Batch Admin
   The sample can also be created with a couple of clicks in the SpringSource
   Tool Suite (STS): go to <<<File->New->Spring Template Project>>>, and select the 
   Spring Batch Admin Webapp from the list (if it isn't there upgrade STS). 
-  In STS you can right click on the project and <<<Run As->Run On Server>> choose Tomcat or tc Server, 
+  In STS you can right click on the project and <<<Run As->Run On Server>>> choose Tomcat or tc Server, 
   and the app will deploy and open a web browser 
   (e.g. localhost:8080/spring-batch-admin-sample). Check out the features for
   launching jobs and inspecting job executions.  If the STS project looks out of date
