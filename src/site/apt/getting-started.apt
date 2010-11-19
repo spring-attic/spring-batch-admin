@@ -29,7 +29,7 @@ Getting Started with Spring Batch Admin
 <dependency>
 	<groupId>org.springframework.batch</groupId>
 	<artifactId>spring-batch-admin-manager</artifactId>
-	<version>1.0.0.CI-SNAPSHOT</version>
+	<version>1.2.0.BUILD-SNAPSHOT</version>
 </dependency>
 +---
  
