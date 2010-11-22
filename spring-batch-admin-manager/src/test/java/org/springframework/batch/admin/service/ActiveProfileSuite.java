@@ -16,8 +16,6 @@
 
 package org.springframework.batch.admin.service;
 
-import static org.junit.Assert.fail;
-
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -58,33 +56,24 @@ public class ActiveProfileSuite extends Suite {
 		if (environment != null) {
 			final Statement inner = statement;
 			final String value = environment;
-			try {
-				statement = new Statement() {
-					public void evaluate() throws Throwable {
+			statement = new Statement() {
+				public void evaluate() throws Throwable {
+
+					String original = System.getProperty("ENVIRONMENT");
+					try {
+						System.setProperty("ENVIRONMENT", value);
+						inner.evaluate();
 					}
-
-					{
-
-						String original = System.getProperty("ENVIRONMENT");
-						try {
-							System.setProperty("ENVIRONMENT", value);
-							inner.evaluate();
+					finally {
+						if (original != null) {
+							System.setProperty("ENVIRONMENT", original);
 						}
-						finally {
-							if (original != null) {
-								System.setProperty("ENVIRONMENT", original);
-							}
-							else {
-								System.clearProperty("ENVIRONMENT");
-							}
+						else {
+							System.clearProperty("ENVIRONMENT");
 						}
-
 					}
-				};
-			}
-			catch (Throwable e) {
-				fail("Unexpected problem creating environment: " + e);
-			}
+				}
+			};
 		}
 		return statement;
 	}
