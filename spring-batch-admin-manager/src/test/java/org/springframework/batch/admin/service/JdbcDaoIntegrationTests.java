@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.springframework.batch.admin.service.ActiveProfileSuite.ActiveProfile;
-import org.springframework.batch.admin.service.JdbcDaoIntegrationTests.DerbyTest;
+import org.springframework.batch.admin.service.JdbcDaoIntegrationTests.H2Test;
 import org.springframework.batch.admin.service.JdbcDaoIntegrationTests.HsqlTest;
 
 /**
@@ -29,7 +29,7 @@ import org.springframework.batch.admin.service.JdbcDaoIntegrationTests.HsqlTest;
  * 
  */
 @RunWith(Suite.class)
-@SuiteClasses({ HsqlTest.class, DerbyTest.class })
+@SuiteClasses({ HsqlTest.class, H2Test.class })
 @Ignore
 public class JdbcDaoIntegrationTests {
 
@@ -45,6 +45,14 @@ public class JdbcDaoIntegrationTests {
 
 	@ActiveProfile("derby")
 	public static class DerbyTest extends BaseTest {
+	}
+
+	@ActiveProfile("h2")
+	public static class H2Test extends BaseTest {
+	}
+
+	@ActiveProfile("mysql")
+	public static class MysqlTest extends BaseTest {
 	}
 
 }
