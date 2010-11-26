@@ -16,6 +16,7 @@
 package org.springframework.batch.admin.jmx;
 
 import java.util.Collection;
+import java.util.Date;
 
 import org.springframework.batch.admin.service.JobService;
 import org.springframework.batch.admin.web.StepExecutionHistory;
@@ -59,7 +60,10 @@ public class SimpleStepExecutionMetrics implements StepExecutionMetrics {
 	}
 
 	public double getLatestDuration() {
-		return computeHistory(stepName, 1).getDuration().getMean();
+		StepExecution stepExecution = getLatestStepExecution(stepName);
+		Date endTime = stepExecution.getEndTime();
+		return (endTime != null ? endTime.getTime() : System.currentTimeMillis())
+				- stepExecution.getStartTime().getTime();
 	}
 
 	public double getMeanDuration() {
@@ -128,11 +132,22 @@ public class SimpleStepExecutionMetrics implements StepExecutionMetrics {
 	}
 
 	private StepExecution getLatestStepExecution(String stepName) {
-		Collection<StepExecution> stepExecutions = jobService.listStepExecutionsForStep(jobName, stepName, 0, 1);
+		// On the cautious side: grab the last 4 executions by ID and look for
+		// the one that was last started...
+		Collection<StepExecution> stepExecutions = jobService.listStepExecutionsForStep(jobName, stepName, 0, 4);
 		if (stepExecutions.isEmpty()) {
 			return null;
 		}
-		return stepExecutions.iterator().next();
+		long lastUpdated = 0L;
+		StepExecution result = null;
+		for (StepExecution stepExecution : stepExecutions) {
+			long updated = stepExecution.getStartTime().getTime();
+			if (updated > lastUpdated) {
+				result = stepExecution;
+				lastUpdated = updated;
+			}
+		}
+		return result;
 	}
 
 	private StepExecutionHistory computeHistory(String stepName, int total) {

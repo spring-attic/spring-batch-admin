@@ -26,9 +26,8 @@ public class CumulativeHistoryTests {
 
 	@Test
 	public void testUndefinedMean() {
-		assertEquals(Double.NaN, history.getMean(), 0.001);
-		assertEquals("NaN", history.getMean() + "");
-		assertEquals("NaN", history.getStandardDeviation() + "");
+		assertEquals(0, history.getMean(), 0.001);
+		assertEquals(0, history.getStandardDeviation(), 0.001);
 	}
 
 	@Test

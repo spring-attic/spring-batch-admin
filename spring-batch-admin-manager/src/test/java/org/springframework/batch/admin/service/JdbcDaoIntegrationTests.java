@@ -30,7 +30,6 @@ import org.springframework.batch.admin.service.JdbcDaoIntegrationTests.HsqlTest;
  */
 @RunWith(Suite.class)
 @SuiteClasses({ HsqlTest.class, H2Test.class })
-@Ignore
 public class JdbcDaoIntegrationTests {
 
 	@RunWith(ActiveProfileSuite.class)
@@ -40,18 +39,22 @@ public class JdbcDaoIntegrationTests {
 	}
 
 	@ActiveProfile("hsql")
+	@Ignore
 	public static class HsqlTest extends BaseTest {
 	}
 
 	@ActiveProfile("derby")
+	@Ignore
 	public static class DerbyTest extends BaseTest {
 	}
 
 	@ActiveProfile("h2")
+	@Ignore
 	public static class H2Test extends BaseTest {
 	}
 
 	@ActiveProfile("mysql")
+	@Ignore
 	public static class MysqlTest extends BaseTest {
 	}
 

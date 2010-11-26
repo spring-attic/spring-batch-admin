@@ -39,7 +39,7 @@ public class SimpleStepExecutionMetricsTests {
 	}
 
 	private void prepareServiceWithSingleStepExecution() throws Exception {
-		jobService.listStepExecutionsForStep("job", "step", 0, 1);
+		jobService.listStepExecutionsForStep("job", "step", 0, 4);
 		EasyMock.expectLastCall().andReturn(Arrays.asList(stepExecution));
 		EasyMock.replay(jobService);
 	}
@@ -88,6 +88,13 @@ public class SimpleStepExecutionMetricsTests {
 	public void testGetLatestStepExecutionDuration() throws Exception {
 		prepareServiceWithSingleStepExecution();
 		assertEquals(stepExecution.getEndTime().getTime() - stepExecution.getStartTime().getTime(), metrics.getLatestDuration(), .001);
+	}
+
+	@Test
+	public void testGetLatestStepExecutionDurationIncomplete() throws Exception {
+		stepExecution.setEndTime(null);
+		prepareServiceWithSingleStepExecution();
+		assertEquals(System.currentTimeMillis() - stepExecution.getStartTime().getTime(), metrics.getLatestDuration(), 10);
 	}
 
 	@Test

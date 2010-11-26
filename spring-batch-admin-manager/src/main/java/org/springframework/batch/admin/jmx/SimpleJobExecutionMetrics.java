@@ -73,7 +73,10 @@ public class SimpleJobExecutionMetrics implements JobExecutionMetrics {
 	}
 
 	public double getLatestDuration() {
-		return computeHistory(jobName, 1).getDuration().getMean();
+		JobExecution jobExecution = getLatestJobExecution(jobName);
+		JobExecutionHistory history = new JobExecutionHistory(jobName);
+		history.append(jobExecution);
+		return history.getDuration().getMean();
 	}
 
 	public double getMeanDuration() {
@@ -141,11 +144,22 @@ public class SimpleJobExecutionMetrics implements JobExecutionMetrics {
 
 	private JobExecution getLatestJobExecution(String jobName) {
 		try {
-			Collection<JobExecution> jobExecutions = jobService.listJobExecutionsForJob(jobName, 0, 1);
+			// On the cautious side: grab the last 4 executions by ID and look for
+			// the one that was last created...
+			Collection<JobExecution> jobExecutions = jobService.listJobExecutionsForJob(jobName, 0, 4);
 			if (jobExecutions.isEmpty()) {
 				return null;
 			}
-			return jobExecutions.iterator().next();
+			long lastUpdated = 0L;
+			JobExecution result = null;
+			for (JobExecution jobExecution : jobExecutions) {
+				long updated = jobExecution.getCreateTime().getTime();
+				if (updated > lastUpdated) {
+					result = jobExecution;
+					lastUpdated = updated;
+				}
+			}
+			return result;
 		}
 		catch (NoSuchJobException e) {
 			throw new IllegalStateException("Cannot locate job=" + jobName, e);

@@ -18,30 +18,36 @@ package org.springframework.batch.admin.util;
 public class CumulativeHistory {
 
 	private int count;
+
 	private double sum;
+
 	private double sumSquares;
+
 	private double min;
+
 	private double max;
 
 	public void append(double value) {
-		if (value>max || count==0) max = value;
-		if (value<min || count==0) min = value;
+		if (value > max || count == 0)
+			max = value;
+		if (value < min || count == 0)
+			min = value;
 		sum += value;
 		sumSquares += value * value;
 		count++;
 	}
-	
+
 	public int getCount() {
 		return count;
 	}
 
 	public double getMean() {
-		return sum / count;
+		return count > 0 ? sum / count : 0;
 	}
 
 	public double getStandardDeviation() {
 		double mean = getMean();
-		return Math.sqrt(sumSquares / count - mean * mean);
+		return count > 0 ? Math.sqrt(sumSquares / count - mean * mean) : 0;
 	}
 
 	public double getMax() {
@@ -51,10 +57,11 @@ public class CumulativeHistory {
 	public double getMin() {
 		return min;
 	}
-	
+
 	@Override
 	public String toString() {
-		return String.format("[N=%d, min=%f, max=%f, mean=%f, sigma=%f]", count, min, max, getMean(), getStandardDeviation());
+		return String.format("[N=%d, min=%f, max=%f, mean=%f, sigma=%f]", count, min, max, getMean(),
+				getStandardDeviation());
 	}
 
 }

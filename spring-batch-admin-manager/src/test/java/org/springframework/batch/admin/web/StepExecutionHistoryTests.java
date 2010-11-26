@@ -34,6 +34,15 @@ public class StepExecutionHistoryTests {
 	}
 
 	@Test
+	public void testGetDurationWithRunningExecution() {
+		assertEquals(0, history.getCount());
+		StepExecution stepExecution = MetaDataInstanceFactory.createStepExecution();
+		stepExecution.setStartTime(new Date(System.currentTimeMillis()-1000));
+		history.append(stepExecution);
+		assertEquals("Incomplete history should have no duration: "+history.getDuration(), 0, history.getDuration().getMean(), 0.01);
+	}
+
+	@Test
 	public void testGetCountWithRunningExecution() {
 		assertEquals(0, history.getCount());
 		history.append(MetaDataInstanceFactory.createStepExecution());

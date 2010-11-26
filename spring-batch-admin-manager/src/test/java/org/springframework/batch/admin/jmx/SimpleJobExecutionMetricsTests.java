@@ -65,7 +65,7 @@ public class SimpleJobExecutionMetricsTests {
 	}
 
 	private void prepareServiceWithSingleJobExecution() throws Exception {
-		jobService.listJobExecutionsForJob("job", 0, 1);
+		jobService.listJobExecutionsForJob("job", 0, 4);
 		EasyMock.expectLastCall().andReturn(Arrays.asList(jobExecution));
 		EasyMock.replay(jobService);
 	}

@@ -19,7 +19,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -140,8 +139,8 @@ public class JdbcSearchableStepExecutionDao extends JdbcStepExecutionDao impleme
 		}
 		else {
 			try {
-				Date startAfterValue = getJdbcTemplate().queryForObject(
-						queryProvider.generateJumpToItemQuery(start, count), Date.class, jobName, stepName);
+				Long startAfterValue = getJdbcTemplate().queryForLong(
+						queryProvider.generateJumpToItemQuery(start, count), jobName, stepName);
 				stepExecutions = getJdbcTemplate().query(queryProvider.generateRemainingPagesQuery(count),
 						new StepExecutionRowMapper(), jobName, stepName, startAfterValue);
 			}
@@ -172,7 +171,7 @@ public class JdbcSearchableStepExecutionDao extends JdbcStepExecutionDao impleme
 		factory.setDataSource(dataSource);
 		factory.setFromClause(getQuery("%PREFIX%STEP_EXECUTION S, %PREFIX%JOB_EXECUTION J, %PREFIX%JOB_INSTANCE I"));
 		factory.setSelectClause(FIELDS);
-		factory.setSortKey("S.LAST_UPDATED");
+		factory.setSortKey("S.STEP_EXECUTION_ID");
 		factory.setAscending(false);
 		if (whereClause != null) {
 			factory.setWhereClause(whereClause

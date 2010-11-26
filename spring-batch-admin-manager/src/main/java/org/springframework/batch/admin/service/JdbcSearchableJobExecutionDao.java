@@ -19,7 +19,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -102,7 +101,8 @@ public class JdbcSearchableJobExecutionDao extends JdbcJobExecutionDao implement
 	}
 
 	/**
-	 * @return a {@link PagingQueryProvider} for all job executions with the provided where clause
+	 * @return a {@link PagingQueryProvider} for all job executions with the
+	 * provided where clause
 	 * @throws Exception
 	 */
 	private PagingQueryProvider getPagingQueryProvider(String whereClause) throws Exception {
@@ -110,7 +110,8 @@ public class JdbcSearchableJobExecutionDao extends JdbcJobExecutionDao implement
 	}
 
 	/**
-	 * @return a {@link PagingQueryProvider} with a where clause to narrow the query
+	 * @return a {@link PagingQueryProvider} with a where clause to narrow the
+	 * query
 	 * @throws Exception
 	 */
 	private PagingQueryProvider getPagingQueryProvider(String fromClause, String whereClause) throws Exception {
@@ -119,7 +120,7 @@ public class JdbcSearchableJobExecutionDao extends JdbcJobExecutionDao implement
 		fromClause = "%PREFIX%JOB_EXECUTION E, %PREFIX%JOB_INSTANCE I" + (fromClause == null ? "" : ", " + fromClause);
 		factory.setFromClause(getQuery(fromClause));
 		factory.setSelectClause(FIELDS);
-		factory.setSortKey("E.LAST_UPDATED");
+		factory.setSortKey("E.JOB_EXECUTION_ID");
 		factory.setAscending(false);
 		whereClause = "E.JOB_INSTANCE_ID=I.JOB_INSTANCE_ID" + (whereClause == null ? "" : " and " + whereClause);
 		if (whereClause != null) {
@@ -158,8 +159,8 @@ public class JdbcSearchableJobExecutionDao extends JdbcJobExecutionDao implement
 					new JobExecutionRowMapper(), jobName);
 		}
 		try {
-			Date startAfterValue = getJdbcTemplate().queryForObject(
-					byJobNamePagingQueryProvider.generateJumpToItemQuery(start, count), Date.class, jobName);
+			Long startAfterValue = getJdbcTemplate().queryForLong(
+					byJobNamePagingQueryProvider.generateJumpToItemQuery(start, count), jobName);
 			return getJdbcTemplate().query(byJobNamePagingQueryProvider.generateRemainingPagesQuery(count),
 					new JobExecutionRowMapper(), jobName, startAfterValue);
 		}
@@ -177,8 +178,8 @@ public class JdbcSearchableJobExecutionDao extends JdbcJobExecutionDao implement
 					new JobExecutionRowMapper());
 		}
 		try {
-			Date startAfterValue = getJdbcTemplate().queryForObject(
-					allExecutionsPagingQueryProvider.generateJumpToItemQuery(start, count), Date.class);
+			Long startAfterValue = getJdbcTemplate().queryForLong(
+					allExecutionsPagingQueryProvider.generateJumpToItemQuery(start, count));
 			return getJdbcTemplate().query(allExecutionsPagingQueryProvider.generateRemainingPagesQuery(count),
 					new JobExecutionRowMapper(), startAfterValue);
 		}
