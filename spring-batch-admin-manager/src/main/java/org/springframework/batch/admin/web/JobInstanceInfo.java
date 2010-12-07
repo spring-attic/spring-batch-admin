@@ -17,9 +17,12 @@ package org.springframework.batch.admin.web;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Properties;
 
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
+import org.springframework.batch.core.converter.DefaultJobParametersConverter;
+import org.springframework.batch.core.converter.JobParametersConverter;
 
 public class JobInstanceInfo {
 
@@ -28,6 +31,8 @@ public class JobInstanceInfo {
 	private final Long id;
 
 	private final Collection<JobExecution> jobExecutions;
+
+	private final JobParametersConverter converter = new DefaultJobParametersConverter();
 
 	public JobInstanceInfo(JobInstance jobInstance, Collection<JobExecution> jobExecutions) {
 		this.jobInstance = jobInstance;
@@ -53,6 +58,10 @@ public class JobInstanceInfo {
 
 	public JobExecution getLastJobExecution() {
 		return jobExecutions.isEmpty() ? null : jobExecutions.iterator().next();
+	}
+	
+	public Properties getJobParameters() {
+		return converter.getProperties(jobInstance.getJobParameters());
 	}
 
 }

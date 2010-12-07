@@ -2,7 +2,7 @@
 <#if jobInfo?? && jobInfo.jobInstanceId??>"jobInstance" : {
     "id" : ${jobInfo.jobInstanceId?c}, 
     "jobName" : "${jobInfo.name}"<#if jobInstanceInfo??>,
-    "jobParameters" : {<#assign params=jobInstanceInfo.jobInstance.jobParameters.parameters/><#list params?keys as param>
+    "jobParameters" : {<#assign params=jobInstanceInfo.jobParameters/><#list params?keys as param>
         "${param}" : "${params[param]}"<#if param_index != params?size-1>,</#if></#list>
       }</#if>
     },</#if>
