@@ -120,6 +120,13 @@ public class StepExecutionInfo {
 		return "NONE";
 	}
 
+	public String getExitCode() {
+		if (id!=null) {
+			return stepExecution.getExitStatus().getExitCode();
+		}
+		return "NONE";
+	}
+
 	public StepExecution getStepExecution() {
 		return stepExecution;
 	}

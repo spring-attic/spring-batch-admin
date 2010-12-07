@@ -26,6 +26,7 @@ import java.util.TimeZone;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.batch.admin.web.JobExecutionInfo;
+import org.springframework.batch.admin.web.JsonWrapper;
 import org.springframework.batch.admin.web.StepExecutionInfo;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.test.MetaDataInstanceFactory;
@@ -73,7 +74,7 @@ public class JobExecutionJsonViewTests extends AbstractManagerViewTests {
 		model.put("baseUrl", "http://localhost:8080/springsource");
 		view.render(model, request, response);
 		String content = response.getContentAsString();
-		System.err.println(content);
+		// System.err.println(content);
 		assertTrue(content.contains("\"duration\" : \"\""));
 		JsonWrapper wrapper = new JsonWrapper(content);
 		assertEquals("STARTING", wrapper.get("jobExecution.status"));

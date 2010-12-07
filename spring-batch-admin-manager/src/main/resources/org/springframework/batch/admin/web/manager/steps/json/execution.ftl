@@ -1,6 +1,7 @@
 <#import "/spring.ftl" as spring />
 <#assign url><@spring.url relativeUrl="${servletPath}/jobs/executions/${stepExecutionInfo.jobExecutionId?c}/steps/${stepExecutionInfo.id?c}/progress"/></#assign>
 "stepExecution" : { 
+    "id" : "${stepExecutionInfo.stepExecution.id?c}",
     "resource" : "${baseUrl}${url}",
     "status" : "${stepExecutionInfo.stepExecution.status}",
     "startTime" : "${stepExecutionInfo.startTime}",
@@ -14,7 +15,11 @@
     "commitCount" : ${stepExecutionInfo.stepExecution.commitCount?c},
     "rollbackCount" : ${stepExecutionInfo.stepExecution.rollbackCount?c},
     "exitCode" : "${stepExecutionInfo.stepExecution.exitStatus.exitCode}",
-    "exitDescription" : "${stepExecutionInfo.stepExecution.exitStatus.exitDescription}"
+    "exitDescription" : "${stepExecutionInfo.stepExecution.exitStatus.exitDescription?replace('\t','\\t')?replace('\n','\\n')?replace('\r','')}"
   },
 <#assign url><@spring.url relativeUrl="${servletPath}/jobs/executions/${stepExecutionInfo.jobExecutionId?c}.json"/></#assign>
-  "jobExecution" : { "resource" : "${baseUrl}${url}" }
+  "jobExecution" : { 
+    "id" : "${stepExecutionInfo.jobExecutionId?c}",
+    "resource" : "${baseUrl}${url}"<#if stepExecutionInfo.stepExecution.jobExecution??>,
+    "status" : "${stepExecutionInfo.stepExecution.jobExecution.status}"</#if>
+  }

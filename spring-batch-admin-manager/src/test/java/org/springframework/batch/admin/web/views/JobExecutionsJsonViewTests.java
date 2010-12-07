@@ -29,6 +29,7 @@ import org.junit.runner.RunWith;
 import org.springframework.batch.admin.web.JobExecutionInfo;
 import org.springframework.batch.admin.web.JobInfo;
 import org.springframework.batch.admin.web.JobInstanceInfo;
+import org.springframework.batch.admin.web.JsonWrapper;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.test.MetaDataInstanceFactory;
 import org.springframework.beans.factory.annotation.Autowired;

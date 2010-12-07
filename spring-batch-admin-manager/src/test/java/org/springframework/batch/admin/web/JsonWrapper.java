@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.batch.admin.web.views;
+package org.springframework.batch.admin.web;
 
 import java.util.Map;
 
@@ -30,8 +30,11 @@ public class JsonWrapper {
 
 	private final Map<String, Object> target;
 
+	private final String content;
+
 	@SuppressWarnings("unchecked")
 	public JsonWrapper(String content) throws Exception {
+		this.content = content;
 		target = new MappingJsonFactory().createJsonParser(content).readValueAs(Map.class);
 		context = new StandardEvaluationContext();
 		context.addPropertyAccessor(new MapAccessor());
@@ -42,9 +45,13 @@ public class JsonWrapper {
 		return get(expression, Object.class);
 	}
 
-	@SuppressWarnings("unchecked")
 	public <T> T get(String expression, Class<T> type) throws Exception {
-		return (T) parser.parseExpression(expression).getValue(context, target);
+		return parser.parseExpression(expression).getValue(context, target, type);
+	}
+	
+	@Override
+	public String toString() {
+		return content;
 	}
 
 }

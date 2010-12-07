@@ -18,12 +18,17 @@ package org.springframework.batch.admin.web.views;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.TimeZone;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.batch.admin.web.JsonWrapper;
 import org.springframework.batch.admin.web.StepExecutionInfo;
+import org.springframework.batch.core.ExitStatus;
+import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.test.MetaDataInstanceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -54,6 +59,27 @@ public class StepExecutionJsonViewTests extends AbstractManagerViewTests {
 		JsonWrapper wrapper = new JsonWrapper(content);
 		assertEquals(0, wrapper.get("stepExecution.commitCount"));
 		assertEquals("http://localhost:8080/springsource/batch/jobs/executions/123.json", wrapper.get("jobExecution.resource"));
+	}
+
+	@Test
+	public void testLaunchViewWithStackTrace() throws Exception {
+		StepExecution stepExecution = MetaDataInstanceFactory.createStepExecution();
+		StringWriter description = new StringWriter();
+		new RuntimeException("planned").printStackTrace(new PrintWriter(description));
+		stepExecution.setExitStatus(ExitStatus.FAILED.addExitDescription(description.toString()));
+		model.put("stepExecutionInfo", new StepExecutionInfo(stepExecution, TimeZone
+				.getTimeZone("GMT")));
+		model.put("baseUrl", "http://localhost:8080/springsource");
+		view.render(model, request, response);
+		String content = response.getContentAsString();
+		// System.err.println(content);
+		assertTrue(content.contains("\"duration\" : \""));
+		JsonWrapper wrapper = new JsonWrapper(content);
+		assertEquals(0, wrapper.get("stepExecution.commitCount"));
+		assertEquals("http://localhost:8080/springsource/batch/jobs/executions/123.json", wrapper.get("jobExecution.resource"));
+		assertEquals(stepExecution.getId(), wrapper.get("stepExecution.id", Long.class));
+		assertEquals(stepExecution.getJobExecution().getStatus().toString(), wrapper.get("jobExecution.status"));
+		assertEquals(stepExecution.getJobExecutionId(), wrapper.get("jobExecution.id", Long.class));
 	}
 
 }
