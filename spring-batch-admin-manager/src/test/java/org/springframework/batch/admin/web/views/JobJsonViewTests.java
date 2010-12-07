@@ -57,7 +57,7 @@ public class JobJsonViewTests extends AbstractManagerViewTests {
 	@Test
 	public void testViewWithJob() throws Exception {
 		model.put(BindingResult.MODEL_KEY_PREFIX + "launchRequest", errors);
-		model.put("job", new JobInfo("foo", 1));
+		model.put("jobInfo", new JobInfo("foo", 1));
 		model.put("jobInstances", Arrays.asList(new JobInstanceInfo(MetaDataInstanceFactory.createJobInstance("foo",
 				1L, "bar=spam"), new ArrayList<JobExecution>())));
 		model.put("baseUrl", "http://localhost:8080/springsource");
@@ -100,7 +100,7 @@ public class JobJsonViewTests extends AbstractManagerViewTests {
 	@Test
 	public void testViewWithJobAndExecutions() throws Exception {
 		model.put(BindingResult.MODEL_KEY_PREFIX + "launchRequest", errors);
-		model.put("job", new JobInfo("foo", 1));
+		model.put("jobInfo", new JobInfo("foo", 1));
 		model.put("jobInstances", Arrays.asList(new JobInstanceInfo(MetaDataInstanceFactory.createJobInstance("foo",
 				123456789L, "bar=spam"), Arrays.asList(MetaDataInstanceFactory.createJobExecution()))));
 		model.put("baseUrl", "http://localhost:8080/springsource");

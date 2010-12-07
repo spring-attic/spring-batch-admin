@@ -22,7 +22,6 @@ import java.util.Properties;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.converter.DefaultJobParametersConverter;
-import org.springframework.batch.core.converter.JobParametersConverter;
 
 public class JobInstanceInfo {
 
@@ -32,12 +31,16 @@ public class JobInstanceInfo {
 
 	private final Collection<JobExecution> jobExecutions;
 
-	private final JobParametersConverter converter = new DefaultJobParametersConverter();
+	private final Properties jobParameters;
+
+	private final String jobParametersString;
 
 	public JobInstanceInfo(JobInstance jobInstance, Collection<JobExecution> jobExecutions) {
 		this.jobInstance = jobInstance;
 		this.jobExecutions = jobExecutions != null ? jobExecutions : new ArrayList<JobExecution>();
 		this.id = jobInstance.getId();
+		this.jobParameters = new DefaultJobParametersConverter().getProperties(jobInstance.getJobParameters());
+		this.jobParametersString = new JobParametersExtractor().fromJobParameters(jobInstance.getJobParameters());
 	}
 
 	public JobInstance getJobInstance() {
@@ -61,7 +64,11 @@ public class JobInstanceInfo {
 	}
 	
 	public Properties getJobParameters() {
-		return converter.getProperties(jobInstance.getJobParameters());
+		return jobParameters;
+	}
+
+	public String getJobParametersString() {
+		return jobParametersString;
 	}
 
 }
