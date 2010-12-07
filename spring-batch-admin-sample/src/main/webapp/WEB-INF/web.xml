@@ -46,7 +46,11 @@
 	<!-- Serves static resource content from .jar files such as spring-faces.jar -->
 	<servlet>
 		<servlet-name>Resources Servlet</servlet-name>
-		<servlet-class>org.springframework.js.resource.ResourceServlet</servlet-class>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>classpath*:/org/springframework/batch/admin/web/resources/resources-config.xml</param-value>
+		</init-param>
 		<load-on-startup>0</load-on-startup>
 	</servlet>
 

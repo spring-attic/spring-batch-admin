@@ -18,15 +18,6 @@
 		<property name="jsonResources" ref="jsonResources" />
 	</bean>
 
-	<bean class="org.springframework.web.servlet.resource.ResourceHttpRequestHandler">
-		<property name="locations">
-			<list>
-				<value>/</value>
-				<value>classpath:/META-INF</value>
-			</list>
-		</property>
-	</bean>
-
 	<util:properties id="defaultResources" />
 	<util:properties id="jsonResources" />
 
