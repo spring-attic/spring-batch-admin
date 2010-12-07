@@ -21,19 +21,16 @@ import static org.junit.Assert.assertTrue;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.TimeZone;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.springframework.batch.admin.service.JobService;
-import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.test.MetaDataInstanceFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.ExtendedModelMap;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
 
 public class JobControllerTests {
@@ -90,17 +87,19 @@ public class JobControllerTests {
 		EasyMock.expectLastCall().andReturn(100);
 		jobService.isLaunchable("foo");
 		EasyMock.expectLastCall().andReturn(true);
+		jobService.isIncrementable("foo");
+		EasyMock.expectLastCall().andReturn(true);
 		EasyMock.replay(jobService);
 
 		ExtendedModelMap model = new ExtendedModelMap();
 		controller.launch(model, "foo", request, new BindException(request, "request"), "job");
 		assertEquals("foo", request.getJobName());
 		// Job, JobInstances, jobParameters, JobExecution, total, next, start,
-		// end, launchable
-		assertEquals(9, model.size());
+		// end
+		assertEquals(8, model.size());
 
 		assertTrue(model.containsKey("jobExecutionInfo"));
-		assertTrue(model.containsKey("job"));
+		assertTrue(model.containsKey("jobInfo"));
 
 		EasyMock.verify(jobService);
 
@@ -144,40 +143,16 @@ public class JobControllerTests {
 		EasyMock.expectLastCall().andReturn(100);
 		jobService.isLaunchable("job");
 		EasyMock.expectLastCall().andReturn(true);
+		jobService.isIncrementable("job");
+		EasyMock.expectLastCall().andReturn(true);
 		EasyMock.replay(jobService);
 
 		ExtendedModelMap model = new ExtendedModelMap();
 		controller.details(model, "job", null, 10, 20);
-		// Job, JobInstances, jobParameters, total, next, previous, start, end,
-		// launchable
-		assertEquals(9, model.size());
+		// Job, JobInstances, jobParameters, total, next, previous, start, end
+		assertEquals(8, model.size());
 
 		EasyMock.verify(jobService);
-
-	}
-
-	@Test
-	public void testJobWithLongParameters() throws Exception {
-
-		String jobParameters = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa=bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb,ccccccccccccccccccccccccccccccccccccccccccccccccc=dddddddddddddddddddddddddddddddddddddddd";
-		String output = controller.getLastJobParameters(Arrays.asList(new JobInstanceInfo(MetaDataInstanceFactory
-				.createJobInstance("job", 12L, jobParameters), Collections.<JobExecution> emptySet())));
-		output = output.replace("\n", ",");
-		output = output.replace("\r", "");
-		if (output.endsWith(",")) {
-			output = output.substring(0, output.lastIndexOf(","));
-		}
-		assertEquals(jobParameters, output);
-
-	}
-
-	@Test
-	public void testJobWithEscapedLongParameters() throws Exception {
-
-		String jobParameters = "a=http://one,b=ftp://two";
-		String output = controller.getLastJobParameters(Arrays.asList(new JobInstanceInfo(MetaDataInstanceFactory
-				.createJobInstance("job", 12L, jobParameters), Collections.<JobExecution> emptySet())));
-		assertEquals(StringUtils.commaDelimitedListToSet(jobParameters), StringUtils.commaDelimitedListToSet(output));
 
 	}
 

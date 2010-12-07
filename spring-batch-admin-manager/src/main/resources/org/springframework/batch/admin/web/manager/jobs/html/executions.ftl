@@ -7,18 +7,23 @@
 
 	<h2>Recent and Current Job Executions${job_info!}</h2>
 
-	<#assign executions_url><@spring.url relativeUrl="${servletPath}/jobs/executions"/></#assign>
-	<form action="${executions_url}" method="POST">
-		<#if stoppedCount??>
-			<p>Stopped ${stoppedCount} Job executions.  <#if stoppedCount gt 0>You may need to wait 
-			for them to respond to the signal.</#if></p>
-		</#if>
-		<input type="hidden" name="_method" value="DELETE"/>	
-		<input id="stop" type="submit" value="Stop&nbsp;All" name="stop" />
-	</form>
+	<div id="job">
+		<#include "launch.ftl">
+	</div>
 
 	<#if jobExecutions?? && jobExecutions?size!=0>
 		<p/>
+
+		<#assign executions_url><@spring.url relativeUrl="${servletPath}/jobs/executions"/></#assign>
+		<form action="${executions_url}" method="POST">
+			<#if stoppedCount??>
+				<p>Stopped ${stoppedCount} Job executions.  <#if stoppedCount gt 0>You may need to wait 
+				for them to respond to the signal.</#if></p>
+			</#if>
+			<input type="hidden" name="_method" value="DELETE"/>	
+			<input id="stop" type="submit" value="Stop&nbsp;All" name="stop" />
+		</form>
+
 		<table title="Recent and Current Job Executions"
 			class="bordered-table">
 			<tr>

@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Properties;
 import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,13 +30,10 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersInvalidException;
-import org.springframework.batch.core.converter.DefaultJobParametersConverter;
-import org.springframework.batch.core.converter.JobParametersConverter;
 import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
-import org.springframework.batch.support.PropertiesConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -59,15 +55,13 @@ import org.springframework.web.util.HtmlUtils;
 @Controller
 public class JobController {
 
-	private static final String LINE_SEPARATOR = System.getProperty("line.separator");
-
 	private final JobService jobService;
 
 	private Collection<String> extensions = new HashSet<String>();
 
-	private JobParametersConverter converter = new DefaultJobParametersConverter();
-
 	private TimeZone timeZone = TimeZone.getDefault();
+
+	private JobParametersExtractor jobParametersExtractor = new JobParametersExtractor();
 
 	/**
 	 * A collection of extensions that may be appended to request urls aimed at
@@ -124,9 +118,8 @@ public class JobController {
 		launchRequest.setJobName(jobName);
 		String params = launchRequest.jobParameters;
 
-		Properties properties = PropertiesConverter.stringToProperties(params);
-		JobParameters jobParameters = converter.getJobParameters(properties);
-		
+		JobParameters jobParameters = jobParametersExtractor.fromString(params);
+
 		try {
 			JobExecution jobExecution = jobService.launch(jobName, jobParameters);
 			model.addAttribute(new JobExecutionInfo(jobExecution, timeZone));
@@ -166,23 +159,31 @@ public class JobController {
 	public String details(ModelMap model, @ModelAttribute("jobName") String jobName, Errors errors,
 			@RequestParam(defaultValue = "0") int startJobInstance, @RequestParam(defaultValue = "20") int pageSize) {
 
-		model.addAttribute("launchable", jobService.isLaunchable(jobName));
+		boolean launchable = jobService.isLaunchable(jobName);
 
 		try {
 
 			Collection<JobInstance> result = jobService.listJobInstances(jobName, startJobInstance, pageSize);
 			Collection<JobInstanceInfo> jobInstances = new ArrayList<JobInstanceInfo>();
+			boolean parametersAdded = false;
+			model.addAttribute("jobParameters", "");
 			for (JobInstance jobInstance : result) {
 				jobInstances.add(new JobInstanceInfo(jobInstance, jobService.getJobExecutionsForJobInstance(jobName,
 						jobInstance.getId())));
+				if (!parametersAdded) {
+					parametersAdded = true;
+					// get the latest parameters as defined by the sort order in
+					// the job service
+					model.addAttribute("jobParameters",
+							jobParametersExtractor.fromJobParameters(jobInstance.getJobParameters()));
+				}
 			}
 
 			model.addAttribute("jobInstances", jobInstances);
-			model.addAttribute("jobParameters", getLastJobParameters(jobInstances));
 			int total = jobService.countJobInstances(jobName);
 			TableUtils.addPagination(model, total, startJobInstance, pageSize, "JobInstance");
 			int count = jobService.countJobExecutionsForJob(jobName);
-			model.addAttribute("job", new JobInfo(jobName, count));
+			model.addAttribute("jobInfo", new JobInfo(jobName, count, launchable, jobService.isIncrementable(jobName)));
 
 		}
 		catch (NoSuchJobException e) {
@@ -192,31 +193,6 @@ public class JobController {
 
 		return "jobs/job";
 
-	}
-
-	/**
-	 * @param lastInstances the latest job instances
-	 * @return a String representation for rendering the job parameters from the
-	 * last instance
-	 */
-	protected String getLastJobParameters(Collection<JobInstanceInfo> lastInstances) {
-
-		JobInstance lastInstance = null;
-		if (!lastInstances.isEmpty()) {
-			lastInstance = lastInstances.iterator().next().getJobInstance();
-		}
-
-		JobParameters oldParameters = new JobParameters();
-		if (lastInstance != null) {
-			oldParameters = lastInstance.getJobParameters();
-		}
-
-		String properties = PropertiesConverter.propertiesToString(converter.getProperties(oldParameters));
-		if (properties.startsWith("#")) {
-			properties = properties.substring(properties.indexOf(LINE_SEPARATOR) + LINE_SEPARATOR.length());
-		}
-		properties = properties.replace("\\:", ":");
-		return properties;
 	}
 
 	@RequestMapping(value = "/jobs", method = RequestMethod.GET)

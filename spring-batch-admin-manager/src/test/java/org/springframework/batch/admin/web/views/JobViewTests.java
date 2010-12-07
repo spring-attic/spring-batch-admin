@@ -76,11 +76,10 @@ public class JobViewTests extends AbstractManagerViewTests {
 
 	@Test
 	public void testJobView() throws Exception {
-		model.put("job", new JobInfo("foo", 1));
+		model.put("jobInfo", new JobInfo("foo", 1, true));
 		model.put("jobInstances", Arrays.asList(new JobInstanceInfo(MetaDataInstanceFactory.createJobInstance("foo",
 				1L, "bar=spam"), new ArrayList<JobExecution>())));
 		model.put("jobParameters", "foo=bar");
-		model.put("launchable", true);
 		model.put("startJobInstance", 3);
 		model.put("endJobInstance", 4);
 		model.put("nextJobInstance", 4);

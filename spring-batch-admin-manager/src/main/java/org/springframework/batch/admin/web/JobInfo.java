@@ -23,21 +23,25 @@ public class JobInfo {
 
 	private final int executionCount;
 	
-	private Boolean launchable;
+	private boolean launchable = false;
 
-	private Boolean incrementable;
+	private boolean incrementable = false;
 
 	private final Long jobInstanceId;
 
 	public JobInfo(String name, int executionCount) {
-		this(name, executionCount, null);
+		this(name, executionCount, false);
 	}
 
-	public JobInfo(String name, int executionCount, Boolean launchable) {
-		this(name, executionCount, null, launchable, null);
+	public JobInfo(String name, int executionCount, boolean launchable) {
+		this(name, executionCount, null, launchable, false);
 	}
 
-	public JobInfo(String name, int executionCount, Long jobInstanceId, Boolean launchable, Boolean incrementable) {
+	public JobInfo(String name, int executionCount, boolean launchable, boolean incrementable) {
+		this(name, executionCount, null, launchable, incrementable);
+	}
+
+	public JobInfo(String name, int executionCount, Long jobInstanceId, boolean launchable, boolean incrementable) {
 		super();
 		this.name = name;
 		this.executionCount = executionCount;
@@ -58,11 +62,11 @@ public class JobInfo {
 		return jobInstanceId;
 	}
 	
-	public Boolean getLaunchable() {
+	public boolean isLaunchable() {
 		return launchable;
 	}
 	
-	public Boolean getIncrementable() {
+	public boolean isIncrementable() {
 		return incrementable;
 	}
 	

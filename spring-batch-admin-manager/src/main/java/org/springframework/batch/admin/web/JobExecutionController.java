@@ -73,6 +73,8 @@ public class JobExecutionController {
 
 	private JobService jobService;
 
+	private JobParametersExtractor jobParametersExtractor = new JobParametersExtractor();
+
 	private TimeZone timeZone = TimeZone.getDefault();
 
 	/**
@@ -191,14 +193,16 @@ public class JobExecutionController {
 					result.add(new JobExecutionInfo(jobExecution, timeZone));
 				}
 				// Add the JobInstance for access to job parameters
-				model.addAttribute(new JobInstanceInfo(jobInstance, jobExecutions));
+				JobInstanceInfo jobInstanceInfo = new JobInstanceInfo(jobInstance, jobExecutions);
+				model.addAttribute(jobInstanceInfo);
+				model.addAttribute("jobParameters", jobParametersExtractor.fromJobParameters(jobInstance.getJobParameters()));
 			}
 			catch (NoSuchJobException e) {
 				errors.reject("no.such.job", new Object[] { jobName }, "There is no such job (" + jobName + ")");
 			}
-			model.addAttribute(new JobInfo(jobName, result.size(), jobInstanceId, null, null));
+			model.addAttribute(new JobInfo(jobName, result.size(), jobInstanceId, jobService.isLaunchable(jobName), jobService.isIncrementable(jobName)));
 			model.addAttribute("jobExecutions", result);
-		}
+	}
 		return "jobs/executions";
 
 	}

@@ -129,12 +129,16 @@ public class JobExecutionControllerTests {
 		EasyMock.expectLastCall().andReturn(MetaDataInstanceFactory.createJobInstance("foo", 11L));
 		jobService.getJobExecutionsForJobInstance("foo", 11L);
 		EasyMock.expectLastCall().andReturn(Arrays.asList(MetaDataInstanceFactory.createJobExecution()));
+		jobService.isLaunchable("foo");
+		EasyMock.expectLastCall().andReturn(true);
+		jobService.isIncrementable("foo");
+		EasyMock.expectLastCall().andReturn(true);
 		EasyMock.replay(jobService);
 
 		ExtendedModelMap model = new ExtendedModelMap();
 		String result = controller.listForInstance(model, "foo", 11L, null, null);
-		// JobExecutions, Job, JobInstance
-		assertEquals(3, model.size());
+		// JobExecutions, JobInfo, JobInstance, jobParameters
+		assertEquals(4, model.size());
 		assertEquals("jobs/executions", result);
 
 		assertTrue(model.containsKey("jobInfo"));

@@ -35,7 +35,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
 import org.springframework.web.servlet.View;
 
-
 @ContextConfiguration(loader = WebApplicationContextLoader.class, inheritLocations = false, locations = "AbstractManagerViewTests-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
 public class JobExecutionsViewTests extends AbstractManagerViewTests {
@@ -77,8 +76,25 @@ public class JobExecutionsViewTests extends AbstractManagerViewTests {
 	}
 
 	@Test
+	public void testJobExecutionsForLaunchableInstance() throws Exception {
+		model.put("jobExecutions", Arrays.asList(new JobExecutionInfo(MetaDataInstanceFactory.createJobExecution(),
+				TimeZone.getTimeZone("GMT"))));
+		model.put("jobInfo", new JobInfo("foo", 1, true));
+		model.put("jobParameters", "foo=bar");
+		view.render(model, request, response);
+		String content = response.getContentAsString();
+		// System.err.println(content);
+		assertTrue(content.contains("<form id=\"launchForm\""));
+		assertTrue(content.contains("foo=bar</textarea>"));
+		assertTrue(content.contains("Recent and Current Job Executions"));
+		assertTrue(content.contains("<a href=\"/batch/jobs/executions/123\">"));
+	}
+
+	@Test
 	public void testStoppedJobExecutions() throws Exception {
 		model.put("stoppedCount", 2);
+		model.put("jobExecutions", Arrays.asList(new JobExecutionInfo(MetaDataInstanceFactory.createJobExecution(),
+				TimeZone.getTimeZone("GMT"))));
 		view.render(model, request, response);
 		String content = response.getContentAsString();
 		// System.err.println(content);
