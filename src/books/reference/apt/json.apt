@@ -1,0 +1,136 @@
+  ------
+  JSON API
+
+JSON API
+  
+  Spring Batch Admin can act as a JSON web service.  All the main HTML
+  UI features can be accessed by JSON clients.  In general, the recipe
+  for doing this is to take a normal HTML URL from the UI application
+  and add a <<<.json>>> suffix.  All the JSON endpoints are listed on
+  the home page of the sample application.
+
+  The examples below all use <<<curl>>> from the command line, but the
+  same resources could be used with an Ajax request from a browser, or
+  with Spring's <<<RestTemplate>>> (see the integration tests in the
+  project source code for examples of the latter).
+
+* Read-only Access using HTTP GET
+
+  After deploying the sample application you can list the jobs
+  registered by sending it a GET request:
+
++---
+$ curl -s http://localhost:8080/spring-batch-admin-sample/batch/jobs.json
+{"jobs" : { 
+    "resource" : "http://localhost:8080/spring-batch-admin-sample/batch/jobs.json",
+    "registrations" : {
+        "infinite" : {
+            "name" : "infinite",
+            "resource" : "http://localhost:8080/spring-batch-admin-sample/batch/jobs/infinite.json",
+            "description" : "No description",
+            "executionCount" : 0,
+            "launchable" : true,
+            "incrementable" : false
+        },
+        "job1" : {
+            "name" : "job1",
+			...
+        },
+        "job2" : {
+            "name" : "job2",
+			...
+        }
+     }
+  }
+}
++---
+
+  As you can see from the example above, the information listed for
+  JSON clients is the same as for HTML clients.  A JSON response
+  always contains a link to the resource that it came from, and also
+  links to other interesting resources, e.g.
+
++---
+$ curl -s http://localhost:8080/sprin-batch-admin-sample/batch/jobs/job1.json
+{"job" : { 
+    "resource" : "http://localhost:8080/spring-batch-admin-sample/batch/jobs/job1.json",
+    "name" : "job1",
+    "jobInstances" : {
+        "0" : {
+            "resource" : "http://localhost:8080/spring-batch-admin-sample/batch/jobs/job1/0/executions.json",
+            "executionCount" : 1,
+            "lastJobExecution" : "/spring-batch-admin-sample/batch/jobs/executions/0.json",
+            "lastJobExecutionStatus" : "FAILED",
+            "jobParameters" : {
+               "run.count(long)" : "0"
+            }
+        }
+     }
+  }
+}
++---
+
+  The result here is a list of all the job instances for the job with
+  name "job1".  Each instance is identified as a JSON key whose value
+  is the job instance id ("0" in the example above), and contains a
+  link to another resource that you can visit (GET) to drill down into
+  the job executions.
+
+* Read-Write Access: Launching a Job
+
+  You can launch a job with a POST request to the job resource:
+
++----
+$ curl -d jobParameters=fail=false http://localhost:8080/spring-batch-admin-sample/batch/jobs/job1.json
+{"jobExecution" : { 
+    "resource" : "http://localhost:8080/spring-batch-admin-sample/batch/jobs/executions/2.json",
+    "id" : "2",
+    "status" : "STARTING",
+    "startTime" : "",
+    "duration" : "",
+    "exitCode" : "UNKNOWN",
+    "exitDescription" : "",
+    "jobInstance" : { "resource" : "http://localhost:8080/spring-batch-admin-sample/batch/jobs/job1/1.json" },
+    "stepExecutions" : {
+    }
+  }
+}
++----
+
+  The input is a set of <<<JobParameters>>> specified as a request
+  parameter called "jobParameters".  The format of the job parameters
+  is identical to that in the UI (a comma or new-line separated list
+  of <<<name=value>>> pairs).  The output is a JSON object
+  representing the <<<JobExecution>>> that is running.  In the
+  example, there are no step executions yet because they haven't
+  started running.  The resource link on line 2 can be used to
+  inspect the result and poll for updates to the status and the step
+  executions.  E.g. (with another GET):
+
++---
+$ curl -s http://localhost:8080/spring-batch-admin-sample/batch/jobs/executions/2.json
+{"jobExecution" : { 
+    "resource" : "http://localhost:8080/spring-batch-admin-sample/batch/jobs/executions/2.json",
+    "id" : "3",
+    "status" : "COMPLETED",
+    "startTime" : "17:44:52",
+    "duration" : "00:00:00",
+    "exitCode" : "COMPLETED",
+    "exitDescription" : "",
+    "jobInstance" : { "resource" : "http://localhost:8080/spring-batch-admin-sample/batch/jobs/job1/2.json" },
+    "stepExecutions" : {
+        "step1" : {
+       	    "status" : "COMPLETED",
+       	    "exitCode" : "COMPLETED",
+       	    "id" : "3",
+	        "resource" : "http://localhost:8080/spring-batch-admin-sample/batch/jobs/executions/2/steps/2.json",
+       	    "readCount" : "5",
+       	    "writeCount" : "5",
+       	    "commitCount" : "6",
+       	    "rollbackCount" : "0",
+       	    "duration" : "00:00:00"
+	    }
+    }
+  }
+}
++---
