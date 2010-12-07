@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.js.ajax.freemarker;
+package org.springframework.batch.admin.web.freemarker;
 
 import java.util.Map;
 
@@ -21,8 +21,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.js.ajax.AjaxHandler;
-import org.springframework.js.ajax.SpringJavascriptAjaxHandler;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
@@ -44,9 +42,20 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerView;
  */
 public class AjaxFreeMarkerView extends FreeMarkerView {
 
+	/**
+	 * Parameter name for the list of fragments top render (value is comma-delimted list).
+	 */
 	private static final String FRAGMENTS_PARAM = "fragments";
 
-	private AjaxHandler ajaxHandler = new SpringJavascriptAjaxHandler();
+	/**
+	 * The accept header value that signifies an Ajax request.
+	 */
+	private static final String AJAX_ACCEPT_CONTENT_TYPE = "text/html;type=ajax";
+
+	/**
+	 * Alternate request parameter to indicate an Ajax request for cases when control of the header is not available.
+	 */
+	private static final String AJAX_SOURCE_PARAM = "ajaxSource";
 
 	private ViewResolver viewResolver;
 
@@ -59,18 +68,10 @@ public class AjaxFreeMarkerView extends FreeMarkerView {
 		this.viewResolver = viewResolver;
 	}
 
-	public AjaxHandler getAjaxHandler() {
-		return ajaxHandler;
-	}
-
-	public void setAjaxHandler(AjaxHandler ajaxHandler) {
-		this.ajaxHandler = ajaxHandler;
-	}
-
 	protected void renderMergedTemplateModel(Map<String, Object> model, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
-		if (ajaxHandler.isAjaxRequest(request, response)) {
+		if (isAjaxRequest(request, response)) {
 
 			String[] attrNames = getRenderFragments(model, request, response);
 			if (attrNames.length == 0) {
@@ -110,6 +111,15 @@ public class AjaxFreeMarkerView extends FreeMarkerView {
 		}
 	}
 
+	protected boolean isAjaxRequest(HttpServletRequest request, HttpServletResponse response) {
+		String acceptHeader = request.getHeader("Accept");
+		String ajaxParam = request.getParameter(AJAX_SOURCE_PARAM);
+		if (AJAX_ACCEPT_CONTENT_TYPE.equals(acceptHeader) || StringUtils.hasText(ajaxParam)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 	protected String[] getRenderFragments(Map<String, Object> model, HttpServletRequest request,
 			HttpServletResponse response) {
 		String attrName = request.getParameter(FRAGMENTS_PARAM);
