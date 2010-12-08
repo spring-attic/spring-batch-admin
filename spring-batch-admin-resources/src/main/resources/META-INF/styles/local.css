@@ -24,35 +24,6 @@ fieldset {
 	padding-top: 6px;
 }
 
-.tundra .dijitTitlePane {
-	margin-top: 1em;
-}
-
-.tundra .dijitTitlePane .dijitTitlePaneTitle {
-	background-image: url(../images/table-header-background.png);
-    background-repeat: repeat-x;
- 	height:19px;
- 	text-align:left;
- 	font-weight:bold;
- 	margin:0;
- 	padding:3px 6px 0 6px;
- 	line-height:19px;
- 	border:1px solid #b8c885;
-}
-
-.tundra .dijitTitlePane .dijitTitlePaneTitle a.edit {
-	float: right;
-	text-decoration: none;
-}
-
-.tundra .dijitTitlePane .dijitTitlePaneContentOuter {
- 	border:1px solid #b8c885;
-}
-
-.tundra .dijitTitlePane .dijitArrowNode {
-	float: left;
-}
-
 #exports #export-fragment {
 	width: 50%;
 	float: right;
@@ -70,10 +41,6 @@ fieldset {
 	opacity: 0;
 }
 
-.dj_ie #loading_indicator {
-	display: none;
-}
-
 textarea {
 	display: inline;
 	width: 40%;
@@ -88,14 +55,6 @@ fieldset > div {
 	color: red;
 	backround-color: inherit;
 	font-weight: bold;
-}
-
-#versionRangeSelector .dijitSpinner {
-	width: 5em;
-}
-
-#versionRangeSelector .dijitTextBox {
-	width: 6em;
 }
 
 hr {
