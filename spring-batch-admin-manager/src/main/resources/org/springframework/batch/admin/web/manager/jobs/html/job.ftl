@@ -1,9 +1,8 @@
 <#import "/spring.ftl" as spring />
 <script type="text/javascript">
-	jobParameters = {};
-	function transferJobParameters(jobInstance) {
-		if (jobParameters[jobInstance]!=null && $("#jobParameters")) {
-			$("#jobParameters").text(jobParameters[jobInstance])
+	function transferJobParameters(jobParameters) {
+		if (jobParameters!=null && $("#jobParameters")) {
+			$("#jobParameters").text(jobParameters)
 		}
 	}
 </script>
@@ -44,10 +43,7 @@
 							<#else>
 								<td>?</td>							
 							</#if>
-							<td onclick="transferJobParameters('${jobInstanceInfo.jobInstance.id}')" onmouseover="$(this).css( 'cursor','pointer');">${jobInstanceInfo.jobInstance.jobParameters}</td>
-							<script type="text/javascript">
-								jobParameters["${jobInstanceInfo.jobInstance.id}"] = "${jobInstanceInfo.jobParametersString}";
-							</script>
+							<td onclick="transferJobParameters('${jobInstanceInfo.jobParametersString?replace('\t','\\t')?replace('\n','\\n')?replace('\r','')}')" onmouseover="$(this).css( 'cursor','pointer');">${jobInstanceInfo.jobInstance.jobParameters}</td>
 						</tr>
 					</#list>
 				</tbody>
