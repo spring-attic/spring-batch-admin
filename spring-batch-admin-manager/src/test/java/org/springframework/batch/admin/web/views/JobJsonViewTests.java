@@ -62,11 +62,36 @@ public class JobJsonViewTests extends AbstractManagerViewTests {
 		model.put("jobInstances", Arrays.asList(new JobInstanceInfo(MetaDataInstanceFactory.createJobInstance("foo",
 				1L, "bar=spam"), new ArrayList<JobExecution>())));
 		model.put("baseUrl", "http://localhost:8080/springsource");
+		model.put("startJobInstance", 11);
+		model.put("endJobInstance", 30);
+		model.put("totalJobInstances", 100);
+		model.put("nextJobInstance", 31);
+		model.put("previousJobInstance", 21);
 		job.render(model, request, response);
 		String content = response.getContentAsString();
-		// System.err.println(content);
+		System.err.println(content);
 		JsonWrapper wrapper = new JsonWrapper(content);
 		assertEquals(1, wrapper.get("job.jobInstances", Map.class).size());
+		assertEquals(4, wrapper.get("job", Map.class).size());
+		assertEquals(5, wrapper.get("job.page", Map.class).size());
+	}
+
+	@Test
+	public void testViewWithJobAndNoPagination() throws Exception {
+		model.put(BindingResult.MODEL_KEY_PREFIX + "launchRequest", errors);
+		model.put("jobInfo", new JobInfo("foo", 1));
+		model.put("jobInstances", Arrays.asList(new JobInstanceInfo(MetaDataInstanceFactory.createJobInstance("foo",
+				1L, "bar=spam"), new ArrayList<JobExecution>())));
+		model.put("baseUrl", "http://localhost:8080/springsource");
+		model.put("startJobInstance", 11);
+		model.put("endJobInstance", 30);
+		model.put("totalJobInstances", 100);
+		job.render(model, request, response);
+		String content = response.getContentAsString();
+		System.err.println(content);
+		JsonWrapper wrapper = new JsonWrapper(content);
+		assertEquals(1, wrapper.get("job.jobInstances", Map.class).size());
+		assertEquals(3, wrapper.get("job", Map.class).size());
 	}
 
 	@Test
@@ -116,11 +141,32 @@ public class JobJsonViewTests extends AbstractManagerViewTests {
 	public void testListViewWithJobs() throws Exception {
 		model.put("jobs", Arrays.asList(new JobInfo("foo", 1, true), new JobInfo("bar", 2)));
 		model.put("baseUrl", "http://localhost:8080/springsource");
+		model.put("startJob", 11);
+		model.put("endJob", 30);
+		model.put("totalJobs", 100);
+		model.put("nextJob", 31);
+		model.put("previousJob", 21);
 		jobs.render(model, request, response);
 		String content = response.getContentAsString();
 		// System.err.println(content);
 		JsonWrapper wrapper = new JsonWrapper(content);
 		assertEquals(2, wrapper.get("jobs.registrations", Map.class).size());
+		assertEquals(5, wrapper.get("page", Map.class).size());
+	}
+
+	@Test
+	public void testListViewWithJobsNoPages() throws Exception {
+		model.put("jobs", Arrays.asList(new JobInfo("foo", 1, true), new JobInfo("bar", 2)));
+		model.put("baseUrl", "http://localhost:8080/springsource");
+		model.put("startJob", 11);
+		model.put("endJob", 30);
+		model.put("totalJobs", 100);
+		jobs.render(model, request, response);
+		String content = response.getContentAsString();
+		// System.err.println(content);
+		JsonWrapper wrapper = new JsonWrapper(content);
+		assertEquals(2, wrapper.get("jobs.registrations", Map.class).size());
+		assertEquals(1, wrapper.getMap().size()); // no pages
 	}
 
 }

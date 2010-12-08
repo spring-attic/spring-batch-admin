@@ -14,5 +14,14 @@
             "duration" : "${jobExecutionInfo.duration}",
             "resource" : "${baseUrl}${url}"
         }<#if jobExecutionInfo_index != jobExecutions?size-1>,</#if></#list>
+    }<#if nextJobExecution?? || previousJobExecution??>,
+	<#assign executions_url><@spring.url relativeUrl="${servletPath}/jobs/executions.json"/></#assign>
+    "page" : {
+        "start" : ${startJobExecution?c},
+        "end" : ${endJobExecution?c},
+        "total" : ${totalJobExecutions?c}<#if nextJobExecution??>, 
+        "next" : "${baseUrl}${executions_url}?startJobExecution=${nextJobExecution?c}&pageSize=${pageSize!20}"</#if><#if previousJobExecution??>,
+        "previous" : "${baseUrl}${executions_url}?startJobExecution=${previousJobExecution?c}&pageSize=${pageSize!20}"</#if>
     }
+	</#if>
 </#if>

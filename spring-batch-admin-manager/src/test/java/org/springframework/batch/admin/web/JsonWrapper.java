@@ -41,6 +41,10 @@ public class JsonWrapper {
 		parser = new SpelExpressionParser();
 	}
 
+	public Map<String,Object> getMap() {
+		return target;
+	}
+
 	public Object get(String expression) throws Exception {
 		return get(expression, Object.class);
 	}

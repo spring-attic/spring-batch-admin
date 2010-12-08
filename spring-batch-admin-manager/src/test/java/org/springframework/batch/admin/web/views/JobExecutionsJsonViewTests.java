@@ -82,4 +82,46 @@ public class JobExecutionsJsonViewTests extends AbstractManagerViewTests {
 		assertEquals(2, wrapper.get("jobExecutions", Map.class).size());
 	}
 
+	@Test
+	public void testViewWithPagination() throws Exception {
+		JobExecution jobExecution1 = MetaDataInstanceFactory.createJobExecution();
+		JobExecution jobExecution2 = MetaDataInstanceFactory.createJobExecution(13L);
+		jobExecution2.setEndTime(new Date());
+		model.put("baseUrl", "http://localhost:8080/springsource");
+		model.put("jobExecutions", Arrays.asList(new JobExecutionInfo(jobExecution1, TimeZone.getTimeZone("GMT")),
+				new JobExecutionInfo(jobExecution2, TimeZone.getTimeZone("GMT"))));
+		model.put("currentTime", new Date());
+		model.put("startJobExecution", 11);
+		model.put("endJobExecution", 30);
+		model.put("totalJobExecutions", 100);
+		model.put("nextJobExecution", 31);
+		model.put("previousJobExecution", 21);
+		view.render(model, request, response);
+		String content = response.getContentAsString();
+		// System.err.println(content);
+		JsonWrapper wrapper = new JsonWrapper(content);
+		assertEquals(2, wrapper.get("jobExecutions", Map.class).size());
+		assertEquals(5, wrapper.get("page", Map.class).size());
+	}
+
+	@Test
+	public void testViewWithNoPagination() throws Exception {
+		JobExecution jobExecution1 = MetaDataInstanceFactory.createJobExecution();
+		JobExecution jobExecution2 = MetaDataInstanceFactory.createJobExecution(13L);
+		jobExecution2.setEndTime(new Date());
+		model.put("baseUrl", "http://localhost:8080/springsource");
+		model.put("jobExecutions", Arrays.asList(new JobExecutionInfo(jobExecution1, TimeZone.getTimeZone("GMT")),
+				new JobExecutionInfo(jobExecution2, TimeZone.getTimeZone("GMT"))));
+		model.put("currentTime", new Date());
+		model.put("startJobExecution", 1);
+		model.put("endJobExecution", 30);
+		model.put("totalJobExecutions", 30);
+		view.render(model, request, response);
+		String content = response.getContentAsString();
+		// System.err.println(content);
+		JsonWrapper wrapper = new JsonWrapper(content);
+		assertEquals(2, wrapper.get("jobExecutions", Map.class).size());
+		assertEquals(1, wrapper.getMap().size()); // no pages if they are all there
+	}
+
 }

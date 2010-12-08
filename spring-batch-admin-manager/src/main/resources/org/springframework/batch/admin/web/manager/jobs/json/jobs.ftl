@@ -17,4 +17,12 @@
     </#list>
 </#if>
      }
+  }<#if nextJob?? || previousJob??>,
+  "page" : {
+      "start" : ${startJob?c},
+      "end" : ${endJob?c},
+      "total" : ${totalJobs?c}<#if nextJob??>, 
+      "next" : "${baseUrl}${url}?startJob=${nextJob?c}&pageSize=${pageSize!20}"</#if><#if previousJob??>,
+      "previous" : "${baseUrl}${url}?startJob=${previousJob?c}&pageSize=${pageSize!20}"</#if>
   }
+</#if>

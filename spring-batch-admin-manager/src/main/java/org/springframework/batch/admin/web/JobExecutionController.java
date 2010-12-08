@@ -279,6 +279,7 @@ public class JobExecutionController {
 		catch (NoSuchJobException e) {
 			errors.reject("no.such.job", new Object[] { jobName }, "There is no such job (" + jobName + ")");
 			logger.warn("Could not locate Job with name=" + jobName);
+			return "jobs/executions";
 		}
 		TableUtils.addPagination(model, total, startJobExecution, pageSize, "JobExecution");
 
