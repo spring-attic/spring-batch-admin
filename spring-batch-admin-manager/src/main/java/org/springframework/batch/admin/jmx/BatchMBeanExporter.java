@@ -36,6 +36,7 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler;
 import org.springframework.jmx.export.naming.MetadataNamingStrategy;
 import org.springframework.jmx.support.MetricType;
+import org.springframework.util.Assert;
 
 @ManagedResource
 public class BatchMBeanExporter extends MBeanExporter implements SmartLifecycle {
@@ -81,6 +82,12 @@ public class BatchMBeanExporter extends MBeanExporter implements SmartLifecycle 
 
 	public void setJobService(JobService jobService) {
 		this.jobService = jobService;
+	}
+	
+	@Override
+	public void afterPropertiesSet() {
+		Assert.state(jobService!=null, "A JobService must be provided");
+		super.afterPropertiesSet();
 	}
 
 	protected void registerBeans() {
