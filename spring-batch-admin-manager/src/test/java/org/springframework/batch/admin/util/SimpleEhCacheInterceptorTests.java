@@ -23,8 +23,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-import net.sf.ehcache.CacheManager;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
