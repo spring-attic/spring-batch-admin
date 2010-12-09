@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.TimeZone;
 
+import org.springframework.batch.admin.history.StepExecutionHistory;
 import org.springframework.batch.admin.service.JobService;
 import org.springframework.batch.admin.service.NoSuchStepExecutionException;
 import org.springframework.batch.core.JobExecution;

@@ -22,6 +22,7 @@ import java.util.Arrays;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
+import org.springframework.batch.admin.history.StepExecutionHistory;
 import org.springframework.batch.admin.service.JobService;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.test.MetaDataInstanceFactory;

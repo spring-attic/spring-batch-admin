@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.batch.admin.web;
+package org.springframework.batch.admin.history;
 
 import static org.junit.Assert.*;
 
 import java.util.Date;
 
 import org.junit.Test;
-import org.springframework.batch.admin.web.StepExecutionHistory;
+import org.springframework.batch.admin.history.StepExecutionHistory;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.test.MetaDataInstanceFactory;
 

@@ -18,8 +18,8 @@ package org.springframework.batch.admin.jmx;
 import java.util.Collection;
 import java.util.Date;
 
+import org.springframework.batch.admin.history.StepExecutionHistory;
 import org.springframework.batch.admin.service.JobService;
-import org.springframework.batch.admin.web.StepExecutionHistory;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.jmx.export.annotation.ManagedResource;
 

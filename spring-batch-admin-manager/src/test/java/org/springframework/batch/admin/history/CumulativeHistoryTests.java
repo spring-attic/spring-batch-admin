@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.batch.admin.util;
+package org.springframework.batch.admin.history;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.springframework.batch.admin.util.CumulativeHistory;
+import org.springframework.batch.admin.history.CumulativeHistory;
 
 public class CumulativeHistoryTests {
 

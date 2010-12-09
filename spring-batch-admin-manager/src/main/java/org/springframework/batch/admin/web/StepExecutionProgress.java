@@ -17,7 +17,8 @@ package org.springframework.batch.admin.web;
 
 import java.util.Date;
 
-import org.springframework.batch.admin.util.CumulativeHistory;
+import org.springframework.batch.admin.history.CumulativeHistory;
+import org.springframework.batch.admin.history.StepExecutionHistory;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
