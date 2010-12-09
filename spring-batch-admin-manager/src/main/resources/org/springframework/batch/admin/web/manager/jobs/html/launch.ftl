@@ -33,7 +33,7 @@
 		$.validator.addMethod('jobParameters', function (value) { 
 		    return !value || /([\w\.-_\)\(]+=[^,\n]*[,\n])*([\w\.-_\)\(]+=[^,]*$)/m.test(value); 
 		}, '${message}');
-		$(document).ready(function(){
+		$(function(){
 		   $("#launchForm").validate();
 		});
 	</script>

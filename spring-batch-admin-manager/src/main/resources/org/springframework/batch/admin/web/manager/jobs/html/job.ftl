@@ -5,6 +5,15 @@
 			$("#jobParameters").text(jobParameters)
 		}
 	}
+	$(function() {
+		var jobParameters = {};
+		<#if jobInfo?? && jobInstances?? && jobInstances?size!=0><#list jobInstances as jobInstanceInfo>
+		jobParameters.instance${jobInstanceInfo.id?c} = "${jobInstanceInfo.jobParametersString?replace('\t','\\t')?replace('\n','\\n')?replace('\r','')}";
+		</#list></#if>
+		$('td.jobParameters')
+			.mouseover(function() {$(this).css( 'cursor','pointer');})
+			.click( function() {transferJobParameters(jobParameters[$(this).attr("id")]);})
+	})
 </script>
 <div id="job">
 	
@@ -43,7 +52,7 @@
 							<#else>
 								<td>?</td>							
 							</#if>
-							<td onclick="transferJobParameters('${jobInstanceInfo.jobParametersString?replace('\t','\\t')?replace('\n','\\n')?replace('\r','')}')" onmouseover="$(this).css( 'cursor','pointer');">${jobInstanceInfo.jobInstance.jobParameters}</td>
+							<td id="instance${jobInstanceInfo.id}" class="jobParameters">${jobInstanceInfo.jobInstance.jobParameters}</td>
 						</tr>
 					</#list>
 				</tbody>
