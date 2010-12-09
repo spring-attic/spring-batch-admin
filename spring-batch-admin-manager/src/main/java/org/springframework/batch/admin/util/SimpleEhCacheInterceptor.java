@@ -29,16 +29,23 @@ import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.Lifecycle;
+import org.springframework.jmx.export.annotation.ManagedAttribute;
+import org.springframework.jmx.export.annotation.ManagedOperation;
+import org.springframework.jmx.export.annotation.ManagedResource;
 
 /**
  * @author Dave Syer
  * 
  */
-public class SimpleEhCacheInterceptor implements MethodInterceptor, InitializingBean, DisposableBean {
+@ManagedResource
+public class SimpleEhCacheInterceptor implements MethodInterceptor, InitializingBean, DisposableBean, Lifecycle {
 
 	private final Cache cache = new Cache("simple", 0, true, false, 60, 0);
 
 	private final CacheManager manager = CacheManager.create();
+
+	private volatile boolean caching = true;
 
 	public void afterPropertiesSet() throws Exception {
 		manager.addCache(cache);
@@ -53,7 +60,7 @@ public class SimpleEhCacheInterceptor implements MethodInterceptor, Initializing
 		Serializable key = getKey(invocation);
 		Element element = cache.get(key);
 		Object value = null;
-		if (element == null || element.isExpired()) {
+		if (caching && (element == null || element.isExpired())) {
 			cache.remove(key);
 			Object old = element == null ? null : element.getValue();
 			value = invocation.proceed();
@@ -97,5 +104,22 @@ public class SimpleEhCacheInterceptor implements MethodInterceptor, Initializing
 	private Serializable getKey(MethodInvocation invocation) {
 		return invocation.getMethod().getName() + Arrays.asList(invocation.getArguments());
 	}
+
+	@ManagedOperation
+	public void start() {
+		caching = true;
+	}
+
+	@ManagedOperation
+	public void stop() {
+		caching = false;
+	}
+
+	@ManagedAttribute
+	public boolean isRunning() {
+		return caching;
+	}
+	
+	
 
 }
