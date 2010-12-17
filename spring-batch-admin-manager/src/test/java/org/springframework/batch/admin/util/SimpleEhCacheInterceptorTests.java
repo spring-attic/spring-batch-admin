@@ -25,7 +25,6 @@ import java.util.Map;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.aop.framework.ProxyFactory;
 
@@ -68,13 +67,18 @@ public class SimpleEhCacheInterceptorTests {
 	}
 
 	@Test
-	@Ignore // TODO: figure out how to expire an element
 	public void testCachingSimpleExpired() throws Exception {
+		interceptor.destroy();
+		interceptor = new SimpleEhCacheInterceptor();
+		interceptor.setTimeout(1);
+		interceptor.afterPropertiesSet();
 		ProxyFactory factory = new ProxyFactory(Service.class, interceptor);
 		TestService target = new TestService();
 		factory.setTarget(target);
 		Service service = (Service) factory.getProxy();
 		assertEquals("foo.test", service.get("foo"));
+		// N.B. this will always take more than 1 second...
+		Thread.sleep(1500L);
 		target.setSuffix(".bar");
 		assertEquals("foo.bar", service.get("foo"));
 	}
