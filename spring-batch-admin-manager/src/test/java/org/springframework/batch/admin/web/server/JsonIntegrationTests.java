@@ -86,7 +86,7 @@ public class JsonIntegrationTests {
 				JsonWrapper wrapper = new JsonWrapper(result.getBody());
 				// System.err.println(wrapper);
 				Map<?,?> map = wrapper.get("jobExecution.stepExecutions", Map.class);
-				return map.isEmpty() ? null : wrapper;
+				return map.isEmpty() || wrapper.get("jobExecution.stepExecutions.step1['resource']")==null ? null : wrapper;
 			}
 		});
 		JsonWrapper jobExecution = poll.get(500L, TimeUnit.MILLISECONDS);

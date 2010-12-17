@@ -17,6 +17,8 @@ package org.springframework.batch.admin.web;
 
 import java.util.Map;
 
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.MappingJsonFactory;
 import org.springframework.context.expression.MapAccessor;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -35,7 +37,11 @@ public class JsonWrapper {
 	@SuppressWarnings("unchecked")
 	public JsonWrapper(String content) throws Exception {
 		this.content = content;
-		target = new MappingJsonFactory().createJsonParser(content).readValueAs(Map.class);
+		try {
+			target = new MappingJsonFactory().createJsonParser(content.replace("\\","/")).readValueAs(Map.class);
+		} catch (JsonParseException e) {
+			throw new JsonMappingException("Cannot create wrapper for:\n"+content, e);
+		}
 		context = new StandardEvaluationContext();
 		context.addPropertyAccessor(new MapAccessor());
 		parser = new SpelExpressionParser();
