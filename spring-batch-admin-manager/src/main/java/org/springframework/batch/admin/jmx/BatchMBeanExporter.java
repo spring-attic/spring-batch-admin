@@ -71,8 +71,9 @@ public class BatchMBeanExporter extends MBeanExporter implements SmartLifecycle 
 	}
 
 	/**
-	 * The JMX domain to use for MBeans registered. Defaults to <code>org.springframework.batch</code> (which is useful
-	 * in SpringSource HQ).
+	 * The JMX domain to use for MBeans registered. Defaults to
+	 * <code>org.springframework.batch</code> (which is useful in SpringSource
+	 * HQ).
 	 * 
 	 * @param domain the domain name to set
 	 */
@@ -80,13 +81,22 @@ public class BatchMBeanExporter extends MBeanExporter implements SmartLifecycle 
 		this.domain = domain;
 	}
 
+	/**
+	 * Help method for extensions which need access to the default domain.
+	 * 
+	 * @return the default domain used to construct object names
+	 */
+	protected String getDefaultDomain() {
+		return this.domain;
+	}
+
 	public void setJobService(JobService jobService) {
 		this.jobService = jobService;
 	}
-	
+
 	@Override
 	public void afterPropertiesSet() {
-		Assert.state(jobService!=null, "A JobService must be provided");
+		Assert.state(jobService != null, "A JobService must be provided");
 		super.afterPropertiesSet();
 	}
 
@@ -108,11 +118,12 @@ public class BatchMBeanExporter extends MBeanExporter implements SmartLifecycle 
 				for (StepExecution stepExecution : jobExecution.getStepExecutions()) {
 					String stepName = stepExecution.getStepName();
 					String stepKey = String.format("%s/%s", jobName, stepName);
-					String beanKey = getBeanKeyForStepExecution(stepKey);
+					String beanKey = getBeanKeyForStepExecution(jobName, stepName);
 					if (!stepKeys.contains(stepKey)) {
 						stepKeys.add(stepKey);
 						logger.info("Registering step execution " + stepKey);
-						registerBeanNameOrInstance(new SimpleStepExecutionMetrics(jobService, jobName, stepName), beanKey);
+						registerBeanNameOrInstance(new SimpleStepExecutionMetrics(jobService, jobName, stepName),
+								beanKey);
 					}
 				}
 			}
@@ -130,24 +141,37 @@ public class BatchMBeanExporter extends MBeanExporter implements SmartLifecycle 
 		}
 	}
 
-	private String getBeanKeyForJobExecution(String jobName) {
+	/**
+	 * Encode the job name into an ObjectName in the form
+	 * <code>[domain]:type=JobExecution,name=[jobName]</code>.
+	 * 
+	 * @param jobName the name of the job
+	 * @return a String representation of an ObjectName
+	 */
+	protected String getBeanKeyForJobExecution(String jobName) {
 		return String.format("%s:type=JobExecution,name=%s", domain, jobName);
 	}
 
-	private String getBeanKeyForStepExecution(String stepName) {
-		return String.format("%s:type=StepExecution,name=%s", domain, stepName);
+	/**
+	 * Encode the job and step name into an ObjectName in the form
+	 * <code>[domain]:type=JobExecution,name=[jobName],step=[stepName]</code>.
+	 * 
+	 * @param jobName the name of the job
+	 * @param stepName the name of teh step
+	 * @return a String representation of an ObjectName
+	 */
+	protected String getBeanKeyForStepExecution(String jobName, String stepName) {
+		return String.format("%s:type=JobExecution,name=%s,step=%s", domain, jobName, stepName);
 	}
 
 	@ManagedMetric(metricType = MetricType.COUNTER, displayName = "Step Count")
 	public int getStepCount() {
-		// TODO: only do this if necessary
 		registerSteps();
 		return stepKeys.size();
 	}
 
 	@ManagedMetric(metricType = MetricType.COUNTER, displayName = "Job Count")
 	public int getJobCount() {
-		// TODO: only do this if necessary
 		registerJobs();
 		return jobKeys.size();
 	}
