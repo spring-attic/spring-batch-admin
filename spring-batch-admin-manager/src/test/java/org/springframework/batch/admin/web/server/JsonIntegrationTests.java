@@ -16,6 +16,7 @@
 
 package org.springframework.batch.admin.web.server;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.Map;
@@ -27,6 +28,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.springframework.batch.admin.ServerRunning;
 import org.springframework.batch.admin.web.JsonWrapper;
+import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.poller.DirectPoller;
 import org.springframework.batch.poller.Poller;
 import org.springframework.http.HttpMethod;
@@ -93,8 +95,8 @@ public class JsonIntegrationTests {
 		assertNotNull(jobExecution);
 
 		// Verify that there is a step execution in the result
-		result = template.exchange(jobExecution.get("jobExecution.stepExecutions.step1.resource", String.class), HttpMethod.GET, null,
-				String.class);
+		result = template.exchange(jobExecution.get("jobExecution.stepExecutions.step1.resource", String.class),
+				HttpMethod.GET, null, String.class);
 		wrapper = new JsonWrapper(result.getBody());
 		// System.err.println(wrapper);
 		assertNotNull(wrapper.get("stepExecution.id"));
@@ -102,6 +104,41 @@ public class JsonIntegrationTests {
 		assertNotNull(wrapper.get("jobExecution.resource"));
 		assertNotNull(wrapper.get("jobExecution.status"));
 		assertNotNull(wrapper.get("jobExecution.id"));
+
+	}
+
+	@Test
+	public void testJobStop() throws Exception {
+
+		RestTemplate template = new RestTemplate();
+		ResponseEntity<String> result = template.exchange(serverRunning.getUrl() + "/batch/jobs/infinite.json",
+				HttpMethod.POST, null, String.class);
+		JsonWrapper wrapper = new JsonWrapper(result.getBody());
+		// System.err.println(wrapper);
+		assertNotNull(wrapper.get("jobExecution.resource"));
+		assertNotNull(wrapper.get("jobExecution.status"));
+		assertNotNull(wrapper.get("jobExecution.id"));
+
+		template.exchange(wrapper.get("jobExecution.resource", String.class), HttpMethod.DELETE, null, String.class);
+
+		// Poll for the completed job execution
+		final String resource = wrapper.get("jobExecution.resource", String.class);
+		Poller<JsonWrapper> poller = new DirectPoller<JsonWrapper>(100L);
+		Future<JsonWrapper> poll = poller.poll(new Callable<JsonWrapper>() {
+			public JsonWrapper call() throws Exception {
+				RestTemplate template = new RestTemplate();
+				ResponseEntity<String> result = template.exchange(resource, HttpMethod.GET, null, String.class);
+				JsonWrapper wrapper = new JsonWrapper(result.getBody());
+				// System.err.println(wrapper);
+				BatchStatus status = wrapper.get("jobExecution.status", BatchStatus.class);
+				return status.isGreaterThan(BatchStatus.STOPPING) ? wrapper : null;
+			}
+		});
+		JsonWrapper jobExecution = poll.get(500L, TimeUnit.MILLISECONDS);
+		assertNotNull(jobExecution);
+
+		BatchStatus status = jobExecution.get("jobExecution.status", BatchStatus.class);
+		assertEquals(BatchStatus.STOPPED, status);
 
 	}
 
