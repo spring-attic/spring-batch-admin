@@ -46,6 +46,8 @@ public class SimpleEhCacheInterceptor implements MethodInterceptor, Initializing
 
 	private long timeout = 60;
 
+	private String name = "simple";
+
 	/**
 	 * The expiry timeout of cache entries (a.k.a. time to live) in seconds. Default 60.
 	 * @param timeout in seconds
@@ -53,9 +55,18 @@ public class SimpleEhCacheInterceptor implements MethodInterceptor, Initializing
 	public void setTimeout(int timeout) {
 		this.timeout = timeout;
 	}
+	
+	/**
+	 * The name of the cache used internally by EhCache.  Defaults to <code>simple</code>.
+	 * 
+	 * @param name the cache name to set
+	 */
+	public void setCacheName(String name) {
+		this.name = name;
+	}
 
 	public void afterPropertiesSet() throws Exception {
-		cache = new Cache("simple", 0, true, false, timeout, 0);
+		cache = new Cache(name, 0, true, false, timeout, 0);
 		manager.addCache(cache);
 	}
 
