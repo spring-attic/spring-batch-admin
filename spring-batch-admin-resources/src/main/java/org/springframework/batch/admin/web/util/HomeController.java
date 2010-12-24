@@ -40,6 +40,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -207,8 +208,7 @@ public class HomeController implements ApplicationContextAware, InitializingBean
 		for (String key : urls) {
 
 			Object handler = handlerMap.get(key);
-			@SuppressWarnings("unchecked")
-			Class handlerType = ClassUtils.getUserClass(handler);
+			Class<?> handlerType = ClassUtils.getUserClass(handler);
 			HandlerMethodResolver resolver = new HandlerMethodResolver();
 			resolver.init(handlerType);
 
@@ -248,9 +248,7 @@ public class HomeController implements ApplicationContextAware, InitializingBean
 					RequestMethod[] methods = mapping.method();
 					if (methods != null && methods.length > 0) {
 						for (RequestMethod requestMethod : methods) {
-							logger
-									.debug("Added explicit mapping for path=" + key + "to RequestMethod="
-											+ requestMethod);
+							logger.debug("Added explicit mapping for path=" + key + "to RequestMethod=" + requestMethod);
 							result.add(new ResourceInfo(key, requestMethod));
 						}
 					}
@@ -298,21 +296,21 @@ public class HomeController implements ApplicationContextAware, InitializingBean
 	 * 
 	 * @return a map of URI pattern to request methods accepted
 	 */
-	@RequestMapping(value = "/home", method = RequestMethod.GET)
-	public @ModelAttribute("resources")
-	List<ResourceInfo> getResources(HttpServletRequest request) {
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	public String getResources(HttpServletRequest request, ModelMap model) {
 
 		String servletPath = this.servletPath;
 		if (servletPath == null) {
 			servletPath = new UrlPathHelper().getServletPath(request);
 		}
-		request.setAttribute("servletPath", servletPath);
+		model.addAttribute("servletPath", servletPath);
 		List<ResourceInfo> resources = new ArrayList<ResourceInfo>();
 		if (!request.getRequestURI().endsWith(".json")) {
 			resources.addAll(defaultResources);
 		}
 		resources.addAll(jsonResources);
-		return resources;
+		model.addAttribute("resources", resources);
+		return "home";
 	}
 
 	/**

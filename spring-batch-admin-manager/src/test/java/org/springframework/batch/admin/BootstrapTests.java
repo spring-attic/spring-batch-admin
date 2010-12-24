@@ -39,6 +39,7 @@ import org.springframework.batch.poller.DirectPoller;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
 
 /**
@@ -97,7 +98,11 @@ public class BootstrapTests {
 		HomeController metaData = new HomeController();
 		metaData.setApplicationContext(context);
 		metaData.afterPropertiesSet();
-		List<ResourceInfo> resources = metaData.getResources(new MockHttpServletRequest());
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		ModelMap model = new ModelMap();
+		metaData.getResources(request, model);
+		@SuppressWarnings("unchecked")
+		List<ResourceInfo> resources = (List<ResourceInfo>) model.get("resources");
 		StringBuilder content = new StringBuilder();
 		for (ResourceInfo resourceInfo : resources) {
 			content.append(resourceInfo.getMethod()+resourceInfo.getUrl()+"=\n");

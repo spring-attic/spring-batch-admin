@@ -22,7 +22,7 @@ package org.springframework.batch.admin.web.resources;
  */
 public class DefaultResourceService implements ResourceService {
 
-	private String servletPath = "/batch";
+	private String servletPath = "";
 	
 	/**
 	 * @param servletPath the servletPath to set

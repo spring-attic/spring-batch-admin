@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -73,7 +74,12 @@ public class HomeControllerTests {
 		metaData.afterPropertiesSet();
 		// System.err.println(metaData.getUrlPatterns());
 		assertTrue(metaData.getUrlPatterns().contains("/list/{id}"));
-		assertEquals(2, metaData.getResources(new MockHttpServletRequest()).size());
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		ModelMap model = new ModelMap();
+		metaData.getResources(request, model);
+		@SuppressWarnings("unchecked")
+		List<ResourceInfo> resources = (List<ResourceInfo>) model.get("resources");
+		assertEquals(2, resources.size());
 	}
 
 	@Test
@@ -86,7 +92,11 @@ public class HomeControllerTests {
 		metaData.setJsonResources(json);
 		metaData.afterPropertiesSet();
 		assertTrue(metaData.getUrlPatterns().contains("/list/{id}"));
-		List<ResourceInfo> resources = metaData.getResources(new MockHttpServletRequest("GET", "foo.json"));
+		MockHttpServletRequest request = new MockHttpServletRequest("GET", "foo.json");
+		ModelMap model = new ModelMap();
+		metaData.getResources(request, model);
+		@SuppressWarnings("unchecked")
+		List<ResourceInfo> resources = (List<ResourceInfo>) model.get("resources");
 		// System.err.println(resources);
 		assertEquals(1, resources.size());
 		assertEquals("", resources.get(0).getDescription());
@@ -136,10 +146,13 @@ public class HomeControllerTests {
 		context.registerSingleton("controller", VanillaController.class);
 		metaData.afterPropertiesSet();
 		MockHttpServletRequest request = new MockHttpServletRequest();
-		List<ResourceInfo> resources = metaData.getResources(request);
+		ModelMap model = new ModelMap();
+		metaData.getResources(request, model);
+		@SuppressWarnings("unchecked")
+		List<ResourceInfo> resources = (List<ResourceInfo>) model.get("resources");
 		assertEquals(1, resources.size());
 		assertEquals(RequestMethod.GET, resources.iterator().next().getMethod());
-		assertEquals("", request.getAttribute("servletPath"));
+		assertEquals("", model.get("servletPath"));
 	}
 
 	@Test
@@ -147,7 +160,10 @@ public class HomeControllerTests {
 		context.registerSingleton("controller", FormController.class);
 		metaData.afterPropertiesSet();
 		MockHttpServletRequest request = new MockHttpServletRequest();
-		List<ResourceInfo> resources = metaData.getResources(request);
+		ModelMap model = new ModelMap();
+		metaData.getResources(request, model);
+		@SuppressWarnings("unchecked")
+		List<ResourceInfo> resources = (List<ResourceInfo>) model.get("resources");
 		Collections.sort(resources);
 		assertEquals(2, resources.size());
 		Iterator<ResourceInfo> iterator = resources.iterator();
@@ -160,7 +176,10 @@ public class HomeControllerTests {
 		context.registerSingleton("controller", MultiMethodController.class);
 		metaData.afterPropertiesSet();
 		MockHttpServletRequest request = new MockHttpServletRequest();
-		List<ResourceInfo> resources = metaData.getResources(request);
+		ModelMap model = new ModelMap();
+		metaData.getResources(request, model);
+		@SuppressWarnings("unchecked")
+		List<ResourceInfo> resources = (List<ResourceInfo>) model.get("resources");
 		Collections.sort(resources);
 		assertEquals(3, resources.size());
 		Iterator<ResourceInfo> iterator = resources.iterator();

@@ -1,1 +1,1 @@
-<jsp:forward page="/batch/home" />
+<jsp:forward page="/home" />
