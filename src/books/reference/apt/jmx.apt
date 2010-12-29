@@ -13,7 +13,8 @@ Monitoring and Management with JMX
   All the basic JMX features are exposed in one place in the Manager
   jar, in
   <<<META-INF/spring/batch/bootstrap/manager/jmx-context.xml>>>.  The
-  Job and Step metrics come from one bean:
+  Job and Step metrics come from one bean, which in turn registers 
+  a set of MBeans for the Job and Step metrics:
 
 +---
 <bean id="batchMBeanExporter" class="org.springframework.batch.admin.jmx.BatchMBeanExporter">
@@ -31,7 +32,7 @@ Monitoring and Management with JMX
   If you start the sample application with the usual command line options to expose the MBeanServer, e.g.
 
 +---
--Dcom.sun.management.jmxremote
+-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=1099 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl.need.client.auth=false
 +---
 
   then launch one of the jobs, and look at the MBeans in JConsole or
@@ -124,7 +125,6 @@ spring.application:type=GaugeMonitor,name=job1.step1.monitor
 +---
 <context:mbean-export default-domain="spring.application" server="mbeanServer"/>	
 +---
-
 
   When a step is taking too long to execute, a JMX notification is sent
   automatically by the MBeanServer to any clients that have registered
