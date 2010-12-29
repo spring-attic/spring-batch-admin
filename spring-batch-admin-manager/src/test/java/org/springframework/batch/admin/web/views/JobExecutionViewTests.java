@@ -58,11 +58,11 @@ public class JobExecutionViewTests extends AbstractManagerViewTests {
 		model.put(BindingResult.MODEL_KEY_PREFIX + "stopRequest", new MapBindingResult(model, "stopRequest"));
 		view.render(model, request, response);
 		String content = response.getContentAsString();
-		// System.err.println(content);
+		System.err.println(content);
 		assertTrue(content.contains("Details for Job Execution"));
 		assertTrue(content.contains("<input type=\"hidden\" name=\"_method\" value=\"DELETE\"/>"));
-		assertTrue(content.contains("<a href=\"/batch/jobs/executions/123/steps\"/>"));
-		assertTrue(content.contains("<a href=\"/batch/jobs/executions/123/steps/1234/progress\"/>"));
+		assertTrue(content.contains("<a href=\"/jobs/executions/123/steps\"/>"));
+		assertTrue(content.contains("<a href=\"/jobs/executions/123/steps/1234/progress\"/>"));
 		assertTrue(content.contains("<td>ID</td>"));
 	}
 
@@ -87,8 +87,8 @@ public class JobExecutionViewTests extends AbstractManagerViewTests {
 		String content = response.getContentAsString();
 		// System.err.println(content);
 		assertTrue(content.contains("restartForm"));
-		assertTrue(content.contains("/batch/jobs/job/12345/executions"));
-		assertTrue(content.contains("/batch/jobs/executions/1233456/steps"));
+		assertTrue(content.contains("/jobs/job/12345/executions"));
+		assertTrue(content.contains("/jobs/executions/1233456/steps"));
 		assertTrue(content.contains("<input id=\"stop\" type=\"submit\" value=\"Abandon\" name=\"abandon\" />"));
 	}
 

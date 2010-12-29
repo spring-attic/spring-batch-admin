@@ -58,7 +58,7 @@ public class StepExecutionJsonViewTests extends AbstractManagerViewTests {
 		assertTrue(content.contains("\"duration\" : \""));
 		JsonWrapper wrapper = new JsonWrapper(content);
 		assertEquals(0, wrapper.get("stepExecution.commitCount"));
-		assertEquals("http://localhost:8080/springsource/batch/jobs/executions/123.json", wrapper.get("jobExecution.resource"));
+		assertEquals("http://localhost:8080/springsource/jobs/executions/123.json", wrapper.get("jobExecution.resource"));
 	}
 
 	@Test
@@ -76,7 +76,7 @@ public class StepExecutionJsonViewTests extends AbstractManagerViewTests {
 		assertTrue(content.contains("\"duration\" : \""));
 		JsonWrapper wrapper = new JsonWrapper(content);
 		assertEquals(0, wrapper.get("stepExecution.commitCount"));
-		assertEquals("http://localhost:8080/springsource/batch/jobs/executions/123.json", wrapper.get("jobExecution.resource"));
+		assertEquals("http://localhost:8080/springsource/jobs/executions/123.json", wrapper.get("jobExecution.resource"));
 		assertEquals(stepExecution.getId(), wrapper.get("stepExecution.id", Long.class));
 		assertEquals(stepExecution.getJobExecution().getStatus().toString(), wrapper.get("jobExecution.status"));
 		assertEquals(stepExecution.getJobExecutionId(), wrapper.get("jobExecution.id", Long.class));

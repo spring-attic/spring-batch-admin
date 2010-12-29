@@ -5,7 +5,9 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-1.0.xsd">
 
-	<import resource="classpath*:/META-INF/spring/batch/bootstrap/manager/*.xml" />
+	<import resource="classpath*:/META-INF/spring/batch/bootstrap/manager/env-context.xml" />
+	<import resource="classpath*:/META-INF/spring/batch/bootstrap/manager/data-source-context.xml" />
+	<import resource="classpath*:/META-INF/spring/batch/bootstrap/manager/execution-context.xml" />
 	<import resource="classpath*:/META-INF/spring/batch/bootstrap/integration/launcher-context.xml" />
 	<import resource="classpath*:/META-INF/spring/batch/bootstrap/integration/file-context.xml" />
 	<import resource="classpath:/staging-context.xml" />

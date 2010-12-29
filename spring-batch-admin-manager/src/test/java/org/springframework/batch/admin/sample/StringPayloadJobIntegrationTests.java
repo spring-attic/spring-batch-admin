@@ -26,11 +26,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.integration.MessageChannel;
 import org.springframework.integration.core.SubscribableChannel;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @ContextConfiguration(locations={"JobIntegrationTests-context.xml", "StringPayloadJobIntegrationTests-context.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
+@DirtiesContext(classMode=ClassMode.AFTER_CLASS)
 public class StringPayloadJobIntegrationTests {
 
 	@Autowired

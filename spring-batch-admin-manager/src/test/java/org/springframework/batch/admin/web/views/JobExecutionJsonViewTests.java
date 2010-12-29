@@ -60,7 +60,7 @@ public class JobExecutionJsonViewTests extends AbstractManagerViewTests {
 		JsonWrapper wrapper = new JsonWrapper(content);
 		assertEquals("STARTING", wrapper.get("jobExecution.status"));
 		assertEquals(2, wrapper.get("jobExecution.stepExecutions", Map.class).size());
-		assertEquals("http://localhost:8080/springsource/batch/jobs/executions/123/steps/1235.json", wrapper
+		assertEquals("http://localhost:8080/springsource/jobs/executions/123/steps/1235.json", wrapper
 				.get("jobExecution.stepExecutions.bar.resource"));
 	}
 
@@ -79,7 +79,7 @@ public class JobExecutionJsonViewTests extends AbstractManagerViewTests {
 		JsonWrapper wrapper = new JsonWrapper(content);
 		assertEquals("STARTING", wrapper.get("jobExecution.status"));
 		assertEquals(2, wrapper.get("jobExecution.stepExecutions", Map.class).size());
-		assertEquals("http://localhost:8080/springsource/batch/jobs/executions/123/steps/1234.json", wrapper
+		assertEquals("http://localhost:8080/springsource/jobs/executions/123/steps/1234.json", wrapper
 				.get("jobExecution.stepExecutions.foo.resource"));
 	}
 

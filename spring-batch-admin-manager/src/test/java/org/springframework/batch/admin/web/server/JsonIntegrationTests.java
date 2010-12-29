@@ -48,7 +48,7 @@ public class JsonIntegrationTests {
 	@Test
 	public void testHomePage() throws Exception {
 		RestTemplate template = new RestTemplate();
-		ResponseEntity<String> result = template.exchange(serverRunning.getUrl() + "/batch/home.json", HttpMethod.GET,
+		ResponseEntity<String> result = template.exchange(serverRunning.getUrl() + "/home.json", HttpMethod.GET,
 				null, String.class);
 		JsonWrapper wrapper = new JsonWrapper(result.getBody());
 		assertNotNull(wrapper.get("feed.resources"));
@@ -58,7 +58,7 @@ public class JsonIntegrationTests {
 	@Test
 	public void testJobsPage() throws Exception {
 		RestTemplate template = new RestTemplate();
-		ResponseEntity<String> result = template.exchange(serverRunning.getUrl() + "/batch/jobs.json", HttpMethod.GET,
+		ResponseEntity<String> result = template.exchange(serverRunning.getUrl() + "/jobs.json", HttpMethod.GET,
 				null, String.class);
 		JsonWrapper wrapper = new JsonWrapper(result.getBody());
 		// System.err.println(wrapper);
@@ -70,7 +70,7 @@ public class JsonIntegrationTests {
 	public void testJobLaunch() throws Exception {
 
 		RestTemplate template = new RestTemplate();
-		ResponseEntity<String> result = template.exchange(serverRunning.getUrl() + "/batch/jobs/job1.json",
+		ResponseEntity<String> result = template.exchange(serverRunning.getUrl() + "/jobs/job1.json",
 				HttpMethod.POST, null, String.class);
 		JsonWrapper wrapper = new JsonWrapper(result.getBody());
 		// System.err.println(wrapper);
@@ -111,7 +111,7 @@ public class JsonIntegrationTests {
 	public void testJobStop() throws Exception {
 
 		RestTemplate template = new RestTemplate();
-		ResponseEntity<String> result = template.exchange(serverRunning.getUrl() + "/batch/jobs/infinite.json",
+		ResponseEntity<String> result = template.exchange(serverRunning.getUrl() + "/jobs/infinite.json",
 				HttpMethod.POST, null, String.class);
 		JsonWrapper wrapper = new JsonWrapper(result.getBody());
 		// System.err.println(wrapper);

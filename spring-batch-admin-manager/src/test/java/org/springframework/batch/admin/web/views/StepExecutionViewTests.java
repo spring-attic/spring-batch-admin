@@ -50,7 +50,7 @@ public class StepExecutionViewTests extends AbstractManagerViewTests {
 		String content = response.getContentAsString();
 		// System.err.println(content);
 		assertTrue(content.contains("Details for Step Execution"));
-		assertTrue(content.contains("<a href=\"/batch/jobs/executions/123\">123</a>"));
+		assertTrue(content.contains("<a href=\"/jobs/executions/123\">123</a>"));
 		assertTrue(content.contains("<td>ID</td>"));
 	}
 

@@ -5,7 +5,9 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd"
 	xmlns:context="http://www.springframework.org/schema/context">
 
-	<import resource="classpath:/META-INF/spring/batch/bootstrap/manager/*.xml" />
+	<import resource="classpath*:/META-INF/spring/batch/bootstrap/manager/env-context.xml" />
+	<import resource="classpath*:/META-INF/spring/batch/bootstrap/manager/data-source-context.xml" />
+	<import resource="classpath*:/META-INF/spring/batch/bootstrap/manager/execution-context.xml" />
 	<import resource="classpath:/test-job-context.xml" />
 	
 	<bean class="org.springframework.batch.test.JobRepositoryTestUtils">

@@ -88,7 +88,7 @@ public class StepExecutionHistoryViewTests extends AbstractManagerViewTests {
 		assertTrue("Wrong content: "+content, content.contains("This execution is estimated to be 50% complete"));
 		assertTrue("Wrong content: "+content, content.contains("Details for Step Execution"));
 		assertTrue("Wrong content: "+content, content
-				.contains("<a href=\"/batch/jobs/executions/123\">123</a>"));
+				.contains("<a href=\"/jobs/executions/123\">123</a>"));
 	}
 
 }

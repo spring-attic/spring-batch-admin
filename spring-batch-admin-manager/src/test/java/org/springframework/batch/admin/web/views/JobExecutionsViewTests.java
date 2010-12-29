@@ -59,8 +59,8 @@ public class JobExecutionsViewTests extends AbstractManagerViewTests {
 		String content = response.getContentAsString();
 		// System.err.println(content);
 		assertTrue(content.contains("Recent and Current Job Executions"));
-		assertTrue(content.contains("<a href=\"/batch/jobs/executions/123\">"));
-		assertTrue(content.contains("title=\"RSS Feed\" href=\"/batch/jobs/executions.rss\">"));
+		assertTrue(content.contains("<a href=\"/jobs/executions/123\">"));
+		assertTrue(content.contains("title=\"RSS Feed\" href=\"/jobs/executions.rss\">"));
 	}
 
 	@Test
@@ -72,7 +72,7 @@ public class JobExecutionsViewTests extends AbstractManagerViewTests {
 		String content = response.getContentAsString();
 		// System.err.println(content);
 		assertTrue(content.contains("Recent and Current Job Executions"));
-		assertTrue(content.contains("<a href=\"/batch/jobs/executions/123\">"));
+		assertTrue(content.contains("<a href=\"/jobs/executions/123\">"));
 	}
 
 	@Test
@@ -87,7 +87,7 @@ public class JobExecutionsViewTests extends AbstractManagerViewTests {
 		assertTrue(content.contains("<form id=\"launchForm\""));
 		assertTrue(content.contains("foo=bar</textarea>"));
 		assertTrue(content.contains("Recent and Current Job Executions"));
-		assertTrue(content.contains("<a href=\"/batch/jobs/executions/123\">"));
+		assertTrue(content.contains("<a href=\"/jobs/executions/123\">"));
 	}
 
 	@Test

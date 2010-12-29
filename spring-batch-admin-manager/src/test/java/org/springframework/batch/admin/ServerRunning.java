@@ -40,7 +40,7 @@ public class ServerRunning extends TestWatchman {
 		try {
 
 			RestTemplate template = new RestTemplate();
-			ResponseEntity<String> result = template.exchange(url + "/batch/home.json", HttpMethod.GET, null,
+			ResponseEntity<String> result = template.exchange(url + "/home.json", HttpMethod.GET, null,
 					String.class);
 			String body = result.getBody();
 			Assert.assertTrue("No home page found", body != null && body.length() > 0);

@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 public class TestMenu extends BaseMenu {
 
 	public TestMenu() {
-		super("/batch/test", "Test", Integer.MIN_VALUE);
+		super("/test", "Test", Integer.MIN_VALUE);
 	}
 
 }

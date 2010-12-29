@@ -56,7 +56,7 @@ public class StepExecutionsViewTests extends AbstractManagerViewTests {
 		// System.err.println(content);
 		assertTrue(content.contains("Step Executions"));
 		assertTrue(content.contains("for Job = job"));
-		assertTrue(content.contains("<a href=\"/batch/jobs/executions/123/steps/1234/progress\">detail</a>"));
+		assertTrue(content.contains("<a href=\"/jobs/executions/123/steps/1234/progress\">detail</a>"));
 		assertTrue(content.contains("<th>ID</th>"));
 	}
 

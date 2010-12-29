@@ -38,6 +38,7 @@ public class SimpleEhCacheInterceptorTests {
 
 	@Before
 	public void open() throws Exception {
+		interceptor.destroy();
 		interceptor.afterPropertiesSet();
 	}
 

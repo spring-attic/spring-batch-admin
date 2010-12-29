@@ -70,7 +70,7 @@ public class JobViewTests extends AbstractManagerViewTests {
 		String content = response.getContentAsString();
 		// System.err.println(content);
 		assertTrue(content.contains("<th>Name</th>"));
-		assertTrue(content.contains("<td><a href=\"/batch/jobs/foo\">foo</a></td>"));
+		assertTrue(content.contains("<td><a href=\"/jobs/foo\">foo</a></td>"));
 		assertTrue(content.contains("<td>1</td>"));
 	}
 
@@ -90,7 +90,7 @@ public class JobViewTests extends AbstractManagerViewTests {
 		// System.err.println(content);
 		assertTrue(content.contains("Job name=foo"));
 		assertTrue(content.contains("foo=bar"));
-		assertTrue(content.contains("<form id=\"launchForm\" action=\"/batch/jobs/foo\" method=\"POST\">"));
+		assertTrue(content.contains("<form id=\"launchForm\" action=\"/jobs/foo\" method=\"POST\">"));
 		assertFalse(content.contains("<input type=\"hidden\" name=\"_method\""));
 		assertTrue(content.contains("<th>ID</th>"));
 	}
@@ -107,7 +107,7 @@ public class JobViewTests extends AbstractManagerViewTests {
 		job.render(model, request, response);
 		String content = response.getContentAsString();
 		// System.err.println(content);
-		assertFalse(content.contains("<form id=\"launchForm\" action=\"/batch/jobs/foo\" method=\"POST\">"));
+		assertFalse(content.contains("<form id=\"launchForm\" action=\"/jobs/foo\" method=\"POST\">"));
 	}
 	
 }

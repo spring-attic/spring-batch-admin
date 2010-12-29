@@ -40,7 +40,7 @@ public class SimpleEhCacheInterceptor implements MethodInterceptor, Initializing
 
 	private Cache cache;
 
-	private final CacheManager manager = CacheManager.create();
+	private CacheManager manager;
 
 	private volatile boolean caching = true;
 
@@ -49,15 +49,17 @@ public class SimpleEhCacheInterceptor implements MethodInterceptor, Initializing
 	private String name = "simple";
 
 	/**
-	 * The expiry timeout of cache entries (a.k.a. time to live) in seconds. Default 60.
+	 * The expiry timeout of cache entries (a.k.a. time to live) in seconds.
+	 * Default 60.
 	 * @param timeout in seconds
 	 */
 	public void setTimeout(int timeout) {
 		this.timeout = timeout;
 	}
-	
+
 	/**
-	 * The name of the cache used internally by EhCache.  Defaults to <code>simple</code>.
+	 * The name of the cache used internally by EhCache. Defaults to
+	 * <code>simple</code>.
 	 * 
 	 * @param name the cache name to set
 	 */
@@ -66,13 +68,16 @@ public class SimpleEhCacheInterceptor implements MethodInterceptor, Initializing
 	}
 
 	public void afterPropertiesSet() throws Exception {
+		manager = CacheManager.create();
 		cache = new Cache(name, 0, true, false, timeout, 0);
 		manager.addCache(cache);
 	}
 
 	public void destroy() throws Exception {
-		manager.removalAll();
-		manager.shutdown();
+		if (manager != null) {
+			manager.removalAll();
+			manager.shutdown();
+		}
 	}
 
 	public Object invoke(MethodInvocation invocation) throws Throwable {
@@ -86,7 +91,8 @@ public class SimpleEhCacheInterceptor implements MethodInterceptor, Initializing
 			if (cacheable(value, old)) {
 				cache.putIfAbsent(new Element(key, value));
 			}
-		} else {
+		}
+		else {
 			value = element.getObjectValue();
 		}
 		return value;
