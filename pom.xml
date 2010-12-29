@@ -77,7 +77,7 @@
 						</executions>
 					</plugin>
 					<plugin>
-						<!-- After the file count, we build the samples and archetypes as well -->
+						<!-- After the file count, we build the sample -->
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-invoker-plugin</artifactId>
 						<configuration>

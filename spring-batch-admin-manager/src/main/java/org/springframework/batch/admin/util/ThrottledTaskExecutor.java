@@ -40,7 +40,6 @@ import org.springframework.core.task.TaskRejectedException;
  * </p>
  * @author Dave Syer
  * 
- * @param <V> the type of object returned by the service
  */
 public class ThrottledTaskExecutor implements TaskExecutor {
 
@@ -51,7 +50,7 @@ public class ThrottledTaskExecutor implements TaskExecutor {
 	private TaskExecutor taskExecutor = new SyncTaskExecutor();
 
 	/**
-	 * Create a {@link TaskExecutorCompletionService} with infinite
+	 * Create a {@link ThrottledTaskExecutor} with infinite
 	 * (Integer.MAX_VALUE) throttle limit. A task can always be submitted.
 	 */
 	public ThrottledTaskExecutor() {
@@ -59,7 +58,7 @@ public class ThrottledTaskExecutor implements TaskExecutor {
 	}
 
 	/**
-	 * Create a {@link TaskExecutorCompletionService} with infinite
+	 * Create a {@link ThrottledTaskExecutor} with infinite
 	 * (Integer.MAX_VALUE) throttle limit. A task can always be submitted.
 	 * 
 	 * @param taskExecutor the {@link TaskExecutor} to use
@@ -69,7 +68,7 @@ public class ThrottledTaskExecutor implements TaskExecutor {
 	}
 
 	/**
-	 * Create a {@link TaskExecutorCompletionService} with finite throttle
+	 * Create a {@link ThrottledTaskExecutor} with finite throttle
 	 * limit. The submit method will block when this limit is reached until one
 	 * of the tasks has finished.
 	 * 

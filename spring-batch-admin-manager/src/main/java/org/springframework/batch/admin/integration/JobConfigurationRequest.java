@@ -42,14 +42,14 @@ public class JobConfigurationRequest {
 	}
 
 	/**
-	 * @param originalFilename
+	 * @param filename the file name to load
 	 */
 	public void setFileName(String filename) {
 		this.filename = filename;
 	}
 
 	/**
-	 * @return the filename
+	 * @return the filename loaded
 	 */
 	public String getFilename() {
 		return filename;

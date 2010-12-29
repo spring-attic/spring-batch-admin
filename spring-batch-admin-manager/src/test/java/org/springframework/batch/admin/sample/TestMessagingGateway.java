@@ -57,8 +57,8 @@ public class TestMessagingGateway {
 	}
 
 	/**
-	 * @param object
-	 * @return
+	 * @param object a payload to send
+	 * @return the returned messages payload
 	 * @see org.springframework.integration.gateway.AbstractMessagingGateway#sendAndReceive(java.lang.Object)
 	 */
 	public Object sendAndReceive(Object object) {

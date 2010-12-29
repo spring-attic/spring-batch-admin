@@ -130,11 +130,9 @@ public class TaskSchedulerPoller<T> implements Poller<T>, BeanFactoryAware, Init
 
 	/**
 	 * @param callback a {@link Callable} to use to retrieve a result
-	 * @param timeout the time to wait for the result before an error is
-	 * generated
 	 * @return the result, or null if the operation times out
 	 * 
-	 * @see Poller#poll(Callable, long)
+	 * @see Poller#poll(Callable)
 	 */
 	public Future<T> poll(Callable<T> callback) throws Exception {
 
