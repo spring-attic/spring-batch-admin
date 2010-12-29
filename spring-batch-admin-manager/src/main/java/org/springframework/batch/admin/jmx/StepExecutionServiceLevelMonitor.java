@@ -15,139 +15,138 @@
  */
 package org.springframework.batch.admin.jmx;
 
-import java.util.Date;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicBoolean;
+import javax.management.ObjectName;
+import javax.management.monitor.GaugeMonitor;
+import javax.management.monitor.MonitorMBean;
 
-import javax.management.Notification;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.springframework.batch.core.Step;
-import org.springframework.batch.core.StepExecution;
-import org.springframework.jmx.export.annotation.ManagedMetric;
-import org.springframework.jmx.export.annotation.ManagedResource;
-import org.springframework.jmx.export.notification.NotificationPublisher;
-import org.springframework.jmx.export.notification.NotificationPublisherAware;
-import org.springframework.jmx.support.MetricType;
-import org.springframework.scheduling.TaskScheduler;
-import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
-import org.springframework.util.StopWatch;
+import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 
 /**
- * Monitors executions of a given step and sends JMX notifications if it takes too long. 
- * 
- * TODO: use messaging instead of notifications?
- * TODO: use JMX monitor instead of AOP?
+ * Monitors executions of a given step and sends JMX notifications if it takes
+ * too long. The monitor is a {@link MonitorMBean} so it can be automatically
+ * exposed to an existing MBeanServer using Spring JMX. JMX clients subscribe to
+ * notifications and receive them whenever the thresholds are crossed.
  * 
  * @author Dave Syer
  * 
  */
-@ManagedResource
-public class StepExecutionServiceLevelMonitor implements NotificationPublisherAware {
+public class StepExecutionServiceLevelMonitor implements FactoryBean<GaugeMonitor>, InitializingBean {
 
-	private static final Log logger = LogFactory.getLog(StepExecutionServiceLevelMonitor.class);
+	private String defaultDomain = BatchMBeanExporter.DEFAULT_DOMAIN;
 
-	private NotificationPublisher notificationPublisher;
+	private String stepName;
 
-	private long timeout = 0;
+	private String jobName;
 
-	private double warningMargin = 0.2;
+	private int upperThreshold = 0;
 
-	private long sequence = 0;
+	private int lowerThreshold = 0;
 
-	private int overruns = 0;
+	private boolean autoStart = true;
 
-	private TaskScheduler taskScheduler = new ConcurrentTaskScheduler(Executors.newSingleThreadScheduledExecutor());
+	private String observedAttribute = "LatestDuration";
 
-	public void setTimeout(long timeout) {
-		this.timeout = timeout;
-	}
-
-	public void setWarningMargin(double warningMargin) {
-		this.warningMargin = warningMargin;
+	/**
+	 * The name of the attribute to monitor on the step. Defaults to
+	 * <code>LatestDuration</code>. This can be changed at runtime, but note
+	 * that if the type of the observed metric changes (e.g. from double to
+	 * integer) then the thresholds will also have to be changed so their type
+	 * matches.
+	 * 
+	 * @param observedAttribute the observed attribute to set
+	 */
+	public void setObservedAttribute(String observedAttribute) {
+		this.observedAttribute = observedAttribute;
 	}
 
 	/**
-	 * A scheduler that can be used to poll a step execution in a background thread.
+	 * Should the monitor start immediately or wait to be started manually?
 	 * 
-	 * @param taskScheduler the task scheduler to set
+	 * @param autoStart the auto start flag to set
 	 */
-	public void setTaskScheduler(TaskScheduler taskScheduler) {
-		this.taskScheduler = taskScheduler;
+	public void setAutoStart(boolean autoStart) {
+		this.autoStart = autoStart;
 	}
 
-	public void invoke(ProceedingJoinPoint joinPoint, final StepExecution stepExecution, Step step) throws Throwable {
+	/**
+	 * The domain name to use in constructing object names for the monitored
+	 * step. Default to <code>org.springframework.batch</code> (same as
+	 * {@link BatchMBeanExporter}).
+	 * 
+	 * @param defaultDomain the default domain to set
+	 */
+	public void setDefaultDomain(String defaultDomain) {
+		this.defaultDomain = defaultDomain;
+	}
 
-		final AtomicBoolean finished = new AtomicBoolean(false);
-		final StopWatch timer = new StopWatch(stepExecution.getStepName() + ":execution");
+	/**
+	 * @param stepName the stepName to set
+	 */
+	public void setStepName(String stepName) {
+		this.stepName = stepName;
+	}
 
-		try {
+	/**
+	 * @param jobName the jobName to set
+	 */
+	public void setJobName(String jobName) {
+		this.jobName = jobName;
+	}
 
-			if (timeout > 0) {
+	/**
+	 * Upper threshold for observed attribute. Mandatory with no default.
+	 * 
+	 * @param upperThreshold the upper threshold to set
+	 */
+	public void setUpperThreshold(int upperThreshold) {
+		this.upperThreshold = upperThreshold;
+	}
 
-				if (notificationPublisher != null) {
-					Notification notification = new Notification("INFO", this, sequence++, "Starting:" + stepExecution);
-					notificationPublisher.sendNotification(notification);
-				}
+	/**
+	 * Optional lower threshold. Defaults to 80% of the upper threshold.
+	 * 
+	 * @param lowerThreshold the lower threshold to set
+	 */
+	public void setLowerThreshold(int lowerThreshold) {
+		this.lowerThreshold = lowerThreshold;
+	}
 
-				timer.start("StepExecution.Id:" + stepExecution.getId());
-				final long threshold = (long) (timeout * (1 - warningMargin));
-				Date warningTime = new Date(System.currentTimeMillis() + threshold);
-				logger.debug("Scheduling warning after (ms) " + threshold);
-				taskScheduler.schedule(new Runnable() {
-
-					public void run() {
-						if (!finished.get()) {
-							logger.debug("Sending warning (step not complete after " + threshold + " ms): "
-									+ stepExecution);
-							if (notificationPublisher != null) {
-								Notification notification = new Notification("WARN",
-										StepExecutionServiceLevelMonitor.this, sequence++, "Warning:" + stepExecution);
-								notificationPublisher.sendNotification(notification);
-							}
-						}
-						else {
-							logger.debug("No warning necessary for " + stepExecution);
-						}
-					}
-
-				}, warningTime);
-			}
-
-			joinPoint.proceed();
-
+	public GaugeMonitor getObject() throws Exception {
+		GaugeMonitor monitor = new GaugeMonitor();
+		monitor.setNotifyHigh(true);
+		monitor.addObservedObject(new ObjectName(String.format("%s:type=JobExecution,name=%s,step=%s", defaultDomain,
+				jobName, stepName)));
+		monitor.setObservedAttribute(observedAttribute);
+		if (observedAttribute.endsWith("Duration")) {
+			monitor.setThresholds(new Double(upperThreshold), new Double(lowerThreshold));
 		}
-		finally {
-
-			finished.set(true);
-
-			if (timeout > 0) {
-				timer.stop();
-				Executors.newSingleThreadScheduledExecutor().shutdown();
-				if (timer.getLastTaskTimeMillis() > timeout) {
-					overruns++;
-					logger.debug("Notifying overrun " + stepExecution);
-					if (notificationPublisher != null) {
-						Notification notification = new Notification("ERROR", this, sequence++, "Overrun:"
-								+ stepExecution);
-						notificationPublisher.sendNotification(notification);
-					}
-				}
-			}
-
+		else {
+			monitor.setThresholds(new Integer(upperThreshold), new Integer(lowerThreshold));
 		}
-
+		if (autoStart) {
+			monitor.start();
+		}
+		return monitor;
 	}
 
-	@ManagedMetric(metricType = MetricType.COUNTER, displayName = "Step Execution Overruns")
-	public int getTotalOverruns() {
-		return overruns;
+	public Class<?> getObjectType() {
+		return GaugeMonitor.class;
 	}
 
-	public void setNotificationPublisher(NotificationPublisher notificationPublisher) {
-		this.notificationPublisher = notificationPublisher;
+	public boolean isSingleton() {
+		return true;
+	}
+
+	public void afterPropertiesSet() throws Exception {
+		Assert.state(jobName != null, "A Job name must be provided");
+		Assert.state(stepName != null, "A Step name must be provided");
+		Assert.state(upperThreshold > 0, "A threshold must be provided");
+		Assert.state(lowerThreshold < upperThreshold, "A threshold must be provided");
+		if (lowerThreshold == 0) {
+			lowerThreshold = upperThreshold * 8 / 10;
+		}
 	}
 
 }

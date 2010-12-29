@@ -19,8 +19,8 @@
 			</sections>
 		</chapter>
 		<chapter>
-			<id>installation</id>
-			<title>Installation</title>
+			<id>features</id>
+			<title>Features</title>
 			<sections>
 				<section>
 					<id>installing</id>
@@ -33,6 +33,9 @@
 				</section>
 				<section>
 					<id>configuration</id>
+				</section>
+				<section>
+					<id>jmx</id>
 				</section>
 			</sections>
 		</chapter>

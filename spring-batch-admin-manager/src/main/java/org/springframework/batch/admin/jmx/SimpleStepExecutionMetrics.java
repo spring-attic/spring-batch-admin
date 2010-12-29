@@ -61,6 +61,9 @@ public class SimpleStepExecutionMetrics implements StepExecutionMetrics {
 
 	public double getLatestDuration() {
 		StepExecution stepExecution = getLatestStepExecution(stepName);
+		if (stepExecution==null) {
+			return 0;
+		}
 		Date endTime = stepExecution.getEndTime();
 		return (endTime != null ? endTime.getTime() : System.currentTimeMillis())
 				- stepExecution.getStartTime().getTime();

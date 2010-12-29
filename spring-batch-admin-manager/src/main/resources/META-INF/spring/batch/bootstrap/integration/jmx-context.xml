@@ -5,23 +5,6 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-	<context:mbean-server id="mbeanServer" />
-
-	<context:mbean-export default-domain="spring.application" server="mbeanServer" />
-
 	<int-jmx:mbean-export id="integrationMBeanExporter" default-domain="spring.application" server="mbeanServer" />
 
-	<bean id="batchMBeanExporter" class="org.springframework.batch.admin.jmx.BatchMBeanExporter">
-		<property name="server" ref="mbeanServer" />
-		<property name="jobService">
-			<bean class="org.springframework.aop.framework.ProxyFactoryBean">
-				<property name="target" ref="jobService" />
-				<property name="interceptorNames" value="cacheInterceptor" />
-			</bean>
-		</property>
-		<property name="defaultDomain" value="spring.application" />
-	</bean>
-
-	<bean id="cacheInterceptor" class="org.springframework.batch.admin.util.SimpleEhCacheInterceptor" />
-	
 </beans>
