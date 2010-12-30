@@ -154,7 +154,7 @@
 				<repository>
 					<id>spring-sourceforge</id>
 					<name>Spring Sourceforge Repository</name>
-					<url>https://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo</url>
+					<url>file:///${user.home}/dev/sourceforge</url>
 				</repository>
 			</distributionManagement>
 		</profile>
