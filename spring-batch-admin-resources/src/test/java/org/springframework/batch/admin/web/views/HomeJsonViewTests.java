@@ -55,7 +55,7 @@ public class HomeJsonViewTests extends AbstractResourceViewTests {
 		standard.render(model, request, response);
 		String content = response.getContentAsString();
 		// System.err.println(content);
-		assertTrue(content.contains("\"http://localhost:8080/springsource/batch/jobs/{jobName}.json\""));
+		assertTrue(content.contains("\"http://localhost:8080/springsource/jobs/{jobName}.json\""));
 		JsonWrapper wrapper = new JsonWrapper(content);
 		assertEquals(2, wrapper.get("feed.resources", Map.class).size());
 		assertEquals("foo", wrapper.get("feed.resources['/jobs/{jobName}'].description"));
