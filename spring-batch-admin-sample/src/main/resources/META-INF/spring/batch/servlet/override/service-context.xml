@@ -9,7 +9,7 @@
 		<property name="service" ref="step1" />
 	</bean>
 
-	<bean id="step1" class="org.springframework.batch.admin.service.StepLocatorStepFactoryBean">
+	<bean id="step1" class="org.springframework.batch.admin.sample.StepLocatorStepFactoryBean">
 		<property name="stepLocator">
 			<bean class="org.springframework.batch.admin.service.JobLocatorStepLocator">
 				<property name="jobLocator" ref="jobRegistry"/>

@@ -1,4 +1,4 @@
-package org.springframework.batch.admin.service;
+package org.springframework.batch.admin.sample;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
