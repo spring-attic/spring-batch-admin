@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beansProjectDescription>
 	<version>1</version>
-	<pluginVersion><![CDATA[2.3.1.201003090936-RELEASE]]></pluginVersion>
+	<pluginVersion><![CDATA[2.5.1.201011101000-RELEASE]]></pluginVersion>
 	<configSuffixes>
 		<configSuffix><![CDATA[xml]]></configSuffix>
 	</configSuffixes>
 	<enableImports><![CDATA[true]]></enableImports>
 	<configs>
+		<config>src/main/resources/META-INF/spring/batch/jobs/infinite-context.xml</config>
+		<config>src/test/resources/org/springframework/batch/admin/sample/JobExecutionTests-context.xml</config>
+		<config>src/test/resources/org/springframework/batch/admin/sample/JobIntegrationTests-context.xml</config>
+		<config>src/main/resources/META-INF/spring/batch/jobs/jobs-context.xml</config>
+		<config>src/main/resources/META-INF/spring/batch/servlet/override/service-context.xml</config>
 	</configs>
 	<configSets>
 	</configSets>
