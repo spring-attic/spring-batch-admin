@@ -93,7 +93,8 @@ public class ContentTypeInterceptor extends HandlerInterceptorAdapter implements
 			return;
 		}
 
-		String path = WebUtils.extractFullFilenameFromUrlPath(request.getPathInfo());
+		String pathInfo = request.getPathInfo();
+		String path = pathInfo==null ? "" : WebUtils.extractFullFilenameFromUrlPath(pathInfo);
 		if (!path.contains(".")) {
 			return;
 		}

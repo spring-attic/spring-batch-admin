@@ -59,6 +59,15 @@ public class ContentTypeInterceptorTests {
 	}
 
 	@Test
+	public void testPostHandleNullPath() throws Exception {
+		interceptor.setExtensions(Collections.singleton("rss"));
+		ModelAndView modelAndView = new ModelAndView("foo");
+		request.setPathInfo(null);
+		interceptor.postHandle(request, response, null, modelAndView);
+		assertEquals("foo", modelAndView.getViewName());
+	}
+
+	@Test
 	public void testPostHandleWithExtension() throws Exception {
 		interceptor.setExtensions(Collections.singleton("rss"));
 		ModelAndView modelAndView = new ModelAndView("foo.rss");
