@@ -149,6 +149,7 @@ public class BatchMBeanExporter extends MBeanExporter implements SmartLifecycle 
 	 * @return a String representation of an ObjectName
 	 */
 	protected String getBeanKeyForJobExecution(String jobName) {
+		jobName=escapeForObjectName(jobName);
 		return String.format("%s:type=JobExecution,name=%s", domain, jobName);
 	}
 
@@ -157,11 +158,21 @@ public class BatchMBeanExporter extends MBeanExporter implements SmartLifecycle 
 	 * <code>[domain]:type=JobExecution,name=[jobName],step=[stepName]</code>.
 	 * 
 	 * @param jobName the name of the job
-	 * @param stepName the name of teh step
+	 * @param stepName the name of the step
 	 * @return a String representation of an ObjectName
 	 */
 	protected String getBeanKeyForStepExecution(String jobName, String stepName) {
+		jobName=escapeForObjectName(jobName);
+		stepName=escapeForObjectName(stepName);
 		return String.format("%s:type=JobExecution,name=%s,step=%s", domain, jobName, stepName);
+	}
+
+
+	private String escapeForObjectName(String value) {
+		value = value.replaceAll(":", "@");
+		value = value.replaceAll(",", ";");
+		value = value.replaceAll("=", "~");
+		return value;
 	}
 
 	@ManagedMetric(metricType = MetricType.COUNTER, displayName = "Step Count")
