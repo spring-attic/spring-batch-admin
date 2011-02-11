@@ -17,7 +17,7 @@
 
 	<job id="job2" xmlns="http://www.springframework.org/schema/batch">
 		<step id="job2.step1">
-			<partition step="step" partitioner="partitioner">
+			<partition step="remoteStep" partitioner="partitioner">
 				<handler grid-size="2" task-executor="taskExecutor" />
 			</partition>
 		</step>
@@ -28,15 +28,15 @@
 			<chunk commit-interval="1" reader="itemReader" writer="itemWriter" />
 		</tasklet>
 	</step>
-	
-	<context:mbean-export default-domain="spring.application" server="mbeanServer"/>
-	
+
+	<context:mbean-export default-domain="spring.application" server="mbeanServer" />
+
 	<bean id="j1.step1.monitor" class="org.springframework.batch.admin.jmx.StepExecutionServiceLevelMonitor">
-		<property name="jobName" value="job1"/>
-		<property name="stepName" value="step1"/>
-		<property name="upperThreshold" value="3"/>
-		<property name="observedAttribute" value="LatestReadCount"/>
-		<property name="defaultDomain" value="spring.application"/>
+		<property name="jobName" value="job1" />
+		<property name="stepName" value="step1" />
+		<property name="upperThreshold" value="3" />
+		<property name="observedAttribute" value="LatestReadCount" />
+		<property name="defaultDomain" value="spring.application" />
 	</bean>
 
 	<chain input-channel="input-files" output-channel="job-requests" xmlns="http://www.springframework.org/schema/integration">
@@ -70,9 +70,15 @@
 
 	<bean id="itemReader" class="org.springframework.batch.admin.sample.ExampleItemReader" scope="step" />
 
-	<bean id="remoteStep1" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
-		<property name="serviceInterface" value="org.springframework.batch.core.Step" />
-		<property name="serviceUrl" value="${batch.remote.base.url}/#{resourceService.servletPath}/steps/step" />
+	<bean id="remoteStep" class="org.springframework.batch.admin.sample.RemoteStep">
+		<property name="step">
+			<bean class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
+				<property name="serviceInterface" value="org.springframework.batch.core.Step" />
+				<property name="serviceUrl" value="${batch.remote.base.url}/#{resourceService.servletPath}/steps/step1" />
+			</bean>
+		</property>
+		<property name="jobExplorer" ref="jobExplorer" />
+		<property name="name" value="step1" />
 	</bean>
 
 </beans>
