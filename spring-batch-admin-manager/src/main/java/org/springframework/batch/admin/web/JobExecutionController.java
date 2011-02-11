@@ -18,6 +18,7 @@ package org.springframework.batch.admin.web;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.TimeZone;
 
@@ -312,15 +313,17 @@ public class JobExecutionController {
 			JobExecution jobExecution = jobService.getJobExecution(jobExecutionId);
 			model.addAttribute(new JobExecutionInfo(jobExecution, timeZone));
 			String jobName = jobExecution.getJobInstance().getJobName();
-			Collection<String> stepNames = jobService.getStepNamesForJob(jobName);
+			Collection<String> stepNames = new HashSet<String>(jobService.getStepNamesForJob(jobName));
 			Collection<StepExecution> stepExecutions = new ArrayList<StepExecution>(jobExecution.getStepExecutions());
 			Collection<StepExecutionInfo> stepExecutionInfos = new ArrayList<StepExecutionInfo>();
+			for (StepExecution stepExecution : stepExecutions) {
+				stepExecutionInfos.add(new StepExecutionInfo(stepExecution, timeZone));
+			}
 			for (String name : stepNames) {
 				boolean found = false;
 				for (Iterator<StepExecution> iterator = stepExecutions.iterator(); iterator.hasNext();) {
 					StepExecution stepExecution = iterator.next();
 					if (stepExecution.getStepName().equals(name)) {
-						stepExecutionInfos.add(new StepExecutionInfo(stepExecution, timeZone));
 						iterator.remove();
 						found = true;
 					}
