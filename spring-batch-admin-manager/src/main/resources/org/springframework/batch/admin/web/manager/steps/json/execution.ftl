@@ -2,6 +2,7 @@
 <#assign url><@spring.url relativeUrl="${servletPath}/jobs/executions/${stepExecutionInfo.jobExecutionId?c}/steps/${stepExecutionInfo.id?c}/progress"/></#assign>
 "stepExecution" : { 
     "id" : "${stepExecutionInfo.stepExecution.id?c}",
+    "name" : "${stepExecutionInfo.name}",
     "resource" : "${baseUrl}${url}",
     "status" : "${stepExecutionInfo.stepExecution.status}",
     "startTime" : "${stepExecutionInfo.startTime}",

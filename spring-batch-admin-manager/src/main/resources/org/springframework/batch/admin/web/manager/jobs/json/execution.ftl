@@ -4,6 +4,7 @@
 "jobExecution" : { 
     "resource" : "${baseUrl}${url}",
     "id" : "${jobExecutionInfo.id?c}",
+    "name" : "${jobExecutionInfo.name}",
     "status" : "${jobExecutionInfo.jobExecution.status}",
     "startTime" : "${jobExecutionInfo.startTime}",
     "duration" : "${jobExecutionInfo.duration}",
