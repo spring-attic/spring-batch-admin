@@ -18,6 +18,8 @@ package org.springframework.batch.admin.jmx;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -50,6 +52,8 @@ public class BatchMBeanExporter extends MBeanExporter implements SmartLifecycle 
 	private volatile int phase = 0;
 
 	private volatile boolean running;
+
+	private final Map<String, String> objectNameStaticProperties = new LinkedHashMap<String, String>();
 
 	private final ReentrantLock lifecycleLock = new ReentrantLock();
 
@@ -92,6 +96,15 @@ public class BatchMBeanExporter extends MBeanExporter implements SmartLifecycle 
 
 	public void setJobService(JobService jobService) {
 		this.jobService = jobService;
+	}
+
+	/**
+	 * Static properties that will be added to all object names.
+	 * 
+	 * @param objectNameStaticProperties the objectNameStaticProperties to set
+	 */
+	public void setObjectNameStaticProperties(Map<String, String> objectNameStaticProperties) {
+		this.objectNameStaticProperties.putAll(objectNameStaticProperties);
 	}
 
 	@Override
@@ -150,7 +163,7 @@ public class BatchMBeanExporter extends MBeanExporter implements SmartLifecycle 
 	 */
 	protected String getBeanKeyForJobExecution(String jobName) {
 		jobName=escapeForObjectName(jobName);
-		return String.format("%s:type=JobExecution,name=%s", domain, jobName);
+		return String.format("%s:type=JobExecution,name=%s", domain, jobName) + getStaticNames();
 	}
 
 	/**
@@ -164,9 +177,20 @@ public class BatchMBeanExporter extends MBeanExporter implements SmartLifecycle 
 	protected String getBeanKeyForStepExecution(String jobName, String stepName) {
 		jobName=escapeForObjectName(jobName);
 		stepName=escapeForObjectName(stepName);
-		return String.format("%s:type=JobExecution,name=%s,step=%s", domain, jobName, stepName);
+		return String.format("%s:type=JobExecution,name=%s,step=%s", domain, jobName, stepName) + getStaticNames();
 	}
 
+
+	private String getStaticNames() {
+		if (objectNameStaticProperties.isEmpty()) {
+			return "";
+		}
+		StringBuilder builder = new StringBuilder();
+		for (String key : objectNameStaticProperties.keySet()) {
+			builder.append("," + key + "=" + objectNameStaticProperties.get(key));
+		}
+		return builder.toString();
+	}
 
 	private String escapeForObjectName(String value) {
 		value = value.replaceAll(":", "@");
