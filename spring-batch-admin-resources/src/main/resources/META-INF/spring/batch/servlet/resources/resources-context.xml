@@ -9,11 +9,11 @@
 
 	<context:annotation-config />
 
-	<mvc:resources location="/,classpath:/META-INF/" mapping="resources/**"/>
-	
-	<bean id="annotationMethodHandlerAdapter" class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
+	<mvc:resources location="/,classpath:/META-INF/" mapping="resources/**" />
 
-	<bean id="controllerHandlerAdapter" class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
+	<bean id="annotationMethodHandlerAdapter" class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
+
+	<bean id="controllerHandlerAdapter" class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
 
 	<bean id="baseMenu" abstract="true">
 		<property name="prefix" value="#{resourceService.servletPath}" />
@@ -38,6 +38,12 @@
 			<map>
 				<entry key="menuManager" value-ref="menuManager" />
 			</map>
+		</property>
+		<property name="freemarkerSettings">
+			<props>
+				<prop key="default_encoding">UTF-8</prop>
+				<prop key="output_encoding">UTF-8</prop>
+			</props>
 		</property>
 	</bean>
 
@@ -80,6 +86,7 @@
 
 	<bean id="standard" parent="parentLayout">
 		<property name="url" value="/layouts/html/standard.ftl" />
+		<property name="contentType" value="text/html;charset=UTF-8" />
 		<property name="attributes">
 			<props merge="true">
 				<prop key="body">/layouts/html/home.ftl</prop>

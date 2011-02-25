@@ -53,6 +53,7 @@ public class StandardViewTests {
 		assertNotNull(standard);
 		standard.render(new HashMap<String, Object>(), request, response);
 		String content = response.getContentAsString();
+		// System.err.println(content);
 		assertTrue(content.contains("<html"));
 		assertTrue(content.contains("</html>"));
 	}
