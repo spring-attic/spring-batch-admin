@@ -25,6 +25,7 @@ import org.springframework.util.StringUtils;
  * @author Dave Syer
  * 
  */
+@SuppressWarnings("serial")
 public class FileInfo implements Comparable<FileInfo>, Serializable {
 
 	private final static String TIMESTAMP_PATTERN = ".*\\.[0-9]*\\.[0-9]*";

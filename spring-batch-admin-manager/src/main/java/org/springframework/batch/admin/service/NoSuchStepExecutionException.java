@@ -17,6 +17,7 @@ package org.springframework.batch.admin.service;
 
 import org.springframework.batch.core.JobExecutionException;
 
+@SuppressWarnings("serial")
 public class NoSuchStepExecutionException extends JobExecutionException {
 
 	public NoSuchStepExecutionException(String msg, Throwable cause) {
