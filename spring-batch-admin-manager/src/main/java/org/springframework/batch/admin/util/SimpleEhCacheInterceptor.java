@@ -21,6 +21,8 @@ import java.util.Map;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
+import net.sf.ehcache.config.Configuration;
+import net.sf.ehcache.config.ConfigurationFactory;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
@@ -68,7 +70,9 @@ public class SimpleEhCacheInterceptor implements MethodInterceptor, Initializing
 	}
 
 	public void afterPropertiesSet() throws Exception {
-		manager = CacheManager.create();
+		Configuration config  = ConfigurationFactory.parseConfiguration();
+		config.setUpdateCheck(false);
+		manager = CacheManager.create(config );
 		cache = new Cache(name, 0, true, false, timeout, 0);
 		manager.addCache(cache);
 	}
