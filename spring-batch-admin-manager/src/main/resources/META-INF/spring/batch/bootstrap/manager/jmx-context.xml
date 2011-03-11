@@ -12,7 +12,7 @@
 		<property name="server" ref="mbeanServer" />
 		<property name="jobService">
 			<bean class="org.springframework.aop.framework.ProxyFactoryBean">
-				<property name="target" ref="jobService" />
+				<property name="targetName" value="jobService" />
 				<property name="interceptorNames" value="cacheInterceptor" />
 			</bean>
 		</property>
