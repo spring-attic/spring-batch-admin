@@ -2,6 +2,9 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
+	<!-- Workaround for INT-1831 -->
+	<bean id="dummy" class="java.util.Date"/>
+
  	<import resource="classpath*:/META-INF/spring/batch/bootstrap/**/*.xml" />
  	<import resource="classpath*:/META-INF/spring/batch/override/**/*.xml" />
  	
