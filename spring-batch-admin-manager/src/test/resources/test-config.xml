@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd"
-	xmlns:context="http://www.springframework.org/schema/context">
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<import resource="classpath*:/META-INF/spring/batch/bootstrap/manager/env-context.xml" />
 	<import resource="classpath*:/META-INF/spring/batch/bootstrap/manager/data-source-context.xml" />
@@ -12,7 +9,13 @@
 	
 	<bean class="org.springframework.batch.test.JobRepositoryTestUtils">
 		<property name="dataSource" ref="dataSource" />
-		<property name="jobRepository" ref="jobRepository" />
+		<property name="jobRepository">
+			<bean class="org.springframework.batch.core.repository.support.JobRepositoryFactoryBean">
+				<property name="validateTransactionState" value="false"/>
+				<property name="dataSource" ref="dataSource"/>
+				<property name="transactionManager" ref="transactionManager"/>
+			</bean>
+		</property>
 	</bean>
 
 </beans>
