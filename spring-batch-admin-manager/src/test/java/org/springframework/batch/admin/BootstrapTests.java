@@ -40,6 +40,7 @@ import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
 /**
@@ -50,7 +51,9 @@ public class BootstrapTests {
 
 	@Test
 	public void testBootstrapConfiguration() throws Exception {
-		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("classpath:/META-INF/spring/batch/bootstrap/**/*.xml");
+		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new String[] {
+				ClassUtils.addResourcePathToPackagePath(getClass(), "dummy-context.xml"),
+				"classpath:/META-INF/spring/batch/bootstrap/**/*.xml" });
 		assertTrue(context.containsBean("jobRepository"));
 		context.close();
 	}
@@ -88,13 +91,13 @@ public class BootstrapTests {
 		new DirectPoller<BatchStatus>(100).poll(new Callable<BatchStatus>() {
 			public BatchStatus call() throws Exception {
 				BatchStatus status = jobExecution.getStatus();
-				if (status.isLessThan(BatchStatus.STOPPED) && status!=BatchStatus.COMPLETED) {
+				if (status.isLessThan(BatchStatus.STOPPED) && status != BatchStatus.COMPLETED) {
 					return null;
 				}
 				return status;
 			}
 		}).get(2000, TimeUnit.MILLISECONDS);
-		
+
 		HomeController metaData = new HomeController();
 		metaData.setApplicationContext(context);
 		metaData.afterPropertiesSet();
@@ -105,14 +108,14 @@ public class BootstrapTests {
 		List<ResourceInfo> resources = (List<ResourceInfo>) model.get("resources");
 		StringBuilder content = new StringBuilder();
 		for (ResourceInfo resourceInfo : resources) {
-			content.append(resourceInfo.getMethod()+resourceInfo.getUrl()+"=\n");
+			content.append(resourceInfo.getMethod() + resourceInfo.getUrl() + "=\n");
 		}
 		FileUtils.writeStringToFile(new File("target/resources.properties"), content.toString());
-		
+
 		HomeController home = context.getBean(HomeController.class);
 		// System.err.println(home.getUrlPatterns());
 		assertTrue(home.getUrlPatterns().contains("/jobs/{jobName}"));
-		
+
 		String message = context.getMessage("GET/jobs/{jobName}", new Object[0], Locale.getDefault());
 		assertTrue("No message for /jobs/{jobName}", StringUtils.hasText(message));
 
