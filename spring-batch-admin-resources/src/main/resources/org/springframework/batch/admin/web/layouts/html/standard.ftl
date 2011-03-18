@@ -3,21 +3,21 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title><@spring.messageText code=titleCode!"title" text=titleText!"Spring Batch Admin"/></title>
-<#assign url><@spring.url relativeUrl="/resources/styles/main.css"/></#assign>
+<#assign url><@spring.url relativeUrl="${servletPath}/resources/styles/main.css"/></#assign>
 <link rel="stylesheet" href="${url}" type="text/css"></link>
-<#assign url><@spring.url relativeUrl="/resources/styles/colors.css"/></#assign>
+<#assign url><@spring.url relativeUrl="${servletPath}/resources/styles/colors.css"/></#assign>
 <link rel="stylesheet" href="${url}" type="text/css"></link>
-<#assign url><@spring.url relativeUrl="/resources/styles/local.css"/></#assign>
+<#assign url><@spring.url relativeUrl="${servletPath}/resources/styles/local.css"/></#assign>
 <link rel="stylesheet" href="${url}" type="text/css"></link>
-<#assign url><@spring.url relativeUrl="/resources/styles/print.css"/></#assign>
+<#assign url><@spring.url relativeUrl="${servletPath}/resources/styles/print.css"/></#assign>
 <link rel="stylesheet" href="${url}" type="text/css" media="print"></link>
 <#if feedPath??>
-<#assign url><@spring.url relativeUrl=feedPath/></#assign>
+<#assign url><@spring.url relativeUrl="${servletPath}${feedPath}"/></#assign>
 	<link rel="alternate" type="application/rss+xml" title="RSS Feed" href="${url}">
 </#if>
-<#assign url><@spring.url relativeUrl="/resources/js/jquery-1.4.2.min.js"/></#assign>
+<#assign url><@spring.url relativeUrl="${servletPath}/resources/js/jquery-1.4.2.min.js"/></#assign>
 <script src="${url}" type="text/javascript"></script>
-<#assign url><@spring.url relativeUrl="/resources/js/jquery.validate-1.7.0.min.js"/></#assign>
+<#assign url><@spring.url relativeUrl="${servletPath}/resources/js/jquery.validate-1.7.0.min.js"/></#assign>
 <script src="${url}" type="text/javascript"></script>
 <!-- 
 Some icons from Silk icon set 1.3 by Mark James, http://www.famfamfam.com/lab/icons/silk/

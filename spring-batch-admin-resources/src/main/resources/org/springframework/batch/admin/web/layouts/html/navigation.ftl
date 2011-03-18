@@ -1,4 +1,4 @@
-<#assign home_url><@spring.url relativeUrl="/"/></#assign>
+<#assign home_url><@spring.url relativeUrl="${servletPath}/"/></#assign>
 <#assign company_url><@spring.messageText code="company.url" text=companyUrl!"http://www.springsource.com"/></#assign>
 <#assign company_name><@spring.messageText code="company.name" text=companyName!"SpringSource"/></#assign>
 <#assign product_url><@spring.messageText code="product.url" text=productUrl!"http://static.springframework.org/spring-batch"/></#assign>

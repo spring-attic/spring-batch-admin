@@ -51,7 +51,7 @@
 		<property name="attributes">
 			<props merge="true">
 				<prop key="body">/manager/jobs/html/executions.ftl</prop>
-				<prop key="feedPath">#{resourceService.servletPath}/jobs/executions.rss</prop>
+				<prop key="feedPath">/jobs/executions.rss</prop>
 				<prop key="titleCode">job.executions.title</prop>
 				<prop key="titleText">Spring Batch Admin: Job Executions</prop>
 			</props>
