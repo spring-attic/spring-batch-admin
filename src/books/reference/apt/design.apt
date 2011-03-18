@@ -45,11 +45,18 @@ Application Context Structure
   duplicate bean definitions because only the Job names have to be unique.  A job context inherits
   the AOP and <<<PropertyPlaceholderConfigurer>>> settings from the root context (not the standard behaviour
   of a child context) as a convenience, but you can add your own settings to apply locally as well.
-  
+
 Extending the UI
 
   There are three extension points for the UI: changing or translating
   text, adding menus, and modifying the content of the existing pages.
+
+* URL Paths
+
+  URL paths start at the context root "/" by default.  If you want to
+  use it with a different context path, just change the servlet
+  mapping in web.xml and override the <<<resourceService>>> bean in
+  the root application context to change the servlet path.
 
 * Text Content
 
