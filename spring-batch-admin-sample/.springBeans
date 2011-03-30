@@ -12,6 +12,7 @@
 		<config>src/test/resources/org/springframework/batch/admin/sample/JobIntegrationTests-context.xml</config>
 		<config>src/main/resources/META-INF/spring/batch/jobs/jobs-context.xml</config>
 		<config>src/main/resources/META-INF/spring/batch/servlet/override/service-context.xml</config>
+		<config>target/classes/META-INF/spring/batch/jobs/jobs-context.xml</config>
 	</configs>
 	<configSets>
 	</configSets>
