@@ -18,7 +18,6 @@ package org.springframework.batch.admin.jmx;
 
 import org.junit.Test;
 import org.springframework.context.support.GenericXmlApplicationContext;
-import org.springframework.util.ClassUtils;
 
 /**
  * @author Dave Syer
@@ -30,9 +29,7 @@ public class IntegrationAndBatchMBeanExporterIntegrationTests {
 	public void testMBeanExporters() throws Exception {
 		String base = "/META-INF/spring/batch/";
 		String bootstrap = base + "bootstrap/";
-		// TODO: Fails if integration JMX context is included...
 		new GenericXmlApplicationContext( //
-				ClassUtils.addResourcePathToPackagePath(getClass(), getClass().getSimpleName() + "-context.xml"), //
 				bootstrap + "manager/execution-context.xml", //
 				bootstrap + "manager/jmx-context.xml", //
 				bootstrap + "manager/env-context.xml", //
