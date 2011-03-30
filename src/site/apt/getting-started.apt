@@ -20,7 +20,7 @@ Getting Started with Spring Batch Admin
   	with your favourite S3 tool or a service like {{{http://s3browse.springsource.com}the SpringSource s3browse app}}). 
 
     [[2]] Check out the source code from 
-  	{{{https://src.springframework.org/svn/spring-batch-admin/trunk}SVN}}.
+  	{{{https://github.com/SpringSource/spring-batch-admin}Github}}.
 
     [[3]] Use Maven to download the artifacts by creating a pom with 
   	dependency
@@ -33,7 +33,7 @@ Getting Started with Spring Batch Admin
 </dependency>
 +---
  
-      and a repository location:
+      For snapshots, add a repository location:
       
 +---
 <repository>
