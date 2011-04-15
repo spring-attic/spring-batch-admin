@@ -19,11 +19,13 @@ package org.springframework.batch.admin.web.server;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.File;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.springframework.batch.admin.ServerRunning;
@@ -31,6 +33,7 @@ import org.springframework.batch.admin.web.JsonWrapper;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.poller.DirectPoller;
 import org.springframework.batch.poller.Poller;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -48,18 +51,18 @@ public class JsonIntegrationTests {
 	@Test
 	public void testHomePage() throws Exception {
 		RestTemplate template = new RestTemplate();
-		ResponseEntity<String> result = template.exchange(serverRunning.getUrl() + "/home.json", HttpMethod.GET,
-				null, String.class);
+		ResponseEntity<String> result = template.exchange(serverRunning.getUrl() + "/home.json", HttpMethod.GET, null,
+				String.class);
 		JsonWrapper wrapper = new JsonWrapper(result.getBody());
 		assertNotNull(wrapper.get("feed.resources"));
-		assertNotNull(wrapper.get("feed.resources['/file-upload'].uri"));
+		assertNotNull(wrapper.get("feed.resources['/files'].uri"));
 	}
 
 	@Test
 	public void testJobsPage() throws Exception {
 		RestTemplate template = new RestTemplate();
-		ResponseEntity<String> result = template.exchange(serverRunning.getUrl() + "/jobs.json", HttpMethod.GET,
-				null, String.class);
+		ResponseEntity<String> result = template.exchange(serverRunning.getUrl() + "/jobs.json", HttpMethod.GET, null,
+				String.class);
 		JsonWrapper wrapper = new JsonWrapper(result.getBody());
 		// System.err.println(wrapper);
 		assertNotNull(wrapper.get("jobs.resource"));
@@ -67,11 +70,23 @@ public class JsonIntegrationTests {
 	}
 
 	@Test
+	public void testJobConfigurationUpload() throws Exception {
+		RestTemplate template = new RestTemplate();
+		HttpEntity<String> request = new HttpEntity<String>(FileUtils.readFileToString(new File("src/test/resources/test-job-context.xml")));
+		ResponseEntity<String> result = template.exchange(serverRunning.getUrl() + "/job-configuration.json", HttpMethod.POST,
+				request, String.class);
+		JsonWrapper wrapper = new JsonWrapper(result.getBody());
+		// System.err.println(wrapper);
+		assertNotNull(wrapper.get("jobs.resource"));
+		assertNotNull(wrapper.get("jobs.registrations['test-job'].name"));
+	}
+
+	@Test
 	public void testJobLaunch() throws Exception {
 
 		RestTemplate template = new RestTemplate();
-		ResponseEntity<String> result = template.exchange(serverRunning.getUrl() + "/jobs/job2.json",
-				HttpMethod.POST, null, String.class);
+		ResponseEntity<String> result = template.exchange(serverRunning.getUrl() + "/jobs/job2.json", HttpMethod.POST,
+				null, String.class);
 		JsonWrapper wrapper = new JsonWrapper(result.getBody());
 		// System.err.println(wrapper);
 		assertNotNull(wrapper.get("jobExecution.resource"));
@@ -87,8 +102,9 @@ public class JsonIntegrationTests {
 				ResponseEntity<String> result = template.exchange(resource, HttpMethod.GET, null, String.class);
 				JsonWrapper wrapper = new JsonWrapper(result.getBody());
 				// System.err.println(wrapper);
-				Map<?,?> map = wrapper.get("jobExecution.stepExecutions", Map.class);
-				return map.isEmpty() || wrapper.get("jobExecution.stepExecutions['job2.step1']['resource']")==null ? null : wrapper;
+				Map<?, ?> map = wrapper.get("jobExecution.stepExecutions", Map.class);
+				return map.isEmpty() || wrapper.get("jobExecution.stepExecutions['job2.step1']['resource']") == null ? null
+						: wrapper;
 			}
 		});
 		JsonWrapper jobExecution = poll.get(500L, TimeUnit.MILLISECONDS);
@@ -96,8 +112,9 @@ public class JsonIntegrationTests {
 		// System.err.println(jobExecution);
 
 		// Verify that there is a step execution in the result
-		result = template.exchange(jobExecution.get("jobExecution.stepExecutions['job2.step1'].resource", String.class),
-				HttpMethod.GET, null, String.class);
+		result = template.exchange(
+				jobExecution.get("jobExecution.stepExecutions['job2.step1'].resource", String.class), HttpMethod.GET,
+				null, String.class);
 		wrapper = new JsonWrapper(result.getBody());
 		// System.err.println(wrapper);
 		assertNotNull(wrapper.get("stepExecution.id"));

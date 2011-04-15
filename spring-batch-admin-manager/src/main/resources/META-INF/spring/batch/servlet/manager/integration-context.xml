@@ -8,33 +8,6 @@
 
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
 
-	<bean id="reload-job-executions" class="org.springframework.web.servlet.view.RedirectView">
-		<property name="url" value="#{resourceService.servletPath}/jobs/executions" />
-		<property name="contextRelative" value="true" />
-	</bean>
-
-	<integration:channel id="job-info" />
-
-	<integration:transformer input-channel="job-operator" output-channel="job-info">
-		<bean class="org.springframework.batch.admin.integration.JobExecutionToInfoAdapter" />
-	</integration:transformer>
-
-	<http:inbound-gateway name="/job-requests.json" request-channel="job-launches" reply-channel="job-info"
-		view-name="jobs/execution" reply-key="jobExecutionInfo" />
-
-	<http:inbound-gateway name="/job-restarts.json" request-channel="job-restarts" reply-channel="job-info"
-		view-name="jobs/execution" reply-key="jobExecutionInfo" />
-
-	<bean name="redirect:jobs" class="org.springframework.web.servlet.view.RedirectView">
-		<property name="url" value="#{resourceService.servletPath}/jobs" />
-		<property name="contextRelative" value="true" />
-	</bean>
-
-	<bean name="redirect:jobs.json" class="org.springframework.web.servlet.view.RedirectView">
-		<property name="url" value="#{resourceService.servletPath}/jobs.json" />
-		<property name="contextRelative" value="true" />
-	</bean>
-
 	<integration:channel id="job-configuration-multipart" />
 
 	<integration:transformer id="multipartToJobConfigurationRequest" input-channel="job-configuration-multipart"
@@ -50,19 +23,15 @@
 		reply-key="jobs" reply-channel="job-registrations" request-payload-type="org.springframework.core.io.Resource"
 		view-name="jobs" supported-methods="POST" message-converters="resourceHttpMessageConverter" />
 
-	<http:inbound-gateway name="/file-upload.json" request-channel="file-uploads" reply-key="files"
-		request-payload-type="java.lang.String" view-name="files" supported-methods="POST" />
+	<bean name="redirect:jobs" class="org.springframework.web.servlet.view.RedirectView">
+		<property name="url" value="#{resourceService.servletPath}/jobs" />
+		<property name="contextRelative" value="true" />
+	</bean>
 
 	<bean id="resourceHttpMessageConverter" class="org.springframework.http.converter.ResourceHttpMessageConverter" />
 
 	<bean id="multipartJobConfigurationRequestHttpMessageConverter" class="org.springframework.batch.admin.web.BindingHttpMessageConverter">
 		<property name="targetType" value="org.springframework.batch.admin.integration.MultipartJobConfigurationRequest" />
 	</bean>
-
-	<integration:service-activator input-channel="file-uploads">
-		<bean class="org.springframework.batch.admin.integration.StringToFileAdapter">
-			<property name="fileService" ref="fileService" />
-		</bean>
-	</integration:service-activator>
 
 </beans>
