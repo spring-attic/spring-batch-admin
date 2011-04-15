@@ -72,9 +72,10 @@ public class JsonIntegrationTests {
 	@Test
 	public void testJobConfigurationUpload() throws Exception {
 		RestTemplate template = new RestTemplate();
-		HttpEntity<String> request = new HttpEntity<String>(FileUtils.readFileToString(new File("src/test/resources/test-job-context.xml")));
-		ResponseEntity<String> result = template.exchange(serverRunning.getUrl() + "/job-configuration.json", HttpMethod.POST,
-				request, String.class);
+		HttpEntity<String> request = new HttpEntity<String>(FileUtils.readFileToString(new File(
+				"src/test/resources/test-job-context.xml")));
+		ResponseEntity<String> result = template.exchange(serverRunning.getUrl() + "/job-configuration.json",
+				HttpMethod.POST, request, String.class);
 		JsonWrapper wrapper = new JsonWrapper(result.getBody());
 		// System.err.println(wrapper);
 		assertNotNull(wrapper.get("jobs.resource"));
@@ -129,8 +130,9 @@ public class JsonIntegrationTests {
 	public void testJobStop() throws Exception {
 
 		RestTemplate template = new RestTemplate();
-		ResponseEntity<String> result = template.exchange(serverRunning.getUrl() + "/jobs/infinite.json",
-				HttpMethod.POST, null, String.class);
+		ResponseEntity<String> result = template.exchange(serverRunning.getUrl()
+				+ "/jobs/infinite.json?jobParameters=timestamp=" + System.currentTimeMillis(), HttpMethod.POST, null,
+				String.class);
 		JsonWrapper wrapper = new JsonWrapper(result.getBody());
 		// System.err.println(wrapper);
 		assertNotNull(wrapper.get("jobExecution.resource"));

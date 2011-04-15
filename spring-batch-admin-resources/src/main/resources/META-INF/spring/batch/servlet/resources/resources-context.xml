@@ -11,9 +11,30 @@
 
 	<mvc:resources location="/,classpath:/META-INF/" mapping="resources/**" />
 
-	<bean id="annotationMethodHandlerAdapter" class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
+	<mvc:annotation-driven />
 
-	<bean id="controllerHandlerAdapter" class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
+	<mvc:interceptors>
+		<bean class="org.springframework.batch.admin.web.interceptor.ContentTypeInterceptor">
+			<property name="extensions">
+				<list>
+					<value>rss</value>
+					<value>xml</value>
+					<value>txt</value>
+					<value>json</value>
+					<value>properties</value>
+				</list>
+			</property>
+		</bean>
+	</mvc:interceptors>
+
+	<!-- Support for Spring Integration HTTP endpoints -->
+	<bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
+
+	<!-- Support for Spring Integration HTTP endpoints -->
+	<bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping" />
+
+	<!-- Support for Freemarker beans as views -->
+	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver" />
 
 	<bean id="baseMenu" abstract="true">
 		<property name="prefix" value="#{resourceService.servletPath}" />
@@ -46,28 +67,6 @@
 			</props>
 		</property>
 	</bean>
-
-	<bean id="defaultAnnotationHandlerMapping" class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
-		<property name="interceptors" ref="contentTypeInterceptor" />
-	</bean>
-
-	<bean id="beanNameUrlHandlerMapping" class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping">
-		<property name="interceptors" ref="contentTypeInterceptor" />
-	</bean>
-
-	<bean id="contentTypeInterceptor" class="org.springframework.batch.admin.web.interceptor.ContentTypeInterceptor">
-		<property name="extensions">
-			<set>
-				<value>rss</value>
-				<value>xml</value>
-				<value>txt</value>
-				<value>json</value>
-				<value>properties</value>
-			</set>
-		</property>
-	</bean>
-
-	<bean id="beanNameViewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver" />
 
 	<bean id="parentLayout" class="org.springframework.batch.admin.web.freemarker.AjaxFreeMarkerView" abstract="true">
 		<property name="viewResolver">
