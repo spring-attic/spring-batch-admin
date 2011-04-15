@@ -70,7 +70,7 @@ public class JsonIntegrationTests {
 	public void testJobLaunch() throws Exception {
 
 		RestTemplate template = new RestTemplate();
-		ResponseEntity<String> result = template.exchange(serverRunning.getUrl() + "/jobs/job1.json",
+		ResponseEntity<String> result = template.exchange(serverRunning.getUrl() + "/jobs/job2.json",
 				HttpMethod.POST, null, String.class);
 		JsonWrapper wrapper = new JsonWrapper(result.getBody());
 		// System.err.println(wrapper);
@@ -88,14 +88,15 @@ public class JsonIntegrationTests {
 				JsonWrapper wrapper = new JsonWrapper(result.getBody());
 				// System.err.println(wrapper);
 				Map<?,?> map = wrapper.get("jobExecution.stepExecutions", Map.class);
-				return map.isEmpty() || wrapper.get("jobExecution.stepExecutions.step1['resource']")==null ? null : wrapper;
+				return map.isEmpty() || wrapper.get("jobExecution.stepExecutions['job2.step1']['resource']")==null ? null : wrapper;
 			}
 		});
 		JsonWrapper jobExecution = poll.get(500L, TimeUnit.MILLISECONDS);
 		assertNotNull(jobExecution);
+		// System.err.println(jobExecution);
 
 		// Verify that there is a step execution in the result
-		result = template.exchange(jobExecution.get("jobExecution.stepExecutions.step1.resource", String.class),
+		result = template.exchange(jobExecution.get("jobExecution.stepExecutions['job2.step1'].resource", String.class),
 				HttpMethod.GET, null, String.class);
 		wrapper = new JsonWrapper(result.getBody());
 		// System.err.println(wrapper);

@@ -19,8 +19,6 @@ package org.springframework.batch.admin.sample;
 import org.springframework.batch.core.JobInterruptedException;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.item.ExecutionContext;
 
 /**
  * Workaround for BATCH-1692, BATCH-1693.
@@ -32,8 +30,6 @@ public class RemoteStep implements Step {
 
 	private Step step;
 
-	private JobExplorer jobExplorer;
-
 	private String name;
 
 	private int startLimit = Integer.MAX_VALUE;
@@ -41,8 +37,7 @@ public class RemoteStep implements Step {
 	private boolean allowStartIfComplete = false;
 
 	/**
-	 * Set the name property. Always overrides the default value if this object
-	 * is a Spring bean.
+	 * Set the name property.
 	 * 
 	 * @see #setBeanName(java.lang.String)
 	 */
@@ -88,31 +83,8 @@ public class RemoteStep implements Step {
 		this.step = delegate;
 	}
 
-	/**
-	 * @param jobExplorer the jobExplorer to set
-	 */
-	public void setJobExplorer(JobExplorer jobExplorer) {
-		this.jobExplorer = jobExplorer;
-	}
-
 	public void execute(StepExecution stepExecution) throws JobInterruptedException {
 		step.execute(stepExecution);
-		copy(jobExplorer.getStepExecution(stepExecution.getJobExecutionId(), stepExecution.getId()), stepExecution);
-	}
-
-	private void copy(final StepExecution source, final StepExecution target) {
-		target.setStatus(source.getStatus());
-		target.setExitStatus(source.getExitStatus());
-		target.setReadCount(source.getReadCount());
-		target.setReadCount(source.getReadCount());
-		target.setWriteCount(source.getWriteCount());
-		target.setFilterCount(source.getFilterCount());
-		target.setCommitCount(source.getCommitCount());
-		target.setRollbackCount(source.getRollbackCount());
-		target.setReadSkipCount(source.getReadSkipCount());
-		target.setWriteSkipCount(source.getWriteSkipCount());
-		target.setProcessSkipCount(source.getProcessSkipCount());
-		target.setExecutionContext(new ExecutionContext(source.getExecutionContext()));
 	}
 
 }
