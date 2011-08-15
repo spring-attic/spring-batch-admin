@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beansProjectDescription>
 	<version>1</version>
-	<pluginVersion><![CDATA[2.5.1.201011101000-RELEASE]]></pluginVersion>
+	<pluginVersion><![CDATA[2.6.0.201104111100-PATCH]]></pluginVersion>
 	<configSuffixes>
 		<configSuffix><![CDATA[xml]]></configSuffix>
 	</configSuffixes>
@@ -12,6 +12,7 @@
 		<config>src/test/resources/org/springframework/batch/admin/sample/JobIntegrationTests-context.xml</config>
 		<config>src/main/resources/META-INF/spring/batch/jobs/jobs-context.xml</config>
 		<config>src/main/resources/META-INF/spring/batch/servlet/override/service-context.xml</config>
+		<config>target/classes/META-INF/spring/batch/jobs/jobs-context.xml</config>
 	</configs>
 	<configSets>
 	</configSets>

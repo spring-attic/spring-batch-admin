@@ -124,6 +124,13 @@ public class JsonIntegrationTests {
 		assertNotNull(wrapper.get("jobExecution.status"));
 		assertNotNull(wrapper.get("jobExecution.id"));
 
+		// Verify that there are step executions
+		result = template.exchange(serverRunning.getUrl() + "/jobs/executions/" + jobExecution.get("jobExecution.id") + "/steps.json",
+				HttpMethod.GET, null, String.class);
+		wrapper = new JsonWrapper(result.getBody());
+		assertNotNull(wrapper.get("jobExecution"));
+		assertNotNull(wrapper.get("stepExecutions"));
+
 	}
 
 	@Test
