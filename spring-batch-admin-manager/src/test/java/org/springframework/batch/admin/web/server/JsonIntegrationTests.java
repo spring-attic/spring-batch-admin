@@ -20,7 +20,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -33,9 +35,12 @@ import org.springframework.batch.admin.web.JsonWrapper;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.poller.DirectPoller;
 import org.springframework.batch.poller.Poller;
+import org.springframework.beans.factory.config.PropertiesFactoryBean;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -124,13 +129,6 @@ public class JsonIntegrationTests {
 		assertNotNull(wrapper.get("jobExecution.status"));
 		assertNotNull(wrapper.get("jobExecution.id"));
 
-		// Verify that there are step executions
-		result = template.exchange(serverRunning.getUrl() + "/jobs/executions/" + jobExecution.get("jobExecution.id") + "/steps.json",
-				HttpMethod.GET, null, String.class);
-		wrapper = new JsonWrapper(result.getBody());
-		assertNotNull(wrapper.get("jobExecution"));
-		assertNotNull(wrapper.get("stepExecutions"));
-
 	}
 
 	@Test
@@ -167,6 +165,36 @@ public class JsonIntegrationTests {
 		BatchStatus status = jobExecution.get("jobExecution.status", BatchStatus.class);
 		assertEquals(BatchStatus.STOPPED, status);
 
+	}
+	
+	@Test
+	public void testListedResourcesWithGet() throws Exception {
+		
+		Map<String,String> params = new HashMap<String, String>();
+		params.put("jobName", "job2");
+		// These should be there if the previous test cases worked
+		params.put("jobInstanceId", "0");
+		params.put("jobExecutionId", "0");
+		params.put("stepExecutionId", "0");
+
+		RestTemplate template = new RestTemplate();
+
+		PropertiesFactoryBean propertiesFactoryBean = new PropertiesFactoryBean();
+		propertiesFactoryBean.setLocation(new ClassPathResource("/org/springframework/batch/admin/web/manager/json-resources.properties"));
+		propertiesFactoryBean.afterPropertiesSet();
+		Properties properties = propertiesFactoryBean.getObject();
+
+		for (String path : properties.stringPropertyNames()) {
+			if (!StringUtils.hasText(path) || !path.startsWith("GET")) {
+				continue;
+			}
+			path = path.substring(path.indexOf("/"));
+			ResponseEntity<String> result = template.exchange(serverRunning.getUrl() + path, HttpMethod.GET,
+					null, String.class, params);
+			JsonWrapper wrapper = new JsonWrapper(result.getBody());
+			// System.err.println(wrapper);
+			assertNotNull(wrapper);
+		}
 	}
 
 }

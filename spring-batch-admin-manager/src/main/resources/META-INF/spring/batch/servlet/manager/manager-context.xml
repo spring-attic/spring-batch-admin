@@ -104,16 +104,6 @@
 		</property>
 	</bean>
 
-	<bean name="jobs/executions/steps.json" parent="standard.json">
-		<property name="attributes">
-			<props merge="true">
-				<prop key="body">/manager/steps/json/executions.ftl</prop>
-				<prop key="titleCode">step.executions.title</prop>
-				<prop key="titleText">Spring Batch Admin: Step Executions</prop>
-			</props>
-		</property>
-	</bean>
-
 	<bean name="jobs/executions/step" parent="standard">
 		<property name="attributes">
 			<props merge="true">
