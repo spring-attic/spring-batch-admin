@@ -67,11 +67,23 @@ public class BatchMBeanExporter extends MBeanExporter implements SmartLifecycle 
 
 	private String domain = DEFAULT_DOMAIN;
 
+	private boolean registerSteps = true;
+
 	public BatchMBeanExporter() {
 		super();
 		setAutodetect(false);
 		setNamingStrategy(new MetadataNamingStrategy(attributeSource));
 		setAssembler(new MetadataMBeanInfoAssembler(attributeSource));
+	}
+
+	/**
+	 * Flag to determine if any metrics at all should be exposed for step
+	 * executions (default true). Set to fals eto only expose job-level metrics.
+	 * 
+	 * @param registerSteps the flag to set
+	 */
+	public void setRegisterSteps(boolean registerSteps) {
+		this.registerSteps = registerSteps;
 	}
 
 	/**
@@ -118,6 +130,9 @@ public class BatchMBeanExporter extends MBeanExporter implements SmartLifecycle 
 	}
 
 	private void registerSteps() {
+		if (!registerSteps) {
+			return;
+		}
 		for (String jobName : jobService.listJobs(0, Integer.MAX_VALUE)) {
 			Collection<JobExecution> jobExecutions = Collections.emptySet();
 			try {
@@ -162,7 +177,7 @@ public class BatchMBeanExporter extends MBeanExporter implements SmartLifecycle 
 	 * @return a String representation of an ObjectName
 	 */
 	protected String getBeanKeyForJobExecution(String jobName) {
-		jobName=escapeForObjectName(jobName);
+		jobName = escapeForObjectName(jobName);
 		return String.format("%s:type=JobExecution,name=%s", domain, jobName) + getStaticNames();
 	}
 
@@ -175,11 +190,10 @@ public class BatchMBeanExporter extends MBeanExporter implements SmartLifecycle 
 	 * @return a String representation of an ObjectName
 	 */
 	protected String getBeanKeyForStepExecution(String jobName, String stepName) {
-		jobName=escapeForObjectName(jobName);
-		stepName=escapeForObjectName(stepName);
+		jobName = escapeForObjectName(jobName);
+		stepName = escapeForObjectName(stepName);
 		return String.format("%s:type=JobExecution,name=%s,step=%s", domain, jobName, stepName) + getStaticNames();
 	}
-
 
 	private String getStaticNames() {
 		if (objectNameStaticProperties.isEmpty()) {

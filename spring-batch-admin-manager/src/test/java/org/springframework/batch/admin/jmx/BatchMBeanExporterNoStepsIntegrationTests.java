@@ -40,7 +40,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
-public class BatchMBeanExporterIntegrationTests {
+public class BatchMBeanExporterNoStepsIntegrationTests {
 	
 	@Autowired
 	private MBeanServer server;
@@ -62,17 +62,8 @@ public class BatchMBeanExporterIntegrationTests {
 		JobExecution jobExecution = jobRepository.createJobExecution("foo", new JobParameters());
 		jobRepository.add(jobExecution.createStepExecution("step"));
 		init();
-		// System.err.println(server.queryNames(new ObjectName("*:type=JobExecution,name=foo,*"), null));
-		assertEquals(2, server.queryNames(new ObjectName("*:type=JobExecution,name=foo,*"), null).size());
-		assertEquals(1, server.queryNames(new ObjectName("*:type=JobExecution,name=foo,step=step,*"), null).size());
-	}
-
-	@Test
-	public void testMBeanCreationWithIllegalCharacter() throws Exception {
-		JobExecution jobExecution = jobRepository.createJobExecution("bar", new JobParameters());
-		jobRepository.add(jobExecution.createStepExecution("step:partition0"));
-		init();
-		assertEquals(2, server.queryNames(new ObjectName("*:type=JobExecution,name=bar,*"), null).size());
+		assertEquals(1, server.queryNames(new ObjectName("*:type=JobExecution,name=foo,*"), null).size());
+		assertEquals(0, server.queryNames(new ObjectName("*:type=JobExecution,name=foo,step=step,*"), null).size());
 	}
 
 }
