@@ -69,6 +69,10 @@ public class BatchMBeanExporter extends MBeanExporter implements SmartLifecycle 
 
 	private boolean registerSteps = true;
 
+	private JobExecutionMetricsFactory jobExecutionMetricsFactory = new ExecutionMetricsFactory();
+
+	private StepExecutionMetricsFactory stepExecutionMetricsFactory = new ExecutionMetricsFactory();
+
 	public BatchMBeanExporter() {
 		super();
 		setAutodetect(false);
@@ -119,6 +123,26 @@ public class BatchMBeanExporter extends MBeanExporter implements SmartLifecycle 
 		this.objectNameStaticProperties.putAll(objectNameStaticProperties);
 	}
 
+	/**
+	 * Factory for {@link JobExecutionMetrics}. Can be used to customize and
+	 * extend the metrics exposed.
+	 * 
+	 * @param stepExecutionMetricsFactory the {@link StepExecutionMetricsFactory} to set
+	 */
+	public void setStepExecutionMetricsFactory(StepExecutionMetricsFactory stepExecutionMetricsFactory) {
+		this.stepExecutionMetricsFactory = stepExecutionMetricsFactory;
+	}
+
+	/**
+	 * Factory for {@link StepExecutionMetrics}. Can be used to customize and
+	 * extend the metrics exposed.
+	 * 
+	 * @param jobExecutionMetricsFactory the {@link JobExecutionMetricsFactory} to set
+	 */
+	public void setJobExecutionMetricsFactory(JobExecutionMetricsFactory jobExecutionMetricsFactory) {
+		this.jobExecutionMetricsFactory = jobExecutionMetricsFactory;
+	}
+
 	@Override
 	public void afterPropertiesSet() {
 		Assert.state(jobService != null, "A JobService must be provided");
@@ -150,7 +174,7 @@ public class BatchMBeanExporter extends MBeanExporter implements SmartLifecycle 
 					if (!stepKeys.contains(stepKey)) {
 						stepKeys.add(stepKey);
 						logger.info("Registering step execution " + stepKey);
-						registerBeanNameOrInstance(new SimpleStepExecutionMetrics(jobService, jobName, stepName),
+						registerBeanNameOrInstance(stepExecutionMetricsFactory.createMetricsForStep(jobName, stepName),
 								beanKey);
 					}
 				}
@@ -163,7 +187,7 @@ public class BatchMBeanExporter extends MBeanExporter implements SmartLifecycle 
 			if (!jobKeys.contains(jobName)) {
 				jobKeys.add(jobName);
 				logger.info("Registering job execution " + jobName);
-				registerBeanNameOrInstance(new SimpleJobExecutionMetrics(jobService, jobName),
+				registerBeanNameOrInstance(jobExecutionMetricsFactory.createMetricsForJob(jobName),
 						getBeanKeyForJobExecution(jobName));
 			}
 		}
@@ -328,6 +352,18 @@ public class BatchMBeanExporter extends MBeanExporter implements SmartLifecycle 
 	protected void doStart() {
 		registerJobs();
 		registerSteps();
+	}
+
+	private class ExecutionMetricsFactory implements JobExecutionMetricsFactory, StepExecutionMetricsFactory {
+
+		public StepExecutionMetrics createMetricsForStep(String jobName, String stepName) {
+			return new SimpleStepExecutionMetrics(jobService, jobName, stepName);
+		}
+
+		public JobExecutionMetrics createMetricsForJob(String jobName) {
+			return new SimpleJobExecutionMetrics(jobService, jobName);
+		}
+
 	}
 
 }
