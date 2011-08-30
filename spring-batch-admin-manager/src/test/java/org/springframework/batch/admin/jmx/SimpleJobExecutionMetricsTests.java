@@ -21,6 +21,7 @@ import static org.junit.Assert.assertFalse;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -45,18 +46,33 @@ public class SimpleJobExecutionMetricsTests {
 
 	private JobExecution jobExecution;
 
+	private JobExecution earlierExecution;
+
 	@Before
 	public void init() throws Exception {
-		jobExecution = MetaDataInstanceFactory.createJobExecutionWithStepExecutions(123L, Arrays.asList("step"));
+
+		earlierExecution = MetaDataInstanceFactory.createJobExecutionWithStepExecutions(122L, Arrays.asList("step"));
+		earlierExecution.setStatus(BatchStatus.FAILED);
+		earlierExecution.setExitStatus(ExitStatus.FAILED);
+		earlierExecution.setStartTime(new Date());
+		earlierExecution.setEndTime(new Date(earlierExecution.getStartTime().getTime() + 100));
+		assertFalse(earlierExecution.isRunning());
+
+		jobExecution = MetaDataInstanceFactory.createJobExecutionWithStepExecutions(123L, Arrays.asList("first","step"));
 		jobExecution.setStatus(BatchStatus.COMPLETED);
 		jobExecution.setExitStatus(ExitStatus.COMPLETED);
 		jobExecution.setStartTime(new Date());
-		jobExecution.setEndTime(new Date(jobExecution.getStartTime().getTime() + 100));
+		jobExecution.setEndTime(new Date(earlierExecution.getEndTime().getTime() + 100));
 		assertFalse(jobExecution.isRunning());
-		StepExecution stepExecution = jobExecution.getStepExecutions().iterator().next();
+
+		Iterator<StepExecution> iterator = jobExecution.getStepExecutions().iterator();
+		iterator.next();
+		StepExecution stepExecution = iterator.next();
 		stepExecution.setStatus(BatchStatus.COMPLETED);
 		stepExecution.setExitStatus(ExitStatus.COMPLETED.addExitDescription("Foo"));
+
 		metrics = new SimpleJobExecutionMetrics(jobService, "job");
+
 	}
 	
 	@After
@@ -71,14 +87,14 @@ public class SimpleJobExecutionMetricsTests {
 	}
 
 	private void prepareServiceWithMultipleJobExecutions(int total) throws Exception {
-		jobService.listJobExecutionsForJob("job", 0, 10);
-		EasyMock.expectLastCall().andReturn(Arrays.asList(jobExecution));
+		jobService.listJobExecutionsForJob("job", 0, total);
+		EasyMock.expectLastCall().andReturn(Arrays.asList(earlierExecution, jobExecution));
 		EasyMock.replay(jobService);
 	}
 
 	private void prepareServiceWithMultipleJobExecutions() throws Exception {
 		jobService.listJobExecutionsForJob("job", 0, 100);
-		EasyMock.expectLastCall().andReturn(Arrays.asList(jobExecution));
+		EasyMock.expectLastCall().andReturn(Arrays.asList(jobExecution, earlierExecution));
 		jobService.listJobExecutionsForJob("job", 100, 100);
 		EasyMock.expectLastCall().andReturn(Arrays.asList());
 		EasyMock.replay(jobService);
@@ -95,7 +111,7 @@ public class SimpleJobExecutionMetricsTests {
 	@Test
 	public void testGetJobExecutionFailureCount() throws Exception {
 		prepareServiceWithMultipleJobExecutions();
-		assertEquals(0, metrics.getFailureCount());
+		assertEquals(1, metrics.getFailureCount());
 	}
 
 	@Test
@@ -147,6 +163,13 @@ public class SimpleJobExecutionMetricsTests {
 	public void testGetLatestJobExecutionLastStepExitDescription() throws Exception {
 		prepareServiceWithSingleJobExecution();
 		assertEquals("Foo", metrics.getLatestStepExitDescription());
+	}
+
+	@Test
+	public void testGetLatestJobExecutionWhenTied() throws Exception {
+		prepareServiceWithMultipleJobExecutions(4);
+		earlierExecution.setCreateTime(new Date(jobExecution.getCreateTime().getTime()));
+		assertEquals("COMPLETED", metrics.getLatestStatus());
 	}
 
 	@Test

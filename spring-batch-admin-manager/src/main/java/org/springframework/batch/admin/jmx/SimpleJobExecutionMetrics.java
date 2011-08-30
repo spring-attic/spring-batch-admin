@@ -117,37 +117,13 @@ public class SimpleJobExecutionMetrics implements JobExecutionMetrics {
 
 	public String getLatestStepExitDescription() {
 		JobExecution jobExecution = getLatestJobExecution(jobName);
-		Collection<StepExecution> stepExecutions = jobExecution.getStepExecutions();
-		StepExecution stepExecution = null;
-		if (!stepExecutions.isEmpty()) {
-			Date latest = new Date(0L);
-			for (StepExecution candidate : stepExecutions) {
-				Date stepDate = candidate.getEndTime();
-				stepDate = stepDate==null ? new Date() : stepDate;
-				if (stepDate.after(latest)) {
-					latest = stepDate;
-					stepExecution = candidate;
-				}				
-			}
-		}
+		StepExecution stepExecution = getLatestStepExecution(jobExecution);
 		return stepExecution==null ? "" : stepExecution.getExitStatus().getExitDescription();
 	}
 
 	public String getLatestStepName() {
 		JobExecution jobExecution = getLatestJobExecution(jobName);
-		Collection<StepExecution> stepExecutions = jobExecution.getStepExecutions();
-		StepExecution stepExecution = null;
-		if (!stepExecutions.isEmpty()) {
-			Date latest = new Date(0L);
-			for (StepExecution candidate : stepExecutions) {
-				Date stepDate = candidate.getEndTime();
-				stepDate = stepDate==null ? new Date() : stepDate;
-				if (stepDate.after(latest)) {
-					latest = stepDate;
-					stepExecution = candidate;
-				}				
-			}
-		}
+		StepExecution stepExecution = getLatestStepExecution(jobExecution);
 		return stepExecution==null ? "" : stepExecution.getStepName();
 	}
 
@@ -177,12 +153,37 @@ public class SimpleJobExecutionMetrics implements JobExecutionMetrics {
 					result = jobExecution;
 					lastUpdated = updated;
 				}
+				else if (result!=null && updated == lastUpdated && jobExecution.getId() > result.getId()) {
+					// Tie breaker using ID
+					result = jobExecution;
+				}
 			}
 			return result;
 		}
 		catch (NoSuchJobException e) {
 			throw new IllegalStateException("Cannot locate job=" + jobName, e);
 		}
+	}
+
+	private StepExecution getLatestStepExecution(JobExecution jobExecution) {
+		Collection<StepExecution> stepExecutions = jobExecution.getStepExecutions();
+		StepExecution stepExecution = null;
+		if (!stepExecutions.isEmpty()) {
+			Date latest = new Date(0L);
+			for (StepExecution candidate : stepExecutions) {
+				Date stepDate = candidate.getEndTime();
+				stepDate = stepDate==null ? new Date() : stepDate;
+				if (stepDate.after(latest)) {
+					latest = stepDate;
+					stepExecution = candidate;
+				}
+				else if (stepExecution!=null && stepDate.equals(latest) && candidate.getId()>stepExecution.getId()) {
+					// Tie breaker using ID
+					stepExecution = candidate;						
+				}
+			}
+		}
+		return stepExecution;
 	}
 
 	private JobExecutionHistory computeHistory(String jobName, int total) {
