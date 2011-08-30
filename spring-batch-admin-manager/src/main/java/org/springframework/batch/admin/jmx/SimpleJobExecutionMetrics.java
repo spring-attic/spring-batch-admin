@@ -133,6 +133,24 @@ public class SimpleJobExecutionMetrics implements JobExecutionMetrics {
 		return stepExecution==null ? "" : stepExecution.getExitStatus().getExitDescription();
 	}
 
+	public String getLatestStepName() {
+		JobExecution jobExecution = getLatestJobExecution(jobName);
+		Collection<StepExecution> stepExecutions = jobExecution.getStepExecutions();
+		StepExecution stepExecution = null;
+		if (!stepExecutions.isEmpty()) {
+			Date latest = new Date(0L);
+			for (StepExecution candidate : stepExecutions) {
+				Date stepDate = candidate.getEndTime();
+				stepDate = stepDate==null ? new Date() : stepDate;
+				if (stepDate.after(latest)) {
+					latest = stepDate;
+					stepExecution = candidate;
+				}				
+			}
+		}
+		return stepExecution==null ? "" : stepExecution.getStepName();
+	}
+
 	public boolean isJobRunning() {
 		JobExecution jobExecution = getLatestJobExecution(jobName);
 		return jobExecution==null ? false : jobExecution.isRunning();

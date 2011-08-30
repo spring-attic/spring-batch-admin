@@ -60,6 +60,9 @@ public interface JobExecutionMetrics {
 	@ManagedAttribute(description = "Latest Step Execution Exit Description")
 	String getLatestStepExitDescription();
 
+	@ManagedAttribute(description = "Latest Step Execution Step Name")
+	String getLatestStepName();
+
 	@ManagedAttribute(description = "Check if there is a Running Job Execution")
 	boolean isJobRunning();
 

@@ -150,6 +150,12 @@ public class SimpleJobExecutionMetricsTests {
 	}
 
 	@Test
+	public void testGetLatestJobExecutionLastStepName() throws Exception {
+		prepareServiceWithSingleJobExecution();
+		assertEquals("step", metrics.getLatestStepName());
+	}
+
+	@Test
 	public void testIsJobExecutionCurrentlyRunning() throws Exception {
 		prepareServiceWithSingleJobExecution();
 		assertEquals(false, metrics.isJobRunning());
