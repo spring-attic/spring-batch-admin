@@ -91,7 +91,7 @@ public class JsonIntegrationTests {
 	public void testJobLaunch() throws Exception {
 
 		RestTemplate template = new RestTemplate();
-		ResponseEntity<String> result = template.exchange(serverRunning.getUrl() + "/jobs/job2.json", HttpMethod.POST,
+		ResponseEntity<String> result = template.exchange(serverRunning.getUrl() + "/jobs/job2.json?jobParameters=fail=true", HttpMethod.POST,
 				null, String.class);
 		JsonWrapper wrapper = new JsonWrapper(result.getBody());
 		// System.err.println(wrapper);
