@@ -18,6 +18,7 @@ package org.springframework.batch.admin.service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -289,6 +290,7 @@ public class SimpleJobService implements JobService, DisposableBean {
 
 		logger.info("Aborting job execution: " + jobExecution);
 		jobExecution.upgradeStatus(BatchStatus.ABANDONED);
+		jobExecution.setEndTime(new Date());
 		jobRepository.update(jobExecution);
 		return jobExecution;
 
