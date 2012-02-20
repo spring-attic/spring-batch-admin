@@ -262,6 +262,7 @@ public class SimpleJobServiceTests {
 		EasyMock.replay(jobExecutionDao, jobRepository);
 		service.abandon(123L);
 		assertEquals(BatchStatus.ABANDONED, jobExecution.getStatus());
+		assertNotNull(jobExecution.getEndTime());
 		EasyMock.verify(jobExecutionDao, jobRepository);
 	}
 
