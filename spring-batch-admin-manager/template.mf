@@ -26,3 +26,5 @@ Import-Template:
  javax.sql;version="0",
  javax.servlet.*;version="0";resolution:=optional,
  org.w3c.dom.*;version="0"
+Import-Package: 
+ org.springframework.jmx.support;version="[3.0.0, 4.0.0)"
