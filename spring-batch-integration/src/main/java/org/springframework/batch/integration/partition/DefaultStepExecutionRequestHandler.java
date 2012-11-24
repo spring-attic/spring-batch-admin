@@ -38,7 +38,7 @@ import java.util.List;
  *
  * @author Sebastien Gerard
  */
-public class DefaultStepExecutionRequestHandler implements StepExecutionRequestHandlerProcessor {
+public class DefaultStepExecutionRequestHandler implements StepExecutionRequestHandler {
 
     private static final Log logger = LogFactory.getLog(DefaultStepExecutionRequestHandler.class);
 
