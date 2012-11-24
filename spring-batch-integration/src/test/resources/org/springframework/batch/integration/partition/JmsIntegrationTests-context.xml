@@ -35,7 +35,7 @@
 	<aggregator ref="partitionHandler" input-channel="staging" xmlns="http://www.springframework.org/schema/integration" />
 
 	<!-- This is the "remote" worker (which in this case is local) -->
-	<bean id="stepExecutionRequestHandler" class="org.springframework.batch.integration.partition.StepExecutionRequestHandler"
+	<bean id="stepExecutionRequestHandler" class="org.springframework.batch.integration.partition.StepExecutionRequestProcessor"
 		p:jobExplorer-ref="jobExplorer" p:stepLocator-ref="stepLocator" />
 
 	<bean id="stepLocator" class="org.springframework.batch.integration.partition.BeanFactoryStepLocator" />
