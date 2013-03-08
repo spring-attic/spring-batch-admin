@@ -87,11 +87,11 @@
 				<td>Exit Code</td>
 				<td>${jobExecutionInfo.jobExecution.exitStatus.exitCode}</td>
 			</tr>
-			<tr class="name-sublevel1-odd">
+			<tr class="name-sublevel1-even">
 				<td>Exit Message</td>
 				<td>${jobExecutionInfo.jobExecution.exitStatus.exitDescription}</td>
 			</tr>
-			<tr class="name-sublevel1-even">
+			<tr class="name-sublevel1-odd">
 				<#assign url><@spring.url relativeUrl="${servletPath}/jobs/executions/${jobExecutionInfo.id?c}/steps"/></#assign>
 				<td>Step Executions Count</td>
 				<td><a href="${url}"/>${jobExecutionInfo.stepExecutionCount}</a></td>
