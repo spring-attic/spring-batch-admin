@@ -50,7 +50,7 @@ public class JdbcSearchableJobInstanceDao extends JdbcJobInstanceDao implements 
 	 * @see SearchableJobInstanceDao#countJobInstances (String)
 	 */
 	public int countJobInstances(String name) {
-		return getJdbcTemplate().queryForInt(getQuery(GET_COUNT_BY_JOB_NAME), name);
+		return getJdbcTemplate().queryForObject(getQuery(GET_COUNT_BY_JOB_NAME), Integer.class, name);
 	}
 
 }

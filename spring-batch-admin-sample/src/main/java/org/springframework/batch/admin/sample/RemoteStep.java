@@ -39,16 +39,17 @@ public class RemoteStep implements Step {
 	/**
 	 * Set the name property.
 	 * 
-	 * @see #setBeanName(java.lang.String)
 	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
+	@Override
 	public String getName() {
 		return this.name;
 	}
 
+	@Override
 	public int getStartLimit() {
 		return this.startLimit;
 	}
@@ -62,6 +63,7 @@ public class RemoteStep implements Step {
 		this.startLimit = startLimit;
 	}
 
+	@Override
 	public boolean isAllowStartIfComplete() {
 		return this.allowStartIfComplete;
 	}
@@ -83,6 +85,7 @@ public class RemoteStep implements Step {
 		this.step = delegate;
 	}
 
+	@Override
 	public void execute(StepExecution stepExecution) throws JobInterruptedException {
 		step.execute(stepExecution);
 	}

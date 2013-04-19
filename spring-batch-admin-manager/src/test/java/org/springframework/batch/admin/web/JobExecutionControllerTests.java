@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2010 the original author or authors.
+ * Copyright 2009-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -138,11 +138,11 @@ public class JobExecutionControllerTests {
 		ExtendedModelMap model = new ExtendedModelMap();
 		String result = controller.listForInstance(model, "foo", 11L, null, null);
 		// JobExecutions, JobInfo, JobInstance, jobParameters
-		assertEquals(4, model.size());
+		assertEquals(2, model.size());
 		assertEquals("jobs/executions", result);
 
 		assertTrue(model.containsKey("jobInfo"));
-		assertTrue(model.containsKey("jobInstanceInfo"));
+		assertTrue(model.containsKey("jobExecutions"));
 
 		EasyMock.verify(jobService);
 
@@ -160,7 +160,7 @@ public class JobExecutionControllerTests {
 		String result = controller.listForInstance(model, "foo", 11L, null, errors);
 		assertEquals(1, errors.getAllErrors().size());
 		assertEquals("jobs/executions", result);
-		
+
 		EasyMock.verify(jobService);
 
 	}
@@ -177,7 +177,7 @@ public class JobExecutionControllerTests {
 		String result = controller.listForInstance(model, "foo", 11L, null, errors);
 		assertEquals(1, errors.getAllErrors().size());
 		assertEquals("jobs/executions", result);
-		
+
 		EasyMock.verify(jobService);
 
 	}

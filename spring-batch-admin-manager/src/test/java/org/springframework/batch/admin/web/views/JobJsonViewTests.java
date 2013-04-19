@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2010 the original author or authors.
+ * Copyright 2009-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,7 +60,7 @@ public class JobJsonViewTests extends AbstractManagerViewTests {
 		model.put(BindingResult.MODEL_KEY_PREFIX + "launchRequest", errors);
 		model.put("jobInfo", new JobInfo("foo", 1));
 		model.put("jobInstances", Arrays.asList(new JobInstanceInfo(MetaDataInstanceFactory.createJobInstance("foo",
-				1L, "bar=spam"), new ArrayList<JobExecution>())));
+				1L), new ArrayList<JobExecution>())));
 		model.put("baseUrl", "http://localhost:8080/springsource");
 		model.put("startJobInstance", 11);
 		model.put("endJobInstance", 30);
@@ -69,7 +69,7 @@ public class JobJsonViewTests extends AbstractManagerViewTests {
 		model.put("previousJobInstance", 21);
 		job.render(model, request, response);
 		String content = response.getContentAsString();
-		System.err.println(content);
+		//		System.err.println(content);
 		JsonWrapper wrapper = new JsonWrapper(content);
 		assertEquals(1, wrapper.get("job.jobInstances", Map.class).size());
 		assertEquals(4, wrapper.get("job", Map.class).size());
@@ -81,14 +81,14 @@ public class JobJsonViewTests extends AbstractManagerViewTests {
 		model.put(BindingResult.MODEL_KEY_PREFIX + "launchRequest", errors);
 		model.put("jobInfo", new JobInfo("foo", 1));
 		model.put("jobInstances", Arrays.asList(new JobInstanceInfo(MetaDataInstanceFactory.createJobInstance("foo",
-				1L, "bar=spam"), new ArrayList<JobExecution>())));
+				1L), new ArrayList<JobExecution>())));
 		model.put("baseUrl", "http://localhost:8080/springsource");
 		model.put("startJobInstance", 11);
 		model.put("endJobInstance", 30);
 		model.put("totalJobInstances", 100);
 		job.render(model, request, response);
 		String content = response.getContentAsString();
-		System.err.println(content);
+		//		System.err.println(content);
 		JsonWrapper wrapper = new JsonWrapper(content);
 		assertEquals(1, wrapper.get("job.jobInstances", Map.class).size());
 		assertEquals(3, wrapper.get("job", Map.class).size());
@@ -128,13 +128,13 @@ public class JobJsonViewTests extends AbstractManagerViewTests {
 		model.put(BindingResult.MODEL_KEY_PREFIX + "launchRequest", errors);
 		model.put("jobInfo", new JobInfo("foo", 1));
 		model.put("jobInstances", Arrays.asList(new JobInstanceInfo(MetaDataInstanceFactory.createJobInstance("foo",
-				123456789L, "bar=spam"), Arrays.asList(MetaDataInstanceFactory.createJobExecution()))));
+				123456789L), Arrays.asList(MetaDataInstanceFactory.createJobExecution()))));
 		model.put("baseUrl", "http://localhost:8080/springsource");
 		job.render(model, request, response);
 		String content = response.getContentAsString();
-		// System.err.println(content);
+		//		System.err.println(content);
 		JsonWrapper wrapper = new JsonWrapper(content);
-		assertEquals("STARTING", wrapper.get("job.jobInstances[123456789].lastJobExecutionStatus", String.class));
+		assertEquals("STARTING", wrapper.get("job.jobInstances['123456789'].lastJobExecutionStatus", String.class));
 	}
 
 	@Test

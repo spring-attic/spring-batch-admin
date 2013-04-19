@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2010 the original author or authors.
+ * Copyright 2009-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.configuration.DuplicateJobException;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.configuration.support.ApplicationContextFactory;
-import org.springframework.batch.core.configuration.support.ClassPathXmlApplicationContextFactory;
+import org.springframework.batch.core.configuration.support.GenericApplicationContextFactory;
 import org.springframework.batch.core.configuration.support.JobLoader;
 import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.beans.BeansException;
@@ -43,6 +43,7 @@ import org.springframework.integration.annotation.ServiceActivator;
  * custom editor configuration from the parent.
  * 
  * @author Dave Syer
+ * @author Michael Minella
  * 
  */
 @MessageEndpoint
@@ -57,11 +58,11 @@ public class JobConfigurationResourceLoader implements ApplicationContextAware {
 	public void setJobLoader(JobLoader jobLoader) {
 		this.jobLoader = jobLoader;
 	}
-	
+
 	public void setJobService(JobService jobService) {
 		this.jobService = jobService;
 	}
-	
+
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		this.parent = applicationContext;
 	}
@@ -95,7 +96,7 @@ public class JobConfigurationResourceLoader implements ApplicationContextAware {
 	/**
 	 * Create an application context from the resource provided. Extension point
 	 * for subclasses if they need to customize the context in any way. The
-	 * default uses a {@link ClassPathXmlApplicationContextFactory}.
+	 * default uses a {@link GenericApplicationContextFactory}.
 	 * 
 	 * @param parent the parent application context (or null if there is none)
 	 * @param resource the location of the XML configuration
@@ -103,8 +104,7 @@ public class JobConfigurationResourceLoader implements ApplicationContextAware {
 	 * @return an application context containing jobs
 	 */
 	protected ApplicationContextFactory createApplicationContextFactory(ApplicationContext parent, Resource resource) {
-		ClassPathXmlApplicationContextFactory applicationContextFactory = new ClassPathXmlApplicationContextFactory();
-		applicationContextFactory.setResource(resource);
+		GenericApplicationContextFactory applicationContextFactory = new GenericApplicationContextFactory(resource);
 		if (parent != null) {
 			applicationContextFactory.setApplicationContext(parent);
 		}
