@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2010 the original author or authors.
+ * Copyright 2009-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,15 +55,13 @@ public class JobExecutionsJsonViewTests extends AbstractManagerViewTests {
 		model.put("jobExecutions", Arrays.asList(new JobExecutionInfo(jobExecution, TimeZone.getTimeZone("GMT"))));
 		model.put("baseUrl", "http://localhost:8080/springsource");
 		model.put("jobInfo", new JobInfo("foo", 1, 123L, false, false));
-		model.put("jobInstanceInfo", new JobInstanceInfo(MetaDataInstanceFactory.createJobInstance("job", 112L,
-				"foo=bar,spam=foo"), Arrays.asList(jobExecution)));
+		model.put("jobInstanceInfo", new JobInstanceInfo(MetaDataInstanceFactory.createJobInstance("job", 112L), Arrays.asList(jobExecution)));
 		view.render(model, request, response);
 		String content = response.getContentAsString();
-		// System.err.println(content);
+		//		System.err.println(content);
 		assertTrue(content.contains("jobInstance"));
 		JsonWrapper wrapper = new JsonWrapper(content);
 		assertEquals(3, wrapper.get("jobInstance", Map.class).size());
-		assertEquals(2, wrapper.get("jobInstance.jobParameters", Map.class).size());
 	}
 
 	@Test

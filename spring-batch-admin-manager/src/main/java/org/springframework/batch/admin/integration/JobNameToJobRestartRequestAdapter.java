@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2010 the original author or authors.
+ * Copyright 2009-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.springframework.batch.admin.integration;
 
 import java.util.List;
 
+import org.springframework.batch.admin.web.LaunchRequest;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
@@ -31,11 +32,12 @@ import org.springframework.integration.annotation.MessageEndpoint;
 import org.springframework.integration.annotation.ServiceActivator;
 
 /**
- * Adapt a job name to a {@link JobLaunchRequest} for restarting the last failed
+ * Adapt a job name to a {@link LaunchRequest} for restarting the last failed
  * execution of the {@link Job}. The parameters of the last execution are pulled
  * out of the {@link JobExplorer}.
  * 
  * @author Dave Syer
+ * @author Michael Minella
  * 
  */
 @MessageEndpoint
@@ -55,7 +57,7 @@ public class JobNameToJobRestartRequestAdapter {
 
 	@ServiceActivator
 	public JobLaunchRequest adapt(String jobName) throws NoSuchJobException,
-			JobParametersNotFoundException {
+	JobParametersNotFoundException {
 		jobName = jobName.trim();
 		Job job = jobLocator.getJob(jobName);
 		JobParameters jobParameters = getLastFailedJobParameters(jobName);
@@ -94,7 +96,7 @@ public class JobNameToJobRestartRequestAdapter {
 						.size() - 1);
 				if (jobExecution.getStatus()
 						.isGreaterThan(BatchStatus.STOPPING)) {
-					jobParameters = jobInstance.getJobParameters();
+					jobParameters = jobExecution.getJobParameters();
 					break;
 				}
 			}

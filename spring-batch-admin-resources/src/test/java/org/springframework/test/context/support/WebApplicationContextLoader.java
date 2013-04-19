@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2010 the original author or authors.
+ * Copyright 2009-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigUtils;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.mock.web.MockServletContext;
+import org.springframework.test.context.MergedContextConfiguration;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.GenericWebApplicationContext;
@@ -83,4 +84,25 @@ public class WebApplicationContextLoader extends AbstractContextLoader {
 		servletContext.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, context);
 	}
 
+	public ApplicationContext loadContext(MergedContextConfiguration config)
+			throws Exception {
+		GenericWebApplicationContext context = new GenericWebApplicationContext();
+
+		// Commented out until SPR-10392 is fixed and we can upgrade to Spring 3.2.3.RELEASE or higher
+		//		ApplicationContext parent = config.getParentApplicationContext();
+		//		if(parent != null) {
+		//			context.setParent(parent);
+		//		}
+
+		prepareContext(context);
+		prepareContext(context, config);
+		customizeBeanFactory(context.getDefaultListableBeanFactory());
+		createBeanDefinitionReader(context).loadBeanDefinitions(config.getLocations());
+		AnnotationConfigUtils.registerAnnotationConfigProcessors(context);
+		customizeContext(context);
+		context.refresh();
+		context.registerShutdownHook();
+
+		return context;
+	}
 }

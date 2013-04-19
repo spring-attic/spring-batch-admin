@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2010 the original author or authors.
+ * Copyright 2009-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ public class JobViewTests extends AbstractManagerViewTests {
 	@Autowired
 	@Qualifier("jobs/job")
 	private View job;
-	
+
 	@Test
 	public void testRegex() throws Exception {
 		String pattern = "([\\w\\.-_\\)\\(]+=.*[,\\n])*([\\w\\.-_\\)\\(]+=.*)";
@@ -78,7 +78,7 @@ public class JobViewTests extends AbstractManagerViewTests {
 	public void testJobView() throws Exception {
 		model.put("jobInfo", new JobInfo("foo", 1, true));
 		model.put("jobInstances", Arrays.asList(new JobInstanceInfo(MetaDataInstanceFactory.createJobInstance("foo",
-				1L, "bar=spam"), new ArrayList<JobExecution>())));
+				1L), new ArrayList<JobExecution>())));
 		model.put("jobParameters", "foo=bar");
 		model.put("startJobInstance", 3);
 		model.put("endJobInstance", 4);
@@ -89,7 +89,6 @@ public class JobViewTests extends AbstractManagerViewTests {
 		String content = response.getContentAsString();
 		// System.err.println(content);
 		assertTrue(content.contains("Job name=foo"));
-		assertTrue(content.contains("foo=bar"));
 		assertTrue(content.contains("<form id=\"launchForm\" action=\"/jobs/foo\" method=\"POST\">"));
 		assertFalse(content.contains("<input type=\"hidden\" name=\"_method\""));
 		assertTrue(content.contains("<th>ID</th>"));
@@ -99,15 +98,14 @@ public class JobViewTests extends AbstractManagerViewTests {
 	public void testJobViewNotLaunchable() throws Exception {
 		model.put("job", new JobInfo("foo", 1));
 		model.put("jobInstances", Arrays.asList(new JobInstanceInfo(MetaDataInstanceFactory.createJobInstance("foo",
-				1L, "bar=spam"), new ArrayList<JobExecution>())));
+				1L), new ArrayList<JobExecution>())));
 		model.put("launchable", false);
 		model.put("startJobInstance", 3);
 		model.put("endJobInstance", 4);
 		model.put("totalJobInstances", 100);
 		job.render(model, request, response);
 		String content = response.getContentAsString();
-		// System.err.println(content);
 		assertFalse(content.contains("<form id=\"launchForm\" action=\"/jobs/foo\" method=\"POST\">"));
 	}
-	
+
 }

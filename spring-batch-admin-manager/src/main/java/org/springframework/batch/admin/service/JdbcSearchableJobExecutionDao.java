@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2007 the original author or authors.
+ * Copyright 2006-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -28,16 +30,18 @@ import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.repository.dao.JdbcJobExecutionDao;
+import org.springframework.batch.item.database.Order;
 import org.springframework.batch.item.database.PagingQueryProvider;
 import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.jdbc.support.incrementer.AbstractDataFieldMaxValueIncrementer;
 import org.springframework.util.Assert;
 
 /**
  * @author Dave Syer
+ * @author Michael Minella
  * 
  */
 public class JdbcSearchableJobExecutionDao extends JdbcJobExecutionDao implements SearchableJobExecutionDao {
@@ -76,7 +80,7 @@ public class JdbcSearchableJobExecutionDao extends JdbcJobExecutionDao implement
 		Assert.state(dataSource != null, "DataSource must be provided");
 
 		if (getJdbcTemplate() == null) {
-			setJdbcTemplate(new SimpleJdbcTemplate(dataSource));
+			setJdbcTemplate(new JdbcTemplate(dataSource));
 		}
 		setJobExecutionIncrementer(new AbstractDataFieldMaxValueIncrementer() {
 			@Override
@@ -120,8 +124,9 @@ public class JdbcSearchableJobExecutionDao extends JdbcJobExecutionDao implement
 		fromClause = "%PREFIX%JOB_EXECUTION E, %PREFIX%JOB_INSTANCE I" + (fromClause == null ? "" : ", " + fromClause);
 		factory.setFromClause(getQuery(fromClause));
 		factory.setSelectClause(FIELDS);
-		factory.setSortKey("E.JOB_EXECUTION_ID");
-		factory.setAscending(false);
+		Map<String, Order> sortKeys = new HashMap<String, Order>();
+		sortKeys.put("E.JOB_EXECUTION_ID", Order.DESCENDING);
+		factory.setSortKeys(sortKeys);
 		whereClause = "E.JOB_INSTANCE_ID=I.JOB_INSTANCE_ID" + (whereClause == null ? "" : " and " + whereClause);
 		if (whereClause != null) {
 			factory.setWhereClause(whereClause);
@@ -132,20 +137,23 @@ public class JdbcSearchableJobExecutionDao extends JdbcJobExecutionDao implement
 	/**
 	 * @see SearchableJobExecutionDao#countJobExecutions()
 	 */
+	@Override
 	public int countJobExecutions() {
-		return getJdbcTemplate().queryForInt(getQuery(GET_COUNT));
+		return getJdbcTemplate().queryForObject(getQuery(GET_COUNT), Integer.class);
 	}
 
 	/**
 	 * @see SearchableJobExecutionDao#countJobExecutions(String)
 	 */
+	@Override
 	public int countJobExecutions(String jobName) {
-		return getJdbcTemplate().queryForInt(getQuery(GET_COUNT_BY_JOB_NAME), jobName);
+		return getJdbcTemplate().queryForObject(getQuery(GET_COUNT_BY_JOB_NAME), Integer.class, jobName);
 	}
 
 	/**
 	 * @see SearchableJobExecutionDao#getRunningJobExecutions()
 	 */
+	@Override
 	public Collection<JobExecution> getRunningJobExecutions() {
 		return getJdbcTemplate().query(getQuery(GET_RUNNING_EXECUTIONS), new JobExecutionRowMapper());
 	}
@@ -153,14 +161,15 @@ public class JdbcSearchableJobExecutionDao extends JdbcJobExecutionDao implement
 	/**
 	 * @see SearchableJobExecutionDao#getJobExecutions(String, int, int)
 	 */
+	@Override
 	public List<JobExecution> getJobExecutions(String jobName, int start, int count) {
 		if (start <= 0) {
 			return getJdbcTemplate().query(byJobNamePagingQueryProvider.generateFirstPageQuery(count),
 					new JobExecutionRowMapper(), jobName);
 		}
 		try {
-			Long startAfterValue = getJdbcTemplate().queryForLong(
-					byJobNamePagingQueryProvider.generateJumpToItemQuery(start, count), jobName);
+			Long startAfterValue = getJdbcTemplate().queryForObject(
+					byJobNamePagingQueryProvider.generateJumpToItemQuery(start, count), Long.class, jobName);
 			return getJdbcTemplate().query(byJobNamePagingQueryProvider.generateRemainingPagesQuery(count),
 					new JobExecutionRowMapper(), jobName, startAfterValue);
 		}
@@ -172,14 +181,15 @@ public class JdbcSearchableJobExecutionDao extends JdbcJobExecutionDao implement
 	/**
 	 * @see SearchableJobExecutionDao#getJobExecutions(int, int)
 	 */
+	@Override
 	public List<JobExecution> getJobExecutions(int start, int count) {
 		if (start <= 0) {
 			return getJdbcTemplate().query(allExecutionsPagingQueryProvider.generateFirstPageQuery(count),
 					new JobExecutionRowMapper());
 		}
 		try {
-			Long startAfterValue = getJdbcTemplate().queryForLong(
-					allExecutionsPagingQueryProvider.generateJumpToItemQuery(start, count));
+			Long startAfterValue = getJdbcTemplate().queryForObject(
+					allExecutionsPagingQueryProvider.generateJumpToItemQuery(start, count), Long.class);
 			return getJdbcTemplate().query(allExecutionsPagingQueryProvider.generateRemainingPagesQuery(count),
 					new JobExecutionRowMapper(), startAfterValue);
 		}
@@ -214,12 +224,14 @@ public class JdbcSearchableJobExecutionDao extends JdbcJobExecutionDao implement
 		public JobExecutionRowMapper() {
 		}
 
+		@Override
 		public JobExecution mapRow(ResultSet rs, int rowNum) throws SQLException {
 			Long id = rs.getLong(1);
 			JobExecution jobExecution;
 
-			JobInstance jobInstance = new JobInstance(rs.getLong(10), null, rs.getString(11));
-			jobExecution = new JobExecution(jobInstance, id);
+			JobInstance jobInstance = new JobInstance(rs.getLong(10), rs.getString(11));
+			jobExecution = new JobExecution(jobInstance, null);
+			jobExecution.setId(id);
 
 			jobExecution.setStartTime(rs.getTimestamp(2));
 			jobExecution.setEndTime(rs.getTimestamp(3));

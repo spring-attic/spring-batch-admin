@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2010 the original author or authors.
+ * Copyright 2009-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,10 +37,10 @@ import org.springframework.batch.item.database.support.DefaultDataFieldMaxValueI
 import org.springframework.batch.support.DatabaseType;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.jdbc.core.simple.SimpleJdbcOperations;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.lob.DefaultLobHandler;
 import org.springframework.jdbc.support.lob.LobHandler;
-import org.springframework.jdbc.support.lob.OracleLobHandler;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
@@ -56,7 +56,7 @@ public class SimpleJobServiceFactoryBean implements FactoryBean<JobService>, Ini
 
 	private DataSource dataSource;
 
-	private SimpleJdbcOperations jdbcTemplate;
+	private JdbcOperations jdbcTemplate;
 
 	private String databaseType;
 
@@ -169,7 +169,7 @@ public class SimpleJobServiceFactoryBean implements FactoryBean<JobService>, Ini
 		Assert.notNull(jobLocator, "JobLocator must not be null.");
 		Assert.notNull(jobLauncher, "JobLauncher must not be null.");
 
-		jdbcTemplate = new SimpleJdbcTemplate(dataSource);
+		jdbcTemplate = new JdbcTemplate(dataSource);
 
 		if (incrementerFactory == null) {
 			incrementerFactory = new DefaultDataFieldMaxValueIncrementerFactory(dataSource);
@@ -180,8 +180,8 @@ public class SimpleJobServiceFactoryBean implements FactoryBean<JobService>, Ini
 			logger.info("No database type set, using meta data indicating: " + databaseType);
 		}
 
-		if (lobHandler == null && databaseType.equalsIgnoreCase(DatabaseType.ORACLE.toString())) {
-			lobHandler = new OracleLobHandler();
+		if (lobHandler == null) {
+			lobHandler = new DefaultLobHandler();
 		}
 
 		Assert.isTrue(incrementerFactory.isSupportedIncrementerType(databaseType), "'" + databaseType

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2010 the original author or authors.
+ * Copyright 2009-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,6 +50,7 @@ import org.springframework.web.util.HtmlUtils;
  * Controller for listing and launching jobs.
  * 
  * @author Dave Syer
+ * @author Michael Minella
  * 
  */
 @Controller
@@ -165,18 +166,10 @@ public class JobController {
 
 			Collection<JobInstance> result = jobService.listJobInstances(jobName, startJobInstance, pageSize);
 			Collection<JobInstanceInfo> jobInstances = new ArrayList<JobInstanceInfo>();
-			boolean parametersAdded = false;
 			model.addAttribute("jobParameters", "");
 			for (JobInstance jobInstance : result) {
 				jobInstances.add(new JobInstanceInfo(jobInstance, jobService.getJobExecutionsForJobInstance(jobName,
 						jobInstance.getId())));
-				if (!parametersAdded) {
-					parametersAdded = true;
-					// get the latest parameters as defined by the sort order in
-					// the job service
-					model.addAttribute("jobParameters",
-							jobParametersExtractor.fromJobParameters(jobInstance.getJobParameters()));
-				}
 			}
 
 			model.addAttribute("jobInstances", jobInstances);

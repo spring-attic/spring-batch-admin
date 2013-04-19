@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2010 the original author or authors.
+ * Copyright 2006-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,10 +34,14 @@ import org.springframework.aop.framework.ProxyFactory;
  */
 public class SimpleEhCacheInterceptorTests {
 
-	private SimpleEhCacheInterceptor interceptor = new SimpleEhCacheInterceptor();
+	private SimpleEhCacheInterceptor interceptor;
 
 	@Before
 	public void open() throws Exception {
+		interceptor = new SimpleEhCacheInterceptor();
+		// Added because we have a CacheManager hanging around
+		// somewhere else causing duplicate cache errors in the maven build.
+		interceptor.setCacheName("SimpleEhCacheInterceptorTests");
 		interceptor.destroy();
 		interceptor.afterPropertiesSet();
 	}
@@ -178,18 +182,22 @@ public class SimpleEhCacheInterceptorTests {
 			this.suffix = suffix;
 		}
 
+		@Override
 		public String get(String input) {
 			return input + suffix;
 		}
 
+		@Override
 		public String[] getArray(String input) {
 			return new String[] { input + suffix };
 		}
 
+		@Override
 		public Collection<String> getCollection(String input) {
 			return Collections.singleton(input + suffix);
 		}
 
+		@Override
 		public Map<String, String> getMap(String input) {
 			return Collections.singletonMap(input, input + suffix);
 		}
@@ -202,18 +210,22 @@ public class SimpleEhCacheInterceptorTests {
 			this.suffix = suffix;
 		}
 
+		@Override
 		public String get(String input) {
 			return suffix == null ? null : input + suffix;
 		}
 
+		@Override
 		public String[] getArray(String input) {
 			return suffix == null ? new String[0] : new String[] { input + suffix };
 		}
 
+		@Override
 		public Collection<String> getCollection(String input) {
 			return suffix == null ? Collections.<String> emptySet() : Collections.singleton(input + suffix);
 		}
 
+		@Override
 		public Map<String, String> getMap(String input) {
 			return suffix == null ? Collections.<String, String> emptyMap() : Collections.singletonMap(input, input
 					+ suffix);

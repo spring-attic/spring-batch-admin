@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2010 the original author or authors.
+ * Copyright 2009-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,7 +85,6 @@ public class JobExecutionsViewTests extends AbstractManagerViewTests {
 		String content = response.getContentAsString();
 		// System.err.println(content);
 		assertTrue(content.contains("<form id=\"launchForm\""));
-		assertTrue(content.contains("foo=bar</textarea>"));
 		assertTrue(content.contains("Recent and Current Job Executions"));
 		assertTrue(content.contains("<a href=\"/jobs/executions/123\">"));
 	}

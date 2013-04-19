@@ -8,7 +8,6 @@
 	$(function() {
 		var jobParameters = {};
 		<#if jobInfo?? && jobInstances?? && jobInstances?size!=0><#list jobInstances as jobInstanceInfo>
-		jobParameters.instance${jobInstanceInfo.id?c} = "${jobInstanceInfo.jobParametersString?replace('\t','\\t')?replace('\n','\\n')?replace('\r','')}";
 		</#list></#if>
 		$('td.jobParameters')
 			.mouseover(function() {$(this).css( 'cursor','pointer');})
@@ -31,7 +30,6 @@
 						<th>&nbsp;</th>
 						<th>JobExecution Count</th>
 						<th>Last JobExecution</th>
-						<th>Parameters</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -52,7 +50,6 @@
 							<#else>
 								<td>?</td>							
 							</#if>
-							<td id="instance${jobInstanceInfo.id}" class="jobParameters">${jobInstanceInfo.jobInstance.jobParameters}</td>
 						</tr>
 					</#list>
 				</tbody>
