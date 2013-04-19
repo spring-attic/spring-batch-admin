@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2010 the original author or authors.
+ * Copyright 2009-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,9 @@ package org.springframework.batch.admin.web;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Properties;
 
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
-import org.springframework.batch.core.converter.DefaultJobParametersConverter;
 
 public class JobInstanceInfo {
 
@@ -31,16 +29,10 @@ public class JobInstanceInfo {
 
 	private final Collection<JobExecution> jobExecutions;
 
-	private final Properties jobParameters;
-
-	private final String jobParametersString;
-
 	public JobInstanceInfo(JobInstance jobInstance, Collection<JobExecution> jobExecutions) {
 		this.jobInstance = jobInstance;
 		this.jobExecutions = jobExecutions != null ? jobExecutions : new ArrayList<JobExecution>();
 		this.id = jobInstance.getId();
-		this.jobParameters = new DefaultJobParametersConverter().getProperties(jobInstance.getJobParameters());
-		this.jobParametersString = new JobParametersExtractor().fromJobParameters(jobInstance.getJobParameters());
 	}
 
 	public JobInstance getJobInstance() {
@@ -62,13 +54,4 @@ public class JobInstanceInfo {
 	public JobExecution getLastJobExecution() {
 		return jobExecutions.isEmpty() ? null : jobExecutions.iterator().next();
 	}
-	
-	public Properties getJobParameters() {
-		return jobParameters;
-	}
-
-	public String getJobParametersString() {
-		return jobParametersString;
-	}
-
 }

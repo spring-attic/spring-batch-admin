@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2010 the original author or authors.
+ * Copyright 2009-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,8 +73,6 @@ public class JobExecutionController {
 	}
 
 	private JobService jobService;
-
-	private JobParametersExtractor jobParametersExtractor = new JobParametersExtractor();
 
 	private TimeZone timeZone = TimeZone.getDefault();
 
@@ -178,7 +176,7 @@ public class JobExecutionController {
 			if (!jobInstance.getJobName().equals(jobName)) {
 				errors.reject("wrong.job.name", new Object[] { jobInstanceId, jobInstance.getJobName(), jobName },
 						"The JobInstance with id=" + jobInstanceId + " has the wrong name (" + jobInstance.getJobName()
-								+ " not " + jobName);
+						+ " not " + jobName);
 			}
 		}
 		catch (NoSuchJobInstanceException e) {
@@ -193,17 +191,13 @@ public class JobExecutionController {
 				for (JobExecution jobExecution : jobExecutions) {
 					result.add(new JobExecutionInfo(jobExecution, timeZone));
 				}
-				// Add the JobInstance for access to job parameters
-				JobInstanceInfo jobInstanceInfo = new JobInstanceInfo(jobInstance, jobExecutions);
-				model.addAttribute(jobInstanceInfo);
-				model.addAttribute("jobParameters", jobParametersExtractor.fromJobParameters(jobInstance.getJobParameters()));
 			}
 			catch (NoSuchJobException e) {
 				errors.reject("no.such.job", new Object[] { jobName }, "There is no such job (" + jobName + ")");
 			}
 			model.addAttribute(new JobInfo(jobName, result.size(), jobInstanceId, jobService.isLaunchable(jobName), jobService.isIncrementable(jobName)));
 			model.addAttribute("jobExecutions", result);
-	}
+		}
 		return "jobs/executions";
 
 	}
@@ -242,7 +236,7 @@ public class JobExecutionController {
 			catch (JobInstanceAlreadyCompleteException e) {
 				errors.reject("job.instance.already.complete", new Object[] { jobName },
 						"The job instance is already complete for (" + jobName
-								+ "). Use different job parameters to launch it again.");
+						+ "). Use different job parameters to launch it again.");
 			}
 			catch (JobParametersInvalidException e) {
 				errors.reject("job.parameters.invalid", new Object[] { jobName },

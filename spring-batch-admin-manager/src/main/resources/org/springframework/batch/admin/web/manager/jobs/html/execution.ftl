@@ -65,7 +65,7 @@
 			</tr>
 			<tr class="name-sublevel1-even">
 				<td>Job Parameters</td>
-				<td>${jobExecutionInfo.jobParameters}</td>
+				<td>${jobExecutionInfo.jobParametersString}</td>
 			</tr>
 			<tr class="name-sublevel1-odd">
 				<td>Start Date</td>

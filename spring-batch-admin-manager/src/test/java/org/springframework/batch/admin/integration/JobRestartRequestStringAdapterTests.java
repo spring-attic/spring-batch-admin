@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2010 the original author or authors.
+ * Copyright 2009-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@ public class JobRestartRequestStringAdapterTests {
 	@Test
 	public void testSimpleJob() throws Exception {
 
-		JobInstance jobInstance = MetaDataInstanceFactory.createJobInstance("foo", 11L, "bar=spam");
+		JobInstance jobInstance = MetaDataInstanceFactory.createJobInstance("foo", 11L);
 		JobExecution jobExecution = MetaDataInstanceFactory.createJobExecution("foo", 11L, 123L);
 		jobExecution.setEndTime(new Date());
 		jobExecution.setStatus(BatchStatus.FAILED);
@@ -71,8 +71,7 @@ public class JobRestartRequestStringAdapterTests {
 
 		JobLaunchRequest request = adapter.adapt("foo");
 		assertEquals("foo", request.getJob().getName());
-		assertEquals(1, request.getJobParameters().getParameters().size());
-		assertEquals("spam", request.getJobParameters().getString("bar"));
+		assertEquals(0, request.getJobParameters().getParameters().size());
 
 		EasyMock.verify(jobExplorer);
 
@@ -80,11 +79,11 @@ public class JobRestartRequestStringAdapterTests {
 
 	@Test
 	public void testSimpleJobNotFailed() throws Exception {
-		
+
 		thrown.expect(JobParametersNotFoundException.class);
 		thrown.expectMessage("No failed or stopped execution");
 
-		JobInstance jobInstance = MetaDataInstanceFactory.createJobInstance("foo", 11L, "bar=spam");
+		JobInstance jobInstance = MetaDataInstanceFactory.createJobInstance("foo", 11L);
 		JobExecution jobExecution = MetaDataInstanceFactory.createJobExecution("foo", 11L, 123L);
 		jobExecution.setEndTime(new Date());
 		jobExecution.setStatus(BatchStatus.COMPLETED);

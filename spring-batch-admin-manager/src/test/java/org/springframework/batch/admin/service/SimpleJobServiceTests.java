@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2007 the original author or authors.
+ * Copyright 2006-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -185,7 +185,7 @@ public class SimpleJobServiceTests {
 		Job job = new JobSupport("job");
 		EasyMock.expect(jobLocator.getJob("job")).andReturn(job);
 		EasyMock.expect(jobLauncher.run(job, jobParameters))
-				.andReturn(MetaDataInstanceFactory.createJobExecution(124L));
+		.andReturn(MetaDataInstanceFactory.createJobExecution(124L));
 		EasyMock.replay(jobInstanceDao, jobExecutionDao, jobLauncher, jobLocator);
 		assertNotNull(service.restart(123L));
 		EasyMock.verify(jobInstanceDao, jobExecutionDao, jobLauncher, jobLocator);
@@ -333,7 +333,7 @@ public class SimpleJobServiceTests {
 		EasyMock.expect(jobExecutionDao.getJobExecutions("job", 0, 100)).andReturn(
 				Arrays.asList(MetaDataInstanceFactory.createJobExecutionWithStepExecutions(123L, Arrays.asList("foo",
 						"bar")), MetaDataInstanceFactory.createJobExecutionWithStepExecutions(124L, Arrays
-						.asList("bar"))));
+								.asList("bar"))));
 		stepExecutionDao.addStepExecutions(EasyMock.isA(JobExecution.class));
 		stepExecutionDao.addStepExecutions(EasyMock.isA(JobExecution.class));
 		EasyMock.replay(jobLocator, stepExecutionDao, jobExecutionDao, jobInstanceDao, executionContextDao);
@@ -489,14 +489,8 @@ public class SimpleJobServiceTests {
 
 	@Test
 	public void testLastJobParameters() throws Exception {
-		String jobName = "job";
-		EasyMock.expect(jobLocator.getJobNames()).andReturn(Collections.<String> emptyList());
-		EasyMock.expect(jobInstanceDao.countJobInstances(jobName)).andReturn(1);
-		EasyMock.expect(jobInstanceDao.getJobInstances("job", 0, 1)).andReturn(
-				Arrays.asList(MetaDataInstanceFactory.createJobInstance("job", 123L)));
-		EasyMock.replay(jobLocator, jobInstanceDao);
+
 		assertEquals(0, service.getLastJobParameters("job").getParameters().size());
-		EasyMock.verify(jobLocator, jobInstanceDao);
 	}
 
 	@Test
@@ -540,7 +534,7 @@ public class SimpleJobServiceTests {
 		EasyMock.expect(jobExecutionDao.getJobExecution(123L)).andReturn(jobExecution).anyTimes();
 		EasyMock.expect(jobInstanceDao.getJobInstance(jobExecution)).andReturn(null).anyTimes();
 		EasyMock.expect(executionContextDao.getExecutionContext(jobExecution)).andReturn(new ExecutionContext())
-				.anyTimes();
+		.anyTimes();
 		stepExecutionDao.addStepExecutions(jobExecution);
 		EasyMock.expectLastCall().anyTimes();
 

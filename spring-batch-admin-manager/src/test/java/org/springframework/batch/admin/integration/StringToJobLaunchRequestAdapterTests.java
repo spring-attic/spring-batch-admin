@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2010 the original author or authors.
+ * Copyright 2009-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,17 +25,17 @@ import org.springframework.batch.core.job.SimpleJob;
 import org.springframework.batch.integration.launch.JobLaunchRequest;
 
 public class StringToJobLaunchRequestAdapterTests {
-	
+
 	private StringToJobLaunchRequestAdapter adapter = new StringToJobLaunchRequestAdapter();
 	private MapJobRegistry jobRegistry = new MapJobRegistry();
-	
+
 	@Before
 	public void init() throws Exception {
-		jobRegistry.register(new ReferenceJobFactory(new SimpleJob("foo")));		
-		jobRegistry.register(new ReferenceJobFactory(new SimpleJob("foo-bar")));		
+		jobRegistry.register(new ReferenceJobFactory(new SimpleJob("foo")));
+		jobRegistry.register(new ReferenceJobFactory(new SimpleJob("foo-bar")));
 		adapter.setJobLocator(jobRegistry);
 	}
-	
+
 	@Test
 	public void testSimpleJob() throws Exception {
 		JobLaunchRequest request = adapter.adapt("foo");
@@ -62,7 +62,7 @@ public class StringToJobLaunchRequestAdapterTests {
 		assertEquals("foo", request.getJob().getName());
 		assertEquals(2, request.getJobParameters().getParameters().size());
 		assertEquals("spam", request.getJobParameters().getString("bar"));
-		assertEquals(123, request.getJobParameters().getLong("count"));
+		assertEquals(123l, request.getJobParameters().getLong("count").intValue());
 	}
 
 }

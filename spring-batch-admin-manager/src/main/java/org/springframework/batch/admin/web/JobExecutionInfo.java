@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2010 the original author or authors.
+ * Copyright 2009-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.converter.DefaultJobParametersConverter;
 import org.springframework.batch.core.converter.JobParametersConverter;
-import org.springframework.batch.support.PropertiesConverter;
 
 public class JobExecutionInfo {
 
@@ -54,7 +53,9 @@ public class JobExecutionInfo {
 
 	private JobExecution jobExecution;
 
-	private String jobParameters;
+	private Properties jobParameters;
+
+	private String jobParametersString;
 
 	private boolean restartable = false;
 
@@ -73,12 +74,12 @@ public class JobExecutionInfo {
 		this.id = jobExecution.getId();
 		this.jobId = jobExecution.getJobId();
 		this.stepExecutionCount = jobExecution.getStepExecutions().size();
+		this.jobParameters = converter.getProperties(jobExecution.getJobParameters());
+		this.jobParametersString = new JobParametersExtractor().fromJobParameters(jobExecution.getJobParameters());
 
 		JobInstance jobInstance = jobExecution.getJobInstance();
 		if (jobInstance != null) {
 			this.jobName = jobInstance.getJobName();
-			Properties properties = converter.getProperties(jobInstance.getJobParameters());
-			this.jobParameters = PropertiesConverter.propertiesToString(properties);
 			BatchStatus status = jobExecution.getStatus();
 			this.restartable = status.isGreaterThan(BatchStatus.STOPPING) && status.isLessThan(BatchStatus.ABANDONED);
 			this.abandonable = status.isGreaterThan(BatchStatus.STARTED) && status!=BatchStatus.ABANDONED;
@@ -86,7 +87,6 @@ public class JobExecutionInfo {
 		}
 		else {
 			this.jobName = "?";
-			this.jobParameters = null;
 		}
 
 		// Duration is always in GMT
@@ -102,7 +102,7 @@ public class JobExecutionInfo {
 		}
 
 	}
-	
+
 	public TimeZone getTimeZone() {
 		return timeZone;
 	}
@@ -118,7 +118,7 @@ public class JobExecutionInfo {
 	public int getStepExecutionCount() {
 		return stepExecutionCount;
 	}
-	
+
 	public Long getJobId() {
 		return jobId;
 	}
@@ -142,16 +142,20 @@ public class JobExecutionInfo {
 	public boolean isRestartable() {
 		return restartable;
 	}
-	
+
 	public boolean isAbandonable() {
 		return abandonable;
 	}
-	
+
 	public boolean isStoppable() {
 		return stoppable;
 	}
 
-	public String getJobParameters() {
+	public String getJobParametersString() {
+		return jobParametersString;
+	}
+
+	public Properties getJobParameters() {
 		return jobParameters;
 	}
 

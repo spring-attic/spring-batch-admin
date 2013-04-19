@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2010 the original author or authors.
+ * Copyright 2009-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,7 +81,7 @@ public class JobLauncherSynchronizerIntegrationTests {
 		jobExecution.setEndTime(new Date());
 		jobRepository.update(jobExecution);
 
-		final JobExecution newExecution = jobLauncher.run(job, jobExecution.getJobInstance().getJobParameters());
+		final JobExecution newExecution = jobLauncher.run(job, jobExecution.getJobParameters());
 
 		assertEquals(jobExecution.getJobId(), newExecution.getJobId());
 		Future<BatchStatus> poll = new DirectPoller<BatchStatus>(100L).poll(new Callable<BatchStatus>() {
@@ -148,7 +148,7 @@ public class JobLauncherSynchronizerIntegrationTests {
 
 				// And restart it...
 				final JobExecution newExecution = jobLauncher
-						.run(job, jobExecution.getJobInstance().getJobParameters());
+						.run(job, jobExecution.getJobParameters());
 
 				assertEquals(jobExecution.getJobId(), newExecution.getJobId());
 				Future<BatchStatus> poll = new DirectPoller<BatchStatus>(100L).poll(new Callable<BatchStatus>() {
@@ -200,7 +200,7 @@ public class JobLauncherSynchronizerIntegrationTests {
 
 				// And restart it...
 				final JobExecution newExecution = jobLauncher
-						.run(job, jobExecution.getJobInstance().getJobParameters());
+						.run(job, jobExecution.getJobParameters());
 
 				assertEquals(jobExecution.getJobId(), newExecution.getJobId());
 				Future<BatchStatus> poll = new DirectPoller<BatchStatus>(100L).poll(new Callable<BatchStatus>() {

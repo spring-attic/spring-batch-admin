@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2007 the original author or authors.
+ * Copyright 2006-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.test.JobRepositoryTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.AfterTransaction;
@@ -52,7 +52,7 @@ public class JdbcSearchableJobInstanceDaoTests {
 	@Autowired
 	public void setDataSource(DataSource dataSource) throws Exception {
 		dao = new JdbcSearchableJobInstanceDao();
-		dao.setJdbcTemplate(new SimpleJdbcTemplate(dataSource));
+		dao.setJdbcTemplate(new JdbcTemplate(dataSource));
 		dao.afterPropertiesSet();
 	}
 

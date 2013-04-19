@@ -74,8 +74,8 @@ public interface JobService {
 	 * @throws JobParametersInvalidException
 	 */
 	JobExecution launch(String jobName, JobParameters params) throws NoSuchJobException,
-			JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException,
-			JobParametersInvalidException;
+	JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException,
+	JobParametersInvalidException;
 
 	/**
 	 * Get the last {@link JobParameters} used to execute a job successfully.
@@ -102,7 +102,7 @@ public interface JobService {
 	 * @throws JobParametersInvalidException
 	 */
 	JobExecution restart(Long jobExecutionId) throws NoSuchJobExecutionException, JobExecutionAlreadyRunningException,
-			JobRestartException, JobInstanceAlreadyCompleteException, NoSuchJobException, JobParametersInvalidException;
+	JobRestartException, JobInstanceAlreadyCompleteException, NoSuchJobException, JobParametersInvalidException;
 
 	/**
 	 * Send a signal to a job execution to stop processing. This method does not
@@ -157,7 +157,7 @@ public interface JobService {
 	 * 
 	 * @param jobInstanceId the id of the instance
 	 * @return a {@link JobInstance job instance}
-	 * @throws NoSuchJobException
+	 * @throws NoSuchJobInstanceException
 	 */
 	JobInstance getJobInstance(long jobInstanceId) throws NoSuchJobInstanceException;
 
@@ -294,7 +294,7 @@ public interface JobService {
 	 * @throws NoSuchJobExecutionException
 	 */
 	StepExecution getStepExecution(Long jobExecutionId, Long stepExecutionId) throws NoSuchStepExecutionException,
-			NoSuchJobExecutionException;
+	NoSuchJobExecutionException;
 
 	/**
 	 * Send a stop signal to all running job executions.

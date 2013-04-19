@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2010 the original author or authors.
+ * Copyright 2009-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,12 +48,14 @@ import org.springframework.batch.core.step.NoSuchStepException;
 import org.springframework.batch.core.step.StepLocator;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.util.CollectionUtils;
 
 /**
  * Implementation of {@link JobService} that delegates most of its work to other
  * off-the-shelf components.
  * 
  * @author Dave Syer
+ * @author Michael Minella
  * 
  */
 public class SimpleJobService implements JobService, DisposableBean {
@@ -166,15 +168,15 @@ public class SimpleJobService implements JobService, DisposableBean {
 	}
 
 	public JobExecution restart(Long jobExecutionId) throws NoSuchJobExecutionException,
-			JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException,
-			NoSuchJobException, JobParametersInvalidException {
+	JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException,
+	NoSuchJobException, JobParametersInvalidException {
 
 		JobExecution target = getJobExecution(jobExecutionId);
 		JobInstance lastInstance = target.getJobInstance();
 
 		Job job = jobLocator.getJob(lastInstance.getJobName());
 
-		JobExecution jobExecution = jobLauncher.run(job, lastInstance.getJobParameters());
+		JobExecution jobExecution = jobLauncher.run(job, target.getJobParameters());
 
 		if (jobExecution.isRunning()) {
 			activeExecutions.add(jobExecution);
@@ -183,8 +185,8 @@ public class SimpleJobService implements JobService, DisposableBean {
 	}
 
 	public JobExecution launch(String jobName, JobParameters jobParameters) throws NoSuchJobException,
-			JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException,
-			JobParametersInvalidException {
+	JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException,
+	JobParametersInvalidException {
 
 		Job job = jobLocator.getJob(jobName);
 
@@ -212,16 +214,16 @@ public class SimpleJobService implements JobService, DisposableBean {
 
 	public JobParameters getLastJobParameters(String jobName) throws NoSuchJobException {
 
-		Collection<JobInstance> lastInstances = listJobInstances(jobName, 0, 1);
+		Collection<JobExecution> executions = jobExecutionDao.getJobExecutions(jobName, 0, 1);
 
-		JobInstance lastInstance = null;
-		if (!lastInstances.isEmpty()) {
-			lastInstance = lastInstances.iterator().next();
+		JobExecution lastExecution = null;
+		if (!CollectionUtils.isEmpty(executions)) {
+			lastExecution = executions.iterator().next();
 		}
 
 		JobParameters oldParameters = new JobParameters();
-		if (lastInstance != null) {
-			oldParameters = lastInstance.getJobParameters();
+		if (lastExecution != null) {
+			oldParameters = lastExecution.getJobParameters();
 		}
 
 		return oldParameters;
@@ -280,7 +282,7 @@ public class SimpleJobService implements JobService, DisposableBean {
 	}
 
 	public JobExecution abandon(Long jobExecutionId) throws NoSuchJobExecutionException,
-			JobExecutionAlreadyRunningException {
+	JobExecutionAlreadyRunningException {
 
 		JobExecution jobExecution = getJobExecution(jobExecutionId);
 		if (jobExecution.getStatus().isLessThan(BatchStatus.STOPPING)) {

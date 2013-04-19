@@ -18,7 +18,6 @@ package org.springframework.batch.admin.sample;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.springframework.batch.core.JobExecution;
 import org.springframework.integration.Message;
 import org.springframework.integration.MessageChannel;
 import org.springframework.integration.MessageDeliveryException;
@@ -41,15 +40,16 @@ public class TestMessagingGateway {
 	private SubscribableChannel replyChannel;
 
 	private MessageHandler handler = new MessageHandler() {
+		@Override
 		public void handleMessage(Message<?> message) throws MessageRejectedException, MessageHandlingException,
-				MessageDeliveryException {
-			reference.set((JobExecution) message.getPayload());
+		MessageDeliveryException {
+			reference.set(message.getPayload());
 		}
 	};
 
 	/**
-	 * @param requests
-	 * @param replies
+	 * @param requestChannel
+	 * @param replyChannel
 	 */
 	public TestMessagingGateway(MessageChannel requestChannel, SubscribableChannel replyChannel) {
 		this.requestChannel = requestChannel;
@@ -59,7 +59,6 @@ public class TestMessagingGateway {
 	/**
 	 * @param object a payload to send
 	 * @return the returned messages payload
-	 * @see org.springframework.integration.gateway.AbstractMessagingGateway#sendAndReceive(java.lang.Object)
 	 */
 	public Object sendAndReceive(Object object) {
 		replyChannel.subscribe(handler);

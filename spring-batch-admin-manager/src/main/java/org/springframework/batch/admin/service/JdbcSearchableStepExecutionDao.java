@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2007 the original author or authors.
+ * Copyright 2006-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.sql.DataSource;
@@ -31,17 +33,19 @@ import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.repository.dao.JdbcJobExecutionDao;
 import org.springframework.batch.core.repository.dao.JdbcStepExecutionDao;
+import org.springframework.batch.item.database.Order;
 import org.springframework.batch.item.database.PagingQueryProvider;
 import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
 import org.springframework.batch.support.PatternMatcher;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.jdbc.support.incrementer.AbstractDataFieldMaxValueIncrementer;
 import org.springframework.util.Assert;
 
 /**
  * @author Dave Syer
+ * @author Michael Minella
  * 
  */
 public class JdbcSearchableStepExecutionDao extends JdbcStepExecutionDao implements SearchableStepExecutionDao {
@@ -77,7 +81,7 @@ public class JdbcSearchableStepExecutionDao extends JdbcStepExecutionDao impleme
 		Assert.state(dataSource != null, "DataSource must be provided");
 
 		if (getJdbcTemplate() == null) {
-			setJdbcTemplate(new SimpleJdbcTemplate(dataSource));
+			setJdbcTemplate(new JdbcTemplate(dataSource));
 		}
 		setStepExecutionIncrementer(new AbstractDataFieldMaxValueIncrementer() {
 			@Override
@@ -139,8 +143,8 @@ public class JdbcSearchableStepExecutionDao extends JdbcStepExecutionDao impleme
 		}
 		else {
 			try {
-				Long startAfterValue = getJdbcTemplate().queryForLong(
-						queryProvider.generateJumpToItemQuery(start, count), jobName, stepName);
+				Long startAfterValue = getJdbcTemplate().queryForObject(
+						queryProvider.generateJumpToItemQuery(start, count), Long.class, jobName, stepName);
 				stepExecutions = getJdbcTemplate().query(queryProvider.generateRemainingPagesQuery(count),
 						new StepExecutionRowMapper(), jobName, stepName, startAfterValue);
 			}
@@ -155,10 +159,10 @@ public class JdbcSearchableStepExecutionDao extends JdbcStepExecutionDao impleme
 
 	public int countStepExecutions(String jobName, String stepName) {
 		if (stepName.contains("*")) {
-			return getJdbcTemplate().queryForInt(getQuery(COUNT_STEP_EXECUTIONS_FOR_STEP_PATTERN), jobName,
+			return getJdbcTemplate().queryForObject(getQuery(COUNT_STEP_EXECUTIONS_FOR_STEP_PATTERN), Integer.class, jobName,
 					stepName.replace("*", "%"));
 		}
-		return getJdbcTemplate().queryForInt(getQuery(COUNT_STEP_EXECUTIONS_FOR_STEP), jobName, stepName);
+		return getJdbcTemplate().queryForObject(getQuery(COUNT_STEP_EXECUTIONS_FOR_STEP), Integer.class, jobName, stepName);
 	}
 
 	/**
@@ -171,8 +175,9 @@ public class JdbcSearchableStepExecutionDao extends JdbcStepExecutionDao impleme
 		factory.setDataSource(dataSource);
 		factory.setFromClause(getQuery("%PREFIX%STEP_EXECUTION S, %PREFIX%JOB_EXECUTION J, %PREFIX%JOB_INSTANCE I"));
 		factory.setSelectClause(FIELDS);
-		factory.setSortKey("S.STEP_EXECUTION_ID");
-		factory.setAscending(false);
+		Map<String, Order> sortKeys = new HashMap<String, Order>();
+		sortKeys.put("S.STEP_EXECUTION_ID", Order.DESCENDING);
+		factory.setSortKeys(sortKeys);
 		if (whereClause != null) {
 			factory.setWhereClause(whereClause
 					+ " AND S.JOB_EXECUTION_ID = J.JOB_EXECUTION_ID AND J.JOB_INSTANCE_ID = I.JOB_INSTANCE_ID");
