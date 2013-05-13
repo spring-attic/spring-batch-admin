@@ -65,9 +65,16 @@ However, as a version-less declaration will always use the latest schema, we gen
 
 ## Launching Batch Jobs through Messages
 
-When starting jobs using the Spring Batch API you have to invoke *[JobLauncher](http://static.springsource.org/spring-batch/apidocs/org/springframework/batch/core/launch/JobLauncher.html).run()* with the respective parameters. However, it is up to you how to execute this method. This may for example involve starting the job via a *main()* method using a shell script. It would be much more powerful, though, to execute the batch job using [Spring Integration][] and its numerous adapters. For example you can use an *File Inbound Channel Adapter* to monitor a directory in the file-system, and start the Batch Job as soon as the input file arrives. Maybe you need to poll a remote (S)FTP server to retrieve the data for the Batch Job. Implementing these scenarios with [Spring Integration][] is easy as it allow for an event-driven execution of the *JobLauncher*.
+When starting Batch Jobs using the core Spring Batch API you basically have 2 options:
 
-Keep in mind that you are not restricted to support only one input source either. In fact, multiple different adapters may easily provide the data for your Batch Jobs from multiple sources simultaneously using configuration only.
+* [CommandLineJobRunner](http://static.springsource.org/spring-batch/apidocs/org/springframework/batch/core/launch/support/CommandLineJobRunner.html)
+* Directly invoke *[JobLauncher](http://static.springsource.org/spring-batch/apidocs/org/springframework/batch/core/launch/JobLauncher.html).run()* with the respective parameters
+
+> For more information please also see the [Spring Batch][] reference documentation: [Running a Job](http://static.springsource.org/spring-batch/reference/html/configureJob.html#runningAJob)
+
+For example, you may want to use the *CommandLineJobRunner* when invoking Batch Jobs using a shell script. Alternatively, you may use the *JobLauncher* directly, for example when using [Spring Batch][] as part of a web application. However, what about more complex use-cases? Maybe you need to poll a remote (S)FTP server to retrieve the data for the Batch Job. Or your application has to support multiple different data sources simultaneously. For example, you may receive data files not only via the web, but also FTP etc. Maybe additional transformation of the input files is needed before invoking [Spring Batch[]. 
+
+Therefore, it would be much more powerful to execute the batch job using [Spring Integration][] and its numerous adapters. For example, you can use a *File Inbound Channel Adapter* to monitor a directory in the file-system and start the Batch Job as soon as the input file arrives. Additionally you can create [Spring Integration][] flows that use multiple different adapters to  easily ingest data for your Batch Jobs from multiple sources simultaneously using configuration only. Implementing all these scenarios with [Spring Integration][] is easy as it allow for an decoupled event-driven execution of the *JobLauncher*.
 
 *Spring Batch Integration* provides the *[JobLaunchingMessageHandler](http://static.springsource.org/spring-batch-admin/apidocs/org/springframework/batch/integration/launch/JobLaunchingMessageHandler.html)* that you can use to launch batch jobs. The input for the *JobLaunchingMessageHandler* is provided by a [Spring Integration][] message, which payload is of type *[JobLaunchRequest](http://static.springsource.org/spring-batch-admin/apidocs/org/springframework/batch/integration/launch/JobLaunchRequest.html)*. This class is a wrapper around the Job that needs to be launched as well as the [JobParameters](http://static.springsource.org/spring-batch/apidocs/org/springframework/batch/core/JobParameters.html) necessary to launch the Batch job. 
 
@@ -100,17 +107,18 @@ public class FileMessageToJobRequest {
 
 ### The JobExecution Response
 
-When a Batch is being executed a [JobExecution](http://static.springsource.org/spring-batch/apidocs/org/springframework/batch/core/JobExecution.html	) instance is returned. This instance can be used to determine the status of an execution. If a *JobExecution* was able to be created successfully, it will always be returned, regardless of whether or not the actual execution was successful.
+When a Batch Job is being executed, a [JobExecution](http://static.springsource.org/spring-batch/apidocs/org/springframework/batch/core/JobExecution.html) instance is returned. This instance can be used to determine the status of an execution. If a *JobExecution* was able to be created successfully, it will always be returned, regardless of whether or not the actual execution was successful.
 
-For more information, please see the Spring Batch reference documentation at: 
+The exact behavior on how the *JobExecution* instance is returned depends on the provided *TaskExecutor*. If a **synchronous** (single-threaded) *TaskExecutor* implementation is used, the *JobExecution* response is only returned *after* the job completes. When using an **asynchronous** *TaskExecutor*, the *JobExecution* instance is returned immediately. Users can then take the *id* of *JobExecution* instance (*JobExecution#getJobId()*) and query the *JobRepository* for the job's updated status using the [JobExplorer](http://static.springsource.org/spring-batch/apidocs/org/springframework/batch/core/explore/JobExplorer.html). For more information, please refer to the *Spring Batch* reference documentation on [Querying the Repository](http://static.springsource.org/spring-batch/reference/html/configureJob.html#queryingRepository).
+
+For more information regarding the returned *JobExecution* instance, please see: 
 
 * http://static.springsource.org/spring-batch/reference/html/domain.html#domainJobExecution
 
 ### Java Bean Configuration
 
 ```xml
-<batch:job-repository data-source="dataSource" id="jobRepository"
-	transaction-manager="transactionManager" table-prefix="BATCH_"/>
+<batch:job-repository id="jobRepository"/>
 
 <bean id="batchjobExecutor" class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
 	<property name="jobRepository" ref="jobRepository"/>
@@ -169,7 +177,7 @@ Also, keep in mind that when sending to a [DirectChannel](http://static.springso
 The *reply-timeout* attribute maps to the *sendTimeout* property of the underlying [MessagingTemplate](http://static.springsource.org/spring-integration/api/org/springframework/integration/core/MessagingTemplate.html) instance (org.springframework.integration.core.MessagingTemplate). The attribute will default, if not specified, to *-1*, meaning that by default, the Gateway will wait indefinitely. The value is specified in milliseconds.
 
 **job-launcher**
-Pass in a custom *[JobLauncher](http://static.springsource.org/spring-batch/apidocs/org/springframework/batch/core/launch/JobLauncher.html)* bean reference. This attribute is optional. If not specified the adapter will re-use the default instance (under the id *jobLauncher*, e.g. when using the [@EnableBatchProcessing](http://static.springsource.org/spring-batch/apidocs/org/springframework/batch/core/configuration/annotation/EnableBatchProcessing.html) annotation via JavaConfig). If no default instance exists an exception is thrown.
+Pass in a custom *[JobLauncher](http://static.springsource.org/spring-batch/apidocs/org/springframework/batch/core/launch/JobLauncher.html)* bean reference. This attribute is optional. If not specified the adapter will re-use the instance that is registered under the id *jobLauncher* (E.g. when using the [@EnableBatchProcessing](http://static.springsource.org/spring-batch/apidocs/org/springframework/batch/core/configuration/annotation/EnableBatchProcessing.html) annotation via JavaConfig). If no default instance exists an exception is thrown.
 
 **order**
 Specifies the order for invocation when this endpoint is connected as a subscriber to a [SubscribableChannel](http://static.springsource.org/spring-integration/api/org/springframework/integration/core/SubscribableChannel.html).
@@ -192,7 +200,7 @@ As [Spring Batch][] jobs can run for long times, providing progress information 
 * Active polling or
 * Event-driven, using listeners.
 
-When starting a *Spring Batch* job, e.g. by using the *Job-Launching Gateway*, a [JobExecution](http://static.springsource.org/spring-batch/apidocs/org/springframework/batch/core/JobExecution.html	) instance is returned which can be continuously monitored (polling) in order to retrieve status updates. However, this is considered sub-optimal and an event-driven approach should be preferred. 
+When starting a *Spring Batch* job asynchronously, e.g. by using the *Job-Launching Gateway*, a [JobExecution](http://static.springsource.org/spring-batch/apidocs/org/springframework/batch/core/JobExecution.html) instance is returned. Thus, *JobExecution#getJobId* can be used to continuously poll for status updates by retrieving updated instances of the *JobExecution* from the *JobRepository* using the *JobExplorer*. However, this is considered sub-optimal and an event-driven approach should be preferred.
 
 Therefore, [Spring Batch][] provides listeners such as:
 
