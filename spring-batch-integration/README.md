@@ -229,19 +229,39 @@ Here is a brief example how a listener is configured:
 
 ## Externalizing Batch Process Execution
 
-The 2 integration approaches discussed so far suggest use-cases where Spring Integration wraps Spring Batch like an outer-shell. However, [Spring Batch][] can also use [Spring Integration][] internally. Using this approach, [Spring Batch][] users can delegate the processing of items or even chunks to outside processes. This allows you to offload complex processing. For example, a *ItemProcessor* can server as a messaging gateway deferring the processing of items to the message bus.
+The two integration approaches discussed so far suggest use-cases where [Spring Integration][] wraps [Spring Batch][] like an outer-shell. However, [Spring Batch][] can also use [Spring Integration][] internally. Using this approach, [Spring Batch][] users can delegate the processing of items or even chunks to outside processes. This allows you to offload complex processing. *Spring Batch Integration* provides dedicated support for:
 
-For complex, long running processing, performance can be increased by using asynchronous item processing. *Spring Batch Integration* provides wrapper components for your *ItemWriter* and *ItemProcessor*:
+* Remote Chunking
+* Remote Partitioning
 
-*[AsyncItemWriter](http://static.springsource.org/spring-batch/spring-batch-integration/apidocs/org/springframework/batch/integration/async/AsyncItemWriter.html)* *[AsyncItemProcessor](http://static.springsource.org/spring-batch/spring-batch-integration/apidocs/org/springframework/batch/integration/async/AsyncItemProcessor.html)*
+### Remote Chunking
 
-This allows you to implement basically *fork-join* scenarios. The *Gateway* invocations are executed concurrently instead sequentially. The *AsyncItemWriter* will gather the results and write back the chunk as soon as all the results become available.
+![Alt text](src/reference/images/remote-chunking.png "Remote Chunking")
 
-Taking things one step further, one can also externalize the chunk processing using the *[ChunkMessageChannelItemWriter](http://static.springsource.org/spring-batch/spring-batch-integration/apidocs/org/springframework/batch/integration/chunk/ChunkMessageChannelItemWriter.html)* which is provided by *Spring Batch Integration*. That way you can send an entire chunk to a Gateway reducing *Spring Batch*'s responsibilities to read items, group them and send out the chunk. Once sent, *Spring Batch* will continue the process of reading and grouping items, without waiting for the results. Rather it is the responsibility of the *ChunkMessageChannelItemWriter* to gather the results and integrate them back into the Spring Batch process. 
+Remote Chunking helps you to to scale the processing of items. In a simple Remote Chunking use-case, an *ItemProcessor* can serve as a messaging gateway deferring the processing of items to [Spring Integration][]. Thus, long running processing, *Spring Batch Integration* provides wrapper components for the *ItemWriter* and *ItemProcessor*:
 
-Using *Spring Integration* you have full control over the concurrency of your processes e.g. by using *QueueChannel*s instead of *DirectChannels*. Furthermore, by relying on *Spring Integration*'s rich collection of Channel Adapters (E.g. JMS or AMQP), you can distribute chunks of a Batch job to external systems for processing.
+* [AsyncItemWriter](http://static.springsource.org/spring-batch/spring-batch-integration/apidocs/org/springframework/batch/integration/async/AsyncItemWriter.html)
+* [AsyncItemProcessor](http://static.springsource.org/spring-batch/spring-batch-integration/apidocs/org/springframework/batch/integration/async/AsyncItemProcessor.html)
+
+Therefore, you can increase performance by using asynchronous item processing, basically allowing you to implement *fork-join* scenarios. The *Gateway* invocations are executed concurrently instead sequentially. The *AsyncItemWriter* will gather the results and write back the chunk as soon as all the results become available.
+
+Taking things one step further, one can also externalize the chunk processing using the *[ChunkMessageChannelItemWriter](http://static.springsource.org/spring-batch/spring-batch-integration/apidocs/org/springframework/batch/integration/chunk/ChunkMessageChannelItemWriter.html)* which is provided by *Spring Batch Integration*. That way you can send an entire chunk to a Gateway, reducing *Spring Batch*'s responsibilities to read items, group them and send out the chunk. Once sent, *Spring Batch* will continue the process of reading and grouping items, without waiting for the results. Rather it is the responsibility of the *ChunkMessageChannelItemWriter* to gather the results and integrate them back into the [Spring Batch][] process. 
+
+Using *Spring Integration* you have full control over the concurrency of your processes, for instance by using *QueueChannel*s instead of *DirectChannels*. Furthermore, by relying on *Spring Integration*'s rich collection of Channel Adapters (E.g. JMS or AMQP), you can distribute chunks of a Batch job to external systems for processing.
 
 For more information, please also consult the *Spring Batch* manual, specifically the chapter on [Remote Chunking](http://static.springsource.org/spring-batch/reference/html/scalability.html#remoteChunking).
+
+### Remote Partitioning
+
+![Alt text](src/reference/images/remote-partitioning.png "Remote Chunking")
+
+Remote Partitioning, on the other hand, is useful when the problem is not the processing of items, but the associated I/O represents the bottleneck. Using Remote Partitioning, work can be farmed out to slaves that execute complete [Spring Batch][] steps. Thus, each slave has its own *reader*, *processor* and *writer*. For this purpose, *Spring Batch Integration* provides the [MessageChannelPartitionHandler](http://static.springsource.org/spring-batch/apidocs/org/springframework/batch/integration/partition/MessageChannelPartitionHandler.html).
+
+This implementation of the [PartitionHandler](http://static.springsource.org/spring-batch/apidocs/org/springframework/batch/core/partition/PartitionHandler.html) interface uses *MessageChannel* instances to send instructions to remote workers and receive their responses. This provides a nice abstraction from the transports (E.g. JMS or AMQP) being used to communicate with the remote workers.
+
+For more information, please see:
+
+* http://static.springsource.org/spring-batch/reference/html/scalability.html#partitioning
 
 # Resources
 
@@ -257,10 +277,12 @@ The book [Spring Integration in Action][] by Mark Fisher, Jonas Partner, Marius 
 
 ### Presentations
 
-* Introduction to Spring Integration and Spring Batch (video)
+* Introduction to Spring Integration and Spring Batch (Video)
   - http://www.infoq.com/presentations/Spring-Integration-Batch
-* Introduction to Spring Integration and Spring Batch (slides)
+* Introduction to Spring Integration and Spring Batch (Slides)
   - http://www.slideshare.net/hillert/introduction-to-spring-integration-and-spring-batch
+* Heavy Lifting in the Cloud with Spring Batch (Slides and Code)
+  - https://github.com/mminella/Spring-Batch-Talk-2.0
 * Deploying and Monitoring Spring Integration and Spring Batch Applications
   - http://www.slideshare.net/DaveSyer/syer-monitoring-integration-and-batch
 
