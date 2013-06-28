@@ -70,7 +70,7 @@ public class StepExecutionController {
 		Collection<StepExecutionInfo> result = new ArrayList<StepExecutionInfo>();
 		try {
 			for (StepExecution stepExecution : jobService.getStepExecutions(jobExecutionId)) {
-				result.add(new StepExecutionInfo(stepExecution, TimeZone.getTimeZone("GMT")));
+				result.add(new StepExecutionInfo(stepExecution, timeZone));
 			}
 			JobExecution jobExecution = jobService.getJobExecution(jobExecutionId);
 			model.addAttribute(new JobExecutionInfo(jobExecution, timeZone));
@@ -91,7 +91,7 @@ public class StepExecutionController {
 
 		try {
 			StepExecution stepExecution = jobService.getStepExecution(jobExecutionId, stepExecutionId);
-			model.addAttribute(new StepExecutionInfo(stepExecution, TimeZone.getTimeZone("GMT")));
+			model.addAttribute(new StepExecutionInfo(stepExecution, timeZone));
 		}
 		catch (NoSuchStepExecutionException e) {
 			errors.reject("no.such.step.execution", new Object[] { stepExecutionId }, "There is no such step execution ("
@@ -112,7 +112,7 @@ public class StepExecutionController {
 
 		try {
 			StepExecution stepExecution = jobService.getStepExecution(jobExecutionId, stepExecutionId);
-			model.addAttribute(new StepExecutionInfo(stepExecution, TimeZone.getTimeZone("GMT")));
+			model.addAttribute(new StepExecutionInfo(stepExecution, timeZone));
 			String stepName = stepExecution.getStepName();
 			if (stepName.contains(":partition")) {
 				// assume we want to compare all partitions
