@@ -15,6 +15,8 @@
  */
 package org.springframework.batch.admin.service;
 
+import javax.sql.DataSource;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -22,8 +24,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.sql.DataSource;
 
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.ExitStatus;
@@ -125,13 +125,11 @@ public class JdbcSearchableJobExecutionDao extends JdbcJobExecutionDao implement
 		factory.setFromClause(getQuery(fromClause));
 		factory.setSelectClause(FIELDS);
 		Map<String, Order> sortKeys = new HashMap<String, Order>();
-		sortKeys.put("E.JOB_EXECUTION_ID", Order.DESCENDING);
+		sortKeys.put("JOB_EXECUTION_ID", Order.DESCENDING);
 		factory.setSortKeys(sortKeys);
 		whereClause = "E.JOB_INSTANCE_ID=I.JOB_INSTANCE_ID" + (whereClause == null ? "" : " and " + whereClause);
-		if (whereClause != null) {
-			factory.setWhereClause(whereClause);
-		}
-		return (PagingQueryProvider) factory.getObject();
+        factory.setWhereClause(whereClause);
+        return (PagingQueryProvider) factory.getObject();
 	}
 
 	/**
