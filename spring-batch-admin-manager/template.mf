@@ -2,7 +2,7 @@ Bundle-SymbolicName: org.springframework.batch.admin.manager
 Bundle-Name: Spring Batch Admin Manager
 Bundle-Vendor: SpringSource
 Bundle-ManifestVersion: 2
-Import-Template: 
+Import-Template:
  org.springframework.batch.admin.*;version="[1.1.0, 2.0.0)",
  org.springframework.batch.integration.*;version="[1.1.0, 2.0.0)",
  org.springframework.batch.*;version="[2.1.0, 3.0.0)",
@@ -10,6 +10,7 @@ Import-Template:
  org.springframework.beans.*;version="[3.0.0, 4.0.0)",
  org.springframework.context.*;version="[3.0.0, 4.0.0)",
  org.springframework.core.*;version="[3.0.0, 4.0.0)",
+ org.springframework.retry.*;version="[1.0.0,2.0.0)";resolution:=optional,
  org.springframework.jdbc.*;version="[3.0.0, 4.0.0)",
  org.springframework.stereotype.*;version="[3.0.0, 4.0.0)",
  org.springframework.scheduling.*;version="[3.0.0, 4.0.0)",
@@ -26,3 +27,5 @@ Import-Template:
  javax.sql;version="0",
  javax.servlet.*;version="0";resolution:=optional,
  org.w3c.dom.*;version="0"
+Import-Package:
+ org.springframework.jmx.support;version="[3.0.0, 4.0.0)"
