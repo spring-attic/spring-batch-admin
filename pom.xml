@@ -5,13 +5,14 @@
 	<artifactId>spring-batch-admin</artifactId>
 	<name>Spring Batch Admin</name>
 	<description>A set of services (Java, JSON) and a UI (webapp) for managing and launching Spring Batch jobs.</description>
-	<version>1.3.0.BUILD-SNAPSHOT</version>
+	<version>1.3.0.M1</version>
 	<packaging>pom</packaging>
 	<scm>
 		<url>http://github.com/SpringSource/spring-batch-admin</url>
 		<connection>scm:git:git://github.com/SpringSource/spring-batch-admin.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/SpringSource/spring-batch-admin.git</developerConnection>
-	</scm>
+	  <tag>1.3.0.M1</tag>
+  </scm>
 	<issueManagement>
 		<system>JIRA</system>
 		<url>http://opensource.atlassian.com/projects/spring/browse/BATCHADM</url>
