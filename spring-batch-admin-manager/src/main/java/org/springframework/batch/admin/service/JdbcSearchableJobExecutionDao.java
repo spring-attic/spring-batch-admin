@@ -29,12 +29,16 @@ import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
+import org.springframework.batch.core.JobParameter;
+import org.springframework.batch.core.JobParameter.ParameterType;
+import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.repository.dao.JdbcJobExecutionDao;
 import org.springframework.batch.item.database.Order;
 import org.springframework.batch.item.database.PagingQueryProvider;
 import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.incrementer.AbstractDataFieldMaxValueIncrementer;
 import org.springframework.util.Assert;
@@ -219,7 +223,7 @@ public class JdbcSearchableJobExecutionDao extends JdbcJobExecutionDao implement
 	 * @author Dave Syer
 	 * 
 	 */
-	protected static class JobExecutionRowMapper implements RowMapper<JobExecution> {
+	protected class JobExecutionRowMapper implements RowMapper<JobExecution> {
 
 		public JobExecutionRowMapper() {
 		}
@@ -228,9 +232,11 @@ public class JdbcSearchableJobExecutionDao extends JdbcJobExecutionDao implement
 		public JobExecution mapRow(ResultSet rs, int rowNum) throws SQLException {
 			Long id = rs.getLong(1);
 			JobExecution jobExecution;
+			
+			JobParameters jobParameters = getJobParameters(id);
 
 			JobInstance jobInstance = new JobInstance(rs.getLong(10), rs.getString(11));
-			jobExecution = new JobExecution(jobInstance, null);
+			jobExecution = new JobExecution(jobInstance, jobParameters);
 			jobExecution.setId(id);
 
 			jobExecution.setStartTime(rs.getTimestamp(2));
