@@ -53,10 +53,10 @@ import org.springframework.util.CollectionUtils;
 /**
  * Implementation of {@link JobService} that delegates most of its work to other
  * off-the-shelf components.
- * 
+ *
  * @author Dave Syer
  * @author Michael Minella
- * 
+ *
  */
 public class SimpleJobService implements JobService, DisposableBean {
 
@@ -85,7 +85,7 @@ public class SimpleJobService implements JobService, DisposableBean {
 
 	/**
 	 * Timeout for shutdown waiting for jobs to finish processing.
-	 * 
+	 *
 	 * @param shutdownTimeout in milliseconds (default 60 secs)
 	 */
 	public void setShutdownTimeout(int shutdownTimeout) {
@@ -105,6 +105,7 @@ public class SimpleJobService implements JobService, DisposableBean {
 		this.executionContextDao = executionContextDao;
 	}
 
+	@Override
 	public Collection<StepExecution> getStepExecutions(Long jobExecutionId) throws NoSuchJobExecutionException {
 
 		JobExecution jobExecution = jobExecutionDao.getJobExecution(jobExecutionId);
@@ -114,7 +115,7 @@ public class SimpleJobService implements JobService, DisposableBean {
 
 		stepExecutionDao.addStepExecutions(jobExecution);
 
-		String jobName = jobExecution.getJobInstance() == null ? null : jobExecution.getJobInstance().getJobName();
+		String jobName = jobExecution.getJobInstance() == null ? jobInstanceDao.getJobInstance(jobExecution).getJobName() : jobExecution.getJobInstance().getJobName();
 		Collection<String> missingStepNames = new LinkedHashSet<String>();
 
 		if (jobName != null) {
@@ -152,10 +153,12 @@ public class SimpleJobService implements JobService, DisposableBean {
 
 	}
 
+	@Override
 	public boolean isLaunchable(String jobName) {
 		return jobLocator.getJobNames().contains(jobName);
 	}
 
+	@Override
 	public boolean isIncrementable(String jobName) {
 		try {
 			return jobLocator.getJobNames().contains(jobName)
@@ -167,6 +170,7 @@ public class SimpleJobService implements JobService, DisposableBean {
 		}
 	}
 
+	@Override
 	public JobExecution restart(Long jobExecutionId) throws NoSuchJobExecutionException,
 	JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException,
 	NoSuchJobException, JobParametersInvalidException {
@@ -184,6 +188,7 @@ public class SimpleJobService implements JobService, DisposableBean {
 		return jobExecution;
 	}
 
+	@Override
 	public JobExecution launch(String jobName, JobParameters jobParameters) throws NoSuchJobException,
 	JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException,
 	JobParametersInvalidException {
@@ -212,6 +217,7 @@ public class SimpleJobService implements JobService, DisposableBean {
 
 	}
 
+	@Override
 	public JobParameters getLastJobParameters(String jobName) throws NoSuchJobException {
 
 		Collection<JobExecution> executions = jobExecutionDao.getJobExecutions(jobName, 0, 1);
@@ -230,14 +236,17 @@ public class SimpleJobService implements JobService, DisposableBean {
 
 	}
 
+	@Override
 	public Collection<JobExecution> listJobExecutions(int start, int count) {
 		return jobExecutionDao.getJobExecutions(start, count);
 	}
 
+	@Override
 	public int countJobExecutions() {
 		return jobExecutionDao.countJobExecutions();
 	}
 
+	@Override
 	public Collection<String> listJobs(int start, int count) {
 		Collection<String> jobNames = new LinkedHashSet<String>(jobLocator.getJobNames());
 		if (start + count > jobNames.size()) {
@@ -252,12 +261,14 @@ public class SimpleJobService implements JobService, DisposableBean {
 		return new ArrayList<String>(jobNames).subList(start, start + count);
 	}
 
+	@Override
 	public int countJobs() {
 		Collection<String> names = new HashSet<String>(jobLocator.getJobNames());
 		names.addAll(jobInstanceDao.getJobNames());
 		return names.size();
 	}
 
+	@Override
 	public int stopAll() {
 		Collection<JobExecution> result = jobExecutionDao.getRunningJobExecutions();
 		for (JobExecution jobExecution : result) {
@@ -267,6 +278,7 @@ public class SimpleJobService implements JobService, DisposableBean {
 		return result.size();
 	}
 
+	@Override
 	public JobExecution stop(Long jobExecutionId) throws NoSuchJobExecutionException, JobExecutionNotRunningException {
 
 		JobExecution jobExecution = getJobExecution(jobExecutionId);
@@ -281,6 +293,7 @@ public class SimpleJobService implements JobService, DisposableBean {
 
 	}
 
+	@Override
 	public JobExecution abandon(Long jobExecutionId) throws NoSuchJobExecutionException,
 	JobExecutionAlreadyRunningException {
 
@@ -298,15 +311,18 @@ public class SimpleJobService implements JobService, DisposableBean {
 
 	}
 
+	@Override
 	public int countJobExecutionsForJob(String name) throws NoSuchJobException {
 		checkJobExists(name);
 		return jobExecutionDao.countJobExecutions(name);
 	}
 
+	@Override
 	public int countJobInstances(String name) throws NoSuchJobException {
 		return jobInstanceDao.countJobInstances(name);
 	}
 
+	@Override
 	public JobExecution getJobExecution(Long jobExecutionId) throws NoSuchJobExecutionException {
 		JobExecution jobExecution = jobExecutionDao.getJobExecution(jobExecutionId);
 		if (jobExecution == null) {
@@ -323,6 +339,7 @@ public class SimpleJobService implements JobService, DisposableBean {
 		return jobExecution;
 	}
 
+	@Override
 	public Collection<JobExecution> getJobExecutionsForJobInstance(String name, Long jobInstanceId)
 			throws NoSuchJobException {
 		checkJobExists(name);
@@ -334,6 +351,7 @@ public class SimpleJobService implements JobService, DisposableBean {
 		return jobExecutions;
 	}
 
+	@Override
 	public StepExecution getStepExecution(Long jobExecutionId, Long stepExecutionId)
 			throws NoSuchJobExecutionException, NoSuchStepExecutionException {
 		JobExecution jobExecution = getJobExecution(jobExecutionId);
@@ -351,6 +369,7 @@ public class SimpleJobService implements JobService, DisposableBean {
 		return stepExecution;
 	}
 
+	@Override
 	public Collection<JobExecution> listJobExecutionsForJob(String jobName, int start, int count)
 			throws NoSuchJobException {
 		checkJobExists(jobName);
@@ -361,6 +380,7 @@ public class SimpleJobService implements JobService, DisposableBean {
 		return jobExecutions;
 	}
 
+	@Override
 	public Collection<StepExecution> listStepExecutionsForStep(String jobName, String stepName, int start, int count)
 			throws NoSuchStepException {
 		if (stepExecutionDao.countStepExecutions(jobName, stepName) == 0) {
@@ -369,10 +389,12 @@ public class SimpleJobService implements JobService, DisposableBean {
 		return stepExecutionDao.findStepExecutions(jobName, stepName, start, count);
 	}
 
+	@Override
 	public int countStepExecutionsForStep(String jobName, String stepName) throws NoSuchStepException {
 		return stepExecutionDao.countStepExecutions(jobName, stepName);
 	}
 
+	@Override
 	public JobInstance getJobInstance(long jobInstanceId) throws NoSuchJobInstanceException {
 		JobInstance jobInstance = jobInstanceDao.getJobInstance(jobInstanceId);
 		if (jobInstance == null) {
@@ -381,11 +403,13 @@ public class SimpleJobService implements JobService, DisposableBean {
 		return jobInstance;
 	}
 
+	@Override
 	public Collection<JobInstance> listJobInstances(String jobName, int start, int count) throws NoSuchJobException {
 		checkJobExists(jobName);
 		return jobInstanceDao.getJobInstances(jobName, start, count);
 	}
 
+	@Override
 	public Collection<String> getStepNamesForJob(String jobName) throws NoSuchJobException {
 		try {
 			Job job = jobLocator.getJob(jobName);
@@ -422,6 +446,7 @@ public class SimpleJobService implements JobService, DisposableBean {
 	 * Stop all the active jobs and wait for them (up to a time out) to finish
 	 * processing.
 	 */
+	@Override
 	public void destroy() throws Exception {
 
 		Exception firstException = null;
