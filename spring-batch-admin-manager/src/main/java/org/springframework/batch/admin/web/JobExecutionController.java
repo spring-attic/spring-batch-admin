@@ -341,4 +341,20 @@ public class JobExecutionController {
 
 	}
 
+    @RequestMapping(value = "/jobs/executions/{jobExecutionId}/context", method = RequestMethod.GET)
+    public String getExecutionContext(Model model, @PathVariable Long jobExecutionId) {
+
+        try {
+            JobExecution jobExecution = jobService.getJobExecution(jobExecutionId);
+            model.addAttribute("jobExecutionContext",jobExecution.getExecutionContext().toString());
+            model.addAttribute("jobExecutionId",jobExecutionId);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            logger.error("no.such.job.execution"+ new Object[]{jobExecutionId}+ "There is no such job execution ("
+                    + jobExecutionId + ")");
+        }
+        return "jobs/executions/context";
+
+    }
 }

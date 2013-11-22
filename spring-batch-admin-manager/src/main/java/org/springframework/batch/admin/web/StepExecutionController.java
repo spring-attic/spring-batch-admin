@@ -20,6 +20,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.TimeZone;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.admin.history.StepExecutionHistory;
 import org.springframework.batch.admin.service.JobService;
 import org.springframework.batch.admin.service.NoSuchStepExecutionException;
@@ -48,7 +50,7 @@ public class StepExecutionController {
 	private JobService jobService;
 
 	private TimeZone timeZone = TimeZone.getDefault();
-
+    private static final Log logger = LogFactory.getLog(StepExecutionController.class);
 	/**
 	 * @param timeZone the timeZone to set
 	 */
@@ -147,4 +149,25 @@ public class StepExecutionController {
 		return stepExecutionHistory;
 	}
 
+    @RequestMapping(value = "/jobs/executions/{jobExecutionId}/steps/{stepExecutionId}/context", method = RequestMethod.GET)
+    public String getStepExecutionContext(Model model, @PathVariable Long jobExecutionId, @PathVariable Long stepExecutionId) {
+        try {
+            StepExecution stepExecution = jobService.getStepExecution(jobExecutionId, stepExecutionId);
+            String stepExecutionContext = stepExecution.getExecutionContext().toString();
+            model.addAttribute("stepExecutionContext",stepExecutionContext);
+            model.addAttribute("stepExecutionId",stepExecutionId);
+            model.addAttribute("stepName",stepExecution.getStepName());
+            model.addAttribute("jobExecutionId",jobExecutionId);
+        }
+        catch (NoSuchJobExecutionException e) {
+            logger.error("no.such.job.execution"+ new Object[]{jobExecutionId}+ "There is no such job execution ("
+                    + jobExecutionId + ")");
+        }
+        catch (NoSuchStepExecutionException e) {
+            logger.error("no.such.step.execution"+new Object[] { stepExecutionId }+ "There is no such step execution ("
+                    + stepExecutionId + ")");
+        }
+        return "jobs/executions/step/context";
+
+    }
 }
