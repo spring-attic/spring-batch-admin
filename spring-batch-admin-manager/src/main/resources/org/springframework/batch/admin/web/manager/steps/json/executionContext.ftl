@@ -5,5 +5,5 @@
     "jobExecutionId" : "${jobExecutionId}",
     "name" : "${stepName}",
     "resource" : "${baseUrl}${url}",
-    "context" : "${stepExecutionContext}"
+    "context" : ${stepExecutionContext}
 }
