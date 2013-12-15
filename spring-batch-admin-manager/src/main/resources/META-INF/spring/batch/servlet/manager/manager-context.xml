@@ -180,10 +180,28 @@
 			</props>
 		</property>
 	</bean>
+    <bean name="jobs/executions/context.json" parent="standard.json">
+        <property name="attributes">
+            <props merge="true">
+                <prop key="body">/manager/jobs/json/executionContext.ftl</prop>
+                <prop key="titleCode">.execution.context.title</prop>
+                <prop key="titleText">Spring Batch Admin: Job Execution Context</prop>
+            </props>
+        </property>
+    </bean>
 
-	<bean id="configurationHandler" name="/configuration" class="org.springframework.batch.admin.web.ViewHandler">
-		<property name="view" ref="configuration" />
-	</bean>
+    <bean name="jobs/executions/step/context.json" parent="standard.json">
+        <property name="attributes">
+            <props merge="true">
+                <prop key="body">/manager/steps/json/executionContext.ftl</prop>
+                <prop key="titleCode">step.execution.context.title</prop>
+                <prop key="titleText">Spring Batch Admin: Step Execution Context</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="configurationHandler" name="/configuration" class="org.springframework.batch.admin.web.ViewHandler">
+        <property name="view" ref="configuration" />
+    </bean>
 
 </beans>
 

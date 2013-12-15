@@ -15,11 +15,12 @@
  */
 package org.springframework.batch.admin.web;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.TimeZone;
+import java.io.IOException;
+import java.util.*;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.batch.admin.history.StepExecutionHistory;
 import org.springframework.batch.admin.service.JobService;
 import org.springframework.batch.admin.service.NoSuchStepExecutionException;
@@ -48,7 +49,7 @@ public class StepExecutionController {
 	private JobService jobService;
 
 	private TimeZone timeZone = TimeZone.getDefault();
-
+    private static final Log logger = LogFactory.getLog(StepExecutionController.class);
 	/**
 	 * @param timeZone the timeZone to set
 	 */
@@ -147,4 +148,30 @@ public class StepExecutionController {
 		return stepExecutionHistory;
 	}
 
+    @RequestMapping(value = "/jobs/executions/{jobExecutionId}/steps/{stepExecutionId}/context", method = RequestMethod.GET)
+    public String getStepExecutionContext(Model model, @PathVariable Long jobExecutionId, @PathVariable Long stepExecutionId) {
+        try {
+            StepExecution stepExecution = jobService.getStepExecution(jobExecutionId, stepExecutionId);
+            Map<String, Object> executionMap=new HashMap<String, Object>();
+            for (Map.Entry<String, Object> entry : stepExecution.getExecutionContext().entrySet()) {
+                executionMap.put(entry.getKey(), entry.getValue());
+            }
+            model.addAttribute("stepExecutionContext",new ObjectMapper().writeValueAsString(executionMap));
+            model.addAttribute("stepExecutionId",stepExecutionId);
+            model.addAttribute("stepName",stepExecution.getStepName());
+            model.addAttribute("jobExecutionId",jobExecutionId);
+        }
+        catch (NoSuchJobExecutionException e) {
+            logger.error("no.such.job.execution"+ new Object[]{jobExecutionId}+ "There is no such job execution ("
+                    + jobExecutionId + ")");
+        }
+        catch (NoSuchStepExecutionException e) {
+            logger.error("no.such.step.execution"+new Object[] { stepExecutionId }+ "There is no such step execution ("
+                    + stepExecutionId + ")");
+        }catch (IOException ioe) {
+            logger.error("Unable to parse Object to Json String. "+ioe.getMessage());
+        }
+        return "jobs/executions/step/context";
+
+    }
 }
