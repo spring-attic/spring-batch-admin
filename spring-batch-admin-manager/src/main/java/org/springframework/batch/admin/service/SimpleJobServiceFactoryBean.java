@@ -26,12 +26,14 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.core.configuration.JobLocator;
 import org.springframework.batch.core.configuration.ListableJobLocator;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.repository.ExecutionContextSerializer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.dao.AbstractJdbcBatchMetadataDao;
 import org.springframework.batch.core.repository.dao.ExecutionContextDao;
 import org.springframework.batch.core.repository.dao.JdbcExecutionContextDao;
 import org.springframework.batch.core.repository.dao.JdbcJobExecutionDao;
 import org.springframework.batch.core.repository.dao.JdbcStepExecutionDao;
+import org.springframework.batch.core.repository.dao.XStreamExecutionContextStringSerializer;
 import org.springframework.batch.item.database.support.DataFieldMaxValueIncrementerFactory;
 import org.springframework.batch.item.database.support.DefaultDataFieldMaxValueIncrementerFactory;
 import org.springframework.batch.support.DatabaseType;
@@ -73,6 +75,8 @@ public class SimpleJobServiceFactoryBean implements FactoryBean<JobService>, Ini
 	private JobLauncher jobLauncher;
 
 	private ListableJobLocator jobLocator;
+
+	private ExecutionContextSerializer serializer;
 
 	/**
 	 * A special handler for large objects. The default is usually fine, except
@@ -162,6 +166,19 @@ public class SimpleJobServiceFactoryBean implements FactoryBean<JobService>, Ini
 		this.jobLocator = jobLocator;
 	}
 
+	/**
+	 * A custom implementation of the {@link ExecutionContextSerializer}. The
+	 * default, if not injected, is the
+	 * {@link XStreamExecutionContextStringSerializer}.
+	 * 
+	 * @param serializer
+	 *            the serializer to set
+	 * @see ExecutionContextSerializer
+	 */
+	public void setSerializer(ExecutionContextSerializer serializer) {
+		this.serializer = serializer;
+	}
+
 	public void afterPropertiesSet() throws Exception {
 
 		Assert.notNull(dataSource, "DataSource must not be null.");
@@ -182,6 +199,13 @@ public class SimpleJobServiceFactoryBean implements FactoryBean<JobService>, Ini
 
 		if (lobHandler == null) {
 			lobHandler = new DefaultLobHandler();
+		}
+
+		if (serializer == null) {
+			XStreamExecutionContextStringSerializer defaultSerializer = new XStreamExecutionContextStringSerializer();
+			defaultSerializer.afterPropertiesSet();
+
+			serializer = defaultSerializer;
 		}
 
 		Assert.isTrue(incrementerFactory.isSupportedIncrementerType(databaseType), "'" + databaseType
@@ -231,6 +255,7 @@ public class SimpleJobServiceFactoryBean implements FactoryBean<JobService>, Ini
 		if (lobHandler != null) {
 			dao.setLobHandler(lobHandler);
 		}
+		dao.setSerializer(serializer);
 		dao.afterPropertiesSet();
 		// Assume the same length.
 		dao.setShortContextLength(maxVarCharLength);
