@@ -176,7 +176,7 @@ public class JdbcSearchableStepExecutionDao extends JdbcStepExecutionDao impleme
 		factory.setFromClause(getQuery("%PREFIX%STEP_EXECUTION S, %PREFIX%JOB_EXECUTION J, %PREFIX%JOB_INSTANCE I"));
 		factory.setSelectClause(FIELDS);
 		Map<String, Order> sortKeys = new HashMap<String, Order>();
-		sortKeys.put("S.STEP_EXECUTION_ID", Order.DESCENDING);
+		sortKeys.put("STEP_EXECUTION_ID", Order.DESCENDING);
 		factory.setSortKeys(sortKeys);
 		if (whereClause != null) {
 			factory.setWhereClause(whereClause

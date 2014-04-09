@@ -129,7 +129,7 @@ public class JdbcSearchableJobExecutionDao extends JdbcJobExecutionDao implement
 		factory.setFromClause(getQuery(fromClause));
 		factory.setSelectClause(FIELDS);
 		Map<String, Order> sortKeys = new HashMap<String, Order>();
-		sortKeys.put("E.JOB_EXECUTION_ID", Order.DESCENDING);
+		sortKeys.put("JOB_EXECUTION_ID", Order.DESCENDING);
 		factory.setSortKeys(sortKeys);
 		whereClause = "E.JOB_INSTANCE_ID=I.JOB_INSTANCE_ID" + (whereClause == null ? "" : " and " + whereClause);
 		if (whereClause != null) {
