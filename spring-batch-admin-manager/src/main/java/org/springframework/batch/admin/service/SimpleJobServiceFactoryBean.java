@@ -26,12 +26,9 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.core.configuration.JobLocator;
 import org.springframework.batch.core.configuration.ListableJobLocator;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.repository.ExecutionContextSerializer;
 import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.core.repository.dao.AbstractJdbcBatchMetadataDao;
-import org.springframework.batch.core.repository.dao.ExecutionContextDao;
-import org.springframework.batch.core.repository.dao.JdbcExecutionContextDao;
-import org.springframework.batch.core.repository.dao.JdbcJobExecutionDao;
-import org.springframework.batch.core.repository.dao.JdbcStepExecutionDao;
+import org.springframework.batch.core.repository.dao.*;
 import org.springframework.batch.item.database.support.DataFieldMaxValueIncrementerFactory;
 import org.springframework.batch.item.database.support.DefaultDataFieldMaxValueIncrementerFactory;
 import org.springframework.batch.support.DatabaseType;
@@ -73,6 +70,8 @@ public class SimpleJobServiceFactoryBean implements FactoryBean<JobService>, Ini
 	private JobLauncher jobLauncher;
 
 	private ListableJobLocator jobLocator;
+
+    private ExecutionContextSerializer serializer;
 
 	/**
 	 * A special handler for large objects. The default is usually fine, except
@@ -162,7 +161,11 @@ public class SimpleJobServiceFactoryBean implements FactoryBean<JobService>, Ini
 		this.jobLocator = jobLocator;
 	}
 
-	public void afterPropertiesSet() throws Exception {
+    public void setSerializer(ExecutionContextSerializer serializer) {
+        this.serializer = serializer;
+    }
+
+    public void afterPropertiesSet() throws Exception {
 
 		Assert.notNull(dataSource, "DataSource must not be null.");
 		Assert.notNull(jobRepository, "JobRepository must not be null.");
@@ -183,6 +186,13 @@ public class SimpleJobServiceFactoryBean implements FactoryBean<JobService>, Ini
 		if (lobHandler == null) {
 			lobHandler = new DefaultLobHandler();
 		}
+
+        if(serializer == null) {
+            XStreamExecutionContextStringSerializer defaultSerializer = new XStreamExecutionContextStringSerializer();
+            defaultSerializer.afterPropertiesSet();
+
+            serializer = defaultSerializer;
+        }
 
 		Assert.isTrue(incrementerFactory.isSupportedIncrementerType(databaseType), "'" + databaseType
 				+ "' is an unsupported database type.  The supported database types are "
@@ -227,6 +237,7 @@ public class SimpleJobServiceFactoryBean implements FactoryBean<JobService>, Ini
 		JdbcExecutionContextDao dao = new JdbcExecutionContextDao();
 		dao.setJdbcTemplate(jdbcTemplate);
 		dao.setTablePrefix(tablePrefix);
+        dao.setSerializer(serializer);
 		dao.setClobTypeToUse(determineClobTypeToUse(this.databaseType));
 		if (lobHandler != null) {
 			dao.setLobHandler(lobHandler);
