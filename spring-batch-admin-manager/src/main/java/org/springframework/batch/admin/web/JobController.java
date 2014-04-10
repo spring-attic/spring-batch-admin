@@ -166,7 +166,7 @@ public class JobController {
 
 			Collection<JobInstance> result = jobService.listJobInstances(jobName, startJobInstance, pageSize);
 			Collection<JobInstanceInfo> jobInstances = new ArrayList<JobInstanceInfo>();
-			model.addAttribute("jobParameters", "");
+			model.addAttribute("jobParameters", jobParametersExtractor.fromJobParameters(jobService.getLastJobParameters(jobName)));
 			for (JobInstance jobInstance : result) {
 				jobInstances.add(new JobInstanceInfo(jobInstance, jobService.getJobExecutionsForJobInstance(jobName,
 						jobInstance.getId())));
