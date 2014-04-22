@@ -35,9 +35,9 @@ import org.springframework.validation.BindException;
 
 public class JobControllerTests {
 
-	private JobService jobService = EasyMock.createMock(JobService.class);
+	private final JobService jobService = EasyMock.createMock(JobService.class);
 
-	private JobController controller = new JobController(jobService);
+	private final JobController controller = new JobController(jobService);
 
 	@Test
 	public void testJobNameSunnyDay() throws Exception {
@@ -89,6 +89,8 @@ public class JobControllerTests {
 		EasyMock.expectLastCall().andReturn(true);
 		jobService.isIncrementable("foo");
 		EasyMock.expectLastCall().andReturn(true);
+		jobService.getLastJobParameters("foo");
+		EasyMock.expectLastCall().andReturn(new JobParameters());
 		EasyMock.replay(jobService);
 
 		ExtendedModelMap model = new ExtendedModelMap();
@@ -145,6 +147,8 @@ public class JobControllerTests {
 		EasyMock.expectLastCall().andReturn(true);
 		jobService.isIncrementable("job");
 		EasyMock.expectLastCall().andReturn(true);
+		jobService.getLastJobParameters("job");
+		EasyMock.expectLastCall().andReturn(new JobParameters());
 		EasyMock.replay(jobService);
 
 		ExtendedModelMap model = new ExtendedModelMap();
