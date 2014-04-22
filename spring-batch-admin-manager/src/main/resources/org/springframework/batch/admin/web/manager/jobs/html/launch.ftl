@@ -11,7 +11,7 @@
 		<label for="launch">Job name=${jobInfo.name}</label><input id="launch" type="submit" value="Launch" name="launch" />
 		<ol>
 			<li><label for="jobParameters">Job Parameters (key=value
-			pairs)</label><textarea id="jobParameters" name="jobParameters" class="jobParameters">${jobParameters}</textarea> 
+			pairs)</label><textarea id="jobParameters" name="jobParameters" class="jobParameters"><#if jobParameters??>${jobParameters}</#if></textarea> 
 			(<#if jobInfo.incrementable>Incrementable<#else>Not incrementable</#if>)</li>
 		</ol>
 
