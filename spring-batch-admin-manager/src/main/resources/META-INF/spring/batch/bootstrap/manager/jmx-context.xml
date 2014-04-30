@@ -13,12 +13,8 @@
 		<property name="jobService">
 			<bean class="org.springframework.aop.framework.ProxyFactoryBean">
 				<property name="targetName" value="jobService" />
-				<property name="interceptorNames" value="cacheInterceptor" />
 			</bean>
 		</property>
 		<property name="defaultDomain" value="spring.application" />
 	</bean>
-
-	<bean id="cacheInterceptor" class="org.springframework.batch.admin.util.SimpleEhCacheInterceptor" />
-	
 </beans>
