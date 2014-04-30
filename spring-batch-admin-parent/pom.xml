@@ -43,6 +43,7 @@
 		<spring.framework.version>3.2.7.RELEASE</spring.framework.version>
 		<spring.integration.version>2.2.5.RELEASE</spring.integration.version>
 		<spring.retry.version>1.0.2.RELEASE</spring.retry.version>
+		<slf4j.version>1.7.6</slf4j.version>
 	</properties>
 	<profiles>
 		<profile>
@@ -396,18 +397,18 @@
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>jcl-over-slf4j</artifactId>
-				<version>1.5.8</version>
+				<version>${slf4j.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
-				<version>1.5.8</version>
+				<version>${slf4j.version}</version>
 				<scope>runtime</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-log4j12</artifactId>
-				<version>1.5.8</version>
+				<version>${slf4j.version}</version>
 				<scope>runtime</scope>
 			</dependency>
 			<dependency>
