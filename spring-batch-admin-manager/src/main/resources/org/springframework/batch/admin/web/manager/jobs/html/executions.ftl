@@ -1,4 +1,5 @@
 <#import "/spring.ftl" as spring />
+<#escape x as x?html>
 <div id="job-executions">
 
 	<#if jobInfo??>
@@ -71,3 +72,4 @@
 	</#if>
 	
 </div><!-- job-executions -->
+</#escape>

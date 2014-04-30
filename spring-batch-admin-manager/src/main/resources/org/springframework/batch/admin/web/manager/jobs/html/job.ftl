@@ -1,4 +1,5 @@
 <#import "/spring.ftl" as spring />
+<#escape x as x?html>
 <script type="text/javascript">
 	function transferJobParameters(jobParameters) {
 		if (jobParameters!=null && $("#jobParameters")) {
@@ -79,3 +80,4 @@
 	</#if>
 	
 </div><!-- jobs -->
+</#escape>

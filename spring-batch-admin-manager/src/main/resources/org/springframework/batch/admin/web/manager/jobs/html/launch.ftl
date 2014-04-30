@@ -1,3 +1,4 @@
+<#escape x as x?html>
 <#if jobInfo?? && jobInfo.launchable>
 	<p/>
 	<#assign launch_url><@spring.url relativeUrl="${servletPath}/jobs/${jobInfo.name}"/></#assign>
@@ -38,4 +39,4 @@
 		});
 	</script>
 </#if>
-
+</#escape>
