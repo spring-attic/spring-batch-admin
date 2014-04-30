@@ -339,11 +339,6 @@
 				<scope>test</scope>
 			</dependency>
 			<dependency>
-				<groupId>net.sf.ehcache</groupId>
-				<artifactId>ehcache-core</artifactId>
-				<version>2.3.0</version>
-			</dependency>
-			<dependency>
 				<groupId>stax</groupId>
 				<artifactId>stax</artifactId>
 				<version>1.2.0</version>
