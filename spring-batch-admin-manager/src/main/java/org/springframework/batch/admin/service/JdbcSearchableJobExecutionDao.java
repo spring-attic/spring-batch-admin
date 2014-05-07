@@ -132,9 +132,8 @@ public class JdbcSearchableJobExecutionDao extends JdbcJobExecutionDao implement
 		sortKeys.put("JOB_EXECUTION_ID", Order.DESCENDING);
 		factory.setSortKeys(sortKeys);
 		whereClause = "E.JOB_INSTANCE_ID=I.JOB_INSTANCE_ID" + (whereClause == null ? "" : " and " + whereClause);
-		if (whereClause != null) {
-			factory.setWhereClause(whereClause);
-		}
+		factory.setWhereClause(whereClause);
+
 		return (PagingQueryProvider) factory.getObject();
 	}
 
