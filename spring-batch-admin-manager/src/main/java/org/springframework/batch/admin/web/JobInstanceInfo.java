@@ -17,6 +17,7 @@ package org.springframework.batch.admin.web;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.TimeZone;
 
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
@@ -27,11 +28,16 @@ public class JobInstanceInfo {
 
 	private final Long id;
 
-	private final Collection<JobExecution> jobExecutions;
+	private final Collection<JobExecutionInfo> jobExecutionInfos;
 
-	public JobInstanceInfo(JobInstance jobInstance, Collection<JobExecution> jobExecutions) {
+	public JobInstanceInfo(JobInstance jobInstance, Collection<JobExecution> jobExecutions, TimeZone timeZone) {
 		this.jobInstance = jobInstance;
-		this.jobExecutions = jobExecutions != null ? jobExecutions : new ArrayList<JobExecution>();
+		this.jobExecutionInfos = new ArrayList<JobExecutionInfo>();
+		if (jobExecutions != null) {
+			for (JobExecution jobExecution : jobExecutions) {
+				jobExecutionInfos.add(new JobExecutionInfo(jobExecution, timeZone));
+			}
+		}
 		this.id = jobInstance.getId();
 	}
 
@@ -44,14 +50,22 @@ public class JobInstanceInfo {
 	}
 
 	public int getJobExecutionCount() {
-		return jobExecutions.size();
+		return jobExecutionInfos.size();
 	}
 
 	public Collection<JobExecution> getJobExecutions() {
+		Collection<JobExecution> jobExecutions = new ArrayList<JobExecution>();
+		for (JobExecutionInfo jobExecutionInfo : jobExecutionInfos) {
+			jobExecutions.add(jobExecutionInfo.getJobExecution());
+		}
 		return jobExecutions;
 	}
 
 	public JobExecution getLastJobExecution() {
-		return jobExecutions.isEmpty() ? null : jobExecutions.iterator().next();
+		return jobExecutionInfos.isEmpty() ? null : jobExecutionInfos.iterator().next().getJobExecution();
+	}
+
+	public JobExecutionInfo getLastJobExecutionInfo() {
+		return jobExecutionInfos.isEmpty() ? null : jobExecutionInfos.iterator().next();
 	}
 }
