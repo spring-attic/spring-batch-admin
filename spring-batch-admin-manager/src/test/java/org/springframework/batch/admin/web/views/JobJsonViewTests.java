@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -60,7 +61,7 @@ public class JobJsonViewTests extends AbstractManagerViewTests {
 		model.put(BindingResult.MODEL_KEY_PREFIX + "launchRequest", errors);
 		model.put("jobInfo", new JobInfo("foo", 1));
 		model.put("jobInstances", Arrays.asList(new JobInstanceInfo(MetaDataInstanceFactory.createJobInstance("foo",
-				1L), new ArrayList<JobExecution>())));
+				1L), new ArrayList<JobExecution>(), TimeZone.getTimeZone("GMT"))));
 		model.put("baseUrl", "http://localhost:8080/springsource");
 		model.put("startJobInstance", 11);
 		model.put("endJobInstance", 30);
@@ -81,7 +82,7 @@ public class JobJsonViewTests extends AbstractManagerViewTests {
 		model.put(BindingResult.MODEL_KEY_PREFIX + "launchRequest", errors);
 		model.put("jobInfo", new JobInfo("foo", 1));
 		model.put("jobInstances", Arrays.asList(new JobInstanceInfo(MetaDataInstanceFactory.createJobInstance("foo",
-				1L), new ArrayList<JobExecution>())));
+				1L), new ArrayList<JobExecution>(), TimeZone.getTimeZone("GMT"))));
 		model.put("baseUrl", "http://localhost:8080/springsource");
 		model.put("startJobInstance", 11);
 		model.put("endJobInstance", 30);
@@ -128,7 +129,7 @@ public class JobJsonViewTests extends AbstractManagerViewTests {
 		model.put(BindingResult.MODEL_KEY_PREFIX + "launchRequest", errors);
 		model.put("jobInfo", new JobInfo("foo", 1));
 		model.put("jobInstances", Arrays.asList(new JobInstanceInfo(MetaDataInstanceFactory.createJobInstance("foo",
-				123456789L), Arrays.asList(MetaDataInstanceFactory.createJobExecution()))));
+				123456789L), Arrays.asList(MetaDataInstanceFactory.createJobExecution()), TimeZone.getTimeZone("GMT"))));
 		model.put("baseUrl", "http://localhost:8080/springsource");
 		job.render(model, request, response);
 		String content = response.getContentAsString();

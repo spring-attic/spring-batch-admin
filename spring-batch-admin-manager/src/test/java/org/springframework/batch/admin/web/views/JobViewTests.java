@@ -21,6 +21,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.TimeZone;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -78,7 +79,7 @@ public class JobViewTests extends AbstractManagerViewTests {
 	public void testJobView() throws Exception {
 		model.put("jobInfo", new JobInfo("foo", 1, true));
 		model.put("jobInstances", Arrays.asList(new JobInstanceInfo(MetaDataInstanceFactory.createJobInstance("foo",
-				1L), new ArrayList<JobExecution>())));
+				1L), new ArrayList<JobExecution>(), TimeZone.getTimeZone("GMT"))));
 		model.put("jobParameters", "foo=bar");
 		model.put("startJobInstance", 3);
 		model.put("endJobInstance", 4);
@@ -98,7 +99,7 @@ public class JobViewTests extends AbstractManagerViewTests {
 	public void testJobViewNotLaunchable() throws Exception {
 		model.put("job", new JobInfo("foo", 1));
 		model.put("jobInstances", Arrays.asList(new JobInstanceInfo(MetaDataInstanceFactory.createJobInstance("foo",
-				1L), new ArrayList<JobExecution>())));
+				1L), new ArrayList<JobExecution>(), TimeZone.getTimeZone("GMT"))));
 		model.put("launchable", false);
 		model.put("startJobInstance", 3);
 		model.put("endJobInstance", 4);
