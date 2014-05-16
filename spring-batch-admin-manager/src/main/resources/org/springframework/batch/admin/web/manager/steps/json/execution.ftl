@@ -16,7 +16,7 @@
     "commitCount" : ${stepExecutionInfo.stepExecution.commitCount?c},
     "rollbackCount" : ${stepExecutionInfo.stepExecution.rollbackCount?c},
     "exitCode" : "${stepExecutionInfo.stepExecution.exitStatus.exitCode}",
-    "exitDescription" : "${stepExecutionInfo.stepExecution.exitStatus.exitDescription?replace('\t','\\t')?replace('\n','\\n')?replace('\r','')}"
+    "exitDescription" : "${stepExecutionInfo.stepExecution.exitStatus.exitDescription?replace('\t','\\t')?replace('\n','\\n')?replace('\r','')?replace('\"','\\"')}"
   },
 <#assign url><@spring.url relativeUrl="${servletPath}/jobs/executions/${stepExecutionInfo.jobExecutionId?c}.json"/></#assign>
   "jobExecution" : { 
