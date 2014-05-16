@@ -9,7 +9,7 @@
     "startTime" : "${jobExecutionInfo.startTime}",
     "duration" : "${jobExecutionInfo.duration}",
     "exitCode" : "${jobExecutionInfo.jobExecution.exitStatus.exitCode}",
-    "exitDescription" : "${jobExecutionInfo.jobExecution.exitStatus.exitDescription?replace('\t','\\t')?replace('\n','\\n')?replace('\r','')}",
+    "exitDescription" : "${jobExecutionInfo.jobExecution.exitStatus.exitDescription?replace('\t','\\t')?replace('\n','\\n')?replace('\r','')?replace('\"','\\"')}",
 <#assign url><@spring.url relativeUrl="${servletPath}/jobs/${jobExecutionInfo.name}/${jobExecutionInfo.jobId?c}.json"/></#assign>
     "jobInstance" : { "resource" : "${baseUrl}${url}" },
 <#if stepExecutionInfos?? && stepExecutionInfos?size != 0>
