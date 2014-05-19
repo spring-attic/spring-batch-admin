@@ -15,15 +15,11 @@
  */
 package org.springframework.batch.admin.web;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.TimeZone;
+import java.util.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.batch.admin.service.JobService;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
@@ -340,4 +336,25 @@ public class JobExecutionController {
 
 	}
 
+    @RequestMapping(value = "/jobs/executions/{jobExecutionId}/context", method = RequestMethod.GET)
+    public String getExecutionContext(Model model, @PathVariable Long jobExecutionId) {
+        String executionContext="";
+        try {
+            JobExecution jobExecution = jobService.getJobExecution(jobExecutionId);
+            Map<String, Object> executionMap=new HashMap<String, Object>();
+            for (Map.Entry<String, Object> entry : jobExecution.getExecutionContext().entrySet()) {
+                executionMap.put(entry.getKey(), entry.getValue());
+            }
+            executionContext= new ObjectMapper().writeValueAsString(executionMap);
+            model.addAttribute("jobExecutionContext",executionContext);
+            model.addAttribute("jobExecutionId",jobExecutionId);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            logger.error("no.such.job.execution"+ new Object[]{jobExecutionId}+ "There is no such job execution ("
+                    + jobExecutionId + ")");
+        }
+        return "jobs/executions/context";
+
+    }
 }
