@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
-                                 http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-                                 http://www.springframework.org/schema/context
-                                 http://www.springframework.org/schema/context/spring-context-2.5.xsd">
-                                 
+                                 http://www.springframework.org/schema/beans/spring-beans.xsd">
+
 	<bean class="org.springframework.batch.admin.web.HomeMenu" parent="baseMenu"/>
 	<bean class="org.springframework.batch.admin.web.JobsMenu" parent="baseMenu"/>
 	<bean class="org.springframework.batch.admin.web.ExecutionsMenu" parent="baseMenu"/>
 	<bean class="org.springframework.batch.admin.web.FilesMenu" parent="baseMenu"/>
-	
+
 	<bean name="jobs" parent="standard">
 		<property name="attributes">
 			<props merge="true">
@@ -180,7 +177,7 @@
 			</props>
 		</property>
 	</bean>
-    <bean name="jobs/executions/context.json" parent="standard.json">
+    <bean name="jobs/executions/execution-context.json" parent="standard.json">
         <property name="attributes">
             <props merge="true">
                 <prop key="body">/manager/jobs/json/executionContext.ftl</prop>
@@ -190,7 +187,7 @@
         </property>
     </bean>
 
-    <bean name="jobs/executions/step/context.json" parent="standard.json">
+    <bean name="jobs/executions/step/execution-context.json" parent="standard.json">
         <property name="attributes">
             <props merge="true">
                 <prop key="body">/manager/steps/json/executionContext.ftl</prop>
@@ -199,6 +196,7 @@
             </props>
         </property>
     </bean>
+
     <bean id="configurationHandler" name="/configuration" class="org.springframework.batch.admin.web.ViewHandler">
         <property name="view" ref="configuration" />
     </bean>

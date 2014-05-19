@@ -1,5 +1,6 @@
 <#import "/spring.ftl" as spring />
-<#assign url><@spring.url relativeUrl="${servletPath}/jobs/executions/${jobExecutionId}/steps/${stepExecutionId}/context.json"/></#assign>
+<#if stepExecutionContext??>
+<#assign url><@spring.url relativeUrl="${servletPath}/jobs/executions/${jobExecutionId}/steps/${stepExecutionId}/execution-context.json"/></#assign>
 "stepExecutionContext" : {
     "id" : "${stepExecutionId}",
     "jobExecutionId" : "${jobExecutionId}",
@@ -7,3 +8,4 @@
     "resource" : "${baseUrl}${url}",
     "context" : ${stepExecutionContext}
 }
+</#if>

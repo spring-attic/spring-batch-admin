@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 the original author or authors.
+ * Copyright 2009-2014 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 package org.springframework.batch.admin.web;
-
-import java.util.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,6 +42,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TimeZone;
+
 /**
  * Controller for job executions.
  * 
@@ -52,7 +60,6 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 @Controller
 public class JobExecutionController {
-
 	private static Log logger = LogFactory.getLog(JobExecutionController.class);
 
 	public static class StopRequest {
@@ -69,7 +76,7 @@ public class JobExecutionController {
 	}
 
 	private JobService jobService;
-
+	private ObjectMapper objectMapper;
 	private TimeZone timeZone = TimeZone.getDefault();
 
 	/**
@@ -79,6 +86,11 @@ public class JobExecutionController {
 	@Qualifier("userTimeZone")
 	public void setTimeZone(TimeZone timeZone) {
 		this.timeZone = timeZone;
+	}
+
+	@Autowired
+	public void setObjectMapper(ObjectMapper objectMapper) {
+		this.objectMapper = objectMapper;
 	}
 
 	@Autowired
@@ -336,25 +348,28 @@ public class JobExecutionController {
 
 	}
 
-    @RequestMapping(value = "/jobs/executions/{jobExecutionId}/context", method = RequestMethod.GET)
-    public String getExecutionContext(Model model, @PathVariable Long jobExecutionId) {
-        String executionContext="";
-        try {
-            JobExecution jobExecution = jobService.getJobExecution(jobExecutionId);
-            Map<String, Object> executionMap=new HashMap<String, Object>();
-            for (Map.Entry<String, Object> entry : jobExecution.getExecutionContext().entrySet()) {
-                executionMap.put(entry.getKey(), entry.getValue());
-            }
-            executionContext= new ObjectMapper().writeValueAsString(executionMap);
-            model.addAttribute("jobExecutionContext",executionContext);
-            model.addAttribute("jobExecutionId",jobExecutionId);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            logger.error("no.such.job.execution"+ new Object[]{jobExecutionId}+ "There is no such job execution ("
-                    + jobExecutionId + ")");
-        }
-        return "jobs/executions/context";
+	@RequestMapping(value = "/jobs/executions/{jobExecutionId}/execution-context", method = RequestMethod.GET)
+	public String getExecutionContext(Model model, @PathVariable Long jobExecutionId, @ModelAttribute("date") Date date,
+									  Errors errors) {
+		try {
+			JobExecution jobExecution = jobService.getJobExecution(jobExecutionId);
+			Map<String, Object> executionMap = new HashMap<String, Object>();
 
-    }
+			for (Map.Entry<String, Object> entry : jobExecution.getExecutionContext().entrySet()) {
+				executionMap.put(entry.getKey(), entry.getValue());
+			}
+
+			model.addAttribute("jobExecutionContext", objectMapper.writeValueAsString(executionMap));
+			model.addAttribute("jobExecutionId", jobExecutionId);
+		}
+		catch (NoSuchJobExecutionException e) {
+			errors.reject("no.such.job.execution", new Object[] { jobExecutionId }, "There is no such job execution ("
+					+ jobExecutionId + ")");
+		} catch (IOException e) {
+			errors.reject("serialization.error", new Object[] { jobExecutionId }, "Error serializing execution context for job execution ("
+					+ jobExecutionId + ")");
+		}
+
+		return "jobs/executions/execution-context";
+	}
 }

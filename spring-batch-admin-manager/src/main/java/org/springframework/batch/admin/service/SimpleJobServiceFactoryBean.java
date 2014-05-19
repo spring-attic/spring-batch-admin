@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 the original author or authors.
+ * Copyright 2009-2014 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import org.springframework.batch.core.configuration.ListableJobLocator;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.ExecutionContextSerializer;
 import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.core.repository.dao.*;
 import org.springframework.batch.core.repository.dao.AbstractJdbcBatchMetadataDao;
 import org.springframework.batch.core.repository.dao.ExecutionContextDao;
 import org.springframework.batch.core.repository.dao.JdbcExecutionContextDao;
@@ -167,7 +166,6 @@ public class SimpleJobServiceFactoryBean implements FactoryBean<JobService>, Ini
 		this.jobLocator = jobLocator;
 	}
 
-
 	/**
 	 * A custom implementation of the {@link ExecutionContextSerializer}. The
 	 * default, if not injected, is the
@@ -202,7 +200,6 @@ public class SimpleJobServiceFactoryBean implements FactoryBean<JobService>, Ini
 		if (lobHandler == null) {
 			lobHandler = new DefaultLobHandler();
 		}
-
 
 		if (serializer == null) {
 			XStreamExecutionContextStringSerializer defaultSerializer = new XStreamExecutionContextStringSerializer();
@@ -254,7 +251,6 @@ public class SimpleJobServiceFactoryBean implements FactoryBean<JobService>, Ini
 		JdbcExecutionContextDao dao = new JdbcExecutionContextDao();
 		dao.setJdbcTemplate(jdbcTemplate);
 		dao.setTablePrefix(tablePrefix);
-        dao.setSerializer(serializer);
 		dao.setClobTypeToUse(determineClobTypeToUse(this.databaseType));
 		if (lobHandler != null) {
 			dao.setLobHandler(lobHandler);

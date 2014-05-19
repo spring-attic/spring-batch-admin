@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2010 the original author or authors.
+ * Copyright 2009-2014 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,13 @@
 package org.springframework.batch.admin.web;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TimeZone;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.batch.admin.history.StepExecutionHistory;
 import org.springframework.batch.admin.service.JobService;
@@ -45,11 +48,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 @Controller
 public class StepExecutionController {
-
 	private JobService jobService;
-
+	private ObjectMapper objectMapper;
 	private TimeZone timeZone = TimeZone.getDefault();
-    private static final Log logger = LogFactory.getLog(StepExecutionController.class);
+
 	/**
 	 * @param timeZone the timeZone to set
 	 */
@@ -57,6 +59,11 @@ public class StepExecutionController {
 	@Qualifier("userTimeZone")
 	public void setTimeZone(TimeZone timeZone) {
 		this.timeZone = timeZone;
+	}
+
+	@Autowired
+	public void setObjectMapper(ObjectMapper objectMapper) {
+		this.objectMapper = objectMapper;
 	}
 
 	@Autowired
@@ -148,30 +155,35 @@ public class StepExecutionController {
 		return stepExecutionHistory;
 	}
 
-    @RequestMapping(value = "/jobs/executions/{jobExecutionId}/steps/{stepExecutionId}/context", method = RequestMethod.GET)
-    public String getStepExecutionContext(Model model, @PathVariable Long jobExecutionId, @PathVariable Long stepExecutionId) {
-        try {
-            StepExecution stepExecution = jobService.getStepExecution(jobExecutionId, stepExecutionId);
-            Map<String, Object> executionMap=new HashMap<String, Object>();
-            for (Map.Entry<String, Object> entry : stepExecution.getExecutionContext().entrySet()) {
-                executionMap.put(entry.getKey(), entry.getValue());
-            }
-            model.addAttribute("stepExecutionContext",new ObjectMapper().writeValueAsString(executionMap));
-            model.addAttribute("stepExecutionId",stepExecutionId);
-            model.addAttribute("stepName",stepExecution.getStepName());
-            model.addAttribute("jobExecutionId",jobExecutionId);
-        }
-        catch (NoSuchJobExecutionException e) {
-            logger.error("no.such.job.execution"+ new Object[]{jobExecutionId}+ "There is no such job execution ("
-                    + jobExecutionId + ")");
-        }
-        catch (NoSuchStepExecutionException e) {
-            logger.error("no.such.step.execution"+new Object[] { stepExecutionId }+ "There is no such step execution ("
-                    + stepExecutionId + ")");
-        }catch (IOException ioe) {
-            logger.error("Unable to parse Object to Json String. "+ioe.getMessage());
-        }
-        return "jobs/executions/step/context";
+	@RequestMapping(value = "/jobs/executions/{jobExecutionId}/steps/{stepExecutionId}/execution-context", method = RequestMethod.GET)
+	public String getStepExecutionContext(Model model, @PathVariable Long jobExecutionId, @PathVariable Long stepExecutionId,
+										  @ModelAttribute("date") Date date, Errors errors) {
+		try {
+			StepExecution stepExecution = jobService.getStepExecution(jobExecutionId, stepExecutionId);
+			Map<String, Object> executionMap = new HashMap<String, Object>();
 
-    }
+			for (Map.Entry<String, Object> entry : stepExecution.getExecutionContext().entrySet()) {
+				executionMap.put(entry.getKey(), entry.getValue());
+			}
+
+			model.addAttribute("stepExecutionContext", objectMapper.writeValueAsString(executionMap));
+			model.addAttribute("stepExecutionId", stepExecutionId);
+			model.addAttribute("stepName", stepExecution.getStepName());
+			model.addAttribute("jobExecutionId", jobExecutionId);
+		}
+		catch (NoSuchJobExecutionException e) {
+			errors.reject("no.such.job.execution", new Object[] { jobExecutionId }, "There is no such job execution ("
+					+ jobExecutionId + ")");
+		}
+		catch (NoSuchStepExecutionException e) {
+			errors.reject("no.such.step.execution", new Object[] { stepExecutionId }, "There is no such step execution ("
+					+ stepExecutionId + ")");
+		}
+		catch (IOException e) {
+			errors.reject("serialization.error", new Object[] { jobExecutionId }, "Error serializing execution context for step execution ("
+				+ stepExecutionId + ")");
+		}
+
+		return "jobs/executions/step/execution-context";
+	}
 }
