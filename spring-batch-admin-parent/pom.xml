@@ -348,7 +348,7 @@
 				<groupId>org.codehaus.jackson</groupId>
 				<artifactId>jackson-mapper-asl</artifactId>
 				<version>1.6.3</version>
-				<scope>test</scope>
+				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.hibernate</groupId>
