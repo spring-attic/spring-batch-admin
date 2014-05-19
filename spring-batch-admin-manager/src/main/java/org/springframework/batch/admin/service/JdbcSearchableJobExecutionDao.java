@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2013 the original author or authors.
+ * Copyright 2006-2014 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,6 @@ import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
-import org.springframework.batch.core.JobParameter;
-import org.springframework.batch.core.JobParameter.ParameterType;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.repository.dao.JdbcJobExecutionDao;
 import org.springframework.batch.item.database.Order;
@@ -38,7 +36,6 @@ import org.springframework.batch.item.database.PagingQueryProvider;
 import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.incrementer.AbstractDataFieldMaxValueIncrementer;
 import org.springframework.util.Assert;
@@ -129,12 +126,11 @@ public class JdbcSearchableJobExecutionDao extends JdbcJobExecutionDao implement
 		factory.setFromClause(getQuery(fromClause));
 		factory.setSelectClause(FIELDS);
 		Map<String, Order> sortKeys = new HashMap<String, Order>();
-		sortKeys.put("E.JOB_EXECUTION_ID", Order.DESCENDING);
+		sortKeys.put("JOB_EXECUTION_ID", Order.DESCENDING);
 		factory.setSortKeys(sortKeys);
 		whereClause = "E.JOB_INSTANCE_ID=I.JOB_INSTANCE_ID" + (whereClause == null ? "" : " and " + whereClause);
-		if (whereClause != null) {
-			factory.setWhereClause(whereClause);
-		}
+		factory.setWhereClause(whereClause);
+
 		return (PagingQueryProvider) factory.getObject();
 	}
 

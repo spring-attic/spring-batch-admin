@@ -1,4 +1,5 @@
 <#import "/spring.ftl" as spring />
+<#escape x as x?html>
 <script type="text/javascript">
 	function transferJobParameters(jobParameters) {
 		if (jobParameters!=null && $("#jobParameters")) {
@@ -30,6 +31,7 @@
 						<th>&nbsp;</th>
 						<th>JobExecution Count</th>
 						<th>Last JobExecution</th>
+						<th>Last JobExecution Parameters</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -47,8 +49,10 @@
 							<#if jobInstanceInfo.lastJobExecution??>
 								<#assign execution_url><@spring.url relativeUrl="${servletPath}/jobs/executions/${jobInstanceInfo.lastJobExecution.id?c}"/></#assign>
 								<td><a href="${execution_url}">${jobInstanceInfo.lastJobExecution.status}</a></td>
+								<td>${jobInstanceInfo.lastJobExecution.jobParameters}</td>
 							<#else>
-								<td>?</td>							
+								<td>?</td>
+								<td>?</td>
 							</#if>
 						</tr>
 					</#list>
@@ -76,3 +80,4 @@
 	</#if>
 	
 </div><!-- jobs -->
+</#escape>

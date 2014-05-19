@@ -29,6 +29,12 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.ExecutionContextSerializer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.dao.*;
+import org.springframework.batch.core.repository.dao.AbstractJdbcBatchMetadataDao;
+import org.springframework.batch.core.repository.dao.ExecutionContextDao;
+import org.springframework.batch.core.repository.dao.JdbcExecutionContextDao;
+import org.springframework.batch.core.repository.dao.JdbcJobExecutionDao;
+import org.springframework.batch.core.repository.dao.JdbcStepExecutionDao;
+import org.springframework.batch.core.repository.dao.XStreamExecutionContextStringSerializer;
 import org.springframework.batch.item.database.support.DataFieldMaxValueIncrementerFactory;
 import org.springframework.batch.item.database.support.DefaultDataFieldMaxValueIncrementerFactory;
 import org.springframework.batch.support.DatabaseType;
@@ -71,7 +77,7 @@ public class SimpleJobServiceFactoryBean implements FactoryBean<JobService>, Ini
 
 	private ListableJobLocator jobLocator;
 
-    private ExecutionContextSerializer serializer;
+	private ExecutionContextSerializer serializer;
 
 	/**
 	 * A special handler for large objects. The default is usually fine, except
@@ -161,11 +167,21 @@ public class SimpleJobServiceFactoryBean implements FactoryBean<JobService>, Ini
 		this.jobLocator = jobLocator;
 	}
 
-    public void setSerializer(ExecutionContextSerializer serializer) {
-        this.serializer = serializer;
-    }
 
-    public void afterPropertiesSet() throws Exception {
+	/**
+	 * A custom implementation of the {@link ExecutionContextSerializer}. The
+	 * default, if not injected, is the
+	 * {@link XStreamExecutionContextStringSerializer}.
+	 * 
+	 * @param serializer
+	 *            the serializer to set
+	 * @see ExecutionContextSerializer
+	 */
+	public void setSerializer(ExecutionContextSerializer serializer) {
+		this.serializer = serializer;
+	}
+
+	public void afterPropertiesSet() throws Exception {
 
 		Assert.notNull(dataSource, "DataSource must not be null.");
 		Assert.notNull(jobRepository, "JobRepository must not be null.");
@@ -187,12 +203,13 @@ public class SimpleJobServiceFactoryBean implements FactoryBean<JobService>, Ini
 			lobHandler = new DefaultLobHandler();
 		}
 
-        if(serializer == null) {
-            XStreamExecutionContextStringSerializer defaultSerializer = new XStreamExecutionContextStringSerializer();
-            defaultSerializer.afterPropertiesSet();
 
-            serializer = defaultSerializer;
-        }
+		if (serializer == null) {
+			XStreamExecutionContextStringSerializer defaultSerializer = new XStreamExecutionContextStringSerializer();
+			defaultSerializer.afterPropertiesSet();
+
+			serializer = defaultSerializer;
+		}
 
 		Assert.isTrue(incrementerFactory.isSupportedIncrementerType(databaseType), "'" + databaseType
 				+ "' is an unsupported database type.  The supported database types are "
@@ -242,6 +259,7 @@ public class SimpleJobServiceFactoryBean implements FactoryBean<JobService>, Ini
 		if (lobHandler != null) {
 			dao.setLobHandler(lobHandler);
 		}
+		dao.setSerializer(serializer);
 		dao.afterPropertiesSet();
 		// Assume the same length.
 		dao.setShortContextLength(maxVarCharLength);

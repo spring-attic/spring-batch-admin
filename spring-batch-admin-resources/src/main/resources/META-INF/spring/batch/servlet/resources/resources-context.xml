@@ -115,7 +115,7 @@
 				<prop key="servletPath">#{resourceService.servletPath}</prop>
 			</props>
 		</property>
-		<property name="contentType" value="text/plain" />
+		<property name="contentType" value="application/json" />
 	</bean>
 
 	<bean id="home" parent="standard" />
