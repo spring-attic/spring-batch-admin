@@ -31,6 +31,9 @@
 						<th>&nbsp;</th>
 						<th>JobExecution Count</th>
 						<th>Last JobExecution</th>
+						<th>Last JobExecution Date</th>
+						<th>Last JobExecution Start</th>
+						<th>Last JobExecution Duration</th>
 						<th>Last JobExecution Parameters</th>
 					</tr>
 				</thead>
@@ -49,8 +52,14 @@
 							<#if jobInstanceInfo.lastJobExecution??>
 								<#assign execution_url><@spring.url relativeUrl="${servletPath}/jobs/executions/${jobInstanceInfo.lastJobExecution.id?c}"/></#assign>
 								<td><a href="${execution_url}">${jobInstanceInfo.lastJobExecution.status}</a></td>
+								<td>${jobInstanceInfo.lastJobExecutionInfo.startDate}</td>
+								<td>${jobInstanceInfo.lastJobExecutionInfo.startTime}</td>
+								<td>${jobInstanceInfo.lastJobExecutionInfo.duration}</td>
 								<td>${jobInstanceInfo.lastJobExecution.jobParameters}</td>
 							<#else>
+								<td>?</td>
+								<td>?</td>
+								<td>?</td>
 								<td>?</td>
 								<td>?</td>
 							</#if>

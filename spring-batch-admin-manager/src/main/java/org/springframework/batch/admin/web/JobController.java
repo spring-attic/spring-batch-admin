@@ -169,7 +169,7 @@ public class JobController {
 			model.addAttribute("jobParameters", jobParametersExtractor.fromJobParameters(jobService.getLastJobParameters(jobName)));
 			for (JobInstance jobInstance : result) {
 				jobInstances.add(new JobInstanceInfo(jobInstance, jobService.getJobExecutionsForJobInstance(jobName,
-						jobInstance.getId())));
+						jobInstance.getId()), timeZone));
 			}
 
 			model.addAttribute("jobInstances", jobInstances);

@@ -55,7 +55,8 @@ public class JobExecutionsJsonViewTests extends AbstractManagerViewTests {
 		model.put("jobExecutions", Arrays.asList(new JobExecutionInfo(jobExecution, TimeZone.getTimeZone("GMT"))));
 		model.put("baseUrl", "http://localhost:8080/springsource");
 		model.put("jobInfo", new JobInfo("foo", 1, 123L, false, false));
-		model.put("jobInstanceInfo", new JobInstanceInfo(MetaDataInstanceFactory.createJobInstance("job", 112L), Arrays.asList(jobExecution)));
+		model.put("jobInstanceInfo", new JobInstanceInfo(MetaDataInstanceFactory.createJobInstance("job", 112L), Arrays.asList(jobExecution), 
+				TimeZone.getTimeZone("GMT")));
 		view.render(model, request, response);
 		String content = response.getContentAsString();
 		//		System.err.println(content);
