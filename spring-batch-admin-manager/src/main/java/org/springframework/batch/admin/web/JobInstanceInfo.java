@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 the original author or authors.
+ * Copyright 2009-2014 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,12 +33,18 @@ public class JobInstanceInfo {
 	public JobInstanceInfo(JobInstance jobInstance, Collection<JobExecution> jobExecutions, TimeZone timeZone) {
 		this.jobInstance = jobInstance;
 		this.jobExecutionInfos = new ArrayList<JobExecutionInfo>();
+
 		if (jobExecutions != null) {
 			for (JobExecution jobExecution : jobExecutions) {
 				jobExecutionInfos.add(new JobExecutionInfo(jobExecution, timeZone));
 			}
 		}
+
 		this.id = jobInstance.getId();
+	}
+
+	public JobInstanceInfo(JobInstance jobInstance, Collection<JobExecution> jobExecutions) {
+		this(jobInstance, jobExecutions, TimeZone.getDefault());
 	}
 
 	public JobInstance getJobInstance() {
@@ -55,9 +61,11 @@ public class JobInstanceInfo {
 
 	public Collection<JobExecution> getJobExecutions() {
 		Collection<JobExecution> jobExecutions = new ArrayList<JobExecution>();
+
 		for (JobExecutionInfo jobExecutionInfo : jobExecutionInfos) {
 			jobExecutions.add(jobExecutionInfo.getJobExecution());
 		}
+
 		return jobExecutions;
 	}
 
