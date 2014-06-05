@@ -12,15 +12,12 @@ Getting Started with Spring Batch Admin
   (e.g. localhost:8080/spring-batch-admin-sample) and check out the features for
   launching jobs and inspecting job executions.
 
-  Four ways to get the code:
+  Ways to get the code:
 
-  	[[1]] Use the {{{http://www.springsource.com/download/community}SpringSource Community Download}} page.
-
-    [[2]] Get the jars from S3 (browse to /maven.springframework.org/snapshot/org/springframework/batch
-  	with your favourite S3 tool or a service like {{{http://shrub.appspot.com}the Shrub app}}).
+  	[[1]] Use the {{{http://docs.spring.io/downloads/nightly/release-download.php?project=BATCHADM}Spring Community Download}} page.
 
     [[2]] Check out the source code from
-  	{{{https://github.com/SpringSource/spring-batch-admin}Github}}.
+  	{{{https://github.com/spring-projects/spring-batch-admin}Github}}.
   	Github also has .zip downloads of the repository from tagged
   	commits.
 

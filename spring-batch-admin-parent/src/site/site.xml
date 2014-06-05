@@ -2,7 +2,7 @@
 <project name="${project.name}">
   <bannerLeft>
     <name>${project.name}</name>
-    <href>http://www.springframework.org/spring-batch</href>
+    <href>http://projects.spring.io/spring-batch/</href>
   </bannerLeft>
   <bannerRight>
     <src>images/shim.gif</src>

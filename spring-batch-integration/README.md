@@ -332,7 +332,7 @@ Report issues via the [Spring Batch Admin JIRA][].
 
 ### Check out sources
 
-	git clone git://github.com/SpringSource/spring-batch-admin.git
+	git clone git://github.com/spring-projects/spring-batch-admin.git
 
 ### Go to the Spring Batch Integration project
 
@@ -360,33 +360,33 @@ Report issues via the [Spring Batch Admin JIRA][].
 
 The Spring Integration Extensions Framework is released under version 2.0 of the [Apache License][] unless noted differently for individual extension Modules, but this should be the rare exception.
 
-[administrator guidelines]: https://github.com/SpringSource/spring-integration/wiki/Administrator-Guidelines
+[administrator guidelines]: https://github.com/spring-projects/spring-integration/wiki/Administrator-Guidelines
 [Apache License]: http://www.apache.org/licenses/LICENSE-2.0
 [Pull requests]: http://help.github.com/send-pull-requests
-[Spring Batch]: http://www.springsource.org/spring-batch/
-[Spring Integration]: http://www.springsource.org/spring-integration/
-[contributor guidelines]: https://github.com/SpringSource/spring-integration/wiki/Contributor-guidelines
+[Spring Batch]: http://projects.spring.io/spring-batch/
+[Spring Integration]: http://projects.spring.io/spring-integration/
+[contributor guidelines]: https://github.com/spring-projects/spring-integration/wiki/Contributor-guidelines
 
 [Maven]: http://maven.apache.org
-[Spring Batch Admin JIRA]: https://jira.springsource.org/browse/BATCHADM
+[Spring Batch Admin JIRA]: https://jira.spring.io/browse/BATCHADM
 
-[Spring Batch]: https://github.com/SpringSource/spring-batch
-[Spring Batch Admin]: https://github.com/SpringSource/spring-batch-admin
+[Spring Batch]: https://github.com/spring-projects/spring-batch
+[Spring Batch Admin]: https://github.com/spring-projects/spring-batch-admin
 
-[Spring Integration Samples]: https://github.com/SpringSource/spring-integration-samples
-[Spring Integration Templates]: https://github.com/SpringSource/spring-integration-templates/tree/master/si-sts-templates
-[Spring Integration Dsl Groovy]: https://github.com/SpringSource/spring-integration-dsl-groovy
-[Spring Integration Dsl Scala]: https://github.com/SpringSource/spring-integration-dsl-scala
-[Spring Integration Pattern Catalog]: https://github.com/SpringSource/spring-integration-pattern-catalog
+[Spring Integration Samples]: https://github.com/spring-projects/spring-integration-samples
+[Spring Integration Templates]: https://github.com/spring-projects/spring-integration-templates/tree/master/si-sts-templates
+[Spring Integration Dsl Groovy]: https://github.com/spring-projects/spring-integration-dsl-groovy
+[Spring Integration Dsl Scala]: https://github.com/spring-projects/spring-integration-dsl-scala
+[Spring Integration Pattern Catalog]: https://github.com/spring-projects/spring-integration-pattern-catalog
 
-[Spring XD]: https://github.com/SpringSource/spring-xd
-[Spring for Apache Hadoop]: https://github.com/SpringSource/spring-hadoop
+[Spring XD]: https://github.com/spring-projects/spring-xd
+[Spring for Apache Hadoop]: https://github.com/spring-projects/spring-hadoop
 
 [Spring Integration in Action]: http://www.manning.com/fisher/
 [Pro Spring Integration]: http://www.apress.com/9781430233459
 [Pro Spring Batch]: http://www.apress.com/9781430234524
 
-[Spring forums]: http://forum.springsource.org
+[Spring forums]: http://forum.spring.io/
 [spring-integration tag]: http://stackoverflow.com/questions/tagged/spring-integration
 [spring-batch tag]: http://stackoverflow.com/questions/tagged/spring-batch
 

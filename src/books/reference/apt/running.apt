@@ -5,7 +5,7 @@ Running Spring Batch Admin
 
   If you are deploying Spring Batch Admin as a WAR file (either the sample or
   one you rolled yourself), just deploy it as normal to a servlet container
-  like {{{http://www.springsource.com/products/tcserver}SpringSource tcServer}}.
+  like {{{http://www.vmware.com/products/vfabric-tcserver/}Pivotal tcServer}}.
   
   If the WAR file is called <<<spring-batch-admin-sample.war>>> (it may have a version 
   number appended), then when you load the application in a browser 

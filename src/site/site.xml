@@ -4,7 +4,7 @@
 
 	<bannerLeft>
 		<name>${project.name}</name>
-		<href>http://www.springframework.org/spring-batch
+		<href>http://projects.spring.io/spring-batch/
 		</href>
 	</bannerLeft>
 
@@ -29,7 +29,7 @@
 
 		<links>
 			<item name="Home"
-				href="http://www.springframework.org/spring-batch-admin/index.html" />
+				href="http://docs.spring.io/spring-batch-admin/" />
 		</links>
 
 		<menu name="Documentation" inherit="none">

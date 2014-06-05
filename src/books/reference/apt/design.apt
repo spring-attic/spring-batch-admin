@@ -60,7 +60,7 @@ Extending the UI
 
 * Text Content
 
-  Text content that doesn't ome from the <<<JobRepository>>> is
+  Text content that doesn't come from the <<<JobRepository>>> is
   rendered using a standard Spring <<<MessageSource>>>.  To change it
   you need to provide a bean in your servlet application context
   (<<<META-INF/spring/batch/servlet/override/*.xml>>>) with id
