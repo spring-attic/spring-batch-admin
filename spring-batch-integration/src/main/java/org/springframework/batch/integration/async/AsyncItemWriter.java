@@ -15,13 +15,13 @@
  */
 package org.springframework.batch.integration.async;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Future;
-
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Future;
 
 public class AsyncItemWriter<T> implements ItemWriter<Future<T>>, InitializingBean {
 	
@@ -32,7 +32,7 @@ public class AsyncItemWriter<T> implements ItemWriter<Future<T>>, InitializingBe
 	}
 	
 	/**
-	 * @param delegate
+	 * @param delegate {@link org.springframework.batch.item.ItemWriter} to do the actual writing
 	 */
 	public void setDelegate(ItemWriter<T> delegate) {
 		this.delegate = delegate;

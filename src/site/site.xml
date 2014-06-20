@@ -41,9 +41,7 @@
 
 		<menu name="Support" inherit="none">
 			<item name="Building" href="building.html" />
-			<item name="Forums"
-				href="http://forum.springframework.org/forumdisplay.php?f=41" />
-			<item name="JIRA" href="http://jira.springframework.org/browse/BATCHADM" />
+			<item name="JIRA" href="http://jira.spring.io/browse/BATCHADM" />
 		</menu>
 
 		<menu name="Modules" inherit="none">
