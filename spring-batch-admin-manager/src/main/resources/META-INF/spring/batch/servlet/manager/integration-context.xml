@@ -15,11 +15,11 @@
 		<bean class="org.springframework.batch.admin.integration.MultipartToJobConfigurationRequestTransformer" />
 	</integration:transformer>
 
-	<http:inbound-channel-adapter name="/job-configuration" channel="job-configuration-multipart"
+	<http:inbound-channel-adapter id="/job-configuration" channel="job-configuration-multipart"
 		request-payload-type="org.springframework.batch.admin.integration.MultipartJobConfigurationRequest" view-name="redirect:jobs"
 		supported-methods="POST" message-converters="multipartJobConfigurationRequestHttpMessageConverter" />
 
-	<http:inbound-gateway name="/job-configuration.json" request-channel="job-configurations"
+	<http:inbound-gateway id="/job-configuration.json" request-channel="job-configurations"
 		reply-key="jobs" reply-channel="job-registrations" request-payload-type="org.springframework.core.io.Resource"
 		view-name="jobs" supported-methods="POST" message-converters="resourceHttpMessageConverter" />
 

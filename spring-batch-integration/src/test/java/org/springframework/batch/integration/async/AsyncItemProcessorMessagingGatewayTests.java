@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2007 the original author or authors.
+ * Copyright 2006-2014 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import org.springframework.batch.test.MetaDataInstanceFactory;
 import org.springframework.batch.test.StepScopeTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.integration.annotation.Header;
 import org.springframework.integration.annotation.MessageEndpoint;
 import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.test.context.ContextConfiguration;
@@ -44,17 +45,19 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
 public class AsyncItemProcessorMessagingGatewayTests {
-
 	private AsyncItemProcessor<String, String> processor = new AsyncItemProcessor<String, String>();
-
-	private StepExecution stepExecution = MetaDataInstanceFactory.createStepExecution(new JobParametersBuilder().addLong("factor", 2L).toJobParameters());;
+	private StepExecution stepExecution = MetaDataInstanceFactory.createStepExecution(
+			new JobParametersBuilder().addLong("factor", 2L).toJobParameters());
 
 	@Rule
 	public MethodRule rule = new MethodRule() {
+		@Override
 		public Statement apply(final Statement base, FrameworkMethod method, Object target) {
 			return new Statement() {
+				@Override
 				public void evaluate() throws Throwable {
 					StepScopeTestUtils.doInStepScope(stepExecution, new Callable<Void>() {
+						@Override
 						public Void call() throws Exception {
 							try {
 								base.evaluate();
@@ -68,7 +71,7 @@ public class AsyncItemProcessorMessagingGatewayTests {
 							return null;
 						}
 					});
-				};
+				}
 			};
 		}
 	};
@@ -100,19 +103,15 @@ public class AsyncItemProcessorMessagingGatewayTests {
 
 	@MessageEndpoint
 	public static class Doubler {
-		private int factor = 1;
-
-		public void setFactor(int factor) {
-			this.factor = factor;
-		}
-
 		@ServiceActivator
-		public String cat(String value) {
-			for (int i=1; i<factor; i++) {
+		public String cat(String value, @Header(value = "stepExecution.jobExecution.jobParameters.getLong('factor')", required = false) Integer input) {
+			long factor = (input == null) ? 1 : input;
+
+			for (int i = 0; i < factor; i++) {
 				value += value;
 			}
+
 			return value;
 		}
 	}
-
 }
