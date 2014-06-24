@@ -15,27 +15,24 @@
  */
 package org.springframework.batch.admin.web.freemarker;
 
-import java.util.Map;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerView;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
+
 /**
  * Tiles view implementation that is able to handle partial rendering for Spring
  * Javascript Ajax requests.
  * 
  * <p>
- * This implementation uses the {@link SpringJavascriptAjaxHandler} by default
- * to determine whether the current request is an Ajax request. On an Ajax
- * request, a "fragments" parameter will be extracted from the request in order
- * to determine which attributes to render from the current view.
+ * On an Ajax request, a "fragments" parameter will be extracted from the request
+ * in order to determine which attributes to render from the current view.
  * </p>
  * 
  * @author Dave Syer
@@ -43,7 +40,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerView;
 public class AjaxFreeMarkerView extends FreeMarkerView {
 
 	/**
-	 * Parameter name for the list of fragments top render (value is comma-delimted list).
+	 * Parameter name for the list of fragments top render (value is comma-delimited list).
 	 */
 	private static final String FRAGMENTS_PARAM = "fragments";
 

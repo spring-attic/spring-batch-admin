@@ -51,7 +51,7 @@ public class JobLaunchingGateway extends AbstractReplyProducingMessageHandler {
 	 * Launches a Batch Job using the provided request {@link Message}. The payload
 	 * of the {@link Message} <em>must</em> be an instance of {@link JobLaunchRequest}.
 	 *
-	 * @param The provided requestMessage must not be null.
+	 * @param requestMessage provided requestMessage must not be null.
 	 * @return Generally a {@link JobExecution} will always be returned. An
 	 * exception ({@link MessageHandlingException}) will only be thrown if there
 	 * is a failure to start the job. The cause of the exception will be a
@@ -60,7 +60,7 @@ public class JobLaunchingGateway extends AbstractReplyProducingMessageHandler {
 	 * @throws MessageHandlingException
 	 */
 	@Override
-	protected Object handleRequestMessage(Message<?> requestMessage) {
+	protected Object handleRequestMessage(Message<?> requestMessage) throws MessageHandlingException {
 
 		Assert.notNull(requestMessage, "The provided requestMessage must not be null.");
 
