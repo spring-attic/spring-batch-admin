@@ -15,8 +15,6 @@
  */
 package org.springframework.batch.admin.integration;
 
-import java.util.List;
-
 import org.springframework.batch.admin.web.LaunchRequest;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
@@ -30,6 +28,8 @@ import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.batch.integration.launch.JobLaunchRequest;
 import org.springframework.integration.annotation.MessageEndpoint;
 import org.springframework.integration.annotation.ServiceActivator;
+
+import java.util.List;
 
 /**
  * Adapt a job name to a {@link LaunchRequest} for restarting the last failed
@@ -65,8 +65,8 @@ public class JobNameToJobRestartRequestAdapter {
 	}
 
 	/**
-	 * @param jobName
-	 * @return
+	 * @param jobName name of job to return parameters for
+	 * @return {@link org.springframework.batch.core.JobParameters} for the job requested
 	 * @throws JobParametersNotFoundException
 	 */
 	private JobParameters getLastFailedJobParameters(String jobName)

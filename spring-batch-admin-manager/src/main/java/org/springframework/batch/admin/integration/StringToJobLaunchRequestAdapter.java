@@ -37,7 +37,7 @@ import org.springframework.util.StringUtils;
  * <li>jobname = the name of a {@link Job} to launch</li>
  * <li>key = the name of a {@link JobParameter}</li>
  * <li>value = the value of the parameter</li>
- * <ul>
+ * </ul>
  * Job parameter values are optional, and if provided are separated by commas
  * and enclosed in square brackets. If no parameters are provided the empty set
  * will be used.

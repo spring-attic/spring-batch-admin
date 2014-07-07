@@ -15,23 +15,6 @@
  */
 package org.springframework.batch.admin.web.util;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
@@ -48,6 +31,22 @@ import org.springframework.web.bind.annotation.support.HandlerMethodResolver;
 import org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping;
 import org.springframework.web.util.UrlPathHelper;
+
+import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Component that discovers request mappings in its application context and
@@ -132,10 +131,6 @@ public class HomeController implements ApplicationContextAware, InitializingBean
 		}
 	}
 
-	/**
-	 * @param properties
-	 * 
-	 */
 	private List<ResourceInfo> buildResourcesFromProperties(Properties properties, Properties defaults) {
 		Set<ResourceInfo> resources = new TreeSet<ResourceInfo>();
 		if (properties == null) {
@@ -154,10 +149,6 @@ public class HomeController implements ApplicationContextAware, InitializingBean
 		return new ArrayList<ResourceInfo>(resources);
 	}
 
-	/**
-	 * @param properties
-	 * 
-	 */
 	private Set<String> buildUrlsFromProperties(Properties properties) {
 		Set<String> urls = new HashSet<String>();
 		if (properties == null) {
@@ -171,9 +162,6 @@ public class HomeController implements ApplicationContextAware, InitializingBean
 		return urls;
 	}
 
-	/**
-	 * 
-	 */
 	private void findResources() {
 		Map<String, Object> handlerMap = new HashMap<String, Object>();
 
@@ -292,6 +280,7 @@ public class HomeController implements ApplicationContextAware, InitializingBean
 	 * 
 	 * @param request the current servlet request (used to extract a page
 	 * attribute "sevletPath")
+	 * @param model {@link org.springframework.ui.ModelMap} to be used
 	 * 
 	 * @return a map of URI pattern to request methods accepted
 	 */

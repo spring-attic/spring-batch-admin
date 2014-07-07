@@ -15,13 +15,13 @@
  */
 package org.springframework.batch.admin.service;
 
-import java.beans.PropertyEditorSupport;
-
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+
+import java.beans.PropertyEditorSupport;
 
 /**
  * Converter for String to Resource that knows about local files managed by a
@@ -44,7 +44,7 @@ public class FileServiceResourceConverter extends PropertyEditorSupport implemen
 	}
 
 	/**
-	 * @param fileService
+	 * @param fileService {@link org.springframework.batch.admin.service.FileService} to be used
 	 */
 	public FileServiceResourceConverter(FileService fileService) {
 		FileServiceResourceConverter.fileService = fileService;

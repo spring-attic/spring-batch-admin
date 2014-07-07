@@ -15,15 +15,6 @@
  */
 package org.springframework.batch.admin.service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.core.BatchStatus;
@@ -49,6 +40,15 @@ import org.springframework.batch.core.step.StepLocator;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.util.CollectionUtils;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
 
 /**
  * Implementation of {@link JobService} that delegates most of its work to other
@@ -429,9 +429,6 @@ public class SimpleJobService implements JobService, DisposableBean {
 		return Collections.unmodifiableList(new ArrayList<String>(stepNames));
 	}
 
-	/**
-	 * @param name
-	 */
 	private void checkJobExists(String jobName) throws NoSuchJobException {
 		if (jobLocator.getJobNames().contains(jobName)) {
 			return;

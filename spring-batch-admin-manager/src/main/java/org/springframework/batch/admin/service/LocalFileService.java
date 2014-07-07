@@ -15,13 +15,6 @@
  */
 package org.springframework.batch.admin.service;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,6 +29,13 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternUtils;
 import org.springframework.util.Assert;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * An implementation of {@link FileService} that deals with files only in the
  * local file system. Files and triggers are created in subdirectories of the
@@ -46,10 +46,6 @@ import org.springframework.util.Assert;
  */
 public class LocalFileService implements FileService, InitializingBean, ResourceLoaderAware {
 
-	/**
-	 * @author Dave Syer
-	 * 
-	 */
 	private File outputDir = new File(System.getProperty("java.io.tmpdir", "/tmp"), "batch/files");
 
 	private static final Log logger = LogFactory.getLog(LocalFileService.class);

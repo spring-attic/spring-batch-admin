@@ -20,14 +20,14 @@ public class StepLocatorStepFactoryBean implements FactoryBean<Step> {
 	public String stepName;
 
 	/**
-	 * @param stepLocator
+	 * @param stepLocator implementation of {@link org.springframework.batch.core.step.StepLocator}
 	 */
 	public void setStepLocator(StepLocator stepLocator) {
 		this.stepLocator = stepLocator;
 	}
 
 	/**
-	 * @param stepName
+	 * @param stepName name of the step to be located
 	 */
 	public void setStepName(String stepName) {
 		this.stepName = stepName;

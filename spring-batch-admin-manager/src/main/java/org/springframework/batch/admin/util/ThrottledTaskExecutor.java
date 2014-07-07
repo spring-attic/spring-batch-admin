@@ -15,13 +15,13 @@
  */
 package org.springframework.batch.admin.util;
 
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.springframework.core.task.SyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.core.task.TaskRejectedException;
+
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * <p>
@@ -99,7 +99,7 @@ public class ThrottledTaskExecutor implements TaskExecutor {
 	 * calling thread. In this case the throttle limit is irrelevant as there
 	 * will always be at most one task pending.
 	 * 
-	 * @param taskExecutor
+	 * @param taskExecutor {@link org.springframework.core.task.TaskExecutor}
 	 */
 	public void setTaskExecutor(TaskExecutor taskExecutor) {
 		this.taskExecutor = taskExecutor;

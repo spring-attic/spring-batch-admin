@@ -15,12 +15,6 @@
  */
 package org.springframework.batch.admin.service;
 
-import static org.springframework.batch.support.DatabaseType.SYBASE;
-
-import java.sql.Types;
-
-import javax.sql.DataSource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.core.configuration.JobLocator;
@@ -45,6 +39,11 @@ import org.springframework.jdbc.support.lob.DefaultLobHandler;
 import org.springframework.jdbc.support.lob.LobHandler;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+
+import javax.sql.DataSource;
+import java.sql.Types;
+
+import static org.springframework.batch.support.DatabaseType.SYBASE;
 
 /**
  * A factory for a {@link JobService} that makes the configuration of its
@@ -126,7 +125,7 @@ public class SimpleJobServiceFactoryBean implements FactoryBean<JobService>, Ini
 
 	/**
 	 * Sets the table prefix for all the batch meta-data tables.
-	 * @param tablePrefix
+	 * @param tablePrefix Prefix for batch meta-data tables
 	 */
 	public void setTablePrefix(String tablePrefix) {
 		this.tablePrefix = tablePrefix;

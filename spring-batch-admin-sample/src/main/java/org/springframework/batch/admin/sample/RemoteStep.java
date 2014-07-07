@@ -38,6 +38,8 @@ public class RemoteStep implements Step {
 
 	/**
 	 * Set the name property.
+	 *
+	 * @param name {@link org.springframework.batch.core.Step#getName()}
 	 * 
 	 */
 	public void setName(String name) {

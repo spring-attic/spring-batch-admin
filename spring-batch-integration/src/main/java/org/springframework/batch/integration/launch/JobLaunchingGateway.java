@@ -57,7 +57,7 @@ public class JobLaunchingGateway extends AbstractReplyProducingMessageHandler {
 	 * is a failure to start the job. The cause of the exception will be a
 	 * {@link JobExecutionException}.
 	 *
-	 * @throws MessageHandlingException
+	 * @throws MessageHandlingException If the job cannot be launched
 	 */
 	@Override
 	protected Object handleRequestMessage(Message<?> requestMessage) throws MessageHandlingException {

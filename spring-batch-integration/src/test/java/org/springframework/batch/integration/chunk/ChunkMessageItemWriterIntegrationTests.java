@@ -1,10 +1,5 @@
 package org.springframework.batch.integration.chunk;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,6 +36,11 @@ import org.springframework.integration.message.GenericMessage;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.StringUtils;
+
+import java.util.Arrays;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @ContextConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -294,11 +294,6 @@ public class ChunkMessageItemWriterIntegrationTests {
 
 	// TODO : test non-dispatch of empty chunk
 
-	/**
-	 * @param expected
-	 * @param maxWait
-	 * @throws InterruptedException
-	 */
 	private void waitForResults(int expected, int maxWait) throws InterruptedException {
 		int count = 0;
 		while (TestItemWriter.count < expected && count < maxWait) {
