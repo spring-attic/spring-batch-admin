@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
+
 import org.springframework.batch.admin.web.JobController;
 import org.springframework.batch.admin.web.resources.MenuManager;
 import org.springframework.batch.admin.web.util.HomeController;
@@ -39,7 +40,6 @@ import org.springframework.batch.poller.DirectPoller;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
@@ -48,7 +48,6 @@ import org.springframework.util.StringUtils;
  * @author Dave Syer
  * 
  */
-@DirtiesContext
 public class BootstrapTests {
 
 	@Test

@@ -5,7 +5,6 @@
 		http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.2.xsd">
 
 	<job id="staging" xmlns="http://www.springframework.org/schema/batch">
-
 		<step id="staging-step">
 			<tasklet>
 				<chunk reader="reader" writer="writer" commit-interval="5" />

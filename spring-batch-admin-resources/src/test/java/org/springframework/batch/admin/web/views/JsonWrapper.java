@@ -17,7 +17,8 @@ package org.springframework.batch.admin.web.views;
 
 import java.util.Map;
 
-import org.codehaus.jackson.map.MappingJsonFactory;
+import com.fasterxml.jackson.databind.MappingJsonFactory;
+
 import org.springframework.context.expression.MapAccessor;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;

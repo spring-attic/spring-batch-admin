@@ -18,14 +18,14 @@ package org.springframework.batch.admin.sample;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.springframework.integration.Message;
-import org.springframework.integration.MessageChannel;
-import org.springframework.integration.MessageDeliveryException;
-import org.springframework.integration.MessageHandlingException;
 import org.springframework.integration.MessageRejectedException;
-import org.springframework.integration.core.MessageHandler;
-import org.springframework.integration.core.SubscribableChannel;
-import org.springframework.integration.message.GenericMessage;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.MessageDeliveryException;
+import org.springframework.messaging.MessageHandler;
+import org.springframework.messaging.MessageHandlingException;
+import org.springframework.messaging.SubscribableChannel;
+import org.springframework.messaging.support.GenericMessage;
 
 /**
  * @author Dave Syer
@@ -42,7 +42,7 @@ public class TestMessagingGateway {
 	private MessageHandler handler = new MessageHandler() {
 		@Override
 		public void handleMessage(Message<?> message) throws MessageRejectedException, MessageHandlingException,
-		MessageDeliveryException {
+				MessageDeliveryException {
 			reference.set(message.getPayload());
 		}
 	};

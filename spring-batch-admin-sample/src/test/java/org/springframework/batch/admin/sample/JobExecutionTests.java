@@ -22,6 +22,7 @@ import javax.sql.DataSource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
@@ -30,12 +31,12 @@ import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.jdbc.SimpleJdbcTestUtils;
+import org.springframework.test.jdbc.JdbcTestUtils;
 
 @ContextConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -51,11 +52,11 @@ public class JobExecutionTests {
 	@Qualifier("job1")
 	private Job job1;
 
-	private SimpleJdbcTemplate jdbcTemplate;
+	private JdbcTemplate jdbcTemplate;
 
 	@Autowired
 	public void setDataSource(DataSource dataSource) {
-		jdbcTemplate = new SimpleJdbcTemplate(dataSource);
+		jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 	
 	@Test
@@ -65,28 +66,28 @@ public class JobExecutionTests {
 
 	@Test
 	public void testLaunchJob() throws Exception {
-		int before = SimpleJdbcTestUtils.countRowsInTable(jdbcTemplate, "BATCH_STEP_EXECUTION");
+		int before = JdbcTestUtils.countRowsInTable(jdbcTemplate, "BATCH_STEP_EXECUTION");
 		JobExecution jobExecution = jobLauncher.run(job1, jobParameters);
 		assertNotNull(jobExecution);
 		assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
-		int after = SimpleJdbcTestUtils.countRowsInTable(jdbcTemplate, "BATCH_STEP_EXECUTION");
+		int after = JdbcTestUtils.countRowsInTable(jdbcTemplate, "BATCH_STEP_EXECUTION");
 		assertEquals(before + 1, after);
 	}
 
 	@Test
 	public void testFailedJob() throws Exception {
-		int before = SimpleJdbcTestUtils.countRowsInTable(jdbcTemplate, "BATCH_STEP_EXECUTION");
+		int before = JdbcTestUtils.countRowsInTable(jdbcTemplate, "BATCH_STEP_EXECUTION");
 		jobParameters = new JobParametersBuilder().addString("fail", "true").toJobParameters();
 		JobExecution jobExecution = jobLauncher.run(job1, jobParameters);
 		assertNotNull(jobExecution);
 		assertEquals(BatchStatus.FAILED, jobExecution.getStatus());
-		int after = SimpleJdbcTestUtils.countRowsInTable(jdbcTemplate, "BATCH_STEP_EXECUTION");
+		int after = JdbcTestUtils.countRowsInTable(jdbcTemplate, "BATCH_STEP_EXECUTION");
 		assertEquals(before + 1, after);
 	}
 
 	@Test
 	public void testLaunchTwoJobs() throws Exception {
-		int before = SimpleJdbcTestUtils.countRowsInTable(jdbcTemplate, "BATCH_STEP_EXECUTION");
+		int before = JdbcTestUtils.countRowsInTable(jdbcTemplate, "BATCH_STEP_EXECUTION");
 		long count = 0;
 		JobExecution jobExecution1 = jobLauncher.run(job1, new JobParametersBuilder(jobParameters).addLong("run.id", count++)
 				.toJobParameters());
@@ -94,7 +95,7 @@ public class JobExecutionTests {
 				.toJobParameters());
 		assertEquals(BatchStatus.COMPLETED, jobExecution1.getStatus());
 		assertEquals(BatchStatus.COMPLETED, jobExecution2.getStatus());
-		int after = SimpleJdbcTestUtils.countRowsInTable(jdbcTemplate, "BATCH_STEP_EXECUTION");
+		int after = JdbcTestUtils.countRowsInTable(jdbcTemplate, "BATCH_STEP_EXECUTION");
 		assertEquals(before + 2, after);
 	}
 

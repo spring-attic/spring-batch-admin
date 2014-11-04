@@ -16,16 +16,19 @@
 package org.springframework.batch.admin.integration;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
-import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
@@ -43,13 +46,15 @@ public class JobRestartRequestStringAdapterTests {
 
 	private MapJobRegistry jobRegistry = new MapJobRegistry();
 
-	private JobExplorer jobExplorer = EasyMock.createNiceMock(JobExplorer.class);
+	@Mock
+	private JobExplorer jobExplorer;
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
 	@Before
 	public void init() throws Exception {
+		MockitoAnnotations.initMocks(this);
 		jobRegistry.register(new ReferenceJobFactory(new SimpleJob("foo")));
 		adapter.setJobLocator(jobRegistry);
 		adapter.setJobExplorer(jobExplorer);
@@ -63,18 +68,12 @@ public class JobRestartRequestStringAdapterTests {
 		jobExecution.setEndTime(new Date());
 		jobExecution.setStatus(BatchStatus.FAILED);
 
-		jobExplorer.getJobInstances("foo", 0, 100);
-		EasyMock.expectLastCall().andReturn(Arrays.asList(jobInstance));
-		jobExplorer.getJobExecutions(jobInstance);
-		EasyMock.expectLastCall().andReturn(Arrays.asList(jobExecution));
-		EasyMock.replay(jobExplorer);
+		when(jobExplorer.getJobInstances("foo", 0, 100)).thenReturn(Arrays.asList(jobInstance));
+		when(jobExplorer.getJobExecutions(jobInstance)).thenReturn(Arrays.asList(jobExecution));
 
 		JobLaunchRequest request = adapter.adapt("foo");
 		assertEquals("foo", request.getJob().getName());
 		assertEquals(0, request.getJobParameters().getParameters().size());
-
-		EasyMock.verify(jobExplorer);
-
 	}
 
 	@Test
@@ -88,17 +87,10 @@ public class JobRestartRequestStringAdapterTests {
 		jobExecution.setEndTime(new Date());
 		jobExecution.setStatus(BatchStatus.COMPLETED);
 
-		jobExplorer.getJobInstances("foo", 0, 100);
-		EasyMock.expectLastCall().andReturn(Arrays.asList(jobInstance));
-		jobExplorer.getJobExecutions(jobInstance);
-		EasyMock.expectLastCall().andReturn(Arrays.asList(jobExecution));
-		jobExplorer.getJobInstances("foo", 100, 100);
-		EasyMock.expectLastCall().andReturn(new ArrayList<JobInstance>());
-		EasyMock.replay(jobExplorer);
+		when(jobExplorer.getJobInstances("foo", 0, 100)).thenReturn(Arrays.asList(jobInstance));
+		when(jobExplorer.getJobExecutions(jobInstance)).thenReturn(Arrays.asList(jobExecution));
+		when(jobExplorer.getJobInstances("foo", 100, 100)).thenReturn(new ArrayList<JobInstance>());
 
 		adapter.adapt("foo");
-
-		EasyMock.verify(jobExplorer);
-
 	}
 }

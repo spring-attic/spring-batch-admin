@@ -1,14 +1,17 @@
 package org.springframework.batch.admin.jmx;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
-import org.easymock.EasyMock;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
 import org.springframework.batch.admin.service.JobService;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.ExitStatus;
@@ -19,12 +22,15 @@ public class SimpleStepExecutionMetricsTests {
 
 	private SimpleStepExecutionMetrics metrics;
 
-	private JobService jobService = EasyMock.createMock(JobService.class);
+	@Mock
+	private JobService jobService;
 
 	private StepExecution stepExecution;
 
 	@Before
 	public void init() throws Exception {
+		MockitoAnnotations.initMocks(this);
+
 		stepExecution = MetaDataInstanceFactory.createStepExecution("step", 123L);
 		stepExecution.setStatus(BatchStatus.COMPLETED);
 		stepExecution.setExitStatus(ExitStatus.COMPLETED);
@@ -33,36 +39,22 @@ public class SimpleStepExecutionMetricsTests {
 		metrics = new SimpleStepExecutionMetrics(jobService, "job", "step");
 	}
 	
-	@After
-	public void verify() {
-		EasyMock.verify(jobService);
-	}
-
 	private void prepareServiceWithSingleStepExecution() throws Exception {
-		jobService.listStepExecutionsForStep("job", "step", 0, 4);
-		EasyMock.expectLastCall().andReturn(Arrays.asList(stepExecution));
-		EasyMock.replay(jobService);
+		when(jobService.listStepExecutionsForStep("job", "step", 0, 4)).thenReturn(Arrays.asList(stepExecution));
 	}
 
 	private void prepareServiceWithMultipleStepExecutions() throws Exception {
-		jobService.listStepExecutionsForStep("job", "step", 0, 100);
-		EasyMock.expectLastCall().andReturn(Arrays.asList(stepExecution));
-		jobService.listStepExecutionsForStep("job", "step", 100, 100);
-		EasyMock.expectLastCall().andReturn(Arrays.asList());
-		EasyMock.replay(jobService);
+		when(jobService.listStepExecutionsForStep("job", "step", 0, 100)).thenReturn(Arrays.asList(stepExecution));
+		when(jobService.listStepExecutionsForStep("job", "step", 100, 100)).thenReturn(new ArrayList<StepExecution>());
 	}
 
 	private void prepareServiceWithMultipleStepExecutions(int total) throws Exception {
-		jobService.listStepExecutionsForStep("job", "step", 0, total);
-		EasyMock.expectLastCall().andReturn(Arrays.asList(stepExecution));
-		EasyMock.replay(jobService);
+		when(jobService.listStepExecutionsForStep("job", "step", 0, total)).thenReturn(Arrays.asList(stepExecution));
 	}
 
 	@Test
 	public void testGetStepExecutionCount() throws Exception {
-		jobService.countStepExecutionsForStep("job", "step");
-		EasyMock.expectLastCall().andReturn(10);
-		EasyMock.replay(jobService);
+		when(jobService.countStepExecutionsForStep("job", "step")).thenReturn(10);
 		assertEquals(10, metrics.getExecutionCount());
 	}
 

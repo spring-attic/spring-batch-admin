@@ -30,13 +30,15 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.integration.Message;
-import org.springframework.integration.core.MessageHandler;
-import org.springframework.integration.core.SubscribableChannel;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageHandler;
+import org.springframework.messaging.SubscribableChannel;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
@@ -82,7 +84,7 @@ public class FileDropJobIntegrationTests {
 
 		assertEquals(0, receiver.size());
 
-		FileUtils.copyFile(new File("src/test/resources/data/test.txt"), new File("target/data/drop.txt"));
+		FileUtils.copyFile(new File(this.getClass().getResource("/data/test.txt").toURI()), new File("target/data/drop.txt"));
 
 		JobExecution result = receiver.poll(2000L, TimeUnit.MILLISECONDS);
 

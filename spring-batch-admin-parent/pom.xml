@@ -39,11 +39,11 @@
 	</developers>
 	<properties>
 		<maven.test.failure.ignore>false</maven.test.failure.ignore>
-		<spring.batch.version>2.2.7.RELEASE</spring.batch.version>
-		<spring.framework.version>3.2.9.RELEASE</spring.framework.version>
-		<spring.integration.version>3.0.2.RELEASE</spring.integration.version>
-		<spring.retry.version>1.0.2.RELEASE</spring.retry.version>
-		<slf4j.version>1.7.6</slf4j.version>
+		<spring.batch.version>3.1.0.BUILD-SNAPSHOT</spring.batch.version>
+		<spring.framework.version>4.1.1.RELEASE</spring.framework.version>
+		<spring.integration.version>4.0.5.BUILD-SNAPSHOT</spring.integration.version>
+		<spring.retry.version>1.1.0.RELEASE</spring.retry.version>
+		<slf4j.version>1.7.7</slf4j.version>
 	</properties>
 	<profiles>
 		<profile>
@@ -152,19 +152,6 @@
 							<pluginExecutions>
 								<pluginExecution>
 									<pluginExecutionFilter>
-										<groupId>com.springsource.bundlor</groupId>
-										<artifactId>com.springsource.bundlor.maven</artifactId>
-										<versionRange>[1.0,)</versionRange>
-										<goals>
-											<goal>bundlor</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
-								<pluginExecution>
-									<pluginExecutionFilter>
 										<groupId>org.apache.maven.plugins</groupId>
 										<artifactId>maven-antrun-plugin</artifactId>
 										<versionRange>[1.0,)</versionRange>
@@ -190,19 +177,6 @@
 							<version>1.0</version>
 						</dependency>
 					</dependencies>
-				</plugin>
-				<plugin>
-					<groupId>com.springsource.bundlor</groupId>
-					<artifactId>com.springsource.bundlor.maven</artifactId>
-					<inherited>true</inherited>
-					<executions>
-						<execution>
-							<id>bundlor-transform</id>
-							<goals>
-								<goal>bundlor</goal>
-							</goals>
-						</execution>
-					</executions>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -233,11 +207,6 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
-					<configuration>
-						<archive>
-							<manifestFile>target/classes/META-INF/MANIFEST.MF</manifestFile>
-						</archive>
-					</configuration>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -303,57 +272,30 @@
 			<dependency>
 				<groupId>org.aspectj</groupId>
 				<artifactId>aspectjrt</artifactId>
-				<version>1.8.1</version>
+				<version>1.8.2</version>
 			</dependency>
 			<dependency>
 				<groupId>org.aspectj</groupId>
 				<artifactId>aspectjweaver</artifactId>
-				<version>1.8.1</version>
+				<version>1.8.2</version>
 				<scope>runtime</scope>
 			</dependency>
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
-				<version>4.8.2</version>
+				<version>4.11</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
-				<groupId>org.easymock</groupId>
-				<artifactId>easymock</artifactId>
-				<version>2.3</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.geronimo.specs</groupId>
-				<artifactId>geronimo-jms_1.1_spec</artifactId>
-				<version>1.1</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.geronimo.specs</groupId>
-				<artifactId>geronimo-jta_1.1_spec</artifactId>
-				<version>1.1</version>
-			</dependency>
-			<dependency>
-				<groupId>javax.annotation</groupId>
-				<artifactId>jsr250-api</artifactId>
-				<version>1.0</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>stax</groupId>
-				<artifactId>stax</artifactId>
-				<version>1.2.0</version>
-			</dependency>
-			<dependency>
-				<groupId>org.codehaus.jackson</groupId>
-				<artifactId>jackson-mapper-asl</artifactId>
-				<version>1.9.13</version>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>2.4.2</version>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate-core</artifactId>
-				<version>4.3.5.Final</version>
+				<version>4.3.6.Final</version>
 				<exclusions>
 					<exclusion>
 						<groupId>cglib</groupId>
@@ -376,7 +318,7 @@
 			<dependency>
 				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate-entitymanager</artifactId>
-				<version>4.3.5.Final</version>
+				<version>4.3.6.Final</version>
 				<exclusions>
 					<exclusion>
 						<groupId>edu.oswego.cs.concurrent</groupId>
@@ -387,12 +329,7 @@
 			<dependency>
 				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate-annotations</artifactId>
-				<version>4.3.5.Final</version>
-			</dependency>
-			<dependency>
-				<groupId>cglib</groupId>
-				<artifactId>cglib-nodep</artifactId>
-				<version>2.1_3</version>
+				<version>4.3.6.Final</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
@@ -451,27 +388,21 @@
 				<scope>test</scope>
 			</dependency>
 			<dependency>
-				<groupId>hsqldb</groupId>
+				<groupId>org.hsqldb</groupId>
 				<artifactId>hsqldb</artifactId>
-				<version>1.8.0.7</version>
+				<version>2.3.2</version>
 				<scope>runtime</scope>
 			</dependency>
 			<dependency>
 				<groupId>mysql</groupId>
 				<artifactId>mysql-connector-java</artifactId>
-				<version>5.1.6</version>
+				<version>5.1.32</version>
 				<scope>runtime</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.derby</groupId>
 				<artifactId>derby</artifactId>
-				<version>10.6.1.0</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.derby</groupId>
-				<artifactId>com.springsource.org.apache.derby</artifactId>
-				<version>10.5.1000001.764942</version>
+				<version>10.10.2.0</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
@@ -487,48 +418,15 @@
 				<scope>runtime</scope>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.ibatis</groupId>
-				<artifactId>ibatis-sqlmap</artifactId>
-				<version>2.3.0</version>
-			</dependency>
-			<dependency>
-				<groupId>javax.persistence</groupId>
-				<artifactId>persistence-api</artifactId>
-				<version>1.0</version>
-			</dependency>
-			<dependency>
-				<groupId>org.osgi</groupId>
-				<artifactId>osgi_R4_core</artifactId>
-				<version>1.0</version>
-			</dependency>
-			<dependency>
-				<groupId>asm</groupId>
-				<artifactId>asm</artifactId>
-				<version>2.2.3</version>
-				<scope>runtime</scope>
-			</dependency>
-			<dependency>
-				<groupId>asm</groupId>
-				<artifactId>asm-attrs</artifactId>
-				<version>2.2.3</version>
-				<scope>runtime</scope>
-			</dependency>
-			<dependency>
-				<groupId>asm</groupId>
-				<artifactId>asm-commons</artifactId>
-				<version>2.2.3</version>
-				<scope>runtime</scope>
-			</dependency>
-			<dependency>
 				<groupId>javax.servlet</groupId>
-				<artifactId>servlet-api</artifactId>
-				<version>2.5</version>
+				<artifactId>javax.servlet-api</artifactId>
+				<version>3.0.1</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.freemarker</groupId>
 				<artifactId>freemarker</artifactId>
-				<version>2.3.15</version>
+				<version>2.3.20</version>
 			</dependency>
 			<dependency>
 				<groupId>javax.servlet</groupId>
@@ -538,7 +436,7 @@
 			<dependency>
 				<groupId>org.springframework.security</groupId>
 				<artifactId>spring-security-taglibs</artifactId>
-				<version>2.0.4</version>
+				<version>3.2.5.RELEASE</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.springframework</groupId>
@@ -549,6 +447,11 @@
 			<dependency>
 				<groupId>org.springframework.batch</groupId>
 				<artifactId>spring-batch-infrastructure</artifactId>
+				<version>${spring.batch.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.batch</groupId>
+				<artifactId>spring-batch-integration</artifactId>
 				<version>${spring.batch.version}</version>
 			</dependency>
 			<dependency>
@@ -723,7 +626,7 @@
 		<repository>
 			<id>spring-milestones</id>
 			<name>Spring Maven Milestone Repository</name>
-			<url>http://maven.springframework.org/milestone/</url>
+			<url>http://repo.spring.io/libs-milestone</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
@@ -731,15 +634,7 @@
 		<repository>
 			<id>spring-snapshots</id>
 			<name>Spring Maven Snapshot Repository</name>
-			<url>http://maven.springframework.org/snapshot/</url>
-		</repository>
-		<repository>
-			<id>spring-ebr</id>
-			<name>Spring Enterprise Bundle Repository</name>
-			<url>http://repository.springsource.com/maven/bundles/release/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
+			<url>https://repo.spring.io/libs-snapshot</url>
 		</repository>
 		<repository>
 			<id>objectstyle</id>

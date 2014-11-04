@@ -50,7 +50,7 @@ import org.springframework.web.client.RestTemplate;
 public class JsonIntegrationTests {
 
 	@Rule
-	public static ServerRunning serverRunning = ServerRunning
+	public ServerRunning serverRunning = ServerRunning
 			.isRunning("${SERVER_URL:http://localhost:8080/spring-batch-admin-sample}");
 
 	@Test

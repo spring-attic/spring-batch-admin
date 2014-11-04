@@ -53,7 +53,7 @@
 	<modules>
 		<module>spring-batch-admin-parent</module>
 		<module>spring-batch-admin-resources</module>
-		<module>spring-batch-integration</module>
+		<!--<module>spring-batch-integration</module>-->
 		<module>spring-batch-admin-manager</module>
 		<module>spring-batch-admin-sample</module>
 	</modules>

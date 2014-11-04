@@ -17,12 +17,16 @@ package org.springframework.batch.admin.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 
-import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.ListableJobLocator;
@@ -40,10 +44,12 @@ public class JobLocatorStepLocatorTests {
 
 	private JobLocatorStepLocator stepLocator = new JobLocatorStepLocator();
 
-	private ListableJobLocator jobLocator = EasyMock.createMock(ListableJobLocator.class);
+	@Mock
+	private ListableJobLocator jobLocator;
 
 	@Before
 	public void init() {
+		MockitoAnnotations.initMocks(this);
 		stepLocator.setJobLocator(jobLocator);
 	}
 
@@ -61,26 +67,24 @@ public class JobLocatorStepLocatorTests {
 	 */
 	@Test
 	public void testGetStep() throws NoSuchJobException {
-		Step step = EasyMock.createMock(Step.class);
-		JobStepLocator job = EasyMock.createMock(JobStepLocator.class);
-		EasyMock.expect(jobLocator.getJob("job")).andReturn(job);
-		EasyMock.expect(job.getStepNames()).andReturn(Arrays.asList("step"));
-		EasyMock.expect(job.getStep("step")).andReturn(step);
-		EasyMock.replay(jobLocator, job);
+		Step step = mock(Step.class);
+		JobStepLocator job = mock(JobStepLocator.class);
+		when(jobLocator.getJob("job")).thenReturn(job);
+		when(job.getStepNames()).thenReturn(Arrays.asList("step"));
+		when(job.getStep("step")).thenReturn(step);
+
 		assertEquals(step, stepLocator.getStep("job/step"));
-		EasyMock.verify(jobLocator, job);
 	}
 
 	@Test
 	public void testGetStepWithJobPrefix() throws NoSuchJobException {
-		Step step = EasyMock.createMock(Step.class);
-		JobStepLocator job = EasyMock.createMock(JobStepLocator.class);
-		EasyMock.expect(jobLocator.getJob("job")).andReturn(job);
-		EasyMock.expect(job.getStepNames()).andReturn(Arrays.asList("job.step")).anyTimes();
-		EasyMock.expect(job.getStep("job.step")).andReturn(step);
-		EasyMock.replay(jobLocator, job);
+		Step step = mock(Step.class);
+		JobStepLocator job = mock(JobStepLocator.class);
+		when(jobLocator.getJob("job")).thenReturn(job);
+		when(job.getStepNames()).thenReturn(Arrays.asList("job.step"));
+		when(job.getStep("job.step")).thenReturn(step);
+
 		assertEquals(step, stepLocator.getStep("job/step"));
-		EasyMock.verify(jobLocator, job);
 	}
 
 	/**
@@ -91,13 +95,12 @@ public class JobLocatorStepLocatorTests {
 	 */
 	@Test
 	public void testGetStepNames() throws Exception {
-		EasyMock.expect(jobLocator.getJobNames()).andReturn(Arrays.asList("job"));
-		JobStepLocator job = EasyMock.createMock(JobStepLocator.class);
-		EasyMock.expect(jobLocator.getJob("job")).andReturn(job);
-		EasyMock.expect(job.getStepNames()).andReturn(Arrays.asList("step"));
-		EasyMock.replay(jobLocator, job);
+		when(jobLocator.getJobNames()).thenReturn(Arrays.asList("job"));
+		JobStepLocator job = mock(JobStepLocator.class);
+		when(jobLocator.getJob("job")).thenReturn(job);
+		when(job.getStepNames()).thenReturn(Arrays.asList("step"));
+
 		assertEquals("[job/step]", stepLocator.getStepNames().toString());
-		EasyMock.verify(jobLocator, job);
 	}
 
 }

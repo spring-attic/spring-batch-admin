@@ -18,6 +18,10 @@ package org.springframework.batch.admin.jmx;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.anyObject;
+import static org.mockito.Mockito.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,8 +31,8 @@ import javax.management.MBeanServer;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 
-import org.easymock.EasyMock;
 import org.junit.Test;
+
 import org.springframework.batch.admin.service.JobService;
 import org.springframework.batch.test.MetaDataInstanceFactory;
 
@@ -79,25 +83,19 @@ public class BatchMBeanExporterTests {
 		};
 		exporter.setJobExecutionMetricsFactory(jobExecutionMetricsFactory);
 
-		MBeanServer server = EasyMock.createMock(MBeanServer.class);
+		MBeanServer server = mock(MBeanServer.class);
 		exporter.setServer(server);
-		server.registerMBean(EasyMock.anyObject(), EasyMock.isA(ObjectName.class));
-		EasyMock.expectLastCall().andReturn(new ObjectInstance(new ObjectName(exporter.getBeanKeyForJobExecution("foo")), SimpleJobExecutionMetrics.class.getName()));
-		server.registerMBean(EasyMock.anyObject(), EasyMock.isA(ObjectName.class));
-		EasyMock.expectLastCall().andReturn(new ObjectInstance(new ObjectName(exporter.getBeanKeyForStepExecution("foo", "step")), SimpleStepExecutionMetrics.class.getName()));
-		
-		JobService jobService = EasyMock.createNiceMock(JobService.class);
-		exporter.setJobService(jobService);
-		jobService.listJobs(0, Integer.MAX_VALUE);
-		EasyMock.expectLastCall().andReturn(Arrays.asList("foo")).anyTimes();
-		jobService.listJobExecutionsForJob("foo", 0, 1);
-		EasyMock.expectLastCall().andReturn(Arrays.asList(MetaDataInstanceFactory.createJobExecutionWithStepExecutions(123L, Arrays.asList("step")))).anyTimes();
+		when(server.registerMBean(anyObject(), isA(ObjectName.class))).thenReturn(new ObjectInstance(new ObjectName(exporter.getBeanKeyForJobExecution("foo")), SimpleJobExecutionMetrics.class.getName()));
+		when(server.registerMBean(anyObject(), isA(ObjectName.class))).thenReturn(new ObjectInstance(new ObjectName(exporter.getBeanKeyForStepExecution("foo", "step")), SimpleStepExecutionMetrics.class.getName()));
 
-		EasyMock.replay(server, jobService);
-		
+		JobService jobService = mock(JobService.class);
+		exporter.setJobService(jobService);
+
+
+		when(jobService.listJobs(0, Integer.MAX_VALUE)).thenReturn(Arrays.asList("foo"));
+		when(jobService.listJobExecutionsForJob("foo", 0, 1)).thenReturn(Arrays.asList(MetaDataInstanceFactory.createJobExecutionWithStepExecutions(123L, Arrays.asList("step"))));
+
 		exporter.doStart();
-		
-		EasyMock.verify(server);
 		
 		assertTrue(stepCalled.get());
 		assertTrue(jobCalled.get());

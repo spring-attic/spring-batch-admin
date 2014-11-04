@@ -15,15 +15,16 @@
  */
 package org.springframework.batch.admin.integration;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.*;
 
 import java.util.Collection;
 
-import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
 import org.springframework.batch.admin.service.JobService;
 import org.springframework.batch.admin.web.JobInfo;
 import org.springframework.batch.core.Job;
@@ -38,17 +39,19 @@ import org.springframework.core.io.ByteArrayResource;
 public class JobConfigurationRequestLoaderTests {
 
 	private JobConfigurationResourceLoader loader = new JobConfigurationResourceLoader();
-	
-	private JobService jobService = EasyMock.createMock(JobService.class);
+
+	@Mock
+	private JobService jobService;
 
 	@Before
 	public void setUp() throws Exception {
+		MockitoAnnotations.initMocks(this);
 		loader.setJobLoader(new DefaultJobLoader(new MapJobRegistry()));
 		loader.setJobService(jobService);
-		expect(jobService.countJobExecutionsForJob("job")).andReturn(2);
-		expect(jobService.isIncrementable("job")).andReturn(true);
-		expect(jobService.isLaunchable("job")).andReturn(true);
-		replay(jobService);
+
+		when(jobService.countJobExecutionsForJob("job")).thenReturn(2);
+		when(jobService.isIncrementable("job")).thenReturn(true);
+		when(jobService.isLaunchable("job")).thenReturn(true);
 	}
 
 	@Test

@@ -17,11 +17,15 @@ package org.springframework.batch.admin.web;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 
-import org.easymock.EasyMock;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
 import org.springframework.batch.admin.history.StepExecutionHistory;
 import org.springframework.batch.admin.service.JobService;
 import org.springframework.batch.core.StepExecution;
@@ -31,18 +35,22 @@ import org.springframework.ui.ExtendedModelMap;
 
 public class StepExecutionControllerTests {
 
-	private JobService jobService = EasyMock.createMock(JobService.class);
+	@Mock
+	private JobService jobService;
 
-	private StepExecutionController controller = new StepExecutionController(
-			jobService);
+	private StepExecutionController controller;
+
+	@Before
+	public void setUp() {
+		MockitoAnnotations.initMocks(this);
+
+		controller = new StepExecutionController(jobService);
+	}
 
 	@Test
 	public void testDetailSunnyDay() throws Exception {
 
-		jobService.getStepExecution(123L, 1234L);
-		EasyMock.expectLastCall().andReturn(
-				MetaDataInstanceFactory.createStepExecution());
-		EasyMock.replay(jobService);
+		when(jobService.getStepExecution(123L, 1234L)).thenReturn(MetaDataInstanceFactory.createStepExecution());
 
 		ExtendedModelMap model = new ExtendedModelMap();
 		String result = controller.detail(model, 123L, 1234L, null, null);
@@ -51,26 +59,15 @@ public class StepExecutionControllerTests {
 		assertEquals("jobs/executions/step", result);
 
 		assertTrue(model.containsKey("stepExecutionInfo"));
-
-		EasyMock.verify(jobService);
-
 	}
 
 	@Test
 	public void testProgressSunnyDay() throws Exception {
 
-		jobService.getStepExecution(123L, 1234L);
-		EasyMock.expectLastCall().andReturn(
-				MetaDataInstanceFactory.createStepExecution());
-		jobService.countStepExecutionsForStep("job", "step");
-		EasyMock.expectLastCall().andReturn(1200);
-		jobService.listStepExecutionsForStep("job", "step", 0, 1000);
-		EasyMock.expectLastCall().andReturn(
-				Arrays.asList(MetaDataInstanceFactory.createStepExecution()));
-		jobService.listStepExecutionsForStep("job", "step", 1000, 1000);
-		EasyMock.expectLastCall().andReturn(
-				Arrays.asList(MetaDataInstanceFactory.createStepExecution()));
-		EasyMock.replay(jobService);
+		when(jobService.getStepExecution(123L, 1234L)).thenReturn(MetaDataInstanceFactory.createStepExecution());
+		when(jobService.countStepExecutionsForStep("job", "step")).thenReturn(1200);
+		when(jobService.listStepExecutionsForStep("job", "step", 0, 1000)).thenReturn(Arrays.asList(MetaDataInstanceFactory.createStepExecution()));
+		when(jobService.listStepExecutionsForStep("job", "step", 1000, 1000)).thenReturn(Arrays.asList(MetaDataInstanceFactory.createStepExecution()));
 
 		ExtendedModelMap model = new ExtendedModelMap();
 		String result = controller.history(model, 123L, 1234L, null, null);
@@ -79,26 +76,15 @@ public class StepExecutionControllerTests {
 		assertEquals("jobs/executions/step/progress", result);
 
 		assertTrue(model.containsKey("stepExecutionHistory"));
-
-		EasyMock.verify(jobService);
-
 	}
 
 	@Test
 	public void testProgressPartitionSunnyDay() throws Exception {
 
-		jobService.getStepExecution(123L, 1234L);
-		EasyMock.expectLastCall().andReturn(
-				MetaDataInstanceFactory.createStepExecution("step:partition1", 0L));
-		jobService.countStepExecutionsForStep("job", "step:partition*");
-		EasyMock.expectLastCall().andReturn(1200);
-		jobService.listStepExecutionsForStep("job", "step:partition*", 0, 1000);
-		EasyMock.expectLastCall().andReturn(
-				Arrays.asList(MetaDataInstanceFactory.createStepExecution()));
-		jobService.listStepExecutionsForStep("job", "step:partition*", 1000, 1000);
-		EasyMock.expectLastCall().andReturn(
-				Arrays.asList(MetaDataInstanceFactory.createStepExecution()));
-		EasyMock.replay(jobService);
+		when(jobService.getStepExecution(123L, 1234L)).thenReturn(MetaDataInstanceFactory.createStepExecution("step:partition1", 0L));
+		when(jobService.countStepExecutionsForStep("job", "step:partition*")).thenReturn(1200);
+		when(jobService.listStepExecutionsForStep("job", "step:partition*", 0, 1000)).thenReturn(Arrays.asList(MetaDataInstanceFactory.createStepExecution()));
+		when(jobService.listStepExecutionsForStep("job", "step:partition*", 1000, 1000)).thenReturn(Arrays.asList(MetaDataInstanceFactory.createStepExecution()));
 
 		ExtendedModelMap model = new ExtendedModelMap();
 		String result = controller.history(model, 123L, 1234L, null, null);
@@ -110,21 +96,14 @@ public class StepExecutionControllerTests {
 		StepExecutionHistory history = (StepExecutionHistory) model.get("stepExecutionHistory");
 		// The wildcard is intentional:
 		assertEquals("step:partition*", history.getStepName());
-
-		EasyMock.verify(jobService);
-
 	}
 
 	@Test
 	public void testListForJobExecutionSunnyDay() throws Exception {
 
-		jobService.getStepExecutions(123L);
-		StepExecution stepExecution = MetaDataInstanceFactory
-				.createStepExecution();
-		EasyMock.expectLastCall().andReturn(Arrays.asList(stepExecution));
-		jobService.getJobExecution(123L);
-		EasyMock.expectLastCall().andReturn(stepExecution.getJobExecution());
-		EasyMock.replay(jobService);
+		StepExecution stepExecution = MetaDataInstanceFactory.createStepExecution();
+		when(jobService.getStepExecutions(123L)).thenReturn(Arrays.asList(stepExecution));
+		when(jobService.getJobExecution(123L)).thenReturn(stepExecution.getJobExecution());
 
 		ExtendedModelMap model = new ExtendedModelMap();
 		String result = controller.list(model, 123L, null, null);
@@ -133,9 +112,6 @@ public class StepExecutionControllerTests {
 		assertEquals("jobs/executions/steps", result);
 
 		assertTrue(model.containsKey("jobExecutionInfo"));
-
-		EasyMock.verify(jobService);
-
 	}
 
 }
