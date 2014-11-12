@@ -25,7 +25,10 @@ import java.util.TimeZone;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.springframework.batch.admin.history.StepExecutionHistory;
+import org.springframework.batch.admin.domain.JobExecutionInfo;
+import org.springframework.batch.admin.domain.StepExecutionHistory;
+import org.springframework.batch.admin.domain.StepExecutionInfo;
+import org.springframework.batch.admin.domain.StepExecutionProgress;
 import org.springframework.batch.admin.service.JobService;
 import org.springframework.batch.admin.service.NoSuchStepExecutionException;
 import org.springframework.batch.core.JobExecution;

@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.springframework.batch.admin.service.JobService;
-import org.springframework.batch.admin.web.JobInfo;
+import org.springframework.batch.admin.domain.JobInfo;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.configuration.DuplicateJobException;
 import org.springframework.batch.core.configuration.JobRegistry;

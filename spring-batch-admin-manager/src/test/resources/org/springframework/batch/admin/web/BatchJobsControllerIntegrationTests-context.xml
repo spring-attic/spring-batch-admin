@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!--<import resource="classpath*:/META-INF/spring/batch/bootstrap/manager/*-context.xml"/>-->
+
+	<bean id="batchJobsController" class="org.springframework.batch.admin.web.BatchJobsController"/>
+
+	<bean id="jobService" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="org.springframework.batch.admin.service.JobService"/>
+	</bean>
+
+	<bean id="jobRepository" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="org.springframework.batch.core.repository.JobRepository"/>
+	</bean>
+
+</beans>

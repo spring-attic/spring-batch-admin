@@ -23,9 +23,9 @@ import java.util.TimeZone;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.batch.admin.history.StepExecutionHistory;
-import org.springframework.batch.admin.web.StepExecutionInfo;
-import org.springframework.batch.admin.web.StepExecutionProgress;
+import org.springframework.batch.admin.domain.StepExecutionHistory;
+import org.springframework.batch.admin.domain.StepExecutionInfo;
+import org.springframework.batch.admin.domain.StepExecutionProgress;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.test.MetaDataInstanceFactory;
 import org.springframework.beans.factory.annotation.Autowired;

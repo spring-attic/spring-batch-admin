@@ -23,8 +23,8 @@ import java.util.Locale;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.batch.admin.history.StepExecutionHistory;
-import org.springframework.batch.admin.web.StepExecutionProgress;
+import org.springframework.batch.admin.domain.StepExecutionHistory;
+import org.springframework.batch.admin.domain.StepExecutionProgress;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.test.MetaDataInstanceFactory;
 import org.springframework.context.MessageSource;

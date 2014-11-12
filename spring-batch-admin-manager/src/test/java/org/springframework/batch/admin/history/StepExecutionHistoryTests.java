@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
 import java.util.Date;
 
 import org.junit.Test;
-import org.springframework.batch.admin.history.StepExecutionHistory;
+import org.springframework.batch.admin.domain.StepExecutionHistory;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.test.MetaDataInstanceFactory;
 

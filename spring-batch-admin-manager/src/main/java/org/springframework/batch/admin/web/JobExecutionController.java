@@ -29,6 +29,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.springframework.batch.admin.domain.JobExecutionInfo;
+import org.springframework.batch.admin.domain.JobInfo;
+import org.springframework.batch.admin.domain.StepExecutionInfo;
 import org.springframework.batch.admin.service.JobService;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;

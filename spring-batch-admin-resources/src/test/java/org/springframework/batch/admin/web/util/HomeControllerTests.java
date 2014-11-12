@@ -25,15 +25,18 @@ import java.util.Properties;
 
 import org.junit.Before;
 import org.junit.Test;
+
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 
+@DirtiesContext
 public class HomeControllerTests {
 
 	private HomeController metaData = new HomeController();
@@ -44,7 +47,7 @@ public class HomeControllerTests {
 	public void init() {
 		metaData.setApplicationContext(context);
 	}
-	
+
 	@Test
 	public void testVanillaMapping() throws Exception {
 		context.registerSingleton("controller", VanillaController.class);

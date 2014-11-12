@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import org.springframework.batch.admin.history.StepExecutionHistory;
+import org.springframework.batch.admin.domain.StepExecutionHistory;
 import org.springframework.batch.admin.service.JobService;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.test.MetaDataInstanceFactory;

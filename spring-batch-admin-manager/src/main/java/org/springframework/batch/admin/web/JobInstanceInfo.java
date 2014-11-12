@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.TimeZone;
 
+import org.springframework.batch.admin.domain.JobExecutionInfo;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 

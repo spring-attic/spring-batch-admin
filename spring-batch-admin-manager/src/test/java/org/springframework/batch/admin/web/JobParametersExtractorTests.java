@@ -19,6 +19,8 @@ package org.springframework.batch.admin.web;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+
+import org.springframework.batch.admin.domain.support.JobParametersExtractor;
 import org.springframework.util.StringUtils;
 
 /**

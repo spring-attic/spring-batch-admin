@@ -16,10 +16,9 @@
 package org.springframework.batch.admin.web.base;
 
 import org.springframework.batch.admin.web.resources.BaseMenu;
-import org.springframework.stereotype.Component;
 
 
-@Component
+//@Component
 public class DummyMenu extends BaseMenu {
 	
 	public DummyMenu() {
