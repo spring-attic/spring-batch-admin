@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.batch.admin.web;
+package org.springframework.batch.admin.domain;
 
 import java.util.Date;
 
-import org.springframework.batch.admin.history.CumulativeHistory;
-import org.springframework.batch.admin.history.StepExecutionHistory;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.context.support.DefaultMessageSourceResolvable;

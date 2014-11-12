@@ -16,7 +16,7 @@
 /**
  * 
  */
-package org.springframework.batch.admin.web;
+package org.springframework.batch.admin.domain;
 
 public class JobInfo {
 	private final String name;

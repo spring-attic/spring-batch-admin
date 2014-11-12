@@ -2,16 +2,65 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context" xmlns:util="http://www.springframework.org/schema/util"
 	xmlns:mvc="http://www.springframework.org/schema/mvc"
-	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
 	<context:annotation-config />
 
 	<mvc:resources location="/,classpath:/META-INF/" mapping="resources/**" />
 
-	<mvc:annotation-driven />
+	<mvc:annotation-driven>
+		<mvc:message-converters register-defaults="true">
+			<ref bean="jackson2Converter"/>
+		</mvc:message-converters>
+		<mvc:argument-resolvers>
+			<ref bean="sortResolver"/>
+			<ref bean="pageableResolver" />
+			<ref bean="pagedResourcesAssemblerArgumentResolver" />
+		</mvc:argument-resolvers>
+	</mvc:annotation-driven>
+
+	<bean id="jackson2Converter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+		<property name="objectMapper" ref="jacksonMapper"/>
+	</bean>
+
+	<bean id="jacksonMapper" class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean">
+		<property name="featuresToDisable">
+			<array>
+				<util:constant static-field="com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS"/>
+			</array>
+		</property>
+		<property name="dateFormat">
+			<bean class="org.springframework.batch.admin.domain.support.ISO8601DateFormatWithMilliSeconds"/>
+		</property>
+		<property name="mixIns">
+			<util:map>
+				<entry key="org.springframework.batch.core.JobExecution" value="org.springframework.batch.admin.domain.support.JobExecutionJacksonMixIn"/>
+				<entry key="org.springframework.batch.core.JobParameters" value="org.springframework.batch.admin.domain.support.JobParametersJacksonMixIn"/>
+				<entry key="org.springframework.batch.core.JobParameter" value="org.springframework.batch.admin.domain.support.JobParameterJacksonMixIn"/>
+				<entry key="org.springframework.batch.core.JobInstance" value="org.springframework.batch.admin.domain.support.JobInstanceJacksonMixIn"/>
+				<entry key="org.springframework.batch.core.StepExecution" value="org.springframework.batch.admin.domain.support.StepExecutionJacksonMixIn"/>
+				<entry key="org.springframework.batch.admin.domain.StepExecutionHistory" value="org.springframework.batch.admin.domain.support.StepExecutionHistoryJacksonMixIn"/>
+				<entry key="org.springframework.batch.item.ExecutionContext" value="org.springframework.batch.admin.domain.support.ExecutionContextJacksonMixIn"/>
+				<entry key="org.springframework.batch.core.ExitStatus" value="org.springframework.batch.admin.domain.support.ExitStatusJacksonMixIn"/>
+			</util:map>
+		</property>
+	</bean>
+
+	<bean id="sortResolver" class="org.springframework.data.web.HateoasSortHandlerMethodArgumentResolver" />
+
+	<bean id="pageableResolver" class="org.springframework.data.web.HateoasPageableHandlerMethodArgumentResolver">
+		<constructor-arg ref="sortResolver" />
+	</bean>
+
+	<bean id="pagedResourcesAssemblerArgumentResolver" class="org.springframework.data.web.PagedResourcesAssemblerArgumentResolver">
+		<constructor-arg ref="pageableResolver" />
+		<constructor-arg>
+			<null />
+		</constructor-arg>
+	</bean>
 
 	<mvc:interceptors>
 		<bean class="org.springframework.batch.admin.web.interceptor.ContentTypeInterceptor">

@@ -40,9 +40,11 @@
 	<properties>
 		<maven.test.failure.ignore>false</maven.test.failure.ignore>
 		<spring.batch.version>3.0.3.BUILD-SNAPSHOT</spring.batch.version>
-		<spring.framework.version>4.1.1.RELEASE</spring.framework.version>
+		<spring.framework.version>4.1.2.RELEASE</spring.framework.version>
 		<spring.integration.version>4.0.5.BUILD-SNAPSHOT</spring.integration.version>
 		<spring.retry.version>1.1.0.RELEASE</spring.retry.version>
+		<spring.data.version>1.9.1.RELEASE</spring.data.version>
+		<spring.hateoas.version>0.16.0.RELEASE</spring.hateoas.version>
 		<slf4j.version>1.7.7</slf4j.version>
 	</properties>
 	<profiles>
@@ -354,6 +356,11 @@
 				<version>2.6</version>
 			</dependency>
 			<dependency>
+				<groupId>commons-logging</groupId>
+				<artifactId>commons-logging</artifactId>
+				<version>1.2</version>
+			</dependency>
+			<dependency>
 				<groupId>commons-io</groupId>
 				<artifactId>commons-io</artifactId>
 				<version>2.4</version>
@@ -409,7 +416,6 @@
 				<groupId>com.thoughtworks.xstream</groupId>
 				<artifactId>xstream</artifactId>
 				<version>1.4.7</version>
-				<scope>runtime</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.codehaus.jettison</groupId>
@@ -588,10 +594,40 @@
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
+				<groupId>org.springframework.data</groupId>
+				<artifactId>spring-data-commons</artifactId>
+				<version>${spring.data.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.hateoas</groupId>
+				<artifactId>spring-hateoas</artifactId>
+				<version>${spring.hateoas.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.plugin</groupId>
+				<artifactId>spring-plugin-core</artifactId>
+				<version>1.1.0.RELEASE</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-oxm</artifactId>
+				<version>${spring.framework.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.codehaus.castor</groupId>
+				<artifactId>castor-xml</artifactId>
+				<version>1.3.3</version>
+			</dependency>
+			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-all</artifactId>
 				<version>1.9.5</version>
 				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.jayway.jsonpath</groupId>
+				<artifactId>json-path</artifactId>
+				<version>0.9.1</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

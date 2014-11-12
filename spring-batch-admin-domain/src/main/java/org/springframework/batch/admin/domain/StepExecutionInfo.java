@@ -16,7 +16,7 @@
 /**
  * 
  */
-package org.springframework.batch.admin.web;
+package org.springframework.batch.admin.domain;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -50,6 +50,8 @@ public class StepExecutionInfo {
 	private StepExecution stepExecution;
 
 	private long durationMillis;
+
+	private String stepType = StepType.UNKNOWN.getDisplayName();
 
 	public StepExecutionInfo(String jobName, Long jobExecutionId, String name, TimeZone timeZone) {
 		this.jobName = jobName;
@@ -130,5 +132,7 @@ public class StepExecutionInfo {
 	public StepExecution getStepExecution() {
 		return stepExecution;
 	}
+
+	public String getStepType() { return this.stepType; }
 
 }

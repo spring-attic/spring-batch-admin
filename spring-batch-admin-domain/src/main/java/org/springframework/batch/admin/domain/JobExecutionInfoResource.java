@@ -1,11 +1,11 @@
 /*
- * Copyright 2009-2013 the original author or authors.
+ * Copyright 2013-2014 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,23 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
-package org.springframework.batch.admin.web;
+
+package org.springframework.batch.admin.domain;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 import java.util.TimeZone;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import org.springframework.batch.admin.domain.support.JobParametersExtractor;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.converter.DefaultJobParametersConverter;
 import org.springframework.batch.core.converter.JobParametersConverter;
+import org.springframework.hateoas.PagedResources;
+import org.springframework.hateoas.ResourceSupport;
 
-public class JobExecutionInfo {
+
+/**
+ * Represents job execution info resource.
+ *
+ * @author Dave Syer
+ * @author Ilayaperumal Gopinathan
+ * @since 2.0
+ */
+@XmlRootElement
+public class JobExecutionInfoResource extends ResourceSupport {
 
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -37,12 +51,13 @@ public class JobExecutionInfo {
 
 	private SimpleDateFormat durationFormat = new SimpleDateFormat("HH:mm:ss");
 
-	private Long id;
+	private Long executionId;
 
 	private int stepExecutionCount;
 
 	private Long jobId;
 
+	@JsonProperty("name")
 	private String jobName;
 
 	private String startDate = "";
@@ -67,11 +82,15 @@ public class JobExecutionInfo {
 
 	private final TimeZone timeZone;
 
-	public JobExecutionInfo(JobExecution jobExecution, TimeZone timeZone) {
+	public JobExecutionInfoResource() {
+		this.timeZone = TimeZone.getTimeZone("UTC");
+	}
+
+	public JobExecutionInfoResource(JobExecution jobExecution, TimeZone timeZone) {
 
 		this.jobExecution = jobExecution;
 		this.timeZone = timeZone;
-		this.id = jobExecution.getId();
+		this.executionId = jobExecution.getId();
 		this.jobId = jobExecution.getJobId();
 		this.stepExecutionCount = jobExecution.getStepExecutions().size();
 		this.jobParameters = converter.getProperties(jobExecution.getJobParameters());
@@ -82,15 +101,15 @@ public class JobExecutionInfo {
 			this.jobName = jobInstance.getJobName();
 			BatchStatus status = jobExecution.getStatus();
 			this.restartable = status.isGreaterThan(BatchStatus.STOPPING) && status.isLessThan(BatchStatus.ABANDONED);
-			this.abandonable = status.isGreaterThan(BatchStatus.STARTED) && status!=BatchStatus.ABANDONED;
-			this.stoppable  = status.isLessThan(BatchStatus.STOPPING);
+			this.abandonable = status.isGreaterThan(BatchStatus.STARTED) && status != BatchStatus.ABANDONED;
+			this.stoppable = status.isLessThan(BatchStatus.STOPPING) && status != BatchStatus.COMPLETED;
 		}
 		else {
 			this.jobName = "?";
 		}
 
 		// Duration is always in GMT
-		durationFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+		durationFormat.setTimeZone(this.timeZone);
 		// The others can be localized
 		timeFormat.setTimeZone(timeZone);
 		dateFormat.setTimeZone(timeZone);
@@ -100,19 +119,19 @@ public class JobExecutionInfo {
 			Date endTime = jobExecution.getEndTime() != null ? jobExecution.getEndTime() : new Date();
 			this.duration = durationFormat.format(new Date(endTime.getTime() - jobExecution.getStartTime().getTime()));
 		}
-
 	}
 
 	public TimeZone getTimeZone() {
 		return timeZone;
 	}
 
+	@JsonProperty
 	public String getName() {
-		return jobName;
+		return (jobName.endsWith(".job") ? jobName.substring(0, jobName.lastIndexOf(".job")) : jobName);
 	}
 
-	public Long getId() {
-		return id;
+	public Long getExecutionId() {
+		return executionId;
 	}
 
 	public int getStepExecutionCount() {
@@ -159,4 +178,21 @@ public class JobExecutionInfo {
 		return jobParameters;
 	}
 
+	/**
+	 * Set restartable flag explicitly based on the job executions status of the same job instance.
+	 *
+	 * @param restartable flag to identify if the job execution can be restarted
+	 */
+	public void setRestartable(boolean restartable) {
+		this.restartable = restartable;
+	}
+
+	/**
+	 * Dedicated subclass to workaround type erasure.
+	 *
+	 * @author Gunnar Hillert
+	 */
+	public static class Page extends PagedResources<JobExecutionInfoResource> {
+
+	}
 }

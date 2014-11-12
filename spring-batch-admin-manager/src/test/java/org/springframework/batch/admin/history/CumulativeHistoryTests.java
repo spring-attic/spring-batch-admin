@@ -18,7 +18,7 @@ package org.springframework.batch.admin.history;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.springframework.batch.admin.history.CumulativeHistory;
+import org.springframework.batch.admin.domain.CumulativeHistory;
 
 public class CumulativeHistoryTests {
 

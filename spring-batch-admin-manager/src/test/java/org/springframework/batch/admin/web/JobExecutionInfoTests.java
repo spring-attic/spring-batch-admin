@@ -24,6 +24,8 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import org.junit.Test;
+
+import org.springframework.batch.admin.domain.JobExecutionInfo;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.test.MetaDataInstanceFactory;
 

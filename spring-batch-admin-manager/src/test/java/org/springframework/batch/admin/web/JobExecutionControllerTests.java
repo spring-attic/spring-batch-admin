@@ -33,6 +33,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import org.springframework.batch.admin.domain.StepExecutionInfo;
 import org.springframework.batch.admin.service.JobService;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
@@ -89,7 +90,6 @@ public class JobExecutionControllerTests {
 		MetaDataInstanceFactory.createStepExecution(jobExecution,"foo", 111L);
 		MetaDataInstanceFactory.createStepExecution(jobExecution, "bar", 222L);
 		when(jobService.getJobExecution(123L)).thenReturn(jobExecution);
-//		when(jobService.getStepNamesForJob("job")).thenReturn(Arrays.asList("foo", "bar"));
 
 		ExtendedModelMap model = new ExtendedModelMap();
 		String result = controller.detail(model, 123L, null, null);

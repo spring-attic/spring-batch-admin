@@ -23,8 +23,8 @@ import java.util.TimeZone;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.batch.admin.web.JobExecutionInfo;
-import org.springframework.batch.admin.web.StepExecutionInfo;
+import org.springframework.batch.admin.domain.JobExecutionInfo;
+import org.springframework.batch.admin.domain.StepExecutionInfo;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.test.MetaDataInstanceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
