@@ -15,18 +15,11 @@
   </scm>
 	<issueManagement>
 		<system>JIRA</system>
-		<url>http://opensource.atlassian.com/projects/spring/browse/BATCHADM</url>
+		<url>https://jira.spring.io/browse/BATCHADM/</url>
 	</issueManagement>
-	<mailingLists>
-		<mailingList>
-			<name>Spring Batch Forum</name>
-			<post>http://forum.springframework.org/forumdisplay.php?f=41</post>
-			<archive>http://forum.springframework.org/forumdisplay.php?f=41</archive>
-		</mailingList>
-	</mailingLists>
 	<ciManagement>
 		<system>Bamboo</system>
-		<url>https://build.springframework.org/bamboo/browse/BATCH</url>
+		<url>https://build.spring.io/browse/BATCH</url>
 	</ciManagement>
 	<licenses>
 		<license>

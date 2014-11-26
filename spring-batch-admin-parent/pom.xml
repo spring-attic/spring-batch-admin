@@ -595,17 +595,6 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	<pluginRepositories>
-		<pluginRepository>
-			<!-- This has to be defined and visible in default profile for bundlor to work -->
-			<id>spring-ebr</id>
-			<name>Spring Maven Release Repository</name>
-			<url>http://repository.springsource.com/maven/bundles/release</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
 	<distributionManagement>
 		<site>
 			<id>static.springframework.org</id>
@@ -626,7 +615,7 @@
 		<repository>
 			<id>spring-milestones</id>
 			<name>Spring Maven Milestone Repository</name>
-			<url>http://repo.spring.io/libs-milestone</url>
+			<url>https://repo.spring.io/libs-milestone</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
@@ -634,12 +623,12 @@
 		<repository>
 			<id>spring-snapshots</id>
 			<name>Spring Maven Snapshot Repository</name>
-			<url>https://repo.spring.io/libs-snapshot</url>
+			<url>https://repo.spring.io/libs-snapshot-local</url>
 		</repository>
 		<repository>
 			<id>objectstyle</id>
 			<name>ObjectStyle.org Repository</name>
-			<url>http://objectstyle.org/maven2</url>
+			<url>https://objectstyle.org/maven2</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
