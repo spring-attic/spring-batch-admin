@@ -54,6 +54,15 @@
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 
+	<bean id="jobBuilderFactory" class="org.springframework.batch.core.configuration.annotation.JobBuilderFactory">
+		<constructor-arg ref="jobRepository"/>
+	</bean>
+
+	<bean id="stepBuilderFactory" class="org.springframework.batch.core.configuration.annotation.StepBuilderFactory">
+		<constructor-arg index="0" ref="jobRepository"/>
+		<constructor-arg index="1" ref="transactionManager"/>
+	</bean>
+
 	<task:scheduled-tasks>
 		<task:scheduled ref="jobService" method="removeInactiveExecutions" fixed-delay="${batch.job.service.reaper.interval}"/>
 	</task:scheduled-tasks>

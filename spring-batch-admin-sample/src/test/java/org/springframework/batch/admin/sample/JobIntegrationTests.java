@@ -40,7 +40,7 @@ public class JobIntegrationTests {
 	@Test
 	public void testSimpleProperties() throws Exception {
 		assertNotNull(jobLocator);
-		assertEquals("[infinite, job1, job2]", new TreeSet<String>(jobLocator.getJobNames()).toString());
+		assertEquals("[infinite, javaJob, job1, job2]", new TreeSet<String>(jobLocator.getJobNames()).toString());
 	}
 
 }
