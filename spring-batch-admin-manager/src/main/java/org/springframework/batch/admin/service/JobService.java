@@ -105,6 +105,24 @@ public interface JobService {
 	JobRestartException, JobInstanceAlreadyCompleteException, NoSuchJobException, JobParametersInvalidException;
 
 	/**
+	 * Launch a job with the parameters provided.  JSR-352 supports restarting of jobs with a new set of parameters.
+	 * This method exposes this functionality
+	 *
+	 * @param jobExecutionId the job execution to restart
+	 * @param params the job parameters to use in the restart
+	 * @return the resulting {@link JobExecution} if successful
+	 *
+	 * @throws NoSuchJobExecutionException
+	 * @throws JobExecutionAlreadyRunningException
+	 * @throws JobRestartException
+	 * @throws JobInstanceAlreadyCompleteException
+	 * @throws NoSuchJobException
+	 * @throws JobParametersInvalidException
+	 */
+	JobExecution restart(Long jobExecutionId, JobParameters params) throws NoSuchJobExecutionException, JobExecutionAlreadyRunningException,
+			JobRestartException, JobInstanceAlreadyCompleteException, NoSuchJobException, JobParametersInvalidException;
+
+	/**
 	 * Send a signal to a job execution to stop processing. This method does not
 	 * guarantee that the processing will stop, only that the signal will be
 	 * delivered. It is up to the individual {@link Job} and {@link Step}

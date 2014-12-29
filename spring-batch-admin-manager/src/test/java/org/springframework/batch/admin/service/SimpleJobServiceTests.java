@@ -21,17 +21,23 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.isA;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.times;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
+
+import javax.batch.api.chunk.AbstractItemReader;
+import javax.batch.api.chunk.AbstractItemWriter;
+import javax.batch.operations.JobOperator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -43,9 +49,11 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.JobParametersIncrementer;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.configuration.ListableJobLocator;
+import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.job.SimpleJob;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
@@ -57,6 +65,7 @@ import org.springframework.batch.test.MetaDataInstanceFactory;
 
 /**
  * @author Dave Syer
+ * @author Michael Minella
  * 
  */
 public class SimpleJobServiceTests {
@@ -82,6 +91,12 @@ public class SimpleJobServiceTests {
 	@Mock
 	private ExecutionContextDao executionContextDao;
 
+	@Mock
+	private JobExplorer jobExplorer;
+
+	@Mock
+	private JobOperator jsrJobOperator;
+
 	private SimpleJobService service;
 
 	@Before
@@ -89,7 +104,120 @@ public class SimpleJobServiceTests {
 		MockitoAnnotations.initMocks(this);
 
 		service = new SimpleJobService(jobInstanceDao, jobExecutionDao, stepExecutionDao,
-				jobRepository, jobLauncher, jobLocator, executionContextDao);
+				jobRepository, jobLauncher, jobLocator, executionContextDao, jsrJobOperator);
+	}
+
+	@Test
+	public void testJsrLaunch() throws Exception {
+		JobExecution jobExecution = MetaDataInstanceFactory.createJobExecutionWithStepExecutions(5L, Arrays.asList(
+				"step1"));
+		JobExecution completeJobExecution = MetaDataInstanceFactory.createJobExecutionWithStepExecutions(5L, Arrays.asList(
+				"step1"));
+		completeJobExecution.setStatus(BatchStatus.COMPLETED);
+		completeJobExecution.setEndTime(new Date());
+		JobParameters jobParameters = new JobParametersBuilder().addString("fail", String.valueOf(false), false).toJobParameters();
+		when(jsrJobOperator.start("jsr352-job", jobParameters.toProperties())).thenReturn(5l);
+		when(jobExecutionDao.getJobExecution(5l)).thenReturn(jobExecution, jobExecution, completeJobExecution);
+
+		JobExecution result = service.launch("jsr352-job", jobParameters);
+
+		while(true) {
+			result = service.getJobExecution(result.getId());
+
+			if(!result.isRunning()) {
+				break;
+			}
+		}
+
+		assertEquals(BatchStatus.COMPLETED, result.getStatus());
+		assertEquals(1, result.getStepExecutions().size());
+	}
+
+	@Test
+	public void testJsrRestartNoParams() throws Exception {
+		JobExecution jobExecution = MetaDataInstanceFactory.createJobExecution(124L);
+		JobExecution completeJobExecution = MetaDataInstanceFactory.createJobExecution(124L);
+		completeJobExecution.setStatus(BatchStatus.COMPLETED);
+		completeJobExecution.setEndTime(new Date());
+		when(jobExecutionDao.getJobExecution(123L)).thenReturn(jobExecution);
+		when(jobInstanceDao.getJobInstance(jobExecution)).thenReturn(
+				MetaDataInstanceFactory.createJobInstance());
+		when(jsrJobOperator.restart(123L, new Properties())).thenReturn(124L);
+		when(jobExecutionDao.getJobExecution(124l)).thenReturn(jobExecution, jobExecution, completeJobExecution);
+
+		JobExecution result = service.restart(123l);
+
+		while(true) {
+			result = service.getJobExecution(result.getId());
+
+			if(!result.isRunning()) {
+				break;
+			}
+		}
+
+		assertEquals(BatchStatus.COMPLETED, result.getStatus());
+	}
+
+	@Test
+	public void testJsrRestartWithParams() throws Exception {
+		JobParameters params = new JobParametersBuilder().addString("foo", "bar").toJobParameters();
+		JobExecution jobExecution = MetaDataInstanceFactory.createJobExecution(124L);
+		JobExecution completeJobExecution = MetaDataInstanceFactory.createJobExecution(124L);
+		completeJobExecution.setStatus(BatchStatus.COMPLETED);
+		completeJobExecution.setEndTime(new Date());
+		when(jobExecutionDao.getJobExecution(123L)).thenReturn(jobExecution);
+		when(jobInstanceDao.getJobInstance(jobExecution)).thenReturn(
+				MetaDataInstanceFactory.createJobInstance());
+		when(jsrJobOperator.restart(123L, params.toProperties())).thenReturn(124L);
+		when(jobExecutionDao.getJobExecution(124l)).thenReturn(jobExecution, jobExecution, completeJobExecution);
+
+		JobExecution result = service.restart(123l, params);
+
+		while(true) {
+			result = service.getJobExecution(result.getId());
+
+			if(!result.isRunning()) {
+				break;
+			}
+		}
+
+		assertEquals(BatchStatus.COMPLETED, result.getStatus());
+	}
+
+	@Test
+	public void testJsrStop() throws Exception {
+		JobExecution jobExecution = MetaDataInstanceFactory.createJobExecution(123L);
+		JobExecution stoppedJobExecution = MetaDataInstanceFactory.createJobExecution(123L);
+		stoppedJobExecution.setStatus(BatchStatus.STOPPED);
+		stoppedJobExecution.setEndTime(new Date());
+
+		when(jobExecutionDao.getJobExecution(123L)).thenReturn(jobExecution, stoppedJobExecution);
+		when(jobInstanceDao.getJobInstance(jobExecution)).thenReturn(
+				MetaDataInstanceFactory.createJobInstance("jsr352-job", 3L));
+
+		JobExecution result = service.stop(123l);
+
+		verify(jsrJobOperator).stop(123L);
+		assertEquals(BatchStatus.STOPPED, result.getStatus());
+	}
+
+	@Test
+	public void testJsrAbandon() throws Exception {
+		JobExecution jobExecution = MetaDataInstanceFactory.createJobExecution(123L);
+		jobExecution.setEndTime(new Date());
+		jobExecution.setStatus(BatchStatus.FAILED);
+		JobExecution stoppedJobExecution = MetaDataInstanceFactory.createJobExecution(123L);
+		stoppedJobExecution.setStatus(BatchStatus.ABANDONED);
+		stoppedJobExecution.setEndTime(new Date());
+
+		when(jobExecutionDao.getJobExecution(123L)).thenReturn(jobExecution, stoppedJobExecution);
+		when(jobInstanceDao.getJobInstance(jobExecution)).thenReturn(
+				MetaDataInstanceFactory.createJobInstance("jsr352-job", 3L));
+
+		JobExecution result = service.abandon(123l);
+
+		verify(jsrJobOperator).abandon(123L);
+		assertEquals(BatchStatus.ABANDONED, result.getStatus());
 	}
 
 	/**
@@ -144,6 +272,7 @@ public class SimpleJobServiceTests {
 	public void testLaunch() throws Exception {
 		JobParameters jobParameters = new JobParameters();
 		Job job = new JobSupport("job");
+		when(jobLocator.getJobNames()).thenReturn(Arrays.asList("job", "job1"));
 		when(jobLocator.getJob("job")).thenReturn(job);
 		when(jobLauncher.run(job, jobParameters)).thenReturn(MetaDataInstanceFactory.createJobExecution());
 
@@ -163,6 +292,7 @@ public class SimpleJobServiceTests {
 				return new RunIdIncrementer();
 			}
 		};
+		when(jobLocator.getJobNames()).thenReturn(Arrays.asList("job", "job1"));
 		when(jobLocator.getJob("job")).thenReturn(job);
 		when(jobLauncher.run(job, nextJobParameters)).thenReturn(MetaDataInstanceFactory.createJobExecution());
 
@@ -181,6 +311,7 @@ public class SimpleJobServiceTests {
 				return new RunIdIncrementer();
 			}
 		};
+		when(jobLocator.getJobNames()).thenReturn(Arrays.asList("job", "job1"));
 		when(jobLocator.getJob("job")).thenReturn(job);
 		JobExecution failed = MetaDataInstanceFactory.createJobExecution();
 		failed.setStatus(BatchStatus.FAILED);
@@ -201,6 +332,7 @@ public class SimpleJobServiceTests {
 				MetaDataInstanceFactory.createJobInstance());
 		JobParameters jobParameters = new JobParameters();
 		Job job = new JobSupport("job");
+		when(jobLocator.getJobNames()).thenReturn(Arrays.asList("job", "job1"));
 		when(jobLocator.getJob("job")).thenReturn(job);
 		when(jobLauncher.run(job, jobParameters))
 		.thenReturn(MetaDataInstanceFactory.createJobExecution(124L));
@@ -248,7 +380,7 @@ public class SimpleJobServiceTests {
 		when(jobLocator.getJobNames()).thenReturn(Arrays.asList("job1", "job2"));
 		when(jobInstanceDao.getJobNames()).thenReturn(Arrays.asList("job3", "job2"));
 
-		assertEquals(3, service.listJobs(0, 4).size());
+		assertEquals(4, service.listJobs(0, 5).size());
 	}
 
 	/**
@@ -270,6 +402,7 @@ public class SimpleJobServiceTests {
 		JobExecution jobExecution = MetaDataInstanceFactory.createJobExecution(123L);
 		jobExecution.setStatus(BatchStatus.STOPPING);
 		when(jobExecutionDao.getJobExecution(123L)).thenReturn(jobExecution);
+		when(jobInstanceDao.getJobInstance(jobExecution)).thenReturn(jobExecution.getJobInstance());
 		jobRepository.update(jobExecution);
 		service.abandon(123L);
 
@@ -284,6 +417,7 @@ public class SimpleJobServiceTests {
 	public void testStop() throws Exception {
 		JobExecution jobExecution = MetaDataInstanceFactory.createJobExecution(123L);
 		when(jobExecutionDao.getJobExecution(123L)).thenReturn(jobExecution);
+		when(jobInstanceDao.getJobInstance(jobExecution)).thenReturn(jobExecution.getJobInstance());
 		jobRepository.update(jobExecution);
 		service.stop(123L);
 
@@ -524,4 +658,28 @@ public class SimpleJobServiceTests {
 		verify(stepExecutionDao, times(2)).addStepExecutions(jobExecution);
 	}
 
+	public static class JsrItemReader extends AbstractItemReader {
+
+		private Iterator<String> items = Arrays.asList("foo", "bar", "baz", "qux").iterator();
+
+		@Override
+		public Object readItem() throws Exception {
+			if(items.hasNext()) {
+				return items.next();
+			}
+			else {
+				return null;
+			}
+		}
+	}
+
+	public static class JsrItemWriter extends AbstractItemWriter {
+
+		public List<Object> writtenItems = new ArrayList<Object>();
+
+		@Override
+		public void writeItems(List<Object> items) throws Exception {
+			writtenItems.addAll(items);
+		}
+	}
 }

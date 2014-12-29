@@ -1,0 +1,8 @@
+<job id="jsr352-job" xmlns="http://xmlns.jcp.org/xml/ns/javaee" version="1.0">
+	<step id="myStep">
+		<chunk>
+			<reader ref="org.springframework.batch.admin.sample.ExampleItemReader"/>
+			<writer ref="org.springframework.batch.admin.sample.ExampleItemWriter"/>
+		</chunk>
+	</step>
+</job>

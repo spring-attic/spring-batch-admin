@@ -15,10 +15,20 @@
  */
 package org.springframework.batch.admin.service;
 
+import static org.springframework.batch.support.DatabaseType.SYBASE;
+
+import java.sql.Types;
+
+import javax.sql.DataSource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springframework.batch.core.configuration.JobLocator;
 import org.springframework.batch.core.configuration.ListableJobLocator;
+import org.springframework.batch.core.explore.JobExplorer;
+import org.springframework.batch.core.jsr.JsrJobParametersConverter;
+import org.springframework.batch.core.jsr.launch.JsrJobOperator;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.ExecutionContextSerializer;
 import org.springframework.batch.core.repository.JobRepository;
@@ -37,13 +47,9 @@ import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.lob.DefaultLobHandler;
 import org.springframework.jdbc.support.lob.LobHandler;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-
-import javax.sql.DataSource;
-import java.sql.Types;
-
-import static org.springframework.batch.support.DatabaseType.SYBASE;
 
 /**
  * A factory for a {@link JobService} that makes the configuration of its
@@ -75,7 +81,15 @@ public class SimpleJobServiceFactoryBean implements FactoryBean<JobService>, Ini
 
 	private ListableJobLocator jobLocator;
 
+	private JobExplorer jobExplorer;
+
 	private ExecutionContextSerializer serializer;
+
+	private PlatformTransactionManager transactionManager;
+
+	public void setTransactionManager(PlatformTransactionManager transactionManager) {
+		this.transactionManager = transactionManager;
+	}
 
 	/**
 	 * A special handler for large objects. The default is usually fine, except
@@ -140,6 +154,10 @@ public class SimpleJobServiceFactoryBean implements FactoryBean<JobService>, Ini
 		this.incrementerFactory = incrementerFactory;
 	}
 
+	public void setJobExplorer(JobExplorer jobExplorer) {
+		this.jobExplorer = jobExplorer;
+	}
+
 	/**
 	 * The repository used to store and update jobs and step executions.
 	 * 
@@ -184,6 +202,7 @@ public class SimpleJobServiceFactoryBean implements FactoryBean<JobService>, Ini
 		Assert.notNull(jobRepository, "JobRepository must not be null.");
 		Assert.notNull(jobLocator, "JobLocator must not be null.");
 		Assert.notNull(jobLauncher, "JobLauncher must not be null.");
+		Assert.notNull(jobExplorer, "JobExplorer must not be null.");
 
 		jdbcTemplate = new JdbcTemplate(dataSource);
 
@@ -276,8 +295,12 @@ public class SimpleJobServiceFactoryBean implements FactoryBean<JobService>, Ini
 	 * @see FactoryBean#getObject()
 	 */
 	public JobService getObject() throws Exception {
+		JsrJobParametersConverter jobParametersConverter = new JsrJobParametersConverter(dataSource);
+		jobParametersConverter.afterPropertiesSet();
+		JsrJobOperator jsrJobOperator = new JsrJobOperator(jobExplorer, jobRepository, jobParametersConverter, transactionManager);
+		jsrJobOperator.afterPropertiesSet();
 		return new SimpleJobService(createJobInstanceDao(), createJobExecutionDao(), createStepExecutionDao(),
-				jobRepository, jobLauncher, jobLocator, createExecutionContextDao());
+				jobRepository, jobLauncher, jobLocator, createExecutionContextDao(), jsrJobOperator);
 	}
 
 	/**

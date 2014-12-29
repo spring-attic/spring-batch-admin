@@ -15,15 +15,18 @@
  */
 package org.springframework.batch.admin.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import org.junit.Test;
+
 import org.springframework.batch.core.configuration.support.MapJobRegistry;
+import org.springframework.batch.core.explore.support.MapJobExplorerFactoryBean;
 import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-
-import static org.junit.Assert.*;
 
 /**
  * @author Michael Minella
@@ -71,6 +74,15 @@ public class SimpleJobServiceFactoryTests {
 		}
 
 		factoryBean.setJobLauncher(new SimpleJobLauncher());
+
+		try {
+			factoryBean.afterPropertiesSet();
+			fail();
+		} catch (IllegalArgumentException expected) {
+			assertEquals("JobExplorer must not be null.", expected.getMessage());
+		}
+
+		factoryBean.setJobExplorer(new MapJobExplorerFactoryBean(new MapJobRepositoryFactoryBean(new ResourcelessTransactionManager())).getObject());
 
 		factoryBean.afterPropertiesSet();
 	}
