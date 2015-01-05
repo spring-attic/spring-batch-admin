@@ -45,10 +45,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -317,7 +320,7 @@ public class JobExecutionController {
 			String jobName = jobExecution.getJobInstance().getJobName();
 			Collection<String> stepNames = new HashSet<String>(jobService.getStepNamesForJob(jobName));
 			Collection<StepExecution> stepExecutions = new ArrayList<StepExecution>(jobExecution.getStepExecutions());
-			Collection<StepExecutionInfo> stepExecutionInfos = new ArrayList<StepExecutionInfo>();
+			List<StepExecutionInfo> stepExecutionInfos = new ArrayList<StepExecutionInfo>();
 
 			for (String name : stepNames) {
 				boolean found = false;
@@ -333,6 +336,14 @@ public class JobExecutionController {
 					stepExecutionInfos.add(new StepExecutionInfo(jobName, jobExecutionId, name, timeZone));
 				}
 			}
+
+			Collections.sort(stepExecutionInfos, new Comparator<StepExecutionInfo>() {
+				@Override
+				public int compare(StepExecutionInfo o1, StepExecutionInfo o2) {
+					return o1.getId().compareTo(o2.getId());
+				}
+			});
+
 			model.addAttribute("stepExecutionInfos", stepExecutionInfos);
 		}
 		catch (NoSuchJobExecutionException e) {

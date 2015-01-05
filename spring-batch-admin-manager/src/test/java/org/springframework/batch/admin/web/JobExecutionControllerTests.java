@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 import org.easymock.EasyMock;
@@ -74,10 +75,14 @@ public class JobExecutionControllerTests {
 	}
 
 	@Test
+	@SuppressWarnings("unchecked")
 	public void testDetailSunnyDay() throws Exception {
 
 		jobService.getJobExecution(123L);
-		EasyMock.expectLastCall().andReturn(MetaDataInstanceFactory.createJobExecution());
+		JobExecution jobExecution = MetaDataInstanceFactory.createJobExecution();
+		MetaDataInstanceFactory.createStepExecution(jobExecution,"foo", 111L);
+		MetaDataInstanceFactory.createStepExecution(jobExecution, "bar", 222L);
+		EasyMock.expectLastCall().andReturn(jobExecution);
 		jobService.getStepNamesForJob("job");
 		EasyMock.expectLastCall().andReturn(Arrays.asList("foo", "bar"));
 		EasyMock.replay(jobService);
@@ -90,9 +95,10 @@ public class JobExecutionControllerTests {
 
 		assertTrue(model.containsKey("jobExecutionInfo"));
 		assertTrue(model.containsKey("stepExecutionInfos"));
+		assertTrue(((List<StepExecutionInfo>) model.get("stepExecutionInfos")).get(0).getName().equals("foo"));
+		assertTrue(((List<StepExecutionInfo>) model.get("stepExecutionInfos")).get(1).getName().equals("bar"));
 
 		EasyMock.verify(jobService);
-
 	}
 
 	@Test
