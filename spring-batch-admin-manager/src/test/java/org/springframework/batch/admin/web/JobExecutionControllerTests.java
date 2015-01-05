@@ -83,8 +83,6 @@ public class JobExecutionControllerTests {
 		MetaDataInstanceFactory.createStepExecution(jobExecution,"foo", 111L);
 		MetaDataInstanceFactory.createStepExecution(jobExecution, "bar", 222L);
 		EasyMock.expectLastCall().andReturn(jobExecution);
-		jobService.getStepNamesForJob("job");
-		EasyMock.expectLastCall().andReturn(Arrays.asList("foo", "bar"));
 		EasyMock.replay(jobService);
 
 		ExtendedModelMap model = new ExtendedModelMap();

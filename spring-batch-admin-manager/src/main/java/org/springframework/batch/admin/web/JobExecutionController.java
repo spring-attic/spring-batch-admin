@@ -112,11 +112,11 @@ public class JobExecutionController {
 			model.addAttribute(new JobExecutionInfo(jobExecution, timeZone));
 		}
 		catch (NoSuchJobExecutionException e) {
-			errors.reject("no.such.job.execution", new Object[] { jobExecutionId }, "No job exection with id="
+			errors.reject("no.such.job.execution", new Object[] { jobExecutionId }, "No job execution with id="
 					+ jobExecutionId);
 		}
 		catch (JobExecutionNotRunningException e) {
-			errors.reject("job.execution.not.running", "Job exection with id=" + jobExecutionId + " is not running.");
+			errors.reject("job.execution.not.running", "Job execution with id=" + jobExecutionId + " is not running.");
 			JobExecution jobExecution;
 			try {
 				jobExecution = jobService.getJobExecution(jobExecutionId);
@@ -278,7 +278,7 @@ public class JobExecutionController {
 			Errors errors, @RequestParam(defaultValue = "0") int startJobExecution,
 			@RequestParam(defaultValue = "20") int pageSize) {
 
-		int total = startJobExecution;
+		int total;
 		try {
 			total = jobService.countJobExecutionsForJob(jobName);
 		}
@@ -317,24 +317,10 @@ public class JobExecutionController {
 		try {
 			JobExecution jobExecution = jobService.getJobExecution(jobExecutionId);
 			model.addAttribute(new JobExecutionInfo(jobExecution, timeZone));
-			String jobName = jobExecution.getJobInstance().getJobName();
-			Collection<String> stepNames = new HashSet<String>(jobService.getStepNamesForJob(jobName));
-			Collection<StepExecution> stepExecutions = new ArrayList<StepExecution>(jobExecution.getStepExecutions());
 			List<StepExecutionInfo> stepExecutionInfos = new ArrayList<StepExecutionInfo>();
 
-			for (String name : stepNames) {
-				boolean found = false;
-				for (Iterator<StepExecution> iterator = stepExecutions.iterator(); iterator.hasNext();) {
-					StepExecution stepExecution = iterator.next();
-					if (stepExecution.getStepName().equals(name)) {
-						stepExecutionInfos.add(new StepExecutionInfo(stepExecution, timeZone));
-						iterator.remove();
-						found = true;
-					}
-				}
-				if (!found) {
-					stepExecutionInfos.add(new StepExecutionInfo(jobName, jobExecutionId, name, timeZone));
-				}
+			for (StepExecution stepExecution : jobExecution.getStepExecutions()) {
+				stepExecutionInfos.add(new StepExecutionInfo(stepExecution, timeZone));
 			}
 
 			Collections.sort(stepExecutionInfos, new Comparator<StepExecutionInfo>() {
@@ -348,10 +334,6 @@ public class JobExecutionController {
 		}
 		catch (NoSuchJobExecutionException e) {
 			errors.reject("no.such.job.execution", new Object[] { jobExecutionId }, "There is no such job execution ("
-					+ jobExecutionId + ")");
-		}
-		catch (NoSuchJobException e) {
-			errors.reject("no.such.job", new Object[] { jobExecutionId }, "There is no such job with exeuction id ("
 					+ jobExecutionId + ")");
 		}
 
