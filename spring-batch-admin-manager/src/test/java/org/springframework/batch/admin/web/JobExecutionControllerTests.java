@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -84,7 +85,10 @@ public class JobExecutionControllerTests {
 	@Test
 	public void testDetailSunnyDay() throws Exception {
 
-		when(jobService.getJobExecution(123L)).thenReturn(MetaDataInstanceFactory.createJobExecution());
+		JobExecution jobExecution = MetaDataInstanceFactory.createJobExecution();
+		MetaDataInstanceFactory.createStepExecution(jobExecution,"foo", 111L);
+		MetaDataInstanceFactory.createStepExecution(jobExecution, "bar", 222L);
+		when(jobService.getJobExecution(123L)).thenReturn(jobExecution);
 		when(jobService.getStepNamesForJob("job")).thenReturn(Arrays.asList("foo", "bar"));
 
 		ExtendedModelMap model = new ExtendedModelMap();
@@ -95,6 +99,8 @@ public class JobExecutionControllerTests {
 
 		assertTrue(model.containsKey("jobExecutionInfo"));
 		assertTrue(model.containsKey("stepExecutionInfos"));
+		assertTrue(((List<StepExecutionInfo>) model.get("stepExecutionInfos")).get(0).getName().equals("foo"));
+		assertTrue(((List<StepExecutionInfo>) model.get("stepExecutionInfos")).get(1).getName().equals("bar"));
 	}
 
 	@Test
@@ -108,7 +114,7 @@ public class JobExecutionControllerTests {
 		ExtendedModelMap model = new ExtendedModelMap();
 		String result = controller.listForJob(model, "foo", null, null, 10, 20);
 		// JobExecutions, Job, total, next, previous, start, end
-		for(Map.Entry curEntry : model.entrySet()) {
+		for (Map.Entry curEntry : model.entrySet()) {
 			System.out.println(curEntry.getKey() + " : " + curEntry.getValue());
 		}
 		assertEquals(7, model.size());
