@@ -319,24 +319,28 @@ public class JobExecutionController {
 			JobExecution jobExecution = jobService.getJobExecution(jobExecutionId);
 			model.addAttribute(new JobExecutionInfo(jobExecution, timeZone));
 			String jobName = jobExecution.getJobInstance().getJobName();
-			Collection<String> stepNames = new HashSet<String>(jobService.getStepNamesForJob(jobName));
-			Collection<StepExecution> stepExecutions = new ArrayList<StepExecution>(jobExecution.getStepExecutions());
+//			Collection<String> stepNames = new HashSet<String>(jobService.getStepNamesForJob(jobName));
+//			Collection<StepExecution> stepExecutions = new ArrayList<StepExecution>(jobExecution.getStepExecutions());
 			List<StepExecutionInfo> stepExecutionInfos = new ArrayList<StepExecutionInfo>();
 
-			for (String name : stepNames) {
-				boolean found = false;
-				for (Iterator<StepExecution> iterator = stepExecutions.iterator(); iterator.hasNext();) {
-					StepExecution stepExecution = iterator.next();
-					if (stepExecution.getStepName().equals(name)) {
-						stepExecutionInfos.add(new StepExecutionInfo(stepExecution, timeZone));
-						iterator.remove();
-						found = true;
-					}
-				}
-				if (!found) {
-					stepExecutionInfos.add(new StepExecutionInfo(jobName, jobExecutionId, name, timeZone));
-				}
+			for (StepExecution stepExecution : jobExecution.getStepExecutions()) {
+				stepExecutionInfos.add(new StepExecutionInfo(stepExecution, timeZone));
 			}
+
+//			for (String name : stepNames) {
+//				boolean found = false;
+//				for (Iterator<StepExecution> iterator = stepExecutions.iterator(); iterator.hasNext();) {
+//					StepExecution stepExecution = iterator.next();
+//					if (stepExecution.getStepName().equals(name)) {
+//						stepExecutionInfos.add(new StepExecutionInfo(stepExecution, timeZone));
+//						iterator.remove();
+//						found = true;
+//					}
+//				}
+//				if (!found) {
+//					stepExecutionInfos.add(new StepExecutionInfo(jobName, jobExecutionId, name, timeZone));
+//				}
+//			}
 
 			Collections.sort(stepExecutionInfos, new Comparator<StepExecutionInfo>() {
 				@Override
@@ -351,10 +355,10 @@ public class JobExecutionController {
 			errors.reject("no.such.job.execution", new Object[] { jobExecutionId }, "There is no such job execution ("
 					+ jobExecutionId + ")");
 		}
-		catch (NoSuchJobException e) {
-			errors.reject("no.such.job", new Object[] { jobExecutionId }, "There is no such job with exeuction id ("
-					+ jobExecutionId + ")");
-		}
+//		catch (NoSuchJobException e) {
+//			errors.reject("no.such.job", new Object[] { jobExecutionId }, "There is no such job with exeuction id ("
+//					+ jobExecutionId + ")");
+//		}
 
 		return "jobs/execution";
 

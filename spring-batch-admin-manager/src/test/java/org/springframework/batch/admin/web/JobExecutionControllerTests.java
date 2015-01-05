@@ -89,7 +89,7 @@ public class JobExecutionControllerTests {
 		MetaDataInstanceFactory.createStepExecution(jobExecution,"foo", 111L);
 		MetaDataInstanceFactory.createStepExecution(jobExecution, "bar", 222L);
 		when(jobService.getJobExecution(123L)).thenReturn(jobExecution);
-		when(jobService.getStepNamesForJob("job")).thenReturn(Arrays.asList("foo", "bar"));
+//		when(jobService.getStepNamesForJob("job")).thenReturn(Arrays.asList("foo", "bar"));
 
 		ExtendedModelMap model = new ExtendedModelMap();
 		String result = controller.detail(model, 123L, null, null);
