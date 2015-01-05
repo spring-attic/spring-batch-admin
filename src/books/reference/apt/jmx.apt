@@ -60,7 +60,7 @@ Monitoring and Management with JMX
   <<<ObjectName>>> in the form
 
 +---
-org.springframework.batch:type=JobExectution,name=job1
+spring.application:type=JobExectution,name=job1
 +---
 
   where <<<job1>>> is the job name.
