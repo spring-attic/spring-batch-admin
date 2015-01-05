@@ -23,4 +23,4 @@
 		"previous" : "${baseUrl}${executions_url}?startJobExecution=${previousJobExecution?c}&pageSize=${pageSize!20}"</#if>
 	}
 	</#if>
-}</#if>
+<#if jobInfo?? && jobInfo.jobInstanceId??>}</#if></#if>
