@@ -1,15 +1,25 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:integration="http://www.springframework.org/schema/integration"
 	xsi:schemaLocation="http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
  	<import resource="classpath*:/META-INF/spring/batch/bootstrap/resources/*.xml" />
  	<import resource="classpath*:/META-INF/spring/batch/bootstrap/manager/*.xml" />
-	<import resource="classpath:/META-INF/spring/batch/jobs/jobs-*.xml" />
-	
+
 	<bean id="jobLauncherTaskExecutor" class="org.springframework.core.task.SyncTaskExecutor"/>
 	<!-- prevent loading of other jobs by overriding the loader in the main bootstrap context -->
-	<bean id="jobLoader" class="java.lang.String"/>
+	<bean id="jobLoader" class="org.springframework.batch.core.configuration.support.AutomaticJobRegistrar">
+		<property name="applicationContextFactories">
+			<bean class="org.springframework.batch.core.configuration.support.ClasspathXmlApplicationContextsFactoryBean">
+				<property name="resources" value="classpath:/META-INF/spring/batch/jobs/*.xml" />
+			</bean>
+		</property>
+		<property name="jobLoader">
+			<bean class="org.springframework.batch.core.configuration.support.DefaultJobLoader">
+				<property name="jobRegistry" ref="jobRegistry" />
+			</bean>
+		</property>
+	</bean>
 
 	<integration:channel id="job-requests"/>
 
