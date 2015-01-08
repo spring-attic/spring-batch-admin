@@ -29,13 +29,15 @@ public class IntegrationAndBatchMBeanExporterIntegrationTests {
 	public void testMBeanExporters() throws Exception {
 		String base = "/META-INF/spring/batch/";
 		String bootstrap = base + "bootstrap/";
-		new GenericXmlApplicationContext( //
+		GenericXmlApplicationContext context = new GenericXmlApplicationContext( //
 				bootstrap + "manager/execution-context.xml", //
 				bootstrap + "manager/jmx-context.xml", //
 				bootstrap + "manager/env-context.xml", //
 				bootstrap + "manager/data-source-context.xml", //
 				bootstrap + "integration/jmx-context.xml" //
 		);
+
+		context.close();
 	}
 
 }
