@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the original author or authors.
+ * Copyright 2013-2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.thoughtworks.xstream.converters.SingleValueConverter;
@@ -31,24 +32,18 @@ import org.junit.Before;
 import org.springframework.batch.admin.domain.JobExecutionInfoResource;
 import org.springframework.batch.admin.domain.JobInstanceInfoResource;
 import org.springframework.batch.admin.domain.StepExecutionHistory;
-import org.springframework.batch.admin.domain.support.ExecutionContextJacksonMixIn;
 import org.springframework.batch.admin.domain.support.ExitStatusJacksonMixIn;
 import org.springframework.batch.admin.domain.support.ISO8601DateFormatWithMilliSeconds;
-import org.springframework.batch.admin.domain.support.JobExecutionJacksonMixIn;
-import org.springframework.batch.admin.domain.support.JobInstanceJacksonMixIn;
 import org.springframework.batch.admin.domain.support.JobParameterJacksonMixIn;
 import org.springframework.batch.admin.domain.support.JobParametersJacksonMixIn;
 import org.springframework.batch.admin.domain.support.StepExecutionHistoryJacksonMixIn;
-import org.springframework.batch.admin.domain.support.StepExecutionJacksonMixIn;
 import org.springframework.batch.admin.service.JobService;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.hateoas.Link;
@@ -130,13 +125,10 @@ public class AbstractControllerIntegrationTest {
 			ObjectMapper objectMapper = jsonConverter.getObjectMapper();
 			objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 			objectMapper.setDateFormat(new ISO8601DateFormatWithMilliSeconds());
-			objectMapper.addMixInAnnotations(JobExecution.class, JobExecutionJacksonMixIn.class);
+			objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
 			objectMapper.addMixInAnnotations(JobParameters.class, JobParametersJacksonMixIn.class);
 			objectMapper.addMixInAnnotations(JobParameter.class, JobParameterJacksonMixIn.class);
-			objectMapper.addMixInAnnotations(JobInstance.class, JobInstanceJacksonMixIn.class);
-			objectMapper.addMixInAnnotations(StepExecution.class, StepExecutionJacksonMixIn.class);
 			objectMapper.addMixInAnnotations(StepExecutionHistory.class, StepExecutionHistoryJacksonMixIn.class);
-			objectMapper.addMixInAnnotations(ExecutionContext.class, ExecutionContextJacksonMixIn.class);
 			objectMapper.addMixInAnnotations(ExitStatus.class, ExitStatusJacksonMixIn.class);
 
 			converters.add(jsonConverter);

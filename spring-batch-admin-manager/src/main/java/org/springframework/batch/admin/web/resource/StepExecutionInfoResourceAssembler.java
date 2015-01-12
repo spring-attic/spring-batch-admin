@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the original author or authors.
+ * Copyright 2013-2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package org.springframework.batch.admin.web;
+package org.springframework.batch.admin.web.resource;
 
 import org.springframework.batch.admin.domain.StepExecutionInfo;
 import org.springframework.batch.admin.domain.StepExecutionInfoResource;
+import org.springframework.batch.admin.web.BatchStepExecutionsController;
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 
 
@@ -36,11 +37,11 @@ public class StepExecutionInfoResourceAssembler extends
 
 	@Override
 	public StepExecutionInfoResource toResource(StepExecutionInfo entity) {
-		return createResourceWithId(entity.getId(), entity, new Object[] { entity.getJobExecutionId() });
+		return createResourceWithId(entity.getId(), entity, entity.getJobExecutionId());
 	}
 
 	@Override
 	protected StepExecutionInfoResource instantiateResource(StepExecutionInfo entity) {
-		return new StepExecutionInfoResource(entity.getJobExecutionId(), entity.getStepExecution(), entity.getStepType());
+		return new StepExecutionInfoResource(entity.getStepExecution(), entity.getTimeZone());
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 the original author or authors.
+ * Copyright 2013-2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,24 @@
 
 package org.springframework.batch.admin.domain;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Properties;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 
-import org.springframework.batch.admin.domain.support.JobParametersExtractor;
 import org.springframework.batch.core.BatchStatus;
+import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
-import org.springframework.batch.core.converter.DefaultJobParametersConverter;
-import org.springframework.batch.core.converter.JobParametersConverter;
+import org.springframework.batch.core.JobParameters;
 import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.ResourceSupport;
 
@@ -40,16 +43,13 @@ import org.springframework.hateoas.ResourceSupport;
  *
  * @author Dave Syer
  * @author Ilayaperumal Gopinathan
+ * @author Michael Minella
  * @since 2.0
  */
 @XmlRootElement
 public class JobExecutionInfoResource extends ResourceSupport {
 
-	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-	private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-
-	private SimpleDateFormat durationFormat = new SimpleDateFormat("HH:mm:ss");
+	private final DateTimeFormatter dateFormat = ISODateTimeFormat.dateTime();
 
 	private Long executionId;
 
@@ -57,20 +57,20 @@ public class JobExecutionInfoResource extends ResourceSupport {
 
 	private Long jobId;
 
+	private Integer version;
+
 	@JsonProperty("name")
 	private String jobName;
 
-	private String startDate = "";
-
 	private String startTime = "";
 
-	private String duration = "";
+	private String endTime = "";
 
-	private JobExecution jobExecution;
+	private String createDate = "";
 
-	private Properties jobParameters;
+	private String lastUpdated = "";
 
-	private String jobParametersString;
+	private JobParameters jobParameters;
 
 	private boolean restartable = false;
 
@@ -78,9 +78,19 @@ public class JobExecutionInfoResource extends ResourceSupport {
 
 	private boolean stoppable = false;
 
-	private JobParametersConverter converter = new DefaultJobParametersConverter();
-
 	private final TimeZone timeZone;
+
+	private BatchStatus status;
+
+	private ExitStatus exitStatus;
+
+	private String jobConfigurationName;
+
+	private List<Throwable> failureExceptions;
+
+	private Map<String, Object> executionContext;
+
+	private Collection<StepExecutionInfoResource> stepExecutions;
 
 	public JobExecutionInfoResource() {
 		this.timeZone = TimeZone.getTimeZone("UTC");
@@ -88,13 +98,31 @@ public class JobExecutionInfoResource extends ResourceSupport {
 
 	public JobExecutionInfoResource(JobExecution jobExecution, TimeZone timeZone) {
 
-		this.jobExecution = jobExecution;
-		this.timeZone = timeZone;
+		if(timeZone != null) {
+			this.timeZone = timeZone;
+		}
+		else {
+			this.timeZone = TimeZone.getTimeZone("UTC");
+		}
+
 		this.executionId = jobExecution.getId();
 		this.jobId = jobExecution.getJobId();
 		this.stepExecutionCount = jobExecution.getStepExecutions().size();
-		this.jobParameters = converter.getProperties(jobExecution.getJobParameters());
-		this.jobParametersString = new JobParametersExtractor().fromJobParameters(jobExecution.getJobParameters());
+		this.jobParameters = jobExecution.getJobParameters();
+		this.status = jobExecution.getStatus();
+		this.exitStatus = jobExecution.getExitStatus();
+		this.jobConfigurationName = jobExecution.getJobConfigurationName();
+		this.failureExceptions = jobExecution.getFailureExceptions();
+		Map<String, Object> executionContextEntires =
+				new HashMap<String, Object>(jobExecution.getExecutionContext().size());
+
+		for (Map.Entry<String, Object> stringObjectEntry : jobExecution.getExecutionContext().entrySet()) {
+			executionContextEntires.put(stringObjectEntry.getKey(), stringObjectEntry.getValue());
+		}
+
+		this.executionContext = executionContextEntires;
+
+		this.version = jobExecution.getVersion();
 
 		JobInstance jobInstance = jobExecution.getJobInstance();
 		if (jobInstance != null) {
@@ -109,16 +137,19 @@ public class JobExecutionInfoResource extends ResourceSupport {
 		}
 
 		// Duration is always in GMT
-		durationFormat.setTimeZone(this.timeZone);
 		// The others can be localized
-		timeFormat.setTimeZone(timeZone);
-		dateFormat.setTimeZone(timeZone);
+		dateFormat.withZone(DateTimeZone.forTimeZone(timeZone));
+		this.createDate = dateFormat.print(jobExecution.getCreateTime().getTime());
+		this.lastUpdated = dateFormat.print(jobExecution.getLastUpdated().getTime());
+
 		if (jobExecution.getStartTime() != null) {
-			this.startDate = dateFormat.format(jobExecution.getStartTime());
-			this.startTime = timeFormat.format(jobExecution.getStartTime());
-			Date endTime = jobExecution.getEndTime() != null ? jobExecution.getEndTime() : new Date();
-			this.duration = durationFormat.format(new Date(endTime.getTime() - jobExecution.getStartTime().getTime()));
+			this.startTime = dateFormat.print(jobExecution.getStartTime().getTime());
+			this.endTime = dateFormat.print(jobExecution.getEndTime().getTime());
 		}
+	}
+
+	public void setStepExecutions(Collection<StepExecutionInfoResource> stepExecutions) {
+		this.stepExecutions = stepExecutions;
 	}
 
 	public TimeZone getTimeZone() {
@@ -142,20 +173,8 @@ public class JobExecutionInfoResource extends ResourceSupport {
 		return jobId;
 	}
 
-	public String getStartDate() {
-		return startDate;
-	}
-
 	public String getStartTime() {
 		return startTime;
-	}
-
-	public String getDuration() {
-		return duration;
-	}
-
-	public JobExecution getJobExecution() {
-		return jobExecution;
 	}
 
 	public boolean isRestartable() {
@@ -170,12 +189,48 @@ public class JobExecutionInfoResource extends ResourceSupport {
 		return stoppable;
 	}
 
-	public String getJobParametersString() {
-		return jobParametersString;
+	public JobParameters getJobParameters() {
+		return jobParameters;
 	}
 
-	public Properties getJobParameters() {
-		return jobParameters;
+	public Map<String, Object> getExecutionContext() {
+		return executionContext;
+	}
+
+	public List<Throwable> getFailureExceptions() {
+		return failureExceptions;
+	}
+
+	public String getJobConfigurationName() {
+		return jobConfigurationName;
+	}
+
+	public ExitStatus getExitStatus() {
+		return exitStatus;
+	}
+
+	public BatchStatus getStatus() {
+		return status;
+	}
+
+	public String getLastUpdated() {
+		return lastUpdated;
+	}
+
+	public String getCreateDate() {
+		return createDate;
+	}
+
+	public Collection<StepExecutionInfoResource> getStepExecutions() {
+		return stepExecutions;
+	}
+
+	public Integer getVersion() {
+		return version;
+	}
+
+	public String getEndTime() {
+		return endTime;
 	}
 
 	/**

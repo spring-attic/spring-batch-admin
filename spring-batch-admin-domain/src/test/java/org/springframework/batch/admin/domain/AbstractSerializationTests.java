@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors.
+ * Copyright 2014-2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,27 +18,20 @@ package org.springframework.batch.admin.domain;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import org.springframework.batch.admin.domain.support.ExecutionContextJacksonMixIn;
 import org.springframework.batch.admin.domain.support.ExitStatusJacksonMixIn;
 import org.springframework.batch.admin.domain.support.ISO8601DateFormatWithMilliSeconds;
-import org.springframework.batch.admin.domain.support.JobExecutionJacksonMixIn;
-import org.springframework.batch.admin.domain.support.JobInstanceJacksonMixIn;
 import org.springframework.batch.admin.domain.support.JobParameterJacksonMixIn;
 import org.springframework.batch.admin.domain.support.JobParametersJacksonMixIn;
 import org.springframework.batch.admin.domain.support.StepExecutionHistoryJacksonMixIn;
-import org.springframework.batch.admin.domain.support.StepExecutionJacksonMixIn;
 import org.springframework.batch.core.ExitStatus;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -78,20 +71,20 @@ public abstract class AbstractSerializationTests<T> {
 		@Bean
 		public ObjectMapper mapper() {
 			Map<Class<?>, Class<?>> mixins = new HashMap<Class<?>, Class<?>>();
-			mixins.put(JobExecution.class, JobExecutionJacksonMixIn.class);
 			mixins.put(JobParameters.class, JobParametersJacksonMixIn.class);
 			mixins.put(JobParameter.class, JobParameterJacksonMixIn.class);
-			mixins.put(JobInstance.class, JobInstanceJacksonMixIn.class);
-			mixins.put(StepExecution.class, StepExecutionJacksonMixIn.class);
 			mixins.put(StepExecutionHistory.class, StepExecutionHistoryJacksonMixIn.class);
-			mixins.put(ExecutionContext.class, ExecutionContextJacksonMixIn.class);
 			mixins.put(ExitStatus.class, ExitStatusJacksonMixIn.class);
 
-			return new Jackson2ObjectMapperBuilder()
+			ObjectMapper objectMapper = new Jackson2ObjectMapperBuilder()
 					.featuresToDisable(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS)
 					.dateFormat(new ISO8601DateFormatWithMilliSeconds())
 					.mixIns(mixins)
 					.build();
+
+			objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+
+			return objectMapper;
 		}
 	}
 }

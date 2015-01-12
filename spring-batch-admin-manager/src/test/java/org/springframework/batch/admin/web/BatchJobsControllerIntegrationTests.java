@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 the original author or authors.
+ * Copyright 2013-2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,13 +61,14 @@ public class BatchJobsControllerIntegrationTests extends AbstractControllerInteg
 
 	@Before
 	public void before() throws Exception {
-		Date startTime = new Date();
-		Date endTime = new Date();
+		Date startTime = new Date(1000);
+		Date endTime = new Date(2000);
 		execution = new JobExecution(0L,
 				new JobParametersBuilder().addString("foo", "bar").addLong("foo2", 0L).toJobParameters());
 		execution.setExitStatus(ExitStatus.COMPLETED);
 		execution.setStartTime(startTime);
 		execution.setEndTime(endTime);
+		execution.setLastUpdated(new Date());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -87,31 +88,30 @@ public class BatchJobsControllerIntegrationTests extends AbstractControllerInteg
 		mockMvc.perform(
 				get("/batch/configurations").accept(
 						MediaType.APPLICATION_JSON)).andDo(print()).andExpect(
-				status().isOk()).andExpect(jsonPath("$.content", Matchers.hasSize(2))).andExpect(
-				jsonPath("$.content[*].executionCount", contains(2, 1))).andExpect(
-				jsonPath("$.content[*].launchable", contains(false, true))).andExpect(
-				jsonPath("$.content[*].incrementable", contains(false, true))).andExpect(
-				jsonPath("$.content[*].jobInstanceId", contains(nullValue(), nullValue()))).andExpect(
-				jsonPath("$.content[*].duration", contains(info.getDuration(), null))).andExpect(
-				jsonPath("$.content[*].startTime", contains(info.getStartTime(), null))).andExpect(
-				jsonPath("$.content[*].startDate", contains(info.getStartDate(), null))).andExpect(
-				jsonPath("$.content[*].stepExecutionCount", contains(info.getStepExecutionCount(), 0))).andExpect(
-				jsonPath("$.content[*].jobParameters", contains(info.getJobParametersString(), null)))
+				status().isOk()).andExpect(jsonPath("$.content[1]", Matchers.hasSize(2))).andExpect(
+				jsonPath("$.content[1][*].executionCount", contains(2, 1))).andExpect(
+				jsonPath("$.content[1][*].launchable", contains(false, true))).andExpect(
+				jsonPath("$.content[1][*].incrementable", contains(false, true))).andExpect(
+				jsonPath("$.content[1][*].jobInstanceId", contains(nullValue(), nullValue()))).andExpect(
+				jsonPath("$.content[1][*].startTime", contains("1969-12-31T18:00:01.000-06:00", null))).andExpect(
+				jsonPath("$.content[1][*].endTime", contains("1969-12-31T18:00:02.000-06:00", null))).andExpect(
+				jsonPath("$.content[1][*].stepExecutionCount", contains(info.getStepExecutionCount(), 0))).andExpect(
+				jsonPath("$.content[1][*].jobParameters.parameters['foo'].value", contains("bar")))
 
 				// should contain the display name (ie- without the .job suffix)
-				.andExpect(jsonPath("$.content[0].name", equalTo("job1"))).andExpect(
-						jsonPath("$.content[0].jobInstanceId", nullValue()))
+				.andExpect(jsonPath("$.content[1][0].name", equalTo("job1"))).andExpect(
+						jsonPath("$.content[1][0].jobInstanceId", nullValue()))
 
-				.andExpect(jsonPath("$.content[1].name", equalTo("job2"))).andExpect(
-						jsonPath("$.content[1].jobInstanceId", nullValue()))
+				.andExpect(jsonPath("$.content[1][1].name", equalTo("job2"))).andExpect(
+						jsonPath("$.content[1][1].jobInstanceId", nullValue()))
 
 				// exit status is non null for job 0 and null for job 1
 				.andExpect(
-						jsonPath("$.content[0].exitStatus.exitDescription",
+						jsonPath("$.content[1][0].exitStatus.exitDescription",
 								equalTo(execution.getExitStatus().getExitDescription()))).andExpect(
-						jsonPath("$.content[0].exitStatus.exitCode", equalTo(execution.getExitStatus().getExitCode()))).andExpect(
-						jsonPath("$.content[0].exitStatus.running", equalTo(false))).andExpect(
-						jsonPath("$.content[1].exitStatus", nullValue()));
+						jsonPath("$.content[1][0].exitStatus.exitCode", equalTo(execution.getExitStatus().getExitCode()))).andExpect(
+						jsonPath("$.content[1][0].exitStatus.running", equalTo(false))).andExpect(
+						jsonPath("$.content[1][1].exitStatus", nullValue()));
 	}
 
 	@Test
@@ -126,27 +126,27 @@ public class BatchJobsControllerIntegrationTests extends AbstractControllerInteg
 		JobExecutionInfo info = new JobExecutionInfo(execution, timeZone);
 		mockMvc.perform(
 				get("/batch/configurations").param("page", "0").param("size", "1").accept(
-						MediaType.APPLICATION_JSON)).andExpect(
-				status().isOk()).andExpect(jsonPath("$.content", Matchers.hasSize(1))).andExpect(
-				jsonPath("$.content[*].executionCount", contains(2))).andExpect(
-				jsonPath("$.content[*].launchable", contains(false))).andExpect(
-				jsonPath("$.content[*].incrementable", contains(false))).andExpect(
-				jsonPath("$.content[*].jobInstanceId", contains(nullValue()))).andExpect(
-				jsonPath("$.content[*].duration", contains(info.getDuration()))).andExpect(
-				jsonPath("$.content[*].startTime", contains(info.getStartTime()))).andExpect(
-				jsonPath("$.content[*].startDate", contains(info.getStartDate()))).andExpect(
-				jsonPath("$.content[*].stepExecutionCount", contains(info.getStepExecutionCount()))).andExpect(
-				jsonPath("$.content[*].jobParameters", contains(info.getJobParametersString())))
+						MediaType.APPLICATION_JSON)).andDo(print()).andExpect(
+				status().isOk()).andExpect(jsonPath("$.content[1]", Matchers.hasSize(1))).andExpect(
+				jsonPath("$.content[1][*].executionCount", contains(2))).andExpect(
+				jsonPath("$.content[1][*].launchable", contains(false))).andExpect(
+				jsonPath("$.content[1][*].incrementable", contains(false))).andExpect(
+				jsonPath("$.content[1][*].jobInstanceId", contains(nullValue()))).andExpect(
+				jsonPath("$.content[1][*].startTime", contains("1969-12-31T18:00:01.000-06:00"))).andExpect(
+				jsonPath("$.content[1][*].endTime", contains("1969-12-31T18:00:02.000-06:00"))).andExpect(
+				jsonPath("$.content[1][*].stepExecutionCount", contains(info.getStepExecutionCount()))).andExpect(
+				jsonPath("$.content[1][*].jobParameters.parameters['foo'].value", contains("bar"))).andExpect(
+				jsonPath("$.content[1][*].jobParameters.parameters['foo2'].value[1]", contains(0)))
 
 				// should contain the display name (ie- without the .job suffix)
-				.andExpect(jsonPath("$.content[0].name", equalTo("job1"))).andExpect(
-						jsonPath("$.content[0].jobInstanceId", nullValue()))
+				.andExpect(jsonPath("$.content[1][0].name", equalTo("job1"))).andExpect(
+						jsonPath("$.content[1][0].jobInstanceId", nullValue()))
 
 				.andExpect(
-						jsonPath("$.content[0].exitStatus.exitDescription",
+						jsonPath("$.content[1][0].exitStatus.exitDescription",
 								equalTo(execution.getExitStatus().getExitDescription()))).andExpect(
-						jsonPath("$.content[0].exitStatus.exitCode", equalTo(execution.getExitStatus().getExitCode()))).andExpect(
-						jsonPath("$.content[0].exitStatus.running", equalTo(false)));
+						jsonPath("$.content[1][0].exitStatus.exitCode", equalTo(execution.getExitStatus().getExitCode()))).andExpect(
+						jsonPath("$.content[1][0].exitStatus.running", equalTo(false)));
 	}
 
 	@Test
@@ -155,6 +155,7 @@ public class BatchJobsControllerIntegrationTests extends AbstractControllerInteg
 		when(jobService.countJobExecutionsForJob("job1")).thenReturn(2);
 		when(jobService.isIncrementable("job1")).thenReturn(false);
 		JobExecution jobExecution = new JobExecution(5l);
+		jobExecution.setLastUpdated(new Date());
 		when(jobService.listJobExecutionsForJob("job1", 0, 1)).thenReturn(Arrays.asList(jobExecution));
 
 		mockMvc.perform(
@@ -162,11 +163,10 @@ public class BatchJobsControllerIntegrationTests extends AbstractControllerInteg
 						.param("startJobInstance", "0")
 						.param("pageSize", "20")
 						.accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk())
+				.andExpect(status().isOk()).andDo(print())
 				.andExpect(jsonPath("$.executionCount").value(2))
 				.andExpect(jsonPath("$.launchable").value(false))
 				.andExpect(jsonPath("$.incrementable").value(false))
-				.andExpect(jsonPath("$.deployed").value(nullValue()))
 				.andExpect(jsonPath("$.jobInstanceId", nullValue()));
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 the original author or authors.
+ * Copyright 2013-2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,24 +19,24 @@ package org.springframework.batch.admin.domain;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.springframework.batch.core.ExitStatus;
+import org.springframework.batch.core.JobParameters;
 
 
 /**
  * Represents Expanded Batch job info that has more details on batch jobs.
  * 
  * @author Ilayaperumal Gopinathan
+ * @author Michael Minella
  * @since 2.0
  */
 @XmlRootElement
 public class DetailedJobInfoResource extends JobInfoResource {
 
-	private String jobParameters;
-
-	private String duration;
+	private JobParameters jobParameters;
 
 	private String startTime;
 
-	private String startDate;
+	private String endTime;
 
 	private int stepExecutionCount;
 
@@ -52,31 +52,22 @@ public class DetailedJobInfoResource extends JobInfoResource {
 
 	public DetailedJobInfoResource(String name, int executionCount, boolean launchable, boolean incrementable,
 			JobExecutionInfoResource lastExecution) {
-		super(name, executionCount, lastExecution != null && lastExecution.getJobExecution().getJobInstance() != null ? lastExecution.getJobExecution().getJobInstance().getInstanceId() : null , launchable, incrementable);
+		super(name, executionCount, lastExecution != null ? lastExecution.getJobId() : null , launchable, incrementable);
 		if (lastExecution != null) {
-			jobParameters = lastExecution.getJobParametersString();
-			duration = lastExecution.getDuration();
-			startTime = lastExecution.getStartTime();
-			startDate = lastExecution.getStartDate();
-			stepExecutionCount = lastExecution.getStepExecutionCount();
-			exitStatus = lastExecution.getJobExecution().getExitStatus();
+			this.jobParameters = lastExecution.getJobParameters();
+			this.startTime = lastExecution.getStartTime();
+			this.endTime = lastExecution.getEndTime();
+			this.stepExecutionCount = lastExecution.getStepExecutionCount();
+			this.exitStatus = lastExecution.getExitStatus();
 		}
 	}
 
-	public String getJobParameters() {
+	public JobParameters getJobParameters() {
 		return jobParameters;
-	}
-
-	public String getDuration() {
-		return duration;
 	}
 
 	public String getStartTime() {
 		return startTime;
-	}
-
-	public String getStartDate() {
-		return startDate;
 	}
 
 	public int getStepExecutionCount() {
@@ -87,4 +78,7 @@ public class DetailedJobInfoResource extends JobInfoResource {
 		return exitStatus;
 	}
 
+	public String getEndTime() {
+		return endTime;
+	}
 }

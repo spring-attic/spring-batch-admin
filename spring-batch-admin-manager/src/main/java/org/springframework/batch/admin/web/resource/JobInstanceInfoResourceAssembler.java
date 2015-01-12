@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.batch.admin.web;
+package org.springframework.batch.admin.web.resource;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,13 +22,15 @@ import java.util.TimeZone;
 
 import org.springframework.batch.admin.domain.JobExecutionInfo;
 import org.springframework.batch.admin.domain.JobInstanceInfoResource;
+import org.springframework.batch.admin.web.BatchJobInstancesController;
+import org.springframework.batch.admin.web.JobInstanceInfo;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 
 
 /**
  * Resource assembler that builds the REST resource {@link JobInstanceInfoResource} out of domain model
- * {@link JobInstanceInfo}.
+ * {@link org.springframework.batch.admin.web.JobInstanceInfo}.
  * 
  * @author Ilayaperumal Gopinathan
  */

@@ -89,7 +89,7 @@ public class BatchJobsController extends AbstractBatchJobsController {
 	 * @return the detailed job info resource for the given job name.
 	 */
 	private DetailedJobInfoResource getJobInfoResource(String jobName) {
-		return jobInfoResourceAssembler.instantiateResource(getJobInfo(jobName));
+		return jobInfoResourceAssembler.toResource(getJobInfo(jobName));
 	}
 
 	/**

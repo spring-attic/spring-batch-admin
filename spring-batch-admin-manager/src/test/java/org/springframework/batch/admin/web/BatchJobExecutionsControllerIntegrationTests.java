@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 the original author or authors.
+ * Copyright 2013-2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -75,10 +76,16 @@ public class BatchJobExecutionsControllerIntegrationTests extends AbstractContro
 		JobInstance jobInstance2 = new JobInstance(0l, "job1");
 
 		execution1 = new JobExecution(jobInstance1, 3l, new JobParametersBuilder().addString("param1", "test").addLong("param2", 123l, false).toJobParameters(), null);
+		execution1.setLastUpdated(new Date());
 		execution2 = new JobExecution(jobInstance2, 0l, new JobParametersBuilder().addString("param1", "test").addLong("param2", 123l, false).toJobParameters(), null);
+		execution2.setLastUpdated(new Date());
 
 		StepExecution step1 = new StepExecution("step1", execution2);
+		step1.setLastUpdated(new Date());
+		step1.setId(1l);
 		StepExecution step2 = new StepExecution("step2", execution2);
+		step2.setLastUpdated(new Date());
+		step2.setId(4l);
 
 		execution2.addStepExecutions(Arrays.asList(step1, step2));
 	}
@@ -93,21 +100,20 @@ public class BatchJobExecutionsControllerIntegrationTests extends AbstractContro
 				get("/batch/executions").param("jobname", "job1")
 						.param("startJobExecution", "0").param("pageSize", "20").accept(
 						MediaType.APPLICATION_JSON)).andExpect(status().isOk())
-				.andExpect(jsonPath("$", Matchers.hasSize(1)))
-				.andExpect(jsonPath("$[0].executionId").value(3))
-				.andExpect(jsonPath("$[0].jobId").value(2))
-				.andExpect(jsonPath("$[0].jobExecution[*].id").value(3))
+				.andExpect(jsonPath("$[1][*]", Matchers.hasSize(1)))
+				.andExpect(jsonPath("$[1][*].executionId").value(3))
+				.andExpect(jsonPath("$[1][*].jobId").value(2))
 				.andExpect(
-						jsonPath("$[0].jobExecution[*].jobParameters.parameters.param1.value").value("test"))
+						jsonPath("$[1][*].jobParameters.parameters.param1.value").value("test"))
 				.andExpect(
-						jsonPath("$[0].jobExecution[*].jobParameters.parameters.param1.type").value("STRING"))
-				.andExpect(jsonPath("$[0].jobExecution[*].jobParameters.parameters.param1.identifying").value(
+						jsonPath("$[1][*].jobParameters.parameters.param1.type").value("STRING"))
+				.andExpect(jsonPath("$[1][*].jobParameters.parameters.param1.identifying").value(
 						true))
 				.andExpect(
-						jsonPath("$[0].jobExecution[*].jobParameters.parameters.param2.value").value(123))
+						jsonPath("$[1][*].jobParameters.parameters.param2.value[1]").value(123))
 				.andExpect(
-						jsonPath("$[0].jobExecution[*].jobParameters.parameters.param2.type").value("LONG"))
-				.andExpect(jsonPath("$[0].jobExecution[*].jobParameters.parameters.param2.identifying").value(
+						jsonPath("$[1][*].jobParameters.parameters.param2.type").value("LONG"))
+				.andExpect(jsonPath("$[1][*].jobParameters.parameters.param2.identifying").value(
 						false));
 	}
 
@@ -119,18 +125,18 @@ public class BatchJobExecutionsControllerIntegrationTests extends AbstractContro
 
 		mockMvc.perform(
 				get("/batch/executions").accept(
-						MediaType.APPLICATION_JSON)).andExpect(status().isOk())
-				.andExpect(jsonPath("$.content[*]", Matchers.hasSize(2)))
-				.andExpect(jsonPath("$.content[*].executionId", contains(0, 3)))
-				.andExpect(jsonPath("$.content[*].jobExecution[*].stepExecutions", Matchers.hasSize(2)))
-				.andExpect(jsonPath("$.content[*].jobId", contains(0, 2)))
-				.andExpect(jsonPath("$.content[*].jobExecution[*].id", contains(0, 3)))
-				.andExpect(jsonPath("$.content[*].jobExecution[*].jobParameters.parameters.param1.value", contains("test", "test")))
-				.andExpect(jsonPath("$.content[*].jobExecution[*].jobParameters.parameters.param1.type", contains("STRING", "STRING")))
-				.andExpect(jsonPath("$.content[*].jobExecution[*].jobParameters.parameters.param1.identifying", contains(true, true)))
-				.andExpect(jsonPath("$.content[*].jobExecution[*].jobParameters.parameters.param2.value", contains(123, 123)))
-				.andExpect(jsonPath("$.content[*].jobExecution[*].jobParameters.parameters.param2.type", contains("LONG", "LONG")))
-				.andExpect(jsonPath("$.content[*].jobExecution[*].jobParameters.parameters.param2.identifying", contains(false, false)));
+						MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
+				.andExpect(jsonPath("$.content[1]", Matchers.hasSize(2)))
+				.andExpect(jsonPath("$.content[1][*].executionId", contains(0, 3)))
+				.andExpect(jsonPath("$.content[1][*].stepExecutions", Matchers.hasSize(2)))
+				.andExpect(jsonPath("$.content[1][*].jobId", contains(0, 2)))
+				.andExpect(jsonPath("$.content[1][*].jobParameters.parameters.param1.value", contains("test", "test")))
+				.andExpect(jsonPath("$.content[1][*].jobParameters.parameters.param1.type", contains("STRING", "STRING")))
+				.andExpect(jsonPath("$.content[1][*].jobParameters.parameters.param1.identifying", contains(true, true)))
+				.andExpect(jsonPath("$.content[1][*].jobParameters.parameters.param2.value[1]", Matchers.hasSize(2)))
+				.andExpect(jsonPath("$.content[1][*].jobParameters.parameters.param2.value[1]", contains(123, 123)))
+				.andExpect(jsonPath("$.content[1][*].jobParameters.parameters.param2.type", contains("LONG", "LONG")))
+				.andExpect(jsonPath("$.content[1][*].jobParameters.parameters.param2.identifying", contains(false, false)));
 	}
 
 	@Test
@@ -153,14 +159,13 @@ public class BatchJobExecutionsControllerIntegrationTests extends AbstractContro
 		mockMvc.perform(
 				get("/batch/executions/0").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
 				.andExpect(jsonPath("$.executionId", Matchers.is(0)))
-				.andExpect(jsonPath("$.jobExecution.id", Matchers.is(0)))
-				.andExpect(jsonPath("$.jobExecution.jobParameters.parameters.param1.type", Matchers.is("STRING")))
-				.andExpect(jsonPath("$.jobExecution.jobParameters.parameters.param1.identifying", Matchers.is(true)))
-				.andExpect(jsonPath("$.jobExecution.jobParameters.parameters.param1.value", Matchers.is("test")))
-				.andExpect(jsonPath("$.jobExecution.jobParameters.parameters.param2.type", Matchers.is("LONG")))
-				.andExpect(jsonPath("$.jobExecution.jobParameters.parameters.param2.identifying", Matchers.is(false)))
-				.andExpect(jsonPath("$.jobExecution.jobParameters.parameters.param2.value", Matchers.is(123)))
-				.andExpect(jsonPath("$.jobExecution.stepExecutions", Matchers.hasSize(2)))
+				.andExpect(jsonPath("$.jobParameters.parameters.param1.type", Matchers.is("STRING")))
+				.andExpect(jsonPath("$.jobParameters.parameters.param1.identifying", Matchers.is(true)))
+				.andExpect(jsonPath("$.jobParameters.parameters.param1.value", Matchers.is("test")))
+				.andExpect(jsonPath("$.jobParameters.parameters.param2.type", Matchers.is("LONG")))
+				.andExpect(jsonPath("$.jobParameters.parameters.param2.identifying", Matchers.is(false)))
+				.andExpect(jsonPath("$.jobParameters.parameters.param2.value[1]", Matchers.is(123)))
+				.andExpect(jsonPath("$.stepExecutions", Matchers.hasSize(2)))
 				.andExpect(jsonPath("$.stepExecutionCount", Matchers.is(2)))
 				.andExpect(jsonPath("$.name", Matchers.is("job1")));
 	}
@@ -170,8 +175,8 @@ public class BatchJobExecutionsControllerIntegrationTests extends AbstractContro
 		when(jobService.getJobExecution(99999l)).thenThrow(new NoSuchJobExecutionException("Could not find jobExecution with id 99999"));
 
 		mockMvc.perform(get("/batch/executions/99999").accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isNotFound())
-				.andExpect(jsonPath("$[0].message", Matchers.is("Could not find jobExecution with id 99999")));
+				.andExpect(status().isNotFound()).andDo(print())
+				.andExpect(jsonPath("$[1][0].message", Matchers.is("Could not find jobExecution with id 99999")));
 	}
 
 	@Test
@@ -193,7 +198,7 @@ public class BatchJobExecutionsControllerIntegrationTests extends AbstractContro
 		when(jobService.getJobExecution(1234l)).thenThrow(new NoSuchJobExecutionException(""));
 
 		mockMvc.perform(put("/batch/executions/{executionId}?restart=true", "1234")).andExpect(status().isNotFound()).andExpect(
-				jsonPath("$[0].message", Matchers.is("Could not find jobExecution with id 1234")));
+				jsonPath("$[1][0].message", Matchers.is("Could not find jobExecution with id 1234")));
 	}
 
 	@Test
@@ -204,7 +209,7 @@ public class BatchJobExecutionsControllerIntegrationTests extends AbstractContro
 
 		mockMvc.perform(put("/batch/executions/{executionId}?restart=true", "4")).andExpect(status().isBadRequest()).andExpect(
 				jsonPath(
-						"$[0].message",
+						"$[1][0].message",
 						Matchers.is("Job Execution for this job is already running: JobInstance: id=4, version=null, Job=[job4running]")));
 	}
 
@@ -219,7 +224,7 @@ public class BatchJobExecutionsControllerIntegrationTests extends AbstractContro
 		when(jobLocator.getJob("job4running")).thenReturn(new JobSupport("job4running"));
 
 		mockMvc.perform(put("/batch/executions/{executionId}?restart=true", "33")).andExpect(status().isBadRequest()).andExpect(
-				jsonPath("$[0].message", Matchers.is("Job Execution 33 is already complete.")));
+				jsonPath("$[1][0].message", Matchers.is("Job Execution 33 is already complete.")));
 	}
 
 	@Test
@@ -227,7 +232,7 @@ public class BatchJobExecutionsControllerIntegrationTests extends AbstractContro
 		when(jobService.getJobExecution(3333l)).thenThrow(new NoSuchJobExecutionException(""));
 
 		mockMvc.perform(put("/batch/executions/{executionId}?restart=true", "3333")).andExpect(status().isNotFound()).andExpect(
-				jsonPath("$[0].message", Matchers.is("Could not find jobExecution with id 3333")));
+				jsonPath("$[1][0].message", Matchers.is("Could not find jobExecution with id 3333")));
 	}
 
 	@Test
@@ -245,7 +250,7 @@ public class BatchJobExecutionsControllerIntegrationTests extends AbstractContro
 		when(jobLocator.getJob("job4running")).thenReturn(job4running);
 
 		mockMvc.perform(put("/batch/executions/{executionId}?restart=true", "5")).andExpect(status().isBadRequest()).andExpect(
-				jsonPath("$[0].message", Matchers.is("The Job Parameters for Job Execution 5 are invalid.")));
+				jsonPath("$[1][0].message", Matchers.is("The Job Parameters for Job Execution 5 are invalid.")));
 	}
 
 	@Test
@@ -261,15 +266,15 @@ public class BatchJobExecutionsControllerIntegrationTests extends AbstractContro
 		when(jobLocator.getJob("job2")).thenReturn(job4running);
 
 		mockMvc.perform(put("/batch/executions/{executionId}?restart=true", "2")).andExpect(status().isBadRequest()).andExpect(
-				jsonPath("$[0].message", Matchers.is("The job 'job2' is not restartable.")));
+				jsonPath("$[1][0].message", Matchers.is("The job 'job2' is not restartable.")));
 	}
 
 	@Test
 	public void testStopJobExecutionNotRunning() throws Exception {
 		when(jobService.stop(3l)).thenThrow(new JobExecutionNotRunningException(""));
 
-		mockMvc.perform(put("/batch/executions/{executionId}?stop=true", "3")).andExpect(status().isNotFound()).andExpect(
-				jsonPath("$[0].message", Matchers.is("Job execution with executionId 3 is not running.")));
+		mockMvc.perform(put("/batch/executions/{executionId}?stop=true", "3")).andExpect(status().isNotFound()).andDo(print()).andExpect(
+				jsonPath("$[1][0].message", Matchers.is("Job execution with executionId 3 is not running.")));
 	}
 
 	@Test
@@ -277,7 +282,7 @@ public class BatchJobExecutionsControllerIntegrationTests extends AbstractContro
 		when(jobService.stop(5l)).thenThrow(new NoSuchJobExecutionException(""));
 
 		mockMvc.perform(put("/batch/executions/{executionId}?stop=true", "5")).andExpect(status().isNotFound()).andExpect(
-				jsonPath("$[0].message",
+				jsonPath("$[1][0].message",
 						Matchers.is("Could not find jobExecution with id 5")));
 	}
 }

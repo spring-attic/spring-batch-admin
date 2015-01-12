@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the original author or authors.
+ * Copyright 2013-2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package org.springframework.batch.admin.web;
+package org.springframework.batch.admin.web.resource;
 
 import org.springframework.batch.admin.domain.StepExecutionProgressInfo;
 import org.springframework.batch.admin.domain.StepExecutionProgressInfoResource;
+import org.springframework.batch.admin.web.BatchStepExecutionsController;
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 
 
@@ -42,6 +43,6 @@ public class StepExecutionProgressInfoResourceAssembler extends
 	@Override
 	protected StepExecutionProgressInfoResource instantiateResource(StepExecutionProgressInfo entity) {
 		return new StepExecutionProgressInfoResource(entity.getStepExecution(), entity.getStepExecutionHistory(),
-				entity.getEstimatedPercentComplete(), entity.isFinished(), entity.getDuration());
+				entity.getEstimatedPercentComplete(), entity.isFinished(), entity.getDuration(), entity.getTimeZone());
 	}
 }

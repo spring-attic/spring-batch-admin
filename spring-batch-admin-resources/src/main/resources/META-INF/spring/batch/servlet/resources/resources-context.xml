@@ -26,7 +26,7 @@
 		<property name="objectMapper" ref="jacksonMapper"/>
 	</bean>
 
-	<bean id="jacksonMapper" class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean">
+	<bean id="jacksonMapper" class="org.springframework.batch.admin.domain.support.VariableTypeJackson2ObjectMapperFactoryBean">
 		<property name="featuresToDisable">
 			<array>
 				<util:constant static-field="com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS"/>
@@ -37,13 +37,9 @@
 		</property>
 		<property name="mixIns">
 			<util:map>
-				<entry key="org.springframework.batch.core.JobExecution" value="org.springframework.batch.admin.domain.support.JobExecutionJacksonMixIn"/>
 				<entry key="org.springframework.batch.core.JobParameters" value="org.springframework.batch.admin.domain.support.JobParametersJacksonMixIn"/>
 				<entry key="org.springframework.batch.core.JobParameter" value="org.springframework.batch.admin.domain.support.JobParameterJacksonMixIn"/>
-				<entry key="org.springframework.batch.core.JobInstance" value="org.springframework.batch.admin.domain.support.JobInstanceJacksonMixIn"/>
-				<entry key="org.springframework.batch.core.StepExecution" value="org.springframework.batch.admin.domain.support.StepExecutionJacksonMixIn"/>
 				<entry key="org.springframework.batch.admin.domain.StepExecutionHistory" value="org.springframework.batch.admin.domain.support.StepExecutionHistoryJacksonMixIn"/>
-				<entry key="org.springframework.batch.item.ExecutionContext" value="org.springframework.batch.admin.domain.support.ExecutionContextJacksonMixIn"/>
 				<entry key="org.springframework.batch.core.ExitStatus" value="org.springframework.batch.admin.domain.support.ExitStatusJacksonMixIn"/>
 			</util:map>
 		</property>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors.
+ * Copyright 2014-2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,101 +36,100 @@ public class JobExecutionInfoResourceSerializationTests extends AbstractSerializ
 
 	@Override
 	public void assertJson(String json) throws Exception {
+		System.out.println(json);
 		new JsonPathExpectationsHelper("$.abandonable").assertValue(json, false);
-		new JsonPathExpectationsHelper("$.duration").assertValue(json, "00:00:00");
+		new JsonPathExpectationsHelper("$.createDate").assertValue(json, "1969-12-31T18:00:00.000-06:00");
+		new JsonPathExpectationsHelper("$.endTime").assertValue(json, "1969-12-31T18:00:02.000-06:00");
 		new JsonPathExpectationsHelper("$.executionId").assertValue(json, 2);
+		new JsonPathExpectationsHelper("$.exitStatus.exitCode").assertValue(json, "COMPLETE");
+		new JsonPathExpectationsHelper("$.exitStatus.exitDescription").assertValue(json, "Exit Description");
+		new JsonPathExpectationsHelper("$.exitStatus.running").assertValue(json, false);
+		new JsonPathExpectationsHelper("$.jobConfigurationName").assertValue(json, "configName.xml");
 		new JsonPathExpectationsHelper("$.jobId").assertValue(json, 1);
-		new JsonPathExpectationsHelper("$.jobParametersString").assertValue(json, "foo=bar");
+		new JsonPathExpectationsHelper("$.jobParameters.parameters['foo'].identifying").assertValue(json, true);
+		new JsonPathExpectationsHelper("$.jobParameters.parameters['foo'].type").assertValue(json, "STRING");
+		new JsonPathExpectationsHelper("$.jobParameters.parameters['foo'].value").assertValue(json, "bar");
+		new JsonPathExpectationsHelper("$.jobParameters.parameters['baz'].identifying").assertValue(json, false);
+		new JsonPathExpectationsHelper("$.jobParameters.parameters['baz'].type").assertValue(json, "DOUBLE");
+		new JsonPathExpectationsHelper("$.jobParameters.parameters['baz'].value").assertValue(json, 3.0);
+		new JsonPathExpectationsHelper("$.lastUpdated").assertValue(json, "1969-12-31T18:00:03.000-06:00");
 		new JsonPathExpectationsHelper("$.name").assertValue(json, "job1");
 		new JsonPathExpectationsHelper("$.restartable").assertValue(json, false);
-		new JsonPathExpectationsHelper("$.startDate").assertValue(json, "1970-01-01");
-		new JsonPathExpectationsHelper("$.startTime").assertValue(json, "00:00:00");
+		new JsonPathExpectationsHelper("$.startTime").assertValue(json, "1969-12-31T18:00:01.000-06:00");
 		new JsonPathExpectationsHelper("$.stepExecutionCount").assertValue(json, 1);
 		new JsonPathExpectationsHelper("$.stoppable").assertValue(json, false);
+		new JsonPathExpectationsHelper("$.timeZone[1]").assertValue(json, "GMT");
+		new JsonPathExpectationsHelper("$.version").assertValue(json, 1);
 
-		new JsonPathExpectationsHelper("$.jobExecution.createTime").assertValue(json, "1970-01-01T00:00:00.000Z");
-		new JsonPathExpectationsHelper("$.jobExecution.endTime").assertValue(json, "1970-01-01T00:00:00.100Z");
-		new JsonPathExpectationsHelper("$.jobExecution.exitStatus.exitCode").assertValue(json, "COMPLETE");
-		new JsonPathExpectationsHelper("$.jobExecution.exitStatus.exitDescription").assertValue(json, "Exit Description");
-		new JsonPathExpectationsHelper("$.jobExecution.exitStatus.running").assertValue(json, false);
-		new JsonPathExpectationsHelper("$.jobExecution.id").assertValue(json, 2);
-		new JsonPathExpectationsHelper("$.jobExecution.jobConfigurationName").assertValue(json, "configName.xml");
-		new JsonPathExpectationsHelper("$.jobExecution.jobInstance.id").assertValue(json, 1);
-		new JsonPathExpectationsHelper("$.jobExecution.jobInstance.jobName").assertValue(json, "job1");
-		new JsonPathExpectationsHelper("$.jobExecution.jobParameters.parameters['foo'].value").assertValue(json, "bar");
-		new JsonPathExpectationsHelper("$.jobExecution.lastUpdated").assertValue(json, "1970-01-01T00:00:00.101Z");
-		new JsonPathExpectationsHelper("$.jobExecution.startTime").assertValue(json, "1970-01-01T00:00:00.001Z");
-		new JsonPathExpectationsHelper("$.jobExecution.status").assertValue(json, "COMPLETED");
-		new JsonPathExpectationsHelper("$.jobExecution.version").assertValue(json, 1);
-
-		new JsonPathExpectationsHelper("$.jobExecution.stepExecutions").assertValueIsArray(json);
-		new JsonPathExpectationsHelper("$.jobExecution.stepExecutions[0].commitCount").assertValue(json, 0);
-		new JsonPathExpectationsHelper("$.jobExecution.stepExecutions[0].endTime").assertValue(json, "1970-01-01T00:00:00.099Z");
-		new JsonPathExpectationsHelper("$.jobExecution.stepExecutions[0].exitStatus.exitCode").assertValue(json, "ALL DONE");
-		new JsonPathExpectationsHelper("$.jobExecution.stepExecutions[0].exitStatus.exitDescription").assertValue(json, "Step Exit Description");
-		new JsonPathExpectationsHelper("$.jobExecution.stepExecutions[0].exitStatus.running").assertValue(json, false);
-		new JsonPathExpectationsHelper("$.jobExecution.stepExecutions[0].filterCount").assertValue(json, 0);
-		new JsonPathExpectationsHelper("$.jobExecution.stepExecutions[0].id").assertValue(json, 3);
-		new JsonPathExpectationsHelper("$.jobExecution.stepExecutions[0].processSkipCount").assertValue(json, 0);
-		new JsonPathExpectationsHelper("$.jobExecution.stepExecutions[0].readCount").assertValue(json, 0);
-		new JsonPathExpectationsHelper("$.jobExecution.stepExecutions[0].readSkipCount").assertValue(json, 0);
-		new JsonPathExpectationsHelper("$.jobExecution.stepExecutions[0].rollbackCount").assertValue(json, 0);
-		new JsonPathExpectationsHelper("$.jobExecution.stepExecutions[0].startTime").assertValue(json, "1970-01-01T00:00:00.002Z");
-		new JsonPathExpectationsHelper("$.jobExecution.stepExecutions[0].status").assertValue(json, "COMPLETED");
-		new JsonPathExpectationsHelper("$.jobExecution.stepExecutions[0].stepName").assertValue(json, "step1");
-		new JsonPathExpectationsHelper("$.jobExecution.stepExecutions[0].terminateOnly").assertValue(json, false);
-		new JsonPathExpectationsHelper("$.jobExecution.stepExecutions[0].writeCount").assertValue(json, 0);
-		new JsonPathExpectationsHelper("$.jobExecution.stepExecutions[0].writeSkipCount").assertValue(json, 0);
+		new JsonPathExpectationsHelper("$.stepExecutions").assertValueIsArray(json);
+		new JsonPathExpectationsHelper("$.stepExecutions[1].[0].commitCount").assertValue(json, 0);
+		new JsonPathExpectationsHelper("$.stepExecutions[1].[0].endTime").assertValue(json, "1969-12-31T18:00:02.000-06:00");
+		new JsonPathExpectationsHelper("$.stepExecutions[1].[0].exitStatus.exitCode").assertValue(json, "ALL DONE");
+		new JsonPathExpectationsHelper("$.stepExecutions[1].[0].exitStatus.exitDescription").assertValue(json, "Step Exit Description");
+		new JsonPathExpectationsHelper("$.stepExecutions[1].[0].exitStatus.running").assertValue(json, false);
+		new JsonPathExpectationsHelper("$.stepExecutions[1].[0].filterCount").assertValue(json, 0);
+		new JsonPathExpectationsHelper("$.stepExecutions[1].[0].executionId").assertValue(json, 3);
+		new JsonPathExpectationsHelper("$.stepExecutions[1].[0].processSkipCount").assertValue(json, 0);
+		new JsonPathExpectationsHelper("$.stepExecutions[1].[0].readCount").assertValue(json, 0);
+		new JsonPathExpectationsHelper("$.stepExecutions[1].[0].readSkipCount").assertValue(json, 0);
+		new JsonPathExpectationsHelper("$.stepExecutions[1].[0].rollbackCount").assertValue(json, 0);
+		new JsonPathExpectationsHelper("$.stepExecutions[1].[0].startTime").assertValue(json, "1969-12-31T18:00:01.000-06:00");
+		new JsonPathExpectationsHelper("$.stepExecutions[1].[0].status").assertValue(json, "COMPLETED");
+		new JsonPathExpectationsHelper("$.stepExecutions[1].[0].stepName").assertValue(json, "step1");
+		new JsonPathExpectationsHelper("$.stepExecutions[1].[0].terminateOnly").assertValue(json, false);
+		new JsonPathExpectationsHelper("$.stepExecutions[1].[0].writeCount").assertValue(json, 0);
+		new JsonPathExpectationsHelper("$.stepExecutions[1].[0].writeSkipCount").assertValue(json, 0);
 	}
 
 	@Override
 	public void assertObject(JobExecutionInfoResource jobExecutionInfoResource) throws Exception {
-		assertEquals("00:00:00", jobExecutionInfoResource.getDuration());
-		assertEquals("foo=bar", jobExecutionInfoResource.getJobParametersString());
-		assertEquals(1, jobExecutionInfoResource.getJobParameters().size());
-		assertEquals("bar", jobExecutionInfoResource.getJobParameters().getProperty("foo"));
+		assertEquals("{foo=bar, baz=3.0}", jobExecutionInfoResource.getJobParameters().toString());
+		assertEquals(2, jobExecutionInfoResource.getJobParameters().toProperties().size());
+		assertEquals("bar", jobExecutionInfoResource.getJobParameters().getString("foo"));
+		assertEquals(true, jobExecutionInfoResource.getJobParameters().getParameters().get("foo").isIdentifying());
+		assertEquals("3.0", jobExecutionInfoResource.getJobParameters().getString("baz"));
+		assertEquals(false, jobExecutionInfoResource.getJobParameters().getParameters().get("baz").isIdentifying());
 		assertEquals("job1", jobExecutionInfoResource.getName());
-		assertEquals("1970-01-01", jobExecutionInfoResource.getStartDate());
-		assertEquals("00:00:00", jobExecutionInfoResource.getStartTime());
+		assertEquals("1969-12-31T18:00:01.000-06:00", jobExecutionInfoResource.getStartTime());
 		assertEquals(2l, (long) jobExecutionInfoResource.getExecutionId());
 		assertEquals(1, jobExecutionInfoResource.getStepExecutionCount());
 		assertEquals(TimeZone.getTimeZone("CDT"), jobExecutionInfoResource.getTimeZone());
-		assertEquals(1, (int) jobExecutionInfoResource.getJobExecution().getVersion());
-		assertEquals(new Date(0), jobExecutionInfoResource.getJobExecution().getCreateTime());
-		assertEquals(new Date(100), jobExecutionInfoResource.getJobExecution().getEndTime());
-		assertEquals(0, jobExecutionInfoResource.getJobExecution().getExecutionContext().size());
-		assertEquals(new ExitStatus("COMPLETE", "Exit Description"), jobExecutionInfoResource.getJobExecution().getExitStatus());
-		assertEquals(0, jobExecutionInfoResource.getJobExecution().getFailureExceptions().size());
-		assertEquals("configName.xml", jobExecutionInfoResource.getJobExecution().getJobConfigurationName());
-		assertEquals(1l, (long) jobExecutionInfoResource.getJobExecution().getJobId());
-		assertEquals("job1", jobExecutionInfoResource.getJobExecution().getJobInstance().getJobName());
-		assertEquals(1l, jobExecutionInfoResource.getJobExecution().getJobInstance().getInstanceId());
-		assertEquals(1, jobExecutionInfoResource.getJobExecution().getJobParameters().toProperties().size());
-		assertEquals(new Date(101), jobExecutionInfoResource.getJobExecution().getLastUpdated());
-		assertEquals(new Date(1), jobExecutionInfoResource.getJobExecution().getStartTime());
-		assertEquals(BatchStatus.COMPLETED, jobExecutionInfoResource.getJobExecution().getStatus());
-		assertEquals(1, jobExecutionInfoResource.getJobExecution().getStepExecutions().size());
-		assertEquals("step1", jobExecutionInfoResource.getJobExecution().getStepExecutions().iterator().next().getStepName());
-		assertEquals(2l, (long) jobExecutionInfoResource.getJobExecution().getId());
+		assertEquals(1, (int) jobExecutionInfoResource.getVersion());
+		assertEquals("1969-12-31T18:00:00.000-06:00", jobExecutionInfoResource.getCreateDate());
+		assertEquals(0, jobExecutionInfoResource.getExecutionContext().size());
+		assertEquals(new ExitStatus("COMPLETE", "Exit Description"), jobExecutionInfoResource.getExitStatus());
+		assertEquals(0, jobExecutionInfoResource.getFailureExceptions().size());
+		assertEquals("configName.xml", jobExecutionInfoResource.getJobConfigurationName());
+		assertEquals(1l, (long) jobExecutionInfoResource.getJobId());
+		assertEquals("job1", jobExecutionInfoResource.getName());
+		assertEquals("1969-12-31T18:00:03.000-06:00", jobExecutionInfoResource.getLastUpdated());
+		assertEquals("1969-12-31T18:00:01.000-06:00", jobExecutionInfoResource.getStartTime());
+		assertEquals(BatchStatus.COMPLETED, jobExecutionInfoResource.getStatus());
+		assertEquals(1, jobExecutionInfoResource.getStepExecutions().size());
+		assertEquals("step1", jobExecutionInfoResource.getStepExecutions().iterator().next().getStepName());
+		assertEquals(2l, (long) jobExecutionInfoResource.getExecutionId());
 	}
 
 	@Override
 	public JobExecutionInfoResource getSerializationValue() {
 		JobInstance jobInstance = new JobInstance(1l, "job1");
-		JobExecution jobExecution = new JobExecution(jobInstance, 2l, new JobParametersBuilder().addString("foo", "bar").toJobParameters(), "configName.xml");
+		JobExecution jobExecution = new JobExecution(jobInstance, 2l, new JobParametersBuilder().addString("foo", "bar").addDouble("baz", 3.0, false).toJobParameters(), "configName.xml");
 		jobExecution.setVersion(1);
 		jobExecution.setExitStatus(new ExitStatus("COMPLETE", "Exit Description"));
 		jobExecution.setCreateTime(new Date(0));
-		jobExecution.setStartTime(new Date(1));
-		jobExecution.setEndTime(new Date(100));
-		jobExecution.setLastUpdated(new Date(101));
+		jobExecution.setStartTime(new Date(1000));
+		jobExecution.setEndTime(new Date(2000));
+		jobExecution.setLastUpdated(new Date(3000));
 		jobExecution.setStatus(BatchStatus.COMPLETED);
 		StepExecution stepExecution = new StepExecution("step1", jobExecution, 3l);
 		stepExecution.setExitStatus(new ExitStatus("ALL DONE", "Step Exit Description"));
 		stepExecution.setStatus(BatchStatus.COMPLETED);
-		stepExecution.setStartTime(new Date(2));
-		stepExecution.setEndTime(new Date(99));
+		stepExecution.setStartTime(new Date(1000));
+		stepExecution.setEndTime(new Date(2000));
+		stepExecution.setLastUpdated(new Date(3000));
 		jobExecution.addStepExecutions(Arrays.asList(stepExecution));
-		return new JobExecutionInfoResource(jobExecution, TimeZone.getTimeZone("CDT"));
+		JobExecutionInfoResource jobExecutionInfoResource = new JobExecutionInfoResource(jobExecution, TimeZone.getTimeZone("CDT"));
+		jobExecutionInfoResource.setStepExecutions(Arrays.asList(new StepExecutionInfoResource(stepExecution, TimeZone.getTimeZone("CDT"))));
+		return jobExecutionInfoResource;
 	}
 }

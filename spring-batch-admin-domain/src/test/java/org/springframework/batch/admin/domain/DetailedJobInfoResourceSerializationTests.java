@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors.
+ * Copyright 2014-2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,32 +32,32 @@ import org.springframework.test.util.JsonPathExpectationsHelper;
 
 /**
  * @author Michael Minella
+ * @since 2.0
  */
 public class DetailedJobInfoResourceSerializationTests extends AbstractSerializationTests<DetailedJobInfoResource> {
 
 	@Override
 	public void assertJson(String json) throws Exception {
-		new JsonPathExpectationsHelper("$.duration").assertValue(json, "00:00:00");
 		new JsonPathExpectationsHelper("$.executionCount").assertValue(json, 1);
 		new JsonPathExpectationsHelper("$.exitStatus.exitCode").assertValue(json, "COMPLETE");
 		new JsonPathExpectationsHelper("$.exitStatus.exitDescription").assertValue(json, "Exit Description");
 		new JsonPathExpectationsHelper("$.exitStatus.running").assertValue(json, false);
 		new JsonPathExpectationsHelper("$.incrementable").assertValue(json, false);
 		new JsonPathExpectationsHelper("$.jobInstanceId").assertValue(json, 1);
-		new JsonPathExpectationsHelper("$.jobParameters").assertValue(json, "foo=bar");
+		new JsonPathExpectationsHelper("$.jobParameters.parameters['foo'].identifying").assertValue(json, true);
+		new JsonPathExpectationsHelper("$.jobParameters.parameters['foo'].type").assertValue(json, "STRING");
+		new JsonPathExpectationsHelper("$.jobParameters.parameters['foo'].value").assertValue(json, "bar");
 		new JsonPathExpectationsHelper("$.launchable").assertValue(json, true);
 		new JsonPathExpectationsHelper("$.name").assertValue(json, "job1");
-		new JsonPathExpectationsHelper("$.startDate").assertValue(json, "1970-01-01");
-		new JsonPathExpectationsHelper("$.startTime").assertValue(json, "00:00:00");
+		new JsonPathExpectationsHelper("$.startTime").assertValue(json, "1969-12-31T18:00:01.000-06:00");
 		new JsonPathExpectationsHelper("$.stepExecutionCount").assertValue(json, 1);
 	}
 
 	@Override
 	public void assertObject(DetailedJobInfoResource detailedJobInfoResource) throws Exception {
-		assertEquals("00:00:00", detailedJobInfoResource.getDuration());
-		assertEquals("foo=bar", detailedJobInfoResource.getJobParameters());
-		assertEquals("1970-01-01", detailedJobInfoResource.getStartDate());
-		assertEquals("00:00:00", detailedJobInfoResource.getStartTime());
+		assertEquals("bar", detailedJobInfoResource.getJobParameters().getString("foo"));
+		assertEquals(true, detailedJobInfoResource.getJobParameters().getParameters().get("foo").isIdentifying());
+		assertEquals("1969-12-31T18:00:01.000-06:00", detailedJobInfoResource.getStartTime());
 		assertEquals("job1", detailedJobInfoResource.getName());
 		assertEquals(new ExitStatus("COMPLETE", "Exit Description"), detailedJobInfoResource.getExitStatus());
 		assertFalse(detailedJobInfoResource.getExitStatus().isRunning());
@@ -72,10 +72,13 @@ public class DetailedJobInfoResourceSerializationTests extends AbstractSerializa
 		JobInstance jobInstance = new JobInstance(1l, "job1");
 		JobExecution jobExecution = new JobExecution(jobInstance, 2l, new JobParametersBuilder().addString("foo", "bar").toJobParameters(), "configName.xml");
 		jobExecution.setExitStatus(new ExitStatus("COMPLETE", "Exit Description"));
-		jobExecution.setStartTime(new Date(1));
-		jobExecution.setEndTime(new Date(100));
+		jobExecution.setCreateTime(new Date(0));
+		jobExecution.setStartTime(new Date(1000));
+		jobExecution.setEndTime(new Date(2000));
+		jobExecution.setLastUpdated(new Date(3000));
 		jobExecution.setStatus(BatchStatus.COMPLETED);
 		StepExecution stepExecution = new StepExecution("step1", jobExecution, 3l);
+		stepExecution.setLastUpdated(new Date(4000));
 		jobExecution.addStepExecutions(Arrays.asList(stepExecution));
 		JobExecutionInfoResource jobExecutionInfoResource = new JobExecutionInfoResource(jobExecution, TimeZone.getTimeZone("CDT"));
 

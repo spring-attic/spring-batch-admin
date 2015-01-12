@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 the original author or authors.
+ * Copyright 2014-2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Date;
+import java.util.TimeZone;
 
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.ExitStatus;
@@ -37,24 +38,24 @@ public class StepExecutionProgressInfoResourceSerializationTests extends Abstrac
 		new JsonPathExpectationsHelper("$.finished").assertValue(json, true);
 		new JsonPathExpectationsHelper("$.stepExecutionHistory.stepName").assertValue(json, "step1");
 		new JsonPathExpectationsHelper("$.percentageComplete").assertValue(json, 1.0);
-		new JsonPathExpectationsHelper("$.stepExecution.commitCount").assertValue(json, 1);
-		new JsonPathExpectationsHelper("$.stepExecution.endTime").assertValue(json, "1970-01-01T00:00:00.100Z");
-		new JsonPathExpectationsHelper("$.stepExecution.exitStatus.exitCode").assertValue(json, "FINISHED");
-		new JsonPathExpectationsHelper("$.stepExecution.exitStatus.exitDescription").assertValue(json, "All Done");
-		new JsonPathExpectationsHelper("$.stepExecution.filterCount").assertValue(json, 2);
-		new JsonPathExpectationsHelper("$.stepExecution.id").assertValue(json, 1);
-		new JsonPathExpectationsHelper("$.stepExecution.lastUpdated").assertValue(json, "1970-01-01T00:00:00.101Z");
-		new JsonPathExpectationsHelper("$.stepExecution.processSkipCount").assertValue(json, 3);
-		new JsonPathExpectationsHelper("$.stepExecution.readCount").assertValue(json, 4);
-		new JsonPathExpectationsHelper("$.stepExecution.rollbackCount").assertValue(json, 6);
-		new JsonPathExpectationsHelper("$.stepExecution.readSkipCount").assertValue(json, 5);
-		new JsonPathExpectationsHelper("$.stepExecution.startTime").assertValue(json, "1970-01-01T00:00:00.001Z");
-		new JsonPathExpectationsHelper("$.stepExecution.status").assertValue(json, BatchStatus.COMPLETED.toString());
-		new JsonPathExpectationsHelper("$.stepExecution.stepName").assertValue(json, "step1");
-		new JsonPathExpectationsHelper("$.stepExecution.terminateOnly").assertValue(json, false);
-		new JsonPathExpectationsHelper("$.stepExecution.version").assertValue(json, 9);
-		new JsonPathExpectationsHelper("$.stepExecution.writeCount").assertValue(json, 7);
-		new JsonPathExpectationsHelper("$.stepExecution.writeSkipCount").assertValue(json, 8);
+		new JsonPathExpectationsHelper("$.commitCount").assertValue(json, 1);
+		new JsonPathExpectationsHelper("$.endTime").assertValue(json, "1969-12-31T18:00:01.000-06:00");
+		new JsonPathExpectationsHelper("$.exitStatus.exitCode").assertValue(json, "FINISHED");
+		new JsonPathExpectationsHelper("$.exitStatus.exitDescription").assertValue(json, "All Done");
+		new JsonPathExpectationsHelper("$.filterCount").assertValue(json, 2);
+		new JsonPathExpectationsHelper("$.executionId").assertValue(json, 1);
+		new JsonPathExpectationsHelper("$.lastUpdated").assertValue(json, "1969-12-31T18:00:02.000-06:00");
+		new JsonPathExpectationsHelper("$.processSkipCount").assertValue(json, 3);
+		new JsonPathExpectationsHelper("$.readCount").assertValue(json, 4);
+		new JsonPathExpectationsHelper("$.rollbackCount").assertValue(json, 6);
+		new JsonPathExpectationsHelper("$.readSkipCount").assertValue(json, 5);
+		new JsonPathExpectationsHelper("$.startTime").assertValue(json, "1969-12-31T18:00:00.001-06:00");
+		new JsonPathExpectationsHelper("$.status").assertValue(json, BatchStatus.COMPLETED.toString());
+		new JsonPathExpectationsHelper("$.stepName").assertValue(json, "step1");
+		new JsonPathExpectationsHelper("$.terminateOnly").assertValue(json, false);
+		new JsonPathExpectationsHelper("$.version").assertValue(json, 9);
+		new JsonPathExpectationsHelper("$.writeCount").assertValue(json, 7);
+		new JsonPathExpectationsHelper("$.writeSkipCount").assertValue(json, 8);
 	}
 
 	@Override
@@ -62,20 +63,19 @@ public class StepExecutionProgressInfoResourceSerializationTests extends Abstrac
 		assertEquals(100.0, stepExecutionProgressInfoResource.getDuration(), 0);
 		assertEquals(1.0, stepExecutionProgressInfoResource.getPercentageComplete(), 0);
 		assertTrue(stepExecutionProgressInfoResource.getFinished());
-		assertEquals("step1", stepExecutionProgressInfoResource.getStepExecution().getStepName());
-		assertEquals(1, stepExecutionProgressInfoResource.getStepExecution().getCommitCount());
-		assertEquals(new Date(100), stepExecutionProgressInfoResource.getStepExecution().getEndTime());
-		assertEquals(new ExitStatus("FINISHED", "All Done"), stepExecutionProgressInfoResource.getStepExecution().getExitStatus());
-		assertEquals(2, stepExecutionProgressInfoResource.getStepExecution().getFilterCount());
-		assertEquals(new Date(101), stepExecutionProgressInfoResource.getStepExecution().getLastUpdated());
-		assertEquals(3, stepExecutionProgressInfoResource.getStepExecution().getProcessSkipCount());
-		assertEquals(4, stepExecutionProgressInfoResource.getStepExecution().getReadCount());
-		assertEquals(5, stepExecutionProgressInfoResource.getStepExecution().getReadSkipCount());
-		assertEquals(6, stepExecutionProgressInfoResource.getStepExecution().getRollbackCount());
-		assertEquals(16, stepExecutionProgressInfoResource.getStepExecution().getSkipCount());
-		assertEquals(7, stepExecutionProgressInfoResource.getStepExecution().getWriteCount());
-		assertEquals(8, stepExecutionProgressInfoResource.getStepExecution().getWriteSkipCount());
-		assertEquals(9l, (long)stepExecutionProgressInfoResource.getStepExecution().getVersion());
+		assertEquals("step1", stepExecutionProgressInfoResource.getStepName());
+		assertEquals(1, stepExecutionProgressInfoResource.getCommitCount());
+		assertEquals("1969-12-31T18:00:01.000-06:00", stepExecutionProgressInfoResource.getEndTime());
+		assertEquals(new ExitStatus("FINISHED", "All Done"), stepExecutionProgressInfoResource.getExitStatus());
+		assertEquals(2, stepExecutionProgressInfoResource.getFilterCount());
+		assertEquals("1969-12-31T18:00:02.000-06:00", stepExecutionProgressInfoResource.getLastUpdated());
+		assertEquals(3, stepExecutionProgressInfoResource.getProcessSkipCount());
+		assertEquals(4, stepExecutionProgressInfoResource.getReadCount());
+		assertEquals(5, stepExecutionProgressInfoResource.getReadSkipCount());
+		assertEquals(6, stepExecutionProgressInfoResource.getRollbackCount());
+		assertEquals(7, stepExecutionProgressInfoResource.getWriteCount());
+		assertEquals(8, stepExecutionProgressInfoResource.getWriteSkipCount());
+		assertEquals(9l, (long)stepExecutionProgressInfoResource.getVersion());
 	}
 
 	@Override
@@ -83,10 +83,10 @@ public class StepExecutionProgressInfoResourceSerializationTests extends Abstrac
 		JobExecution jobExecution = new JobExecution(5l, new JobParametersBuilder().addString("foo", "bar").toJobParameters(), "config.xml");
 		StepExecution stepExecution = new StepExecution("step1", jobExecution, 1l);
 		stepExecution.setCommitCount(1);
-		stepExecution.setEndTime(new Date(100));
+		stepExecution.setEndTime(new Date(1000));
 		stepExecution.setExitStatus(new ExitStatus("FINISHED", "All Done"));
 		stepExecution.setFilterCount(2);
-		stepExecution.setLastUpdated(new Date(101));
+		stepExecution.setLastUpdated(new Date(2000));
 		stepExecution.setProcessSkipCount(3);
 		stepExecution.setReadCount(4);
 		stepExecution.setReadSkipCount(5);
@@ -100,6 +100,6 @@ public class StepExecutionProgressInfoResourceSerializationTests extends Abstrac
 		StepExecutionHistory history = new StepExecutionHistory("step1");
 		history.append(stepExecution);
 
-		return new StepExecutionProgressInfoResource(stepExecution, history, 1.0, true, 100.0);
+		return new StepExecutionProgressInfoResource(stepExecution, history, 1.0, true, 100.0, TimeZone.getTimeZone("GMT"));
 	}
 }

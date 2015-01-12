@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 the original author or authors.
+ * Copyright 2013-2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,11 @@ package org.springframework.batch.admin.web;
 import java.util.TimeZone;
 
 import org.springframework.batch.admin.service.JobService;
+import org.springframework.batch.admin.web.resource.DetailedJobInfoResourceAssembler;
+import org.springframework.batch.admin.web.resource.JobExecutionInfoResourceAssembler;
+import org.springframework.batch.admin.web.resource.JobInstanceInfoResourceAssembler;
+import org.springframework.batch.admin.web.resource.StepExecutionInfoResourceAssembler;
+import org.springframework.batch.admin.web.resource.StepExecutionProgressInfoResourceAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -42,7 +47,7 @@ public abstract class AbstractBatchJobsController {
 
 	protected final JobInstanceInfoResourceAssembler jobInstanceInfoResourceAssembler = new JobInstanceInfoResourceAssembler();
 
-	protected final StepExecutionInfoResourceAssembler stepExecutionInfoResourceAssembler = new StepExecutionInfoResourceAssembler();;
+	protected final StepExecutionInfoResourceAssembler stepExecutionInfoResourceAssembler = new StepExecutionInfoResourceAssembler();
 
 	protected final StepExecutionProgressInfoResourceAssembler progressInfoResourceAssembler = new StepExecutionProgressInfoResourceAssembler();
 

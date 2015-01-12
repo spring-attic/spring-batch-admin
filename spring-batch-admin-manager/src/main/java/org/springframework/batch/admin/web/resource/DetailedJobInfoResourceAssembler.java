@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package org.springframework.batch.admin.web;
+package org.springframework.batch.admin.web.resource;
 
 import org.springframework.batch.admin.domain.DetailedJobInfo;
 import org.springframework.batch.admin.domain.DetailedJobInfoResource;
 import org.springframework.batch.admin.domain.JobExecutionInfo;
 import org.springframework.batch.admin.domain.JobExecutionInfoResource;
+import org.springframework.batch.admin.web.BatchJobsController;
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 
 

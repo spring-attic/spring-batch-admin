@@ -14,10 +14,17 @@
  * limitations under the License.
  */
 
-package org.springframework.batch.admin.web;
+package org.springframework.batch.admin.web.resource;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.springframework.batch.admin.domain.JobExecutionInfo;
 import org.springframework.batch.admin.domain.JobExecutionInfoResource;
+import org.springframework.batch.admin.domain.StepExecutionInfo;
+import org.springframework.batch.admin.domain.StepExecutionInfoResource;
+import org.springframework.batch.admin.web.BatchJobExecutionsController;
+import org.springframework.batch.core.StepExecution;
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 
 
@@ -28,6 +35,9 @@ import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
  */
 public class JobExecutionInfoResourceAssembler extends
 		ResourceAssemblerSupport<JobExecutionInfo, JobExecutionInfoResource> {
+
+	private StepExecutionInfoResourceAssembler stepExecutionInfoResourceAssembler =
+			new StepExecutionInfoResourceAssembler();
 
 	public JobExecutionInfoResourceAssembler() {
 		super(BatchJobExecutionsController.class, JobExecutionInfoResource.class);
@@ -40,6 +50,20 @@ public class JobExecutionInfoResourceAssembler extends
 
 	@Override
 	protected JobExecutionInfoResource instantiateResource(JobExecutionInfo entity) {
-		return new JobExecutionInfoResource(entity.getJobExecution(), entity.getTimeZone());
+		Collection<StepExecutionInfoResource> stepExecutionInfoResources =
+				new ArrayList<StepExecutionInfoResource>(entity.getStepExecutionCount());
+
+		if(entity.getStepExecutionCount() > 0) {
+			for (StepExecution stepExecution : entity.getJobExecution().getStepExecutions()) {
+				stepExecutionInfoResources.add(
+						stepExecutionInfoResourceAssembler.toResource(new StepExecutionInfo(stepExecution, entity.getTimeZone())));
+			}
+		}
+
+		JobExecutionInfoResource jobExecutionInfoResource =
+				new JobExecutionInfoResource(entity.getJobExecution(), entity.getTimeZone());
+
+		jobExecutionInfoResource.setStepExecutions(stepExecutionInfoResources);
+		return jobExecutionInfoResource;
 	}
 }

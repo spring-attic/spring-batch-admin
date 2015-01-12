@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the original author or authors.
+ * Copyright 2013-2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.springframework.batch.admin.domain;
 
 import java.util.Date;
+import java.util.TimeZone;
 
 import org.springframework.batch.core.StepExecution;
 import org.springframework.context.MessageSourceResolvable;
@@ -29,6 +30,7 @@ import org.springframework.util.StringUtils;
  * 
  * @author Dave Syer
  * @author Ilayaperumal Gopinathan
+ * @author Michael Minella
  * @since 1.0
  */
 public class StepExecutionProgressInfo {
@@ -76,6 +78,17 @@ public class StepExecutionProgressInfo {
 	private boolean isFinished = false;
 
 	private PercentCompleteBasis percentCompleteBasis = PercentCompleteBasis.UNKNOWN;
+
+	private TimeZone timeZone = TimeZone.getTimeZone("UTC");
+
+	public StepExecutionProgressInfo(StepExecution stepExecution,
+			StepExecutionHistory stepExecutionHistory, TimeZone timeZone) {
+		this(stepExecution, stepExecutionHistory);
+
+		if(timeZone != null) {
+			timeZone = this.timeZone;
+		}
+	}
 
 	public StepExecutionProgressInfo(StepExecution stepExecution,
 			StepExecutionHistory stepExecutionHistory) {
@@ -170,5 +183,9 @@ public class StepExecutionProgressInfo {
 
 	public StepExecutionHistory getStepExecutionHistory() {
 		return stepExecutionHistory;
+	}
+
+	public TimeZone getTimeZone() {
+		return timeZone;
 	}
 }

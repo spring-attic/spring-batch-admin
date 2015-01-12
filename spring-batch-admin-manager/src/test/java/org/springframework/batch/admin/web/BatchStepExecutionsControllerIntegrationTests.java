@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 the original author or authors.
+ * Copyright 2013-2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,12 @@ package org.springframework.batch.admin.web;
 import static org.hamcrest.Matchers.contains;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Arrays;
+import java.util.Date;
 
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -53,20 +55,24 @@ public class BatchStepExecutionsControllerIntegrationTests extends AbstractContr
 	@Test
 	public void testGetBatchStepExecutions() throws Exception {
 		JobExecution jobExecution = new JobExecution(2l);
+		jobExecution.setLastUpdated(new Date());
 		StepExecution execution1 = new StepExecution("step1", jobExecution, 1l);
+		execution1.setLastUpdated(new Date());
 		StepExecution execution2 = new StepExecution("step2", jobExecution, 2l);
+		execution2.setLastUpdated(new Date());
 		StepExecution execution3 = new StepExecution("step3", jobExecution, 3l);
+		execution3.setLastUpdated(new Date());
 
 		when(jobService.getStepExecutions(2l)).thenReturn(Arrays.asList(execution1, execution2, execution3));
 
 		mockMvc.perform(
 				get("/batch/executions/2/steps").accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$", Matchers.hasSize(3)))
-				.andExpect(jsonPath("$[*].stepExecution.id", contains(1, 2, 3)))
-				.andExpect(jsonPath("$[*].jobExecutionId", contains(2, 2, 2)))
-				.andExpect(jsonPath("$[*].stepExecution.stepName", contains("step1", "step2", "step3")))
-				.andExpect(jsonPath("$[*].links[*].href", contains(
+				.andExpect(status().isOk()).andDo(print())
+				.andExpect(jsonPath("$[1]", Matchers.hasSize(3)))
+				.andExpect(jsonPath("$[1][*].executionId", contains(1, 2, 3)))
+				.andExpect(jsonPath("$[1][*].jobExecutionId", contains(2, 2, 2)))
+				.andExpect(jsonPath("$[1][*].stepName", contains("step1", "step2", "step3")))
+				.andExpect(jsonPath("$[1][*].links[1][*].href", contains(
 						"http://localhost/batch/executions/2/steps/1",
 						"http://localhost/batch/executions/2/steps/2",
 						"http://localhost/batch/executions/2/steps/3")));
@@ -76,8 +82,8 @@ public class BatchStepExecutionsControllerIntegrationTests extends AbstractContr
 	public void testGetBatchStepExecutionsNotExists() throws Exception {
 		when(jobService.getStepExecutions(5555l)).thenThrow(new NoSuchJobExecutionException(""));
 
-		mockMvc.perform(get("/batch/executions/{executionId}/steps", "5555")).andExpect(status().isNotFound()).andExpect(
-				jsonPath("$[0].message",
+		mockMvc.perform(get("/batch/executions/{executionId}/steps", "5555")).andDo(print()).andExpect(status().isNotFound()).andExpect(
+				jsonPath("$[1][0].message",
 						Matchers.is("Could not find jobExecution with id 5555")));
 
 	}
@@ -85,23 +91,21 @@ public class BatchStepExecutionsControllerIntegrationTests extends AbstractContr
 	@Test
 	public void testGetSingleBatchStepExecution() throws Exception {
 		JobExecution jobExecution = new JobExecution(2l, new JobParametersBuilder().addString("param1", "test").addLong("param2", 123l).toJobParameters());
+		jobExecution.setLastUpdated(new Date());
 		StepExecution execution = new StepExecution("step1", jobExecution, 1l);
+		execution.setLastUpdated(new Date());
 		execution.getExecutionContext().put("contextTestKey", "someValue");
 
 		when(jobService.getStepExecution(2l, 1l)).thenReturn(execution);
 
 		mockMvc.perform(
 				get("/batch/executions/2/steps/1").accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("stepExecution.id", Matchers.is(1)))
+				.andExpect(status().isOk()).andDo(print())
+				.andExpect(jsonPath("executionId", Matchers.is(1)))
 				.andExpect(jsonPath("jobExecutionId", Matchers.is(2)))
-				.andExpect(jsonPath("stepExecution.stepName", Matchers.is("step1")))
-				.andExpect(jsonPath("stepExecution.executionContext.empty", Matchers.is(false)))
-				.andExpect(jsonPath("stepExecution.executionContext.values", Matchers.not(Matchers.empty())))
-				.andExpect(jsonPath("stepExecution.executionContext.values", Matchers.hasSize(1)))
-				.andExpect(
-						jsonPath("stepExecution.executionContext.values[?(@.key == 'contextTestKey')].value",
-								Matchers.hasSize(1)));
+				.andExpect(jsonPath("stepName", Matchers.is("step1")))
+				.andExpect(jsonPath("executionContext", Matchers.not(Matchers.empty())))
+				.andExpect(jsonPath("executionContext['contextTestKey']", Matchers.is("someValue")));
 	}
 
 	@Test
@@ -110,7 +114,7 @@ public class BatchStepExecutionsControllerIntegrationTests extends AbstractContr
 
 		mockMvc.perform(get("/batch/executions/{jobExecutionId}/steps/{stepExecutionId}", "5555", "1")).andExpect(
 				status().isNotFound()).andExpect(
-				jsonPath("$[0].message",
+				jsonPath("$[1][0].message",
 						Matchers.is("Could not find jobExecution with id 5555")));
 	}
 
@@ -120,7 +124,7 @@ public class BatchStepExecutionsControllerIntegrationTests extends AbstractContr
 
 		mockMvc.perform(get("/batch/executions/{jobExecutionId}/steps/{stepExecutionId}", "2", "5555")).andExpect(
 				status().isNotFound()).andExpect(
-				jsonPath("$[0].message",
+				jsonPath("$[1][0].message",
 						Matchers.is("Could not find step execution with id 5555")));
 	}
 
@@ -128,7 +132,9 @@ public class BatchStepExecutionsControllerIntegrationTests extends AbstractContr
 	public void testGetBatchStepExecutionProgress() throws Exception {
 		JobInstance jobInstance = new JobInstance(1l, "job1");
 		JobExecution jobExecution = new JobExecution(jobInstance, 2l, new JobParametersBuilder().addString("param1", "test").addLong("param2", 123l).toJobParameters(), null);
+		jobExecution.setLastUpdated(new Date());
 		StepExecution execution = new StepExecution("step1", jobExecution, 1l);
+		execution.setLastUpdated(new Date());
 
 		when(jobService.getStepExecution(2l, 1l)).thenReturn(execution);
 		when(jobService.countStepExecutionsForStep("job", "step1")).thenReturn(1);
@@ -137,8 +143,8 @@ public class BatchStepExecutionsControllerIntegrationTests extends AbstractContr
 		mockMvc.perform(
 				get("/batch/executions/2/steps/1/progress").accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$[*].stepExecution.id", Matchers.is(1)))
-				.andExpect(jsonPath("$[*].percentageComplete", Matchers.is(0.5)));
+				.andExpect(jsonPath("$.executionId", Matchers.is(1)))
+				.andExpect(jsonPath("$.percentageComplete", Matchers.is(0.5)));
 	}
 
 	@Test
@@ -147,7 +153,7 @@ public class BatchStepExecutionsControllerIntegrationTests extends AbstractContr
 
 		mockMvc.perform(get("/batch/executions/{jobExecutionId}/steps/{stepExecutionId}/progress", "5555", "2")).andExpect(
 				status().isNotFound()).andExpect(
-				jsonPath("$[0].message",
+				jsonPath("$[1][0].message",
 						Matchers.is("Could not find jobExecution with id 5555")));
 	}
 
@@ -157,7 +163,7 @@ public class BatchStepExecutionsControllerIntegrationTests extends AbstractContr
 
 		mockMvc.perform(get("/batch/executions/{jobExecutionId}/steps/{stepExecutionId}/progress", "3", "5555")).andExpect(
 				status().isNotFound()).andExpect(
-				jsonPath("$[0].message",
+				jsonPath("$[1][0].message",
 						Matchers.is("Could not find step execution with id 5555")));
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2010 the original author or authors.
+ * Copyright 2009-2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,14 +53,24 @@ public class StepExecutionInfo {
 
 	private String stepType = StepType.UNKNOWN.getDisplayName();
 
+	private TimeZone timeZone = TimeZone.getTimeZone("UTC");
+
 	public StepExecutionInfo(String jobName, Long jobExecutionId, String name, TimeZone timeZone) {
 		this.jobName = jobName;
 		this.jobExecutionId = jobExecutionId;
 		this.name = name;
 		this.stepExecution = new StepExecution(name, new JobExecution(jobExecutionId));
+
+		if(timeZone != null) {
+			this.timeZone = timeZone;
+		}
 	}
 
 	public StepExecutionInfo(StepExecution stepExecution, TimeZone timeZone) {
+
+		if(timeZone != null) {
+			this.timeZone = timeZone;
+		}
 
 		this.stepExecution = stepExecution;
 		this.id = stepExecution.getId();
@@ -135,4 +145,7 @@ public class StepExecutionInfo {
 
 	public String getStepType() { return this.stepType; }
 
+	public TimeZone getTimeZone() {
+		return timeZone;
+	}
 }

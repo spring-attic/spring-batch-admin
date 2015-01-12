@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 the original author or authors.
+ * Copyright 2013-2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,11 @@
 
 package org.springframework.batch.admin.domain;
 
+import java.util.TimeZone;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.springframework.batch.core.StepExecution;
-import org.springframework.hateoas.ResourceSupport;
 import org.springframework.util.Assert;
 
 
@@ -27,12 +28,13 @@ import org.springframework.util.Assert;
  * Represents the step execution progress info resource.
  * 
  * @author Ilayaperumal Gopinathan
+ * @author Michael Minella
  * @since 2.0
  */
 @XmlRootElement
-public class StepExecutionProgressInfoResource extends ResourceSupport {
+public class StepExecutionProgressInfoResource extends StepExecutionInfoResource {
 
-	private StepExecution stepExecution;
+//	private StepExecution stepExecution;
 
 	private StepExecutionHistory stepExecutionHistory;
 
@@ -51,12 +53,11 @@ public class StepExecutionProgressInfoResource extends ResourceSupport {
 	 * @param stepExecutionHistory Must not be null
 	 */
 	public StepExecutionProgressInfoResource(StepExecution stepExecution, StepExecutionHistory stepExecutionHistory,
-			double percentageComplete, boolean isFinished, double duration) {
+			double percentageComplete, boolean isFinished, double duration, TimeZone timeZone) {
+		super(stepExecution, timeZone);
 
-		Assert.notNull(stepExecution, "stepExecution must not be null.");
-		Assert.notNull(stepExecutionHistory, "stepExecution must not be null.");
+		Assert.notNull(stepExecutionHistory, "stepExecutionHistory must not be null.");
 
-		this.stepExecution = stepExecution;
 		this.stepExecutionHistory = stepExecutionHistory;
 		this.percentageComplete = percentageComplete;
 		this.finished = isFinished;
@@ -73,10 +74,6 @@ public class StepExecutionProgressInfoResource extends ResourceSupport {
 
 	public double getDuration() {
 		return duration;
-	}
-
-	public StepExecution getStepExecution() {
-		return stepExecution;
 	}
 
 	public StepExecutionHistory getStepExecutionHistory() {
