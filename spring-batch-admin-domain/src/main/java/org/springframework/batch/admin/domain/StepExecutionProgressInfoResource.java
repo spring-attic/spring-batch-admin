@@ -34,8 +34,6 @@ import org.springframework.util.Assert;
 @XmlRootElement
 public class StepExecutionProgressInfoResource extends StepExecutionInfoResource {
 
-//	private StepExecution stepExecution;
-
 	private StepExecutionHistory stepExecutionHistory;
 
 	private double percentageComplete;

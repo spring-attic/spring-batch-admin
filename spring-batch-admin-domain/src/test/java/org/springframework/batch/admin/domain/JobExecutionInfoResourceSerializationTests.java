@@ -58,7 +58,7 @@ public class JobExecutionInfoResourceSerializationTests extends AbstractSerializ
 		new JsonPathExpectationsHelper("$.startTime").assertValue(json, "1969-12-31T18:00:01.000-06:00");
 		new JsonPathExpectationsHelper("$.stepExecutionCount").assertValue(json, 1);
 		new JsonPathExpectationsHelper("$.stoppable").assertValue(json, false);
-		new JsonPathExpectationsHelper("$.timeZone[1]").assertValue(json, "GMT");
+		new JsonPathExpectationsHelper("$.timeZone[1]").assertValue(json, "America/Chicago");
 		new JsonPathExpectationsHelper("$.version").assertValue(json, 1);
 
 		new JsonPathExpectationsHelper("$.stepExecutions").assertValueIsArray(json);
@@ -93,7 +93,7 @@ public class JobExecutionInfoResourceSerializationTests extends AbstractSerializ
 		assertEquals("1969-12-31T18:00:01.000-06:00", jobExecutionInfoResource.getStartTime());
 		assertEquals(2l, (long) jobExecutionInfoResource.getExecutionId());
 		assertEquals(1, jobExecutionInfoResource.getStepExecutionCount());
-		assertEquals(TimeZone.getTimeZone("CDT"), jobExecutionInfoResource.getTimeZone());
+		assertEquals(TimeZone.getTimeZone("America/Chicago"), jobExecutionInfoResource.getTimeZone());
 		assertEquals(1, (int) jobExecutionInfoResource.getVersion());
 		assertEquals("1969-12-31T18:00:00.000-06:00", jobExecutionInfoResource.getCreateDate());
 		assertEquals(0, jobExecutionInfoResource.getExecutionContext().size());
@@ -128,8 +128,8 @@ public class JobExecutionInfoResourceSerializationTests extends AbstractSerializ
 		stepExecution.setEndTime(new Date(2000));
 		stepExecution.setLastUpdated(new Date(3000));
 		jobExecution.addStepExecutions(Arrays.asList(stepExecution));
-		JobExecutionInfoResource jobExecutionInfoResource = new JobExecutionInfoResource(jobExecution, TimeZone.getTimeZone("CDT"));
-		jobExecutionInfoResource.setStepExecutions(Arrays.asList(new StepExecutionInfoResource(stepExecution, TimeZone.getTimeZone("CDT"))));
+		JobExecutionInfoResource jobExecutionInfoResource = new JobExecutionInfoResource(jobExecution, TimeZone.getTimeZone("America/Chicago"));
+		jobExecutionInfoResource.setStepExecutions(Arrays.asList(new StepExecutionInfoResource(stepExecution, TimeZone.getTimeZone("America/Chicago"))));
 		return jobExecutionInfoResource;
 	}
 }

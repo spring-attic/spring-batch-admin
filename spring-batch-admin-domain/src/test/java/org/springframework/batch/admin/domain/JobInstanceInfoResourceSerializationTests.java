@@ -56,7 +56,7 @@ public class JobInstanceInfoResourceSerializationTests extends AbstractSerializa
 		new JsonPathExpectationsHelper("$.jobExecutions[1].[0].startTime").assertValue(json, "1969-12-31T18:00:01.000-06:00");
 		new JsonPathExpectationsHelper("$.jobExecutions[1].[0].stepExecutionCount").assertValue(json, 1);
 		new JsonPathExpectationsHelper("$.jobExecutions[1].[0].stoppable").assertValue(json, false);
-		new JsonPathExpectationsHelper("$.jobExecutions[1].[0].timeZone[1]").assertValue(json, "GMT");
+		new JsonPathExpectationsHelper("$.jobExecutions[1].[0].timeZone[1]").assertValue(json, "America/Chicago");
 		new JsonPathExpectationsHelper("$.jobExecutions[1].[0].version").assertValue(json, 1);
 
 		new JsonPathExpectationsHelper("$.jobExecutions[1].[0].stepExecutions[1].[0].commitCount").assertValue(json, 0);
@@ -99,8 +99,8 @@ public class JobInstanceInfoResourceSerializationTests extends AbstractSerializa
 		StepExecution stepExecution = new StepExecution("step1", jobExecution, 3l);
 		stepExecution.setLastUpdated(new Date(5000));
 		jobExecution.addStepExecutions(Arrays.asList(stepExecution));
-		JobExecutionInfoResource jobExecutionInfoResource = new JobExecutionInfoResource(jobExecution, TimeZone.getTimeZone("CDT"));
-		jobExecutionInfoResource.setStepExecutions(Arrays.asList(new StepExecutionInfoResource(stepExecution, TimeZone.getTimeZone("CDT"))));
+		JobExecutionInfoResource jobExecutionInfoResource = new JobExecutionInfoResource(jobExecution, TimeZone.getTimeZone("America/Chicago"));
+		jobExecutionInfoResource.setStepExecutions(Arrays.asList(new StepExecutionInfoResource(stepExecution, TimeZone.getTimeZone("America/Chicago"))));
 
 		return new JobInstanceInfoResource(jobInstance, Arrays.asList(jobExecutionInfoResource));
 	}

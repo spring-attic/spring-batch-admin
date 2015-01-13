@@ -46,7 +46,7 @@ import org.springframework.util.Assert;
 @XmlRootElement
 public class StepExecutionInfoResource extends ResourceSupport {
 
-	private final DateTimeFormatter dateFormat = ISODateTimeFormat.dateTime();
+	private DateTimeFormatter dateFormat = ISODateTimeFormat.dateTime();
 
 	private Long executionId;
 
@@ -102,10 +102,10 @@ public class StepExecutionInfoResource extends ResourceSupport {
 			this.timeZone = timeZone;
 		}
 		else {
-			this.timeZone = TimeZone.getTimeZone("GMT");
+			this.timeZone = TimeZone.getTimeZone("UTC");
 		}
 
-		this.dateFormat.withZone(DateTimeZone.forTimeZone(this.timeZone));
+		this.dateFormat = this.dateFormat.withZone(DateTimeZone.forTimeZone(this.timeZone));
 
 		this.jobExecutionId = stepExecution.getJobExecutionId();
 		if(stepExecution.getExecutionContext().containsKey(Step.STEP_TYPE_KEY)) {

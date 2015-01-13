@@ -93,8 +93,8 @@ public class BatchJobsControllerIntegrationTests extends AbstractControllerInteg
 				jsonPath("$.content[1][*].launchable", contains(false, true))).andExpect(
 				jsonPath("$.content[1][*].incrementable", contains(false, true))).andExpect(
 				jsonPath("$.content[1][*].jobInstanceId", contains(nullValue(), nullValue()))).andExpect(
-				jsonPath("$.content[1][*].startTime", contains("1969-12-31T18:00:01.000-06:00", null))).andExpect(
-				jsonPath("$.content[1][*].endTime", contains("1969-12-31T18:00:02.000-06:00", null))).andExpect(
+				jsonPath("$.content[1][*].startTime", contains("1970-01-01T00:00:01.000Z", null))).andExpect(
+				jsonPath("$.content[1][*].endTime", contains("1970-01-01T00:00:02.000Z", null))).andExpect(
 				jsonPath("$.content[1][*].stepExecutionCount", contains(info.getStepExecutionCount(), 0))).andExpect(
 				jsonPath("$.content[1][*].jobParameters.parameters['foo'].value", contains("bar")))
 
@@ -132,8 +132,8 @@ public class BatchJobsControllerIntegrationTests extends AbstractControllerInteg
 				jsonPath("$.content[1][*].launchable", contains(false))).andExpect(
 				jsonPath("$.content[1][*].incrementable", contains(false))).andExpect(
 				jsonPath("$.content[1][*].jobInstanceId", contains(nullValue()))).andExpect(
-				jsonPath("$.content[1][*].startTime", contains("1969-12-31T18:00:01.000-06:00"))).andExpect(
-				jsonPath("$.content[1][*].endTime", contains("1969-12-31T18:00:02.000-06:00"))).andExpect(
+				jsonPath("$.content[1][*].startTime", contains("1970-01-01T00:00:01.000Z"))).andExpect(
+				jsonPath("$.content[1][*].endTime", contains("1970-01-01T00:00:02.000Z"))).andExpect(
 				jsonPath("$.content[1][*].stepExecutionCount", contains(info.getStepExecutionCount()))).andExpect(
 				jsonPath("$.content[1][*].jobParameters.parameters['foo'].value", contains("bar"))).andExpect(
 				jsonPath("$.content[1][*].jobParameters.parameters['foo2'].value[1]", contains(0)))

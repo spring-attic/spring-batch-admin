@@ -49,7 +49,7 @@ import org.springframework.hateoas.ResourceSupport;
 @XmlRootElement
 public class JobExecutionInfoResource extends ResourceSupport {
 
-	private final DateTimeFormatter dateFormat = ISODateTimeFormat.dateTime();
+	private DateTimeFormatter dateFormat = ISODateTimeFormat.dateTime();
 
 	private Long executionId;
 
@@ -136,9 +136,8 @@ public class JobExecutionInfoResource extends ResourceSupport {
 			this.jobName = "?";
 		}
 
-		// Duration is always in GMT
-		// The others can be localized
-		dateFormat.withZone(DateTimeZone.forTimeZone(timeZone));
+		this.dateFormat = this.dateFormat.withZone(DateTimeZone.forTimeZone(timeZone));
+
 		this.createDate = dateFormat.print(jobExecution.getCreateTime().getTime());
 		this.lastUpdated = dateFormat.print(jobExecution.getLastUpdated().getTime());
 

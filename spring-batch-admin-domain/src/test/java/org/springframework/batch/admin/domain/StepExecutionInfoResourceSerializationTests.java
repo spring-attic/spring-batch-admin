@@ -102,6 +102,6 @@ public class StepExecutionInfoResourceSerializationTests extends AbstractSeriali
 
 		stepExecution.setExecutionContext(context);
 
-		return new StepExecutionInfoResource(stepExecution, TimeZone.getTimeZone("CDT"));
+		return new StepExecutionInfoResource(stepExecution, TimeZone.getTimeZone("America/Chicago"));
 	}
 }

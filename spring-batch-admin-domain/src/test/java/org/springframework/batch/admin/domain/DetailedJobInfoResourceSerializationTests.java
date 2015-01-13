@@ -49,7 +49,7 @@ public class DetailedJobInfoResourceSerializationTests extends AbstractSerializa
 		new JsonPathExpectationsHelper("$.jobParameters.parameters['foo'].value").assertValue(json, "bar");
 		new JsonPathExpectationsHelper("$.launchable").assertValue(json, true);
 		new JsonPathExpectationsHelper("$.name").assertValue(json, "job1");
-		new JsonPathExpectationsHelper("$.startTime").assertValue(json, "1969-12-31T18:00:01.000-06:00");
+		new JsonPathExpectationsHelper("$.startTime").assertValue(json, "1970-01-01T00:00:01.000Z");
 		new JsonPathExpectationsHelper("$.stepExecutionCount").assertValue(json, 1);
 	}
 
@@ -57,7 +57,7 @@ public class DetailedJobInfoResourceSerializationTests extends AbstractSerializa
 	public void assertObject(DetailedJobInfoResource detailedJobInfoResource) throws Exception {
 		assertEquals("bar", detailedJobInfoResource.getJobParameters().getString("foo"));
 		assertEquals(true, detailedJobInfoResource.getJobParameters().getParameters().get("foo").isIdentifying());
-		assertEquals("1969-12-31T18:00:01.000-06:00", detailedJobInfoResource.getStartTime());
+		assertEquals("1970-01-01T00:00:01.000Z", detailedJobInfoResource.getStartTime());
 		assertEquals("job1", detailedJobInfoResource.getName());
 		assertEquals(new ExitStatus("COMPLETE", "Exit Description"), detailedJobInfoResource.getExitStatus());
 		assertFalse(detailedJobInfoResource.getExitStatus().isRunning());
