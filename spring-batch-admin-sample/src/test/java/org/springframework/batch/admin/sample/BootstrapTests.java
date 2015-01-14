@@ -33,13 +33,11 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.poller.DirectPoller;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.test.annotation.DirtiesContext;
 
 /**
  * @author Dave Syer
  * 
  */
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class BootstrapTests {
 
 	@Test

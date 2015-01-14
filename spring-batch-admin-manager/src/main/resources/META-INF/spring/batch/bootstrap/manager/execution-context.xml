@@ -34,12 +34,29 @@
 	<bean id="jobExplorer" class="org.springframework.batch.core.explore.support.JobExplorerFactoryBean"
 		p:dataSource-ref="dataSource" />
 
-	<bean id="jobLoader" class="org.springframework.batch.core.configuration.support.AutomaticJobRegistrar">
-		<property name="applicationContextFactories">
-			<bean class="org.springframework.batch.core.configuration.support.ClasspathXmlApplicationContextsFactoryBean">
-				<property name="resources" value="classpath*:/META-INF/spring/batch/jobs/*.xml" />
-			</bean>
+	<bean id="applicationContextFactories" class="org.springframework.batch.admin.configuration.CompositeApplicationContextFactory">
+		<property name="factoryBeans">
+			<list>
+				<ref bean="&amp;xmlJobContextFactories"/>
+			</list>
 		</property>
+		<property name="factories">
+			<list>
+				<ref bean="javaJobContextFactories"/>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="xmlJobContextFactories" class="org.springframework.batch.core.configuration.support.ClasspathXmlApplicationContextsFactoryBean">
+		<property name="resources" value="classpath*:/META-INF/spring/batch/jobs/*.xml" />
+	</bean>
+
+	<bean id="javaJobContextFactories" class="org.springframework.batch.core.configuration.support.GenericApplicationContextFactory">
+		<constructor-arg value="${batch.job.configuration.package:org.springframework.batch.admin.sample.job}"/>
+	</bean>
+
+	<bean id="jobLoader" class="org.springframework.batch.core.configuration.support.AutomaticJobRegistrar">
+		<property name="applicationContextFactories" ref="applicationContextFactories"/>
 		<property name="jobLoader">
 			<bean class="org.springframework.batch.core.configuration.support.DefaultJobLoader">
 				<property name="jobRegistry" ref="jobRegistry" />
