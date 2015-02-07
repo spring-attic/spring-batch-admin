@@ -415,6 +415,7 @@
 				<configuration>
 					<aggregate>true</aggregate>
 					<breakiterator>true</breakiterator>
+					<additionalparam>-Xdoclint:none</additionalparam>
 					<links>
 						<link>http://java.sun.com/j2ee/1.4/docs/api</link>
 						<link>http://java.sun.com/j2se/1.5.0/docs/api</link>
