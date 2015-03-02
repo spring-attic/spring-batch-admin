@@ -15,8 +15,6 @@
  */
 package org.springframework.batch.admin.service;
 
-import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,7 +31,6 @@ import javax.batch.operations.JobOperator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
@@ -55,8 +52,8 @@ import org.springframework.batch.core.repository.dao.ExecutionContextDao;
 import org.springframework.batch.core.step.NoSuchStepException;
 import org.springframework.batch.core.step.StepLocator;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.util.CollectionUtils;
 
@@ -337,25 +334,19 @@ public class SimpleJobService implements JobService, DisposableBean {
 	}
 
 	private Collection<String> getJsrJobNames() {
-		Resource jsrJobsDirectory = new ClassPathResource("/META-INF/batch-jobs");
+
 		Set<String> jsr352JobNames = new HashSet<String>();
 
-		if(jsrJobsDirectory.exists()) {
-			try {
-				File [] jobXmlFiles = jsrJobsDirectory.getFile().listFiles(new FilenameFilter() {
-					@Override
-					public boolean accept(File dir, String name) {
-						return name.endsWith(".xml");
-					}
-				});
+		try {
+			PathMatchingResourcePatternResolver pathMatchingResourcePatternResolver = new org.springframework.core.io.support.PathMatchingResourcePatternResolver();
+			Resource[] resources = pathMatchingResourcePatternResolver.getResources("classpath*:/META-INF/batch-jobs/**/*.xml");
 
-				for (File jobXmlFile : jobXmlFiles) {
-					jsr352JobNames.add(jobXmlFile.getName().substring(0, jobXmlFile.getName().length() - 4));
-				}
+			for (Resource resource : resources) {
+				String jobXmlFileName = resource.getFilename();
+				jsr352JobNames.add(jobXmlFileName.substring(0, jobXmlFileName.length() - 4));
 			}
-			catch (IOException e) {
-				logger.debug("Unable to list JSR-352 batch jobs", e);
-			}
+		} catch (IOException e) {
+			logger.debug("Unable to list JSR-352 batch jobs", e);
 		}
 
 		return jsr352JobNames;
