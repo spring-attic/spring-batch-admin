@@ -73,6 +73,7 @@
 		<property name="dataSource" ref="dataSource" />
 		<property name="jobExplorer" ref="jobExplorer"/>
 		<property name="transactionManager" ref="transactionManager"/>
+        <property name="jobRegistry" ref="jobRegistry"/>
 	</bean>
 
 	<bean id="jobBuilderFactory" class="org.springframework.batch.core.configuration.annotation.JobBuilderFactory">

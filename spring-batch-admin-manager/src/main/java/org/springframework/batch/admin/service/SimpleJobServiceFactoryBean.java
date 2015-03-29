@@ -25,11 +25,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.batch.core.configuration.JobLocator;
+import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.configuration.ListableJobLocator;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.jsr.JsrJobParametersConverter;
 import org.springframework.batch.core.jsr.launch.JsrJobOperator;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.launch.JobOperator;
+import org.springframework.batch.core.launch.support.SimpleJobOperator;
 import org.springframework.batch.core.repository.ExecutionContextSerializer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.dao.AbstractJdbcBatchMetadataDao;
@@ -86,6 +89,9 @@ public class SimpleJobServiceFactoryBean implements FactoryBean<JobService>, Ini
 	private ExecutionContextSerializer serializer;
 
 	private PlatformTransactionManager transactionManager;
+
+    private JobRegistry jobRegistry;
+
 
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
@@ -196,13 +202,22 @@ public class SimpleJobServiceFactoryBean implements FactoryBean<JobService>, Ini
 		this.serializer = serializer;
 	}
 
-	public void afterPropertiesSet() throws Exception {
+    /**
+     * A job registry than ca be used to register or unregister job.
+     * @param jobRegistry a {@link jobRegistry}
+     */
+    public void setJobRegistry(JobRegistry jobRegistry) {
+        this.jobRegistry = jobRegistry;
+    }
+
+    public void afterPropertiesSet() throws Exception {
 
 		Assert.notNull(dataSource, "DataSource must not be null.");
 		Assert.notNull(jobRepository, "JobRepository must not be null.");
 		Assert.notNull(jobLocator, "JobLocator must not be null.");
 		Assert.notNull(jobLauncher, "JobLauncher must not be null.");
 		Assert.notNull(jobExplorer, "JobExplorer must not be null.");
+        Assert.notNull(jobRegistry, "JobRegistry must not be null.");
 
 		jdbcTemplate = new JdbcTemplate(dataSource);
 
@@ -299,8 +314,14 @@ public class SimpleJobServiceFactoryBean implements FactoryBean<JobService>, Ini
 		jobParametersConverter.afterPropertiesSet();
 		JsrJobOperator jsrJobOperator = new JsrJobOperator(jobExplorer, jobRepository, jobParametersConverter, transactionManager);
 		jsrJobOperator.afterPropertiesSet();
+        SimpleJobOperator jobOperator = new SimpleJobOperator();
+        jobOperator.setJobExplorer(jobExplorer);
+        jobOperator.setJobLauncher(jobLauncher);
+        jobOperator.setJobRepository(jobRepository);
+        jobOperator.setJobRegistry(jobRegistry);
+        jobOperator.afterPropertiesSet();
 		return new SimpleJobService(createJobInstanceDao(), createJobExecutionDao(), createStepExecutionDao(),
-				jobRepository, jobLauncher, jobLocator, createExecutionContextDao(), jsrJobOperator);
+				jobRepository, jobLauncher, jobLocator, createExecutionContextDao(), jobOperator, jsrJobOperator);
 	}
 
 	/**

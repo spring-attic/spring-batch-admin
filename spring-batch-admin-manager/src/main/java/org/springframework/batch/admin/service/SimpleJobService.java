@@ -93,6 +93,8 @@ public class SimpleJobService implements JobService, DisposableBean {
 
 	private JobOperator jsrJobOperator;
 
+    private org.springframework.batch.core.launch.JobOperator jobOperator;
+
 	private int shutdownTimeout = DEFAULT_SHUTDOWN_TIMEOUT;
 
 	/**
@@ -106,13 +108,13 @@ public class SimpleJobService implements JobService, DisposableBean {
 
 	public SimpleJobService(SearchableJobInstanceDao jobInstanceDao, SearchableJobExecutionDao jobExecutionDao,
 			SearchableStepExecutionDao stepExecutionDao, JobRepository jobRepository, JobLauncher jobLauncher,
-			ListableJobLocator jobLocator, ExecutionContextDao executionContextDao) {
-		this(jobInstanceDao, jobExecutionDao, stepExecutionDao, jobRepository, jobLauncher, jobLocator, executionContextDao, null);
+			ListableJobLocator jobLocator, ExecutionContextDao executionContextDao, org.springframework.batch.core.launch.JobOperator jobOperator) {
+		this(jobInstanceDao, jobExecutionDao, stepExecutionDao, jobRepository, jobLauncher, jobLocator, executionContextDao, jobOperator, null);
 	}
 
 	public SimpleJobService(SearchableJobInstanceDao jobInstanceDao, SearchableJobExecutionDao jobExecutionDao,
 			SearchableStepExecutionDao stepExecutionDao, JobRepository jobRepository, JobLauncher jobLauncher,
-			ListableJobLocator jobLocator, ExecutionContextDao executionContextDao, JobOperator jsrJobOperator) {
+			ListableJobLocator jobLocator, ExecutionContextDao executionContextDao, org.springframework.batch.core.launch.JobOperator jobOperator, JobOperator jsrJobOperator) {
 		super();
 		this.jobInstanceDao = jobInstanceDao;
 		this.jobExecutionDao = jobExecutionDao;
@@ -121,6 +123,7 @@ public class SimpleJobService implements JobService, DisposableBean {
 		this.jobLauncher = jobLauncher;
 		this.jobLocator = jobLocator;
 		this.executionContextDao = executionContextDao;
+        this.jobOperator = jobOperator;
 
 		if(jsrJobOperator == null) {
 			logger.warn("No JobOperator compatible with JSR-352 was provided.");
@@ -369,7 +372,7 @@ public class SimpleJobService implements JobService, DisposableBean {
 	}
 
 	@Override
-	public int stopAll() {
+	public int stopAll() throws NoSuchJobExecutionException, JobExecutionNotRunningException {
 		Collection<JobExecution> result = jobExecutionDao.getRunningJobExecutions();
 		Collection<String> jsrJobNames = getJsrJobNames();
 
@@ -378,8 +381,7 @@ public class SimpleJobService implements JobService, DisposableBean {
 				jsrJobOperator.stop(jobExecution.getId());
 			}
 			else {
-				jobExecution.stop();
-				jobRepository.update(jobExecution);
+                jobOperator.stop(jobExecution.getId());
 			}
 		}
 
@@ -400,12 +402,11 @@ public class SimpleJobService implements JobService, DisposableBean {
 
 		if(jsrJobOperator != null && jsrJobNames.contains(jobExecution.getJobInstance().getJobName())) {
 			jsrJobOperator.stop(jobExecutionId);
-			jobExecution = getJobExecution(jobExecutionId);
 		}
 		else {
-			jobExecution.stop();
-			jobRepository.update(jobExecution);
+            jobOperator.stop(jobExecutionId);
 		}
+        jobExecution = getJobExecution(jobExecutionId);
 		return jobExecution;
 
 	}

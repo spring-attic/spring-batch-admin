@@ -305,7 +305,7 @@ public class BatchJobExecutionsController extends AbstractBatchJobsController {
 	 */
 	@RequestMapping(value = { "" }, method = RequestMethod.PUT, params = "stop=true")
 	@ResponseStatus(HttpStatus.OK)
-	public void stopAll() {
+	public void stopAll() throws NoSuchJobExecutionException, JobExecutionNotRunningException {
 		jobService.stopAll();
 	}
 }

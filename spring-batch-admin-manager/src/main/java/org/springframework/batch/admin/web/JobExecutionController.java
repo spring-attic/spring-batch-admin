@@ -270,7 +270,7 @@ public class JobExecutionController {
 	@RequestMapping(value = "/jobs/executions", method = RequestMethod.DELETE)
 	public @ModelAttribute("jobExecutions")
 	Collection<JobExecutionInfo> stopAll(ModelMap model, @RequestParam(defaultValue = "0") int startJobExecution,
-			@RequestParam(defaultValue = "20") int pageSize) {
+			@RequestParam(defaultValue = "20") int pageSize) throws NoSuchJobExecutionException, JobExecutionNotRunningException {
 
 		model.addAttribute("stoppedCount", jobService.stopAll());
 		return list(model, startJobExecution, pageSize);

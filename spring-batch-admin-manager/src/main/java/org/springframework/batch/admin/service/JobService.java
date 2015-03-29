@@ -319,7 +319,7 @@ public interface JobService {
 	 * 
 	 * @return the number of executions affected
 	 */
-	int stopAll();
+	int stopAll() throws NoSuchJobExecutionException, JobExecutionNotRunningException;
 
 	/**
 	 * Check if a job has a {@link JobParametersIncrementer}.

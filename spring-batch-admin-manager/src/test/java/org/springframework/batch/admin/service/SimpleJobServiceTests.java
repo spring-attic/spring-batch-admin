@@ -44,6 +44,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
@@ -97,6 +99,9 @@ public class SimpleJobServiceTests {
 	@Mock
 	private JobOperator jsrJobOperator;
 
+    @Mock
+    private org.springframework.batch.core.launch.JobOperator jobOperator;
+
 	private SimpleJobService service;
 
 	@Before
@@ -104,7 +109,7 @@ public class SimpleJobServiceTests {
 		MockitoAnnotations.initMocks(this);
 
 		service = new SimpleJobService(jobInstanceDao, jobExecutionDao, stepExecutionDao,
-				jobRepository, jobLauncher, jobLocator, executionContextDao, jsrJobOperator);
+				jobRepository, jobLauncher, jobLocator, executionContextDao, jobOperator, jsrJobOperator);
 	}
 
 	@Test
@@ -415,10 +420,17 @@ public class SimpleJobServiceTests {
 	 */
 	@Test
 	public void testStop() throws Exception {
-		JobExecution jobExecution = MetaDataInstanceFactory.createJobExecution(123L);
+		final JobExecution jobExecution = MetaDataInstanceFactory.createJobExecution(123L);
 		when(jobExecutionDao.getJobExecution(123L)).thenReturn(jobExecution);
 		when(jobInstanceDao.getJobInstance(jobExecution)).thenReturn(jobExecution.getJobInstance());
 		jobRepository.update(jobExecution);
+        when(jobOperator.stop(123L)).thenAnswer(new Answer<Object>() {
+            @Override
+            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
+                jobExecution.setStatus(BatchStatus.STOPPING);
+                return null;
+            }
+        });
 		service.stop(123L);
 
 		assertEquals(BatchStatus.STOPPING, jobExecution.getStatus());

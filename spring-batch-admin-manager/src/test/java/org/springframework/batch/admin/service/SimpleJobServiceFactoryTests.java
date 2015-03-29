@@ -84,7 +84,17 @@ public class SimpleJobServiceFactoryTests {
 
 		factoryBean.setJobExplorer(new MapJobExplorerFactoryBean(new MapJobRepositoryFactoryBean(new ResourcelessTransactionManager())).getObject());
 
-		factoryBean.afterPropertiesSet();
+        try {
+            factoryBean.afterPropertiesSet();
+            fail();
+        } catch (IllegalArgumentException expected) {
+            assertEquals("JobRegistry must not be null.", expected.getMessage());
+        }
+
+        factoryBean.setJobRegistry(new MapJobRegistry());
+
+
+        factoryBean.afterPropertiesSet();
 	}
 
 }
