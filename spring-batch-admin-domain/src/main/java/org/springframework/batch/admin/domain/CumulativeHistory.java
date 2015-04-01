@@ -15,6 +15,8 @@
  */
 package org.springframework.batch.admin.domain;
 
+import java.util.Locale;
+
 public class CumulativeHistory {
 
 	private int count;
