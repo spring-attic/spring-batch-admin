@@ -6,6 +6,7 @@
     "id" : "${jobExecutionInfo.id?c}",
     "name" : "${jobExecutionInfo.name}",
     "status" : "${jobExecutionInfo.jobExecution.status}",
+    "startDate" : "${jobExecutionInfo.startDate}",
     "startTime" : "${jobExecutionInfo.startTime}",
     "duration" : "${jobExecutionInfo.duration}",
     "exitCode" : "${jobExecutionInfo.jobExecution.exitStatus.exitCode}",
