@@ -5,6 +5,7 @@
 	<#if jobExecutions?? && jobExecutions?size!=0>
 	"jobExecutions" : {<#list jobExecutions as jobExecutionInfo><#assign url><@spring.url relativeUrl="${servletPath}/jobs/executions/${jobExecutionInfo.id?c}.json"/></#assign>
 		"${jobExecutionInfo.id}" : {
+			"name" : "${jobExecutionInfo.name}",
 			"status" : "${jobExecutionInfo.jobExecution.status}",
 			"startTime" : "${jobExecutionInfo.startTime}",
 			"duration" : "${jobExecutionInfo.duration}",
