@@ -3,8 +3,9 @@
 	"id" : ${jobInfo.jobInstanceId?c}, 
 	"jobName" : "${jobInfo.name}",</#if>
 	<#if jobExecutions?? && jobExecutions?size!=0>
-	"jobExecutions" : {<#list jobExecutions as jobExecutionInfo><#assign url><@spring.url relativeUrl="${servletPath}/jobs/executions/${jobExecutionInfo.id?c}.json"/></#assign>
-		"${jobExecutionInfo.id}" : {
+	"jobExecutions" : [<#list jobExecutions as jobExecutionInfo><#assign url><@spring.url relativeUrl="${servletPath}/jobs/executions/${jobExecutionInfo.id?c}.json"/></#assign>
+		{
+			"id" : "${jobExecutionInfo.id}",
 			"status" : "${jobExecutionInfo.jobExecution.status}",
 			"startTime" : "${jobExecutionInfo.startTime}",
 			"duration" : "${jobExecutionInfo.duration}",
@@ -13,7 +14,7 @@
 				"${param}" : "${params[param]}"<#if param_index != params?size-1>,</#if></#list>
 			}
 		}<#if jobExecutionInfo_index != jobExecutions?size-1>,</#if></#list>
-	}<#if nextJobExecution?? || previousJobExecution??>,
+	]<#if nextJobExecution?? || previousJobExecution??>,
 	<#assign executions_url><@spring.url relativeUrl="${servletPath}/jobs/executions.json"/></#assign>
 	"page" : {
 		"start" : ${startJobExecution?c},
