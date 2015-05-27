@@ -68,11 +68,11 @@ public class BatchStepExecutionsControllerIntegrationTests extends AbstractContr
 		mockMvc.perform(
 				get("/batch/executions/2/steps").accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk()).andDo(print())
-				.andExpect(jsonPath("$[1]", Matchers.hasSize(3)))
-				.andExpect(jsonPath("$[1][*].executionId", contains(1, 2, 3)))
-				.andExpect(jsonPath("$[1][*].jobExecutionId", contains(2, 2, 2)))
-				.andExpect(jsonPath("$[1][*].stepName", contains("step1", "step2", "step3")))
-				.andExpect(jsonPath("$[1][*].links[1][*].href", contains(
+				.andExpect(jsonPath("$.stepExecutionInfoResourceList", Matchers.hasSize(3)))
+				.andExpect(jsonPath("$.stepExecutionInfoResourceList[*].executionId", contains(1, 2, 3)))
+				.andExpect(jsonPath("$.stepExecutionInfoResourceList[*].jobExecutionId", contains(2, 2, 2)))
+				.andExpect(jsonPath("$.stepExecutionInfoResourceList[*].stepName", contains("step1", "step2", "step3")))
+				.andExpect(jsonPath("$.stepExecutionInfoResourceList[*].links[*].href", contains(
 						"http://localhost/batch/executions/2/steps/1",
 						"http://localhost/batch/executions/2/steps/2",
 						"http://localhost/batch/executions/2/steps/3")));
@@ -101,11 +101,11 @@ public class BatchStepExecutionsControllerIntegrationTests extends AbstractContr
 		mockMvc.perform(
 				get("/batch/executions/2/steps/1").accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk()).andDo(print())
-				.andExpect(jsonPath("executionId", Matchers.is(1)))
-				.andExpect(jsonPath("jobExecutionId", Matchers.is(2)))
-				.andExpect(jsonPath("stepName", Matchers.is("step1")))
-				.andExpect(jsonPath("executionContext", Matchers.not(Matchers.empty())))
-				.andExpect(jsonPath("executionContext['contextTestKey']", Matchers.is("someValue")));
+				.andExpect(jsonPath("$.stepExecutionInfoResource.executionId", Matchers.is(1)))
+				.andExpect(jsonPath("$.stepExecutionInfoResource.jobExecutionId", Matchers.is(2)))
+				.andExpect(jsonPath("$.stepExecutionInfoResource.stepName", Matchers.is("step1")))
+				.andExpect(jsonPath("$.stepExecutionInfoResource.executionContext", Matchers.not(Matchers.empty())))
+				.andExpect(jsonPath("$.stepExecutionInfoResource.executionContext['contextTestKey']", Matchers.is("someValue")));
 	}
 
 	@Test
@@ -142,9 +142,10 @@ public class BatchStepExecutionsControllerIntegrationTests extends AbstractContr
 
 		mockMvc.perform(
 				get("/batch/executions/2/steps/1/progress").accept(MediaType.APPLICATION_JSON))
+				.andDo(print())
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.executionId", Matchers.is(1)))
-				.andExpect(jsonPath("$.percentageComplete", Matchers.is(0.5)));
+				.andExpect(jsonPath("$.stepExecutionProgressInfoResource.executionId", Matchers.is(1)))
+				.andExpect(jsonPath("$.stepExecutionProgressInfoResource.percentageComplete", Matchers.is(0.5)));
 	}
 
 	@Test

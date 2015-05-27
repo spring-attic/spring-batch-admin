@@ -43,12 +43,12 @@ import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.PagedResources.PageMetadata;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Controller for batch job executions.
@@ -58,7 +58,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Gunnar Hillert
  * @since 2.0
  */
-@RestController
+@Controller
 @RequestMapping("/batch/executions")
 @ExposesResourceFor(JobExecutionInfoResource.class)
 public class BatchJobExecutionsController extends AbstractBatchJobsController {
@@ -74,7 +74,7 @@ public class BatchJobExecutionsController extends AbstractBatchJobsController {
 	 * @param pageable If not provided will default to page 0 and a page size of 20
 	 * @return Collection of JobExecutionInfoResource
 	 */
-	@RequestMapping(value = { "" }, method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = { "" }, method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
 	public PagedResources<JobExecutionInfoResource> list(Pageable pageable) throws NoSuchJobException {
 
@@ -101,7 +101,7 @@ public class BatchJobExecutionsController extends AbstractBatchJobsController {
 	 * @param pageSize page size for the list
 	 * @return collection of JobExecutionInfo
 	 */
-	@RequestMapping(value = "", method = RequestMethod.GET, params = "jobname", produces = "application/json")
+	@RequestMapping(value = "", method = RequestMethod.GET, params = "jobname")
 	@ResponseStatus(HttpStatus.OK)
 	public Collection<JobExecutionInfoResource> executionsForJob(@RequestParam("jobname") String jobName,
 			@RequestParam(defaultValue = "0") int startJobExecution,

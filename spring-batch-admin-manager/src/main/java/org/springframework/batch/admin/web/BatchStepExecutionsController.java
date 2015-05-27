@@ -29,11 +29,11 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.launch.NoSuchJobExecutionException;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Controller for returning Batch {@link org.springframework.batch.core.StepExecution}s.
@@ -43,7 +43,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Ilayaperumal Gopinathan
  * @since 2.0
  */
-@RestController
+@Controller
 @RequestMapping("/batch/executions/{jobExecutionId}/steps")
 @ExposesResourceFor(StepExecutionInfoResource.class)
 public class BatchStepExecutionsController extends AbstractBatchJobsController {
@@ -55,7 +55,7 @@ public class BatchStepExecutionsController extends AbstractBatchJobsController {
 	 * @return Collection of {@link StepExecutionInfoResource} for the given jobExecutionId
 	 * @throws org.springframework.batch.core.launch.NoSuchJobExecutionException Thrown if the respective {@link org.springframework.batch.core.JobExecution} does not exist
 	 */
-	@RequestMapping(value = { "" }, method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = { "" }, method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
 	public Collection<StepExecutionInfoResource> list(@PathVariable("jobExecutionId") long jobExecutionId) throws NoSuchJobExecutionException {
 

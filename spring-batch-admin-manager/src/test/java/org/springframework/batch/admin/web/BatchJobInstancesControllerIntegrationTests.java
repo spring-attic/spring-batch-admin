@@ -83,12 +83,12 @@ public class BatchJobInstancesControllerIntegrationTests extends AbstractControl
 
 		mockMvc.perform(
 				get("/batch/instances/0").accept(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
-				.andExpect(jsonPath("$.instanceId").value(0))
-				.andExpect(jsonPath("$.jobName").value("job1"))
-				.andExpect(jsonPath("$.jobExecutions[1]", Matchers.hasSize(1)))
-				.andExpect(jsonPath("$.jobExecutions[1][0].executionId").value(3))
-				.andExpect(jsonPath("$.jobExecutions[1][0].stepExecutions[1]", Matchers.hasSize(1)))
-				.andExpect(jsonPath("$.jobExecutions[1][0].stepExecutions[1][0].stepName").value("s1"));
+				.andExpect(jsonPath("$.jobInstanceInfoResource.instanceId").value(0))
+				.andExpect(jsonPath("$.jobInstanceInfoResource.jobName").value("job1"))
+				.andExpect(jsonPath("$.jobInstanceInfoResource.jobExecutions", Matchers.hasSize(1)))
+				.andExpect(jsonPath("$.jobInstanceInfoResource.jobExecutions[0].executionId").value(3))
+				.andExpect(jsonPath("$.jobInstanceInfoResource.jobExecutions[0].stepExecutions", Matchers.hasSize(1)))
+				.andExpect(jsonPath("$.jobInstanceInfoResource.jobExecutions[0].stepExecutions[0].stepName").value("s1"));
 	}
 
 	@Test
@@ -98,10 +98,10 @@ public class BatchJobInstancesControllerIntegrationTests extends AbstractControl
 
 		mockMvc.perform(
 				get("/batch/instances").param("jobname", "job1").param("startJobInstance", "0").param("pageSize", "20").accept(
-						MediaType.APPLICATION_JSON)).andExpect(status().isOk())
-				.andExpect(jsonPath("$[1]", Matchers.hasSize(2)))
-				.andExpect(jsonPath("$[1][*].instanceId", contains(0, 3)))
-				.andExpect(jsonPath("$[1][*].jobName", contains("job1", "job1")));
+						MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
+				.andExpect(jsonPath("$.jobInstanceInfoResourceList", Matchers.hasSize(2)))
+				.andExpect(jsonPath("$.jobInstanceInfoResourceList[*].instanceId", contains(0, 3)))
+				.andExpect(jsonPath("$.jobInstanceInfoResourceList[*].jobName", contains("job1", "job1")));
 	}
 
 	@Test

@@ -88,30 +88,30 @@ public class BatchJobsControllerIntegrationTests extends AbstractControllerInteg
 		mockMvc.perform(
 				get("/batch/configurations").accept(
 						MediaType.APPLICATION_JSON)).andDo(print()).andExpect(
-				status().isOk()).andExpect(jsonPath("$.content[1]", Matchers.hasSize(2))).andExpect(
-				jsonPath("$.content[1][*].executionCount", contains(2, 1))).andExpect(
-				jsonPath("$.content[1][*].launchable", contains(false, true))).andExpect(
-				jsonPath("$.content[1][*].incrementable", contains(false, true))).andExpect(
-				jsonPath("$.content[1][*].jobInstanceId", contains(nullValue(), nullValue()))).andExpect(
-				jsonPath("$.content[1][*].startTime", contains("1970-01-01T00:00:01.000Z", null))).andExpect(
-				jsonPath("$.content[1][*].endTime", contains("1970-01-01T00:00:02.000Z", null))).andExpect(
-				jsonPath("$.content[1][*].stepExecutionCount", contains(info.getStepExecutionCount(), 0))).andExpect(
-				jsonPath("$.content[1][*].jobParameters.parameters['foo'].value", contains("bar")))
+				status().isOk()).andExpect(jsonPath("$.pagedResources.content", Matchers.hasSize(2))).andExpect(
+				jsonPath("$.pagedResources.content[*].executionCount", contains(2, 1))).andExpect(
+				jsonPath("$.pagedResources.content[*].launchable", contains(false, true))).andExpect(
+				jsonPath("$.pagedResources.content[*].incrementable", contains(false, true))).andExpect(
+				jsonPath("$.pagedResources.content[*].jobInstanceId", contains(nullValue(), nullValue()))).andExpect(
+				jsonPath("$.pagedResources.content[*].startTime", contains("1970-01-01T00:00:01.000Z", null))).andExpect(
+				jsonPath("$.pagedResources.content[*].endTime", contains("1970-01-01T00:00:02.000Z", null))).andExpect(
+				jsonPath("$.pagedResources.content[*].stepExecutionCount", contains(info.getStepExecutionCount(), 0))).andExpect(
+				jsonPath("$.pagedResources.content[*].jobParameters.parameters['foo'].value", contains("bar")))
 
 				// should contain the display name (ie- without the .job suffix)
-				.andExpect(jsonPath("$.content[1][0].name", equalTo("job1"))).andExpect(
-						jsonPath("$.content[1][0].jobInstanceId", nullValue()))
+				.andExpect(jsonPath("$.pagedResources.content[0].name", equalTo("job1"))).andExpect(
+						jsonPath("$.pagedResources.content[0].jobInstanceId", nullValue()))
 
-				.andExpect(jsonPath("$.content[1][1].name", equalTo("job2"))).andExpect(
-						jsonPath("$.content[1][1].jobInstanceId", nullValue()))
+				.andExpect(jsonPath("$.pagedResources.content[1].name", equalTo("job2"))).andExpect(
+						jsonPath("$.pagedResources.content[1].jobInstanceId", nullValue()))
 
 				// exit status is non null for job 0 and null for job 1
 				.andExpect(
-						jsonPath("$.content[1][0].exitStatus.exitDescription",
+						jsonPath("$.pagedResources.content[0].exitStatus.exitDescription",
 								equalTo(execution.getExitStatus().getExitDescription()))).andExpect(
-						jsonPath("$.content[1][0].exitStatus.exitCode", equalTo(execution.getExitStatus().getExitCode()))).andExpect(
-						jsonPath("$.content[1][0].exitStatus.running", equalTo(false))).andExpect(
-						jsonPath("$.content[1][1].exitStatus", nullValue()));
+						jsonPath("$.pagedResources.content[0].exitStatus.exitCode", equalTo(execution.getExitStatus().getExitCode()))).andExpect(
+						jsonPath("$.pagedResources.content[0].exitStatus.running", equalTo(false))).andExpect(
+						jsonPath("$.pagedResources.content[1].exitStatus", nullValue()));
 	}
 
 	@Test
@@ -127,26 +127,26 @@ public class BatchJobsControllerIntegrationTests extends AbstractControllerInteg
 		mockMvc.perform(
 				get("/batch/configurations").param("page", "0").param("size", "1").accept(
 						MediaType.APPLICATION_JSON)).andDo(print()).andExpect(
-				status().isOk()).andExpect(jsonPath("$.content[1]", Matchers.hasSize(1))).andExpect(
-				jsonPath("$.content[1][*].executionCount", contains(2))).andExpect(
-				jsonPath("$.content[1][*].launchable", contains(false))).andExpect(
-				jsonPath("$.content[1][*].incrementable", contains(false))).andExpect(
-				jsonPath("$.content[1][*].jobInstanceId", contains(nullValue()))).andExpect(
-				jsonPath("$.content[1][*].startTime", contains("1970-01-01T00:00:01.000Z"))).andExpect(
-				jsonPath("$.content[1][*].endTime", contains("1970-01-01T00:00:02.000Z"))).andExpect(
-				jsonPath("$.content[1][*].stepExecutionCount", contains(info.getStepExecutionCount()))).andExpect(
-				jsonPath("$.content[1][*].jobParameters.parameters['foo'].value", contains("bar"))).andExpect(
-				jsonPath("$.content[1][*].jobParameters.parameters['foo2'].value[1]", contains(0)))
+				status().isOk()).andExpect(jsonPath("$.pagedResources.content", Matchers.hasSize(1))).andExpect(
+				jsonPath("$.pagedResources.content[*].executionCount", contains(2))).andExpect(
+				jsonPath("$.pagedResources.content[*].launchable", contains(false))).andExpect(
+				jsonPath("$.pagedResources.content[*].incrementable", contains(false))).andExpect(
+				jsonPath("$.pagedResources.content[*].jobInstanceId", contains(nullValue()))).andExpect(
+				jsonPath("$.pagedResources.content[*].startTime", contains("1970-01-01T00:00:01.000Z"))).andExpect(
+				jsonPath("$.pagedResources.content[*].endTime", contains("1970-01-01T00:00:02.000Z"))).andExpect(
+				jsonPath("$.pagedResources.content[*].stepExecutionCount", contains(info.getStepExecutionCount()))).andExpect(
+				jsonPath("$.pagedResources.content[*].jobParameters.parameters['foo'].value", contains("bar"))).andExpect(
+				jsonPath("$.pagedResources.content[*].jobParameters.parameters['foo2'].value", contains(0)))
 
 				// should contain the display name (ie- without the .job suffix)
-				.andExpect(jsonPath("$.content[1][0].name", equalTo("job1"))).andExpect(
-						jsonPath("$.content[1][0].jobInstanceId", nullValue()))
+				.andExpect(jsonPath("$.pagedResources.content[0].name", equalTo("job1"))).andExpect(
+						jsonPath("$.pagedResources.content[0].jobInstanceId", nullValue()))
 
 				.andExpect(
-						jsonPath("$.content[1][0].exitStatus.exitDescription",
+						jsonPath("$.pagedResources.content[0].exitStatus.exitDescription",
 								equalTo(execution.getExitStatus().getExitDescription()))).andExpect(
-						jsonPath("$.content[1][0].exitStatus.exitCode", equalTo(execution.getExitStatus().getExitCode()))).andExpect(
-						jsonPath("$.content[1][0].exitStatus.running", equalTo(false)));
+						jsonPath("$.pagedResources.content[0].exitStatus.exitCode", equalTo(execution.getExitStatus().getExitCode()))).andExpect(
+						jsonPath("$.pagedResources.content[0].exitStatus.running", equalTo(false)));
 	}
 
 	@Test
@@ -164,10 +164,10 @@ public class BatchJobsControllerIntegrationTests extends AbstractControllerInteg
 						.param("pageSize", "20")
 						.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk()).andDo(print())
-				.andExpect(jsonPath("$.executionCount").value(2))
-				.andExpect(jsonPath("$.launchable").value(false))
-				.andExpect(jsonPath("$.incrementable").value(false))
-				.andExpect(jsonPath("$.jobInstanceId", nullValue()));
+				.andExpect(jsonPath("$.detailedJobInfoResource.executionCount").value(2))
+				.andExpect(jsonPath("$.detailedJobInfoResource.launchable").value(false))
+				.andExpect(jsonPath("$.detailedJobInfoResource.incrementable").value(false))
+				.andExpect(jsonPath("$.detailedJobInfoResource.jobInstanceId", nullValue()));
 	}
 
 }

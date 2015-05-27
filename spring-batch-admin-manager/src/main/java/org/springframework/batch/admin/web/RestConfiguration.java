@@ -14,9 +14,15 @@
 
 package org.springframework.batch.admin.web;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.web.accept.ContentNegotiationManager;
+import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 
 /**
  * Takes care of infrastructure setup for the web/rest layer.
@@ -50,5 +56,24 @@ public class RestConfiguration {
 	@Bean
 	public BatchStepExecutionsController batchStepExecutionsController() {
 		return new BatchStepExecutionsController();
+	}
+
+	@Bean
+	public ViewResolver jsonViewResolver() {
+		return new JsonViewResolver();
+	}
+
+	@Bean
+	public ViewResolver contentNegotiatingViewResolver(ContentNegotiationManager manager) {
+		// Define the view resolvers
+		List<ViewResolver> resolvers = new ArrayList<ViewResolver>();
+
+		resolvers.add(jsonViewResolver());
+
+		// Create the CNVR plugging in the resolvers and the content-negotiation manager
+		ContentNegotiatingViewResolver resolver = new ContentNegotiatingViewResolver();
+		resolver.setViewResolvers(resolvers);
+		resolver.setContentNegotiationManager(manager);
+		return resolver;
 	}
 }

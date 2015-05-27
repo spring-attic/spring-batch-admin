@@ -32,11 +32,11 @@ import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.PagedResources;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
 
 
 /**
@@ -48,7 +48,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2.0
  * 
  */
-@RestController
+@Controller
 @RequestMapping("/batch/configurations")
 @ExposesResourceFor(DetailedJobInfoResource.class)
 public class BatchJobsController extends AbstractBatchJobsController {

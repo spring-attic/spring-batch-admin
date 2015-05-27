@@ -99,21 +99,21 @@ public class BatchJobExecutionsControllerIntegrationTests extends AbstractContro
 		mockMvc.perform(
 				get("/batch/executions").param("jobname", "job1")
 						.param("startJobExecution", "0").param("pageSize", "20").accept(
-						MediaType.APPLICATION_JSON)).andExpect(status().isOk())
-				.andExpect(jsonPath("$[1][*]", Matchers.hasSize(1)))
-				.andExpect(jsonPath("$[1][*].executionId").value(3))
-				.andExpect(jsonPath("$[1][*].jobId").value(2))
+						MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
+				.andExpect(jsonPath("$.[*]", Matchers.hasSize(1)))
+				.andExpect(jsonPath("$.[*][0].executionId").value(3))
+				.andExpect(jsonPath("$.[*][0].jobId").value(2))
 				.andExpect(
-						jsonPath("$[1][*].jobParameters.parameters.param1.value").value("test"))
+						jsonPath("$.[*][0].jobParameters.parameters.param1.value").value("test"))
 				.andExpect(
-						jsonPath("$[1][*].jobParameters.parameters.param1.type").value("STRING"))
-				.andExpect(jsonPath("$[1][*].jobParameters.parameters.param1.identifying").value(
+						jsonPath("$.[*][0].jobParameters.parameters.param1.type").value("STRING"))
+				.andExpect(jsonPath("$.[*][0].jobParameters.parameters.param1.identifying").value(
 						true))
 				.andExpect(
-						jsonPath("$[1][*].jobParameters.parameters.param2.value[1]").value(123))
+						jsonPath("$.[*][0].jobParameters.parameters.param2.value").value(123))
 				.andExpect(
-						jsonPath("$[1][*].jobParameters.parameters.param2.type").value("LONG"))
-				.andExpect(jsonPath("$[1][*].jobParameters.parameters.param2.identifying").value(
+						jsonPath("$.[*][0].jobParameters.parameters.param2.type").value("LONG"))
+				.andExpect(jsonPath("$.[*][0].jobParameters.parameters.param2.identifying").value(
 						false));
 	}
 
@@ -126,17 +126,16 @@ public class BatchJobExecutionsControllerIntegrationTests extends AbstractContro
 		mockMvc.perform(
 				get("/batch/executions").accept(
 						MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
-				.andExpect(jsonPath("$.content[1]", Matchers.hasSize(2)))
-				.andExpect(jsonPath("$.content[1][*].executionId", contains(0, 3)))
-				.andExpect(jsonPath("$.content[1][*].stepExecutions", Matchers.hasSize(2)))
-				.andExpect(jsonPath("$.content[1][*].jobId", contains(0, 2)))
-				.andExpect(jsonPath("$.content[1][*].jobParameters.parameters.param1.value", contains("test", "test")))
-				.andExpect(jsonPath("$.content[1][*].jobParameters.parameters.param1.type", contains("STRING", "STRING")))
-				.andExpect(jsonPath("$.content[1][*].jobParameters.parameters.param1.identifying", contains(true, true)))
-				.andExpect(jsonPath("$.content[1][*].jobParameters.parameters.param2.value[1]", Matchers.hasSize(2)))
-				.andExpect(jsonPath("$.content[1][*].jobParameters.parameters.param2.value[1]", contains(123, 123)))
-				.andExpect(jsonPath("$.content[1][*].jobParameters.parameters.param2.type", contains("LONG", "LONG")))
-				.andExpect(jsonPath("$.content[1][*].jobParameters.parameters.param2.identifying", contains(false, false)));
+				.andExpect(jsonPath("$.pagedResources.content", Matchers.hasSize(2)))
+				.andExpect(jsonPath("$.pagedResources.content[*].executionId", contains(0, 3)))
+				.andExpect(jsonPath("$.pagedResources.content[*].stepExecutions", Matchers.hasSize(2)))
+				.andExpect(jsonPath("$.pagedResources.content[*].jobId", contains(0, 2)))
+				.andExpect(jsonPath("$.pagedResources.content[*].jobParameters.parameters.param1.value", contains("test", "test")))
+				.andExpect(jsonPath("$.pagedResources.content[*].jobParameters.parameters.param1.type", contains("STRING", "STRING")))
+				.andExpect(jsonPath("$.pagedResources.content[*].jobParameters.parameters.param1.identifying", contains(true, true)))
+				.andExpect(jsonPath("$.pagedResources.content[*].jobParameters.parameters.param2.value", contains(123, 123)))
+				.andExpect(jsonPath("$.pagedResources.content[*].jobParameters.parameters.param2.type", contains("LONG", "LONG")))
+				.andExpect(jsonPath("$.pagedResources.content[*].jobParameters.parameters.param2.identifying", contains(false, false)));
 	}
 
 	@Test
@@ -148,7 +147,7 @@ public class BatchJobExecutionsControllerIntegrationTests extends AbstractContro
 		mockMvc.perform(
 				get("/batch/executions").param("page", "1").param("size", "5").accept(
 						MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andExpect(
-				jsonPath("$.content[*]", Matchers.hasSize(2)));
+				jsonPath("$.pagedResources.content[*]", Matchers.hasSize(2)));
 	}
 
 	@Test
@@ -157,17 +156,17 @@ public class BatchJobExecutionsControllerIntegrationTests extends AbstractContro
 		when(jobLocator.getJob("job1")).thenReturn(new JobSupport("job1"));
 
 		mockMvc.perform(
-				get("/batch/executions/0").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
-				.andExpect(jsonPath("$.executionId", Matchers.is(0)))
-				.andExpect(jsonPath("$.jobParameters.parameters.param1.type", Matchers.is("STRING")))
-				.andExpect(jsonPath("$.jobParameters.parameters.param1.identifying", Matchers.is(true)))
-				.andExpect(jsonPath("$.jobParameters.parameters.param1.value", Matchers.is("test")))
-				.andExpect(jsonPath("$.jobParameters.parameters.param2.type", Matchers.is("LONG")))
-				.andExpect(jsonPath("$.jobParameters.parameters.param2.identifying", Matchers.is(false)))
-				.andExpect(jsonPath("$.jobParameters.parameters.param2.value[1]", Matchers.is(123)))
-				.andExpect(jsonPath("$.stepExecutions", Matchers.hasSize(2)))
-				.andExpect(jsonPath("$.stepExecutionCount", Matchers.is(2)))
-				.andExpect(jsonPath("$.name", Matchers.is("job1")));
+				get("/batch/executions/0").accept(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
+				.andExpect(jsonPath("$.jobExecutionInfoResource.executionId", Matchers.is(0)))
+				.andExpect(jsonPath("$.jobExecutionInfoResource.jobParameters.parameters.param1.type", Matchers.is("STRING")))
+				.andExpect(jsonPath("$.jobExecutionInfoResource.jobParameters.parameters.param1.identifying", Matchers.is(true)))
+				.andExpect(jsonPath("$.jobExecutionInfoResource.jobParameters.parameters.param1.value", Matchers.is("test")))
+				.andExpect(jsonPath("$.jobExecutionInfoResource.jobParameters.parameters.param2.type", Matchers.is("LONG")))
+				.andExpect(jsonPath("$.jobExecutionInfoResource.jobParameters.parameters.param2.identifying", Matchers.is(false)))
+				.andExpect(jsonPath("$.jobExecutionInfoResource.jobParameters.parameters.param2.value", Matchers.is(123)))
+				.andExpect(jsonPath("$.jobExecutionInfoResource.stepExecutions", Matchers.hasSize(2)))
+				.andExpect(jsonPath("$.jobExecutionInfoResource.stepExecutionCount", Matchers.is(2)))
+				.andExpect(jsonPath("$.jobExecutionInfoResource.name", Matchers.is("job1")));
 	}
 
 	@Test
