@@ -97,23 +97,22 @@ public class BatchJobExecutionsControllerIntegrationTests extends AbstractContro
 		when(jobService.countJobExecutions()).thenReturn(1);
 
 		mockMvc.perform(
-				get("/batch/executions").param("jobname", "job1")
-						.param("startJobExecution", "0").param("pageSize", "20").accept(
+				get("/batch/executions").param("jobname", "job1").param("startJobInstance", "0").param("pageSize", "20").accept(
 						MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
-				.andExpect(jsonPath("$.[*]", Matchers.hasSize(1)))
-				.andExpect(jsonPath("$.[*][0].executionId").value(3))
-				.andExpect(jsonPath("$.[*][0].jobId").value(2))
+				.andExpect(jsonPath("$.pagedResources.content", Matchers.hasSize(1)))
+				.andExpect(jsonPath("$.pagedResources.content[0].executionId").value(3))
+				.andExpect(jsonPath("$.pagedResources.content[0].jobId").value(2))
 				.andExpect(
-						jsonPath("$.[*][0].jobParameters.parameters.param1.value").value("test"))
+						jsonPath("$.pagedResources.content[0].jobParameters.parameters.param1.value").value("test"))
 				.andExpect(
-						jsonPath("$.[*][0].jobParameters.parameters.param1.type").value("STRING"))
-				.andExpect(jsonPath("$.[*][0].jobParameters.parameters.param1.identifying").value(
+						jsonPath("$.pagedResources.content[0].jobParameters.parameters.param1.type").value("STRING"))
+				.andExpect(jsonPath("$.pagedResources.content[0].jobParameters.parameters.param1.identifying").value(
 						true))
 				.andExpect(
-						jsonPath("$.[*][0].jobParameters.parameters.param2.value").value(123))
+						jsonPath("$.pagedResources.content[0].jobParameters.parameters.param2.value").value(123))
 				.andExpect(
-						jsonPath("$.[*][0].jobParameters.parameters.param2.type").value("LONG"))
-				.andExpect(jsonPath("$.[*][0].jobParameters.parameters.param2.identifying").value(
+						jsonPath("$.pagedResources.content[0].jobParameters.parameters.param2.type").value("LONG"))
+				.andExpect(jsonPath("$.pagedResources.content[0].jobParameters.parameters.param2.identifying").value(
 						false));
 	}
 

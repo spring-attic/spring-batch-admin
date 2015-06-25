@@ -97,26 +97,27 @@ public class BatchJobExecutionsController extends AbstractBatchJobsController {
 	 * Return a paged collection of job executions for a given job.
 	 *
 	 * @param jobName name of the job
-	 * @param startJobExecution start index for the job execution list
-	 * @param pageSize page size for the list
-	 * @return collection of JobExecutionInfo
+	 * @param pageable If not provided will default to page 0 and a page size of 20
+	 * @return Collection of JobExecutionInfo
 	 */
 	@RequestMapping(value = "", method = RequestMethod.GET, params = "jobname")
 	@ResponseStatus(HttpStatus.OK)
-	public Collection<JobExecutionInfoResource> executionsForJob(@RequestParam("jobname") String jobName,
-			@RequestParam(defaultValue = "0") int startJobExecution,
-			@RequestParam(defaultValue = "20") int pageSize) {
+	public PagedResources<JobExecutionInfoResource> executionsForJob(@RequestParam("jobname") String jobName,
+			Pageable pageable) {
 
 		Collection<JobExecutionInfoResource> result = new ArrayList<JobExecutionInfoResource>();
 		try {
-			for (JobExecution jobExecution : jobService.listJobExecutionsForJob(jobName, startJobExecution, pageSize)) {
+			for (JobExecution jobExecution : jobService.listJobExecutionsForJob(jobName, pageable.getOffset(), pageable.getPageSize())) {
 				result.add(jobExecutionInfoResourceAssembler.toResource(new JobExecutionInfo(jobExecution, timeZone)));
 			}
+
+			return new PagedResources<JobExecutionInfoResource>(result,
+					new PageMetadata(pageable.getPageSize(), pageable.getPageNumber(),
+							jobService.countJobExecutionsForJob(jobName)));
 		}
 		catch (NoSuchJobException e) {
 			throw new NoSuchBatchJobException(jobName);
 		}
-		return result;
 	}
 
 	/**
@@ -127,11 +128,11 @@ public class BatchJobExecutionsController extends AbstractBatchJobsController {
 	 */
 	@RequestMapping(value = "", method = RequestMethod.POST, params = "jobname")
 	@ResponseStatus(HttpStatus.CREATED)
-	public void launchJob(@RequestParam("jobname") String name, @RequestParam(required = false) String jobParameters) throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, NoSuchJobException {
+	public void launchJob(@RequestParam("jobname") String name, @RequestParam(value = "jobParameters", required = false) String jobParameters) throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, NoSuchJobException {
 		JobParameters params = new JobParameters();
 		if(jobParameters != null) {
 			JobParametersExtractor extractor = new JobParametersExtractor();
-			extractor.fromString(jobParameters);
+			params = extractor.fromString(jobParameters);
 		}
 
 		jobService.launch(name, params);

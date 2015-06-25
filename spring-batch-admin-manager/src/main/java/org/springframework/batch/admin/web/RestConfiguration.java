@@ -59,21 +59,17 @@ public class RestConfiguration {
 	}
 
 	@Bean
-	public ViewResolver jsonViewResolver() {
-		return new JsonViewResolver();
-	}
-
-	@Bean
 	public ViewResolver contentNegotiatingViewResolver(ContentNegotiationManager manager) {
 		// Define the view resolvers
 		List<ViewResolver> resolvers = new ArrayList<ViewResolver>();
 
-		resolvers.add(jsonViewResolver());
+		resolvers.add(new JsonViewResolver());
 
 		// Create the CNVR plugging in the resolvers and the content-negotiation manager
 		ContentNegotiatingViewResolver resolver = new ContentNegotiatingViewResolver();
 		resolver.setViewResolvers(resolvers);
 		resolver.setContentNegotiationManager(manager);
+
 		return resolver;
 	}
 }

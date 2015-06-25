@@ -79,7 +79,11 @@
 	<bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping" />
 
 	<!-- Support for Freemarker beans as views -->
-	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver" />
+	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
+		<property name="order">
+			<util:constant static-field="org.springframework.core.Ordered.HIGHEST_PRECEDENCE"/>
+		</property>
+	</bean>
 
 	<bean id="baseMenu" abstract="true">
 		<property name="prefix" value="#{resourceService.servletPath}" />

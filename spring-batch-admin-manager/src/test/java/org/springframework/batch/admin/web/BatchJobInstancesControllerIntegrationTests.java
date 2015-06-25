@@ -99,9 +99,9 @@ public class BatchJobInstancesControllerIntegrationTests extends AbstractControl
 		mockMvc.perform(
 				get("/batch/instances").param("jobname", "job1").param("startJobInstance", "0").param("pageSize", "20").accept(
 						MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk())
-				.andExpect(jsonPath("$.jobInstanceInfoResourceList", Matchers.hasSize(2)))
-				.andExpect(jsonPath("$.jobInstanceInfoResourceList[*].instanceId", contains(0, 3)))
-				.andExpect(jsonPath("$.jobInstanceInfoResourceList[*].jobName", contains("job1", "job1")));
+				.andExpect(jsonPath("$.pagedResources.content", Matchers.hasSize(2)))
+				.andExpect(jsonPath("$.pagedResources.content[*].instanceId", contains(0, 3)))
+				.andExpect(jsonPath("$.pagedResources.content[*].jobName", contains("job1", "job1")));
 	}
 
 	@Test
