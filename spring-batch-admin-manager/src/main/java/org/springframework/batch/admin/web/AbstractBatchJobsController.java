@@ -20,6 +20,7 @@ import java.util.TimeZone;
 
 import org.springframework.batch.admin.service.JobService;
 import org.springframework.batch.admin.web.resource.DetailedJobInfoResourceAssembler;
+import org.springframework.batch.admin.web.resource.FileInfoResourceAssembler;
 import org.springframework.batch.admin.web.resource.JobExecutionInfoResourceAssembler;
 import org.springframework.batch.admin.web.resource.JobInstanceInfoResourceAssembler;
 import org.springframework.batch.admin.web.resource.StepExecutionInfoResourceAssembler;
@@ -50,6 +51,8 @@ public abstract class AbstractBatchJobsController {
 	protected final StepExecutionInfoResourceAssembler stepExecutionInfoResourceAssembler = new StepExecutionInfoResourceAssembler();
 
 	protected final StepExecutionProgressInfoResourceAssembler progressInfoResourceAssembler = new StepExecutionProgressInfoResourceAssembler();
+
+	protected final FileInfoResourceAssembler fileInfoResourceAssembler = new FileInfoResourceAssembler();
 
 	/**
 	 * @param timeZone the timeZone to set

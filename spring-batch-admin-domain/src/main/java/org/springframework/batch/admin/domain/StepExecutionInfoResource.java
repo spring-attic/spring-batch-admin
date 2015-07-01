@@ -16,7 +16,6 @@
 
 package org.springframework.batch.admin.domain;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -128,7 +127,7 @@ public class StepExecutionInfoResource extends ResourceSupport {
 			this.endTime = dateFormat.print(stepExecution.getEndTime().getTime());
 		}
 		else {
-			this.endTime = dateFormat.print(new Date().getTime());
+			this.endTime = "N/A";
 		}
 
 		this.lastUpdated = dateFormat.print(stepExecution.getLastUpdated().getTime());

@@ -143,7 +143,13 @@ public class JobExecutionInfoResource extends ResourceSupport {
 
 		if (jobExecution.getStartTime() != null) {
 			this.startTime = dateFormat.print(jobExecution.getStartTime().getTime());
-			this.endTime = dateFormat.print(jobExecution.getEndTime().getTime());
+
+			if(!jobExecution.isRunning()) {
+				this.endTime = dateFormat.print(jobExecution.getEndTime().getTime());
+			}
+			else {
+				this.endTime = "N/A";
+			}
 		}
 	}
 

@@ -54,6 +54,11 @@ public class RestConfiguration {
 	}
 
 	@Bean
+	public BatchFileController batchFileController() {
+		return new BatchFileController();
+	}
+
+	@Bean
 	public BatchStepExecutionsController batchStepExecutionsController() {
 		return new BatchStepExecutionsController();
 	}

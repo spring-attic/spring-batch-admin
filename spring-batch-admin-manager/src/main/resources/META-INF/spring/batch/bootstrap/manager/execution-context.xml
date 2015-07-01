@@ -11,9 +11,13 @@
 
 	<context:annotation-config />
 
-	<bean class="org.springframework.batch.core.scope.StepScope"/>
+	<bean class="org.springframework.batch.core.scope.StepScope">
+		<property name="proxyTargetClass" value="true"/>
+	</bean>
 
-	<bean class="org.springframework.batch.core.scope.JobScope"/>
+	<bean class="org.springframework.batch.core.scope.JobScope">
+		<property name="proxyTargetClass" value="true"/>
+	</bean>
 
 	<bean id="jobLauncher" class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
 		<property name="jobRepository" ref="jobRepository" />

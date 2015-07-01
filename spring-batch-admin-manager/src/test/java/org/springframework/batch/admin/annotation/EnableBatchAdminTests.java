@@ -79,7 +79,7 @@ public class EnableBatchAdminTests {
 		assertEquals(1, this.context.getBeanNamesForType(JobRepository.class).length);
 		assertEquals(1, this.context.getBeanNamesForType(JobExplorer.class).length);
 		assertEquals(1, this.context.getBeanNamesForType(JobLauncher.class).length);
-		assertEquals(9, this.context.getBeanNamesForAnnotation(Controller.class).length);
+		assertEquals(10, this.context.getBeanNamesForAnnotation(Controller.class).length);
 		assertEquals(1, this.context.getBeanNamesForType(DataSource.class).length);
 		assertEquals(1, this.context.getBeanNamesForType(PlatformTransactionManager.class).length);
 		assertEquals(1, this.context.getBeanNamesForType(JobService.class).length);
