@@ -25,19 +25,25 @@ import org.springframework.hateoas.ResourceSupport;
 @XmlRootElement
 public class FileInfoResource extends ResourceSupport {
 
-	private final String timestamp;
+	private String timestamp;
 
-	private final String path;
+	private String path;
 
-	private final String shortPath;
+	private String shortPath;
 
-	private final boolean local;
+	private boolean local;
 
-	public FileInfoResource(String timestamp, String path, String shortPath, boolean local) {
+	private int deleteCount = 0;
+
+	public FileInfoResource() {
+	}
+
+	public FileInfoResource(String timestamp, String path, String shortPath, boolean local, int deleteCount) {
 		this.timestamp = timestamp;
 		this.path = path;
 		this.shortPath = shortPath;
 		this.local = local;
+		this.deleteCount = deleteCount;
 	}
 
 	public String getTimestamp() {
@@ -54,5 +60,9 @@ public class FileInfoResource extends ResourceSupport {
 
 	public boolean isLocal() {
 		return local;
+	}
+
+	public int getDeleteCount() {
+		return deleteCount;
 	}
 }

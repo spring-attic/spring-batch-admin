@@ -40,6 +40,6 @@ public class FileInfoResourceAssembler extends ResourceAssemblerSupport<FileInfo
 
 	@Override
 	protected FileInfoResource instantiateResource(FileInfo entity) {
-		return new FileInfoResource(entity.getTimestamp(), entity.getPath(), entity.shortPath().getPath(), entity.isLocal());
+		return new FileInfoResource(entity.getTimestamp(), entity.getPath(), entity.shortPath().getPath(), entity.isLocal(), entity.getDeleteCount());
 	}
 }

@@ -86,8 +86,8 @@ public class FileInfoTests {
 
 	@Test
 	public void testCompareToWithTimestamp() throws Exception {
-		FileInfo info1 = new FileInfo("foo", "19990101.124500", false);
-		FileInfo info2 = new FileInfo("foo", "19990101.124400", false);
+		FileInfo info1 = new FileInfo("foo", "19990101.124500", false, 0);
+		FileInfo info2 = new FileInfo("foo", "19990101.124400", false, 0);
 		assertEquals(-1, info1.compareTo(info2));
 
 		ArrayList<FileInfo> list = new ArrayList<FileInfo>(Arrays.asList(info1, info2));

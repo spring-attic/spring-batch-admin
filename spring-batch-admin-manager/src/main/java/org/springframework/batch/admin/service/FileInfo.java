@@ -38,21 +38,23 @@ public class FileInfo implements Comparable<FileInfo>, Serializable {
 
 	private final boolean local;
 
+	private final int deleteCount;
+
 	public FileInfo(String path) {
-		this(path, null, true);
+		this(path, null, true, 0);
 	}
 
-	public FileInfo(String path, String timestamp, boolean local) {
+	public FileInfo(String path, String timestamp, boolean local, int deleteCount) {
 		super();
 		this.path = path.replace("\\", "/");
 		this.shortPath = extractPath(path, timestamp);
 		this.timestamp = extractTimestamp(path, timestamp);
 		this.local = local;
+		this.deleteCount = deleteCount;
 	}
 	
 	public FileInfo shortPath() {
-		FileInfo info = new FileInfo(shortPath, timestamp, local);
-		return info;
+		return new FileInfo(shortPath, timestamp, local, deleteCount);
 	}
 	
 	public String getPattern() {
@@ -110,6 +112,10 @@ public class FileInfo implements Comparable<FileInfo>, Serializable {
 
 	public String getPath() {
 		return path;
+	}
+
+	public int getDeleteCount() {
+		return deleteCount;
 	}
 
 	public String getFileName() {

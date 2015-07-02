@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.accept.ContentNegotiationManager;
+import org.springframework.web.filter.HttpPutFormContentFilter;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 
@@ -37,6 +38,11 @@ import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 @Configuration
 @Import(RestControllerAdvice.class)
 public class RestConfiguration {
+
+	@Bean
+	public HttpPutFormContentFilter putFilter() {
+		return new HttpPutFormContentFilter();
+	}
 
 	@Bean
 	public BatchJobExecutionsController batchJobExecutionsController() {
