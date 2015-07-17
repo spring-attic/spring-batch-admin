@@ -15,9 +15,10 @@
  */
 package org.springframework.batch.admin.history;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+
 import org.springframework.batch.admin.domain.CumulativeHistory;
 
 public class CumulativeHistoryTests {
@@ -35,9 +36,10 @@ public class CumulativeHistoryTests {
 		history.append(1);
 		history.append(2);
 		history.append(3);
-		assertEquals(
-				"[N=3, min=1.000000, max=3.000000, mean=2.000000, sigma=0.816497]",
-				history.toString());
+
+		String output = String.format("[N=%d, min=%f, max=%f, mean=%f, sigma=%f]", 3, 1.0f, 3.0f, 2.0f, 0.816497);
+
+		assertEquals(output, history.toString());
 	}
 
 	@Test
