@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Jackson MixIn for {@link org.springframework.batch.admin.history.StepExecutionHistory} de-serialization.
+ * Jackson MixIn for org.springframework.batch.admin.history.StepExecutionHistory de-serialization.
  * 
  * @author Ilayaperumal Gopinathan
  * @since 2.0

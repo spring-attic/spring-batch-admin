@@ -49,6 +49,10 @@ public class StepExecutionProgressInfoResource extends StepExecutionInfoResource
 	 * 
 	 * @param stepExecution Must not be null
 	 * @param stepExecutionHistory Must not be null
+	 * @param percentageComplete percentage of the step that is complete (1.0 = 100%)
+	 * @param isFinished true if the step is finished
+	 * @param duration duration of the step
+	 * @param timeZone time zone dates/times are expressed in
 	 */
 	public StepExecutionProgressInfoResource(StepExecution stepExecution, StepExecutionHistory stepExecutionHistory,
 			double percentageComplete, boolean isFinished, double duration, TimeZone timeZone) {

@@ -58,6 +58,10 @@ public class RestControllerAdvice {
 
 	/**
 	 * Handles the case where client submitted an ill valued request (missing parameter).
+	 *
+	 * @param e exception to be handled
+	 *
+	 * @return VndErrors see {@link VndErrors}
 	 */
 	@ExceptionHandler
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -69,6 +73,10 @@ public class RestControllerAdvice {
 
 	/**
 	 * Handles the general error case. Report server-side error.
+	 *
+	 * @param e the exception to be handled
+	 *
+	 * @return VndErrors see {@link VndErrors}
 	 */
 	@ExceptionHandler(Exception.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

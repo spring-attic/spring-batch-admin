@@ -58,6 +58,8 @@ public class BatchJobsController extends AbstractBatchJobsController {
 	 * 
 	 * @param pageable the paging metadata
 	 * @param assembler the paged resource assembler of type {@link org.springframework.batch.admin.domain.DetailedJobInfo}
+	 *
+	 * @return a page of {@link DetailedJobInfoResource}
 	 */
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)

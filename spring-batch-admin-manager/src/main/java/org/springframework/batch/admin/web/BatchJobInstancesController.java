@@ -87,6 +87,8 @@ public class BatchJobInstancesController extends AbstractBatchJobsController {
 	/**
 	 * Return a paged collection of job instances for a given job.
 	 *
+	 * @param pageable page request
+	 * @param assembler used to construct resources
 	 * @param jobName name of the batch job
 	 * @return collection of JobInstances by job name
 	 */

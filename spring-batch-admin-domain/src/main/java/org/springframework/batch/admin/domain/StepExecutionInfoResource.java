@@ -93,6 +93,7 @@ public class StepExecutionInfoResource extends ResourceSupport {
 
 	/**
 	 * @param stepExecution Must not be null
+	 * @param timeZone timeZone dates are represented in.
 	 */
 	public StepExecutionInfoResource(StepExecution stepExecution, TimeZone timeZone) {
 		Assert.notNull(stepExecution, "stepExecution must not be null.");
