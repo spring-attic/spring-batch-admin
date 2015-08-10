@@ -79,102 +79,102 @@
 	<bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping" />
 
 	<!-- Support for Freemarker beans as views -->
-	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
-		<property name="order">
-			<util:constant static-field="org.springframework.core.Ordered.HIGHEST_PRECEDENCE"/>
-		</property>
-	</bean>
+	<!--<bean class="org.springframework.web.servlet.view.BeanNameViewResolver">-->
+		<!--<property name="order">-->
+			<!--<util:constant static-field="org.springframework.core.Ordered.HIGHEST_PRECEDENCE"/>-->
+		<!--</property>-->
+	<!--</bean>-->
 
-	<bean id="baseMenu" abstract="true">
-		<property name="prefix" value="#{resourceService.servletPath}" />
-	</bean>
+	<!--<bean id="baseMenu" abstract="true">-->
+		<!--<property name="prefix" value="#{resourceService.servletPath}" />-->
+	<!--</bean>-->
 
-	<bean id="menuManager" class="org.springframework.batch.admin.web.resources.MenuManager" />
+	<!--<bean id="menuManager" class="org.springframework.batch.admin.web.resources.MenuManager" />-->
 
-	<bean class="org.springframework.batch.admin.web.util.HomeController">
-		<property name="defaultResources" ref="defaultResources" />
-		<property name="jsonResources" ref="jsonResources" />
-	</bean>
+	<!--<bean class="org.springframework.batch.admin.web.util.HomeController">-->
+		<!--<property name="defaultResources" ref="defaultResources" />-->
+		<!--<property name="jsonResources" ref="jsonResources" />-->
+	<!--</bean>-->
 
-	<util:properties id="defaultResources" />
-	<util:properties id="jsonResources" />
+	<!--<util:properties id="defaultResources" />-->
+	<!--<util:properties id="jsonResources" />-->
 
 	<!-- freemarker config -->
-	<bean id="freemarkerConfig" class="org.springframework.batch.admin.web.freemarker.HippyFreeMarkerConfigurer">
-		<property name="templateLoaderPaths" value="/WEB-INF/web,classpath:/org/springframework/batch/admin/web" />
-		<!-- TODO: find a way to switch this on for some template paths and not others -->
-		<property name="preferFileSystemAccess" value="false" />
-		<property name="freemarkerVariables">
-			<map>
-				<entry key="menuManager" value-ref="menuManager" />
-			</map>
-		</property>
-		<property name="freemarkerSettings">
-			<props>
-				<prop key="default_encoding">UTF-8</prop>
-				<prop key="output_encoding">UTF-8</prop>
-			</props>
-		</property>
-	</bean>
+	<!--<bean id="freemarkerConfig" class="org.springframework.batch.admin.web.freemarker.HippyFreeMarkerConfigurer">-->
+		<!--<property name="templateLoaderPaths" value="/WEB-INF/web,classpath:/org/springframework/batch/admin/web" />-->
+		<!--&lt;!&ndash; TODO: find a way to switch this on for some template paths and not others &ndash;&gt;-->
+		<!--<property name="preferFileSystemAccess" value="false" />-->
+		<!--<property name="freemarkerVariables">-->
+			<!--<map>-->
+				<!--<entry key="menuManager" value-ref="menuManager" />-->
+			<!--</map>-->
+		<!--</property>-->
+		<!--<property name="freemarkerSettings">-->
+			<!--<props>-->
+				<!--<prop key="default_encoding">UTF-8</prop>-->
+				<!--<prop key="output_encoding">UTF-8</prop>-->
+			<!--</props>-->
+		<!--</property>-->
+	<!--</bean>-->
 
-	<bean id="parentLayout" class="org.springframework.batch.admin.web.freemarker.AjaxFreeMarkerView" abstract="true">
-		<property name="viewResolver">
-			<bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
-				<property name="exposeSpringMacroHelpers" value="false" />
-				<property name="allowRequestOverride" value="true" />
-			</bean>
-		</property>
-		<property name="attributes">
-			<props merge="true">
-				<prop key="titleCode">home.title</prop>
-				<prop key="titleText">Spring Batch Admin</prop>
-			</props>
-		</property>
-	</bean>
+	<!--<bean id="parentLayout" class="org.springframework.batch.admin.web.freemarker.AjaxFreeMarkerView" abstract="true">-->
+		<!--<property name="viewResolver">-->
+			<!--<bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">-->
+				<!--<property name="exposeSpringMacroHelpers" value="false" />-->
+				<!--<property name="allowRequestOverride" value="true" />-->
+			<!--</bean>-->
+		<!--</property>-->
+		<!--<property name="attributes">-->
+			<!--<props merge="true">-->
+				<!--<prop key="titleCode">home.title</prop>-->
+				<!--<prop key="titleText">Spring Batch Admin</prop>-->
+			<!--</props>-->
+		<!--</property>-->
+	<!--</bean>-->
 
-	<bean id="standard" parent="parentLayout">
-		<property name="url" value="/layouts/html/standard.ftl" />
-		<property name="contentType" value="text/html;charset=UTF-8" />
-		<property name="attributes">
-			<props merge="true">
-				<prop key="body">/layouts/html/home.ftl</prop>
-				<!-- Matches the prefix of the servlet mapping in web.xml -->
-				<prop key="servletPath">#{resourceService.servletPath}</prop>
-			</props>
-		</property>
-	</bean>
+	<!--<bean id="standard" parent="parentLayout">-->
+		<!--<property name="url" value="/layouts/html/standard.ftl" />-->
+		<!--<property name="contentType" value="text/html;charset=UTF-8" />-->
+		<!--<property name="attributes">-->
+			<!--<props merge="true">-->
+				<!--<prop key="body">/layouts/html/home.ftl</prop>-->
+				<!--&lt;!&ndash; Matches the prefix of the servlet mapping in web.xml &ndash;&gt;-->
+				<!--<prop key="servletPath">#{resourceService.servletPath}</prop>-->
+			<!--</props>-->
+		<!--</property>-->
+	<!--</bean>-->
 
-	<bean id="standard.rss" parent="parentLayout">
-		<property name="url" value="/layouts/rss/standard.ftl" />
-		<property name="attributes">
-			<props merge="true">
-				<prop key="body">/layouts/rss/home.ftl</prop>
-				<!-- Matches the prefix of the servlet mapping in web.xml -->
-				<prop key="servletPath">#{resourceService.servletPath}</prop>
-			</props>
-		</property>
-		<property name="contentType" value="text/xml" />
-	</bean>
+	<!--<bean id="standard.rss" parent="parentLayout">-->
+		<!--<property name="url" value="/layouts/rss/standard.ftl" />-->
+		<!--<property name="attributes">-->
+			<!--<props merge="true">-->
+				<!--<prop key="body">/layouts/rss/home.ftl</prop>-->
+				<!--&lt;!&ndash; Matches the prefix of the servlet mapping in web.xml &ndash;&gt;-->
+				<!--<prop key="servletPath">#{resourceService.servletPath}</prop>-->
+			<!--</props>-->
+		<!--</property>-->
+		<!--<property name="contentType" value="text/xml" />-->
+	<!--</bean>-->
 
-	<bean id="standard.json" parent="parentLayout">
-		<property name="url" value="/layouts/json/standard.ftl" />
-		<property name="attributes">
-			<props merge="true">
-				<!-- Matches the prefix of the servlet mapping in web.xml -->
-				<prop key="servletPath">#{resourceService.servletPath}</prop>
-			</props>
-		</property>
-		<property name="contentType" value="application/json" />
-	</bean>
+	<!--<bean id="standard.json" parent="parentLayout">-->
+		<!--<property name="url" value="/layouts/json/standard.ftl" />-->
+		<!--<property name="attributes">-->
+			<!--<props merge="true">-->
+				<!--&lt;!&ndash; Matches the prefix of the servlet mapping in web.xml &ndash;&gt;-->
+				<!--<prop key="servletPath">#{resourceService.servletPath}</prop>-->
+			<!--</props>-->
+		<!--</property>-->
+		<!--<property name="contentType" value="application/json" />-->
+	<!--</bean>-->
 
-	<bean id="home" parent="standard" />
+	<!--<bean id="home" parent="standard" />-->
 
-	<bean id="home.json" parent="standard.json">
-		<property name="attributes">
-			<props merge="true">
-				<prop key="body">/layouts/json/home.ftl</prop>
-			</props>
-		</property>
-	</bean>
+	<!--<bean id="home.json" parent="standard.json">-->
+		<!--<property name="attributes">-->
+			<!--<props merge="true">-->
+				<!--<prop key="body">/layouts/json/home.ftl</prop>-->
+			<!--</props>-->
+		<!--</property>-->
+	<!--</bean>-->
 
 </beans>

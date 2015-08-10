@@ -3,203 +3,203 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
                                  http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<bean class="org.springframework.batch.admin.web.HomeMenu" parent="baseMenu"/>
-	<bean class="org.springframework.batch.admin.web.JobsMenu" parent="baseMenu"/>
-	<bean class="org.springframework.batch.admin.web.ExecutionsMenu" parent="baseMenu"/>
-	<bean class="org.springframework.batch.admin.web.FilesMenu" parent="baseMenu"/>
+	<!--<bean class="org.springframework.batch.admin.web.HomeMenu" parent="baseMenu"/>-->
+	<!--<bean class="org.springframework.batch.admin.web.JobsMenu" parent="baseMenu"/>-->
+	<!--<bean class="org.springframework.batch.admin.web.ExecutionsMenu" parent="baseMenu"/>-->
+	<!--<bean class="org.springframework.batch.admin.web.FilesMenu" parent="baseMenu"/>-->
 
-	<bean name="jobs" parent="standard">
-		<property name="attributes">
-			<props merge="true">
-				<prop key="body">/manager/jobs/html/jobs.ftl</prop>
-				<prop key="titleCode">jobs.title</prop>
-				<prop key="titleText">Spring Batch Admin: Jobs</prop>
-			</props>
-		</property>
-	</bean>
+	<!--<bean name="jobs" parent="standard">-->
+		<!--<property name="attributes">-->
+			<!--<props merge="true">-->
+				<!--<prop key="body">/manager/jobs/html/jobs.ftl</prop>-->
+				<!--<prop key="titleCode">jobs.title</prop>-->
+				<!--<prop key="titleText">Spring Batch Admin: Jobs</prop>-->
+			<!--</props>-->
+		<!--</property>-->
+	<!--</bean>-->
 
-	<bean name="jobs.json" parent="standard.json">
-		<property name="attributes">
-			<props merge="true">
-				<prop key="body">/manager/jobs/json/jobs.ftl</prop>
-			</props>
-		</property>
-	</bean>
+	<!--<bean name="jobs.json" parent="standard.json">-->
+		<!--<property name="attributes">-->
+			<!--<props merge="true">-->
+				<!--<prop key="body">/manager/jobs/json/jobs.ftl</prop>-->
+			<!--</props>-->
+		<!--</property>-->
+	<!--</bean>-->
 
-	<bean name="jobs/job" parent="standard">
-		<property name="attributes">
-			<props merge="true">
-				<prop key="body">/manager/jobs/html/job.ftl</prop>
-				<prop key="titleCode">job.title</prop>
-				<prop key="titleText">Spring Batch Admin: Job Summary</prop>
-			</props>
-		</property>
-	</bean>
+	<!--<bean name="jobs/job" parent="standard">-->
+		<!--<property name="attributes">-->
+			<!--<props merge="true">-->
+				<!--<prop key="body">/manager/jobs/html/job.ftl</prop>-->
+				<!--<prop key="titleCode">job.title</prop>-->
+				<!--<prop key="titleText">Spring Batch Admin: Job Summary</prop>-->
+			<!--</props>-->
+		<!--</property>-->
+	<!--</bean>-->
 
-	<bean name="jobs/job.json" parent="standard.json">
-		<property name="attributes">
-			<props merge="true">
-				<prop key="body">/manager/jobs/json/job.ftl</prop>
-			</props>
-		</property>
-	</bean>
+	<!--<bean name="jobs/job.json" parent="standard.json">-->
+		<!--<property name="attributes">-->
+			<!--<props merge="true">-->
+				<!--<prop key="body">/manager/jobs/json/job.ftl</prop>-->
+			<!--</props>-->
+		<!--</property>-->
+	<!--</bean>-->
 
-	<bean name="jobs/executions" parent="standard">
-		<property name="attributes">
-			<props merge="true">
-				<prop key="body">/manager/jobs/html/executions.ftl</prop>
-				<prop key="feedPath">/jobs/executions.rss</prop>
-				<prop key="titleCode">job.executions.title</prop>
-				<prop key="titleText">Spring Batch Admin: Job Executions</prop>
-			</props>
-		</property>
-	</bean>
+	<!--<bean name="jobs/executions" parent="standard">-->
+		<!--<property name="attributes">-->
+			<!--<props merge="true">-->
+				<!--<prop key="body">/manager/jobs/html/executions.ftl</prop>-->
+				<!--<prop key="feedPath">/jobs/executions.rss</prop>-->
+				<!--<prop key="titleCode">job.executions.title</prop>-->
+				<!--<prop key="titleText">Spring Batch Admin: Job Executions</prop>-->
+			<!--</props>-->
+		<!--</property>-->
+	<!--</bean>-->
 
-	<bean name="jobs/executions.json" parent="standard.json">
-		<property name="attributes">
-			<props merge="true">
-				<prop key="body">/manager/jobs/json/executions.ftl</prop>
-			</props>
-		</property>
-	</bean>
+	<!--<bean name="jobs/executions.json" parent="standard.json">-->
+		<!--<property name="attributes">-->
+			<!--<props merge="true">-->
+				<!--<prop key="body">/manager/jobs/json/executions.ftl</prop>-->
+			<!--</props>-->
+		<!--</property>-->
+	<!--</bean>-->
 
-	<bean name="jobs/executions.rss" parent="standard.rss">
-		<property name="attributes">
-			<props merge="true">
-				<prop key="body">/manager/jobs/rss/executions.ftl</prop>
-			</props>
-		</property>
-	</bean>
+	<!--<bean name="jobs/executions.rss" parent="standard.rss">-->
+		<!--<property name="attributes">-->
+			<!--<props merge="true">-->
+				<!--<prop key="body">/manager/jobs/rss/executions.ftl</prop>-->
+			<!--</props>-->
+		<!--</property>-->
+	<!--</bean>-->
 
-	<bean name="jobs/execution" parent="standard">
-		<property name="attributes">
-			<props merge="true">
-				<prop key="body">/manager/jobs/html/execution.ftl</prop>
-				<prop key="titleCode">job.execution.title</prop>
-				<prop key="titleText">Spring Batch Admin: Job Execution</prop>
-			</props>
-		</property>
-	</bean>
+	<!--<bean name="jobs/execution" parent="standard">-->
+		<!--<property name="attributes">-->
+			<!--<props merge="true">-->
+				<!--<prop key="body">/manager/jobs/html/execution.ftl</prop>-->
+				<!--<prop key="titleCode">job.execution.title</prop>-->
+				<!--<prop key="titleText">Spring Batch Admin: Job Execution</prop>-->
+			<!--</props>-->
+		<!--</property>-->
+	<!--</bean>-->
 
-	<bean name="jobs/execution.json" parent="standard.json">
-		<property name="attributes">
-			<props merge="true">
-				<prop key="body">/manager/jobs/json/execution.ftl</prop>
-				<prop key="titleCode">job.execution.title</prop>
-				<prop key="titleText">Spring Batch Admin: Job Execution</prop>
-			</props>
-		</property>
-	</bean>
+	<!--<bean name="jobs/execution.json" parent="standard.json">-->
+		<!--<property name="attributes">-->
+			<!--<props merge="true">-->
+				<!--<prop key="body">/manager/jobs/json/execution.ftl</prop>-->
+				<!--<prop key="titleCode">job.execution.title</prop>-->
+				<!--<prop key="titleText">Spring Batch Admin: Job Execution</prop>-->
+			<!--</props>-->
+		<!--</property>-->
+	<!--</bean>-->
 
-	<bean name="jobs/executions/steps" parent="standard">
-		<property name="attributes">
-			<props merge="true">
-				<prop key="body">/manager/steps/html/executions.ftl</prop>
-				<prop key="titleCode">step.executions.title</prop>
-				<prop key="titleText">Spring Batch Admin: Step Executions</prop>
-			</props>
-		</property>
-	</bean>
+	<!--<bean name="jobs/executions/steps" parent="standard">-->
+		<!--<property name="attributes">-->
+			<!--<props merge="true">-->
+				<!--<prop key="body">/manager/steps/html/executions.ftl</prop>-->
+				<!--<prop key="titleCode">step.executions.title</prop>-->
+				<!--<prop key="titleText">Spring Batch Admin: Step Executions</prop>-->
+			<!--</props>-->
+		<!--</property>-->
+	<!--</bean>-->
 
-	<bean name="jobs/executions/step" parent="standard">
-		<property name="attributes">
-			<props merge="true">
-				<prop key="body">/manager/steps/html/execution.ftl</prop>
-				<prop key="titleCode">step.execution.title</prop>
-				<prop key="titleText">Spring Batch Admin: Step Execution Summary</prop>
-			</props>
-		</property>
-	</bean>
+	<!--<bean name="jobs/executions/step" parent="standard">-->
+		<!--<property name="attributes">-->
+			<!--<props merge="true">-->
+				<!--<prop key="body">/manager/steps/html/execution.ftl</prop>-->
+				<!--<prop key="titleCode">step.execution.title</prop>-->
+				<!--<prop key="titleText">Spring Batch Admin: Step Execution Summary</prop>-->
+			<!--</props>-->
+		<!--</property>-->
+	<!--</bean>-->
 
-	<bean name="jobs/executions/step.json" parent="standard.json">
-		<property name="attributes">
-			<props merge="true">
-				<prop key="body">/manager/steps/json/execution.ftl</prop>
-				<prop key="titleCode">step.execution.title</prop>
-				<prop key="titleText">Spring Batch Admin: Step Execution</prop>
-			</props>
-		</property>
-	</bean>
+	<!--<bean name="jobs/executions/step.json" parent="standard.json">-->
+		<!--<property name="attributes">-->
+			<!--<props merge="true">-->
+				<!--<prop key="body">/manager/steps/json/execution.ftl</prop>-->
+				<!--<prop key="titleCode">step.execution.title</prop>-->
+				<!--<prop key="titleText">Spring Batch Admin: Step Execution</prop>-->
+			<!--</props>-->
+		<!--</property>-->
+	<!--</bean>-->
 
-	<bean name="jobs/executions/step/history" parent="standard">
-		<property name="attributes">
-			<props merge="true">
-				<prop key="body">/manager/steps/html/history.ftl</prop>
-				<prop key="titleCode">step.history.title</prop>
-				<prop key="titleText">Spring Batch Admin: Step Execution History</prop>
-			</props>
-		</property>
-	</bean>
+	<!--<bean name="jobs/executions/step/history" parent="standard">-->
+		<!--<property name="attributes">-->
+			<!--<props merge="true">-->
+				<!--<prop key="body">/manager/steps/html/history.ftl</prop>-->
+				<!--<prop key="titleCode">step.history.title</prop>-->
+				<!--<prop key="titleText">Spring Batch Admin: Step Execution History</prop>-->
+			<!--</props>-->
+		<!--</property>-->
+	<!--</bean>-->
 
-	<bean name="jobs/executions/step/progress" parent="standard">
-		<property name="attributes">
-			<props merge="true">
-				<prop key="body">/manager/steps/html/progress.ftl</prop>
-				<prop key="history">/manager/steps/html/history.ftl</prop>
-				<prop key="execution">/manager/steps/html/execution.ftl</prop>
-				<prop key="titleCode">step.progress.title</prop>
-				<prop key="titleText">Spring Batch Admin: Step Execution Progress</prop>
-			</props>
-		</property>
-	</bean>
+	<!--<bean name="jobs/executions/step/progress" parent="standard">-->
+		<!--<property name="attributes">-->
+			<!--<props merge="true">-->
+				<!--<prop key="body">/manager/steps/html/progress.ftl</prop>-->
+				<!--<prop key="history">/manager/steps/html/history.ftl</prop>-->
+				<!--<prop key="execution">/manager/steps/html/execution.ftl</prop>-->
+				<!--<prop key="titleCode">step.progress.title</prop>-->
+				<!--<prop key="titleText">Spring Batch Admin: Step Execution Progress</prop>-->
+			<!--</props>-->
+		<!--</property>-->
+	<!--</bean>-->
 
-	<bean name="redirect:files" class="org.springframework.web.servlet.view.RedirectView">
-		<property name="url" value="#{resourceService.servletPath}/files" />
-		<property name="contextRelative" value="true" />
-	</bean>
+	<!--<bean name="redirect:files" class="org.springframework.web.servlet.view.RedirectView">-->
+		<!--<property name="url" value="#{resourceService.servletPath}/files" />-->
+		<!--<property name="contextRelative" value="true" />-->
+	<!--</bean>-->
 
-	<bean name="files" parent="standard">
-		<property name="attributes">
-			<props merge="true">
-				<prop key="body">/manager/files/html/files.ftl</prop>
-				<prop key="side">/manager/files/html/side.ftl</prop>
-				<prop key="titleCode">files.title</prop>
-				<prop key="titleText">Spring Batch Admin: Input File Uploads</prop>
-			</props>
-		</property>
-	</bean>
+	<!--<bean name="files" parent="standard">-->
+		<!--<property name="attributes">-->
+			<!--<props merge="true">-->
+				<!--<prop key="body">/manager/files/html/files.ftl</prop>-->
+				<!--<prop key="side">/manager/files/html/side.ftl</prop>-->
+				<!--<prop key="titleCode">files.title</prop>-->
+				<!--<prop key="titleText">Spring Batch Admin: Input File Uploads</prop>-->
+			<!--</props>-->
+		<!--</property>-->
+	<!--</bean>-->
 
-	<bean name="files.json" parent="standard.json">
-		<property name="attributes">
-			<props merge="true">
-				<prop key="body">/manager/files/json/files.ftl</prop>
-			</props>
-		</property>
-	</bean>
+	<!--<bean name="files.json" parent="standard.json">-->
+		<!--<property name="attributes">-->
+			<!--<props merge="true">-->
+				<!--<prop key="body">/manager/files/json/files.ftl</prop>-->
+			<!--</props>-->
+		<!--</property>-->
+	<!--</bean>-->
 
-	<bean name="configuration" parent="standard">
-		<property name="attributes">
-			<props merge="true">
-				<prop key="body">/manager/files/html/configuration.ftl</prop>
-				<prop key="side">/manager/files/html/side.ftl</prop>
-				<prop key="titleCode">configuration.title</prop>
-				<prop key="titleText">Spring Batch Admin: Job Configuration Upload</prop>
-			</props>
-		</property>
-	</bean>
-    <bean name="jobs/executions/execution-context.json" parent="standard.json">
-        <property name="attributes">
-            <props merge="true">
-                <prop key="body">/manager/jobs/json/executionContext.ftl</prop>
-                <prop key="titleCode">.execution.context.title</prop>
-                <prop key="titleText">Spring Batch Admin: Job Execution Context</prop>
-            </props>
-        </property>
-    </bean>
+	<!--<bean name="configuration" parent="standard">-->
+		<!--<property name="attributes">-->
+			<!--<props merge="true">-->
+				<!--<prop key="body">/manager/files/html/configuration.ftl</prop>-->
+				<!--<prop key="side">/manager/files/html/side.ftl</prop>-->
+				<!--<prop key="titleCode">configuration.title</prop>-->
+				<!--<prop key="titleText">Spring Batch Admin: Job Configuration Upload</prop>-->
+			<!--</props>-->
+		<!--</property>-->
+	<!--</bean>-->
+    <!--<bean name="jobs/executions/execution-context.json" parent="standard.json">-->
+        <!--<property name="attributes">-->
+            <!--<props merge="true">-->
+                <!--<prop key="body">/manager/jobs/json/executionContext.ftl</prop>-->
+                <!--<prop key="titleCode">.execution.context.title</prop>-->
+                <!--<prop key="titleText">Spring Batch Admin: Job Execution Context</prop>-->
+            <!--</props>-->
+        <!--</property>-->
+    <!--</bean>-->
 
-    <bean name="jobs/executions/step/execution-context.json" parent="standard.json">
-        <property name="attributes">
-            <props merge="true">
-                <prop key="body">/manager/steps/json/executionContext.ftl</prop>
-                <prop key="titleCode">step.execution.context.title</prop>
-                <prop key="titleText">Spring Batch Admin: Step Execution Context</prop>
-            </props>
-        </property>
-    </bean>
+    <!--<bean name="jobs/executions/step/execution-context.json" parent="standard.json">-->
+        <!--<property name="attributes">-->
+            <!--<props merge="true">-->
+                <!--<prop key="body">/manager/steps/json/executionContext.ftl</prop>-->
+                <!--<prop key="titleCode">step.execution.context.title</prop>-->
+                <!--<prop key="titleText">Spring Batch Admin: Step Execution Context</prop>-->
+            <!--</props>-->
+        <!--</property>-->
+    <!--</bean>-->
 
-    <bean id="configurationHandler" name="/configuration" class="org.springframework.batch.admin.web.ViewHandler">
-        <property name="view" ref="configuration" />
-    </bean>
+    <!--<bean id="configurationHandler" name="/configuration" class="org.springframework.batch.admin.web.ViewHandler">-->
+        <!--<property name="view" ref="configuration" />-->
+    <!--</bean>-->
 
 </beans>
 

@@ -12,17 +12,17 @@
 	<bean class="org.springframework.batch.admin.web.JobExecutionController" />
 
 	<!-- Override the location of the resource descriptors for the home page -->
-	<util:properties id="defaultResources" location="classpath:/org/springframework/batch/admin/web/manager/html-resources.properties" />
-	<util:properties id="jsonResources" location="classpath:/org/springframework/batch/admin/web/manager/json-resources.properties" />
-	
-	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
-		<property name="basenames">
-			<list>
-				<value>org/springframework/batch/admin/web/manager/html-resources</value>
-				<value>org/springframework/batch/admin/web/manager/json-resources</value>
-			</list>
-		</property>
-	</bean>
+	<!--<util:properties id="defaultResources" location="classpath:/org/springframework/batch/admin/web/managerOld/html-resources.properties" />-->
+	<!--<util:properties id="jsonResources" location="classpath:/org/springframework/batch/admin/web/managerOld/json-resources.properties" />-->
+	<!-- -->
+	<!--<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">-->
+		<!--<property name="basenames">-->
+			<!--<list>-->
+				<!--<value>org/springframework/batch/admin/web/manager/html-resources</value>-->
+				<!--<value>org/springframework/batch/admin/web/manager/json-resources</value>-->
+			<!--</list>-->
+		<!--</property>-->
+	<!--</bean>-->
 
 	<bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper"/>
 </beans>
