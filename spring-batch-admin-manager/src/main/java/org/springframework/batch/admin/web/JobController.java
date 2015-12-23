@@ -93,6 +93,9 @@ public class JobController {
 	@ModelAttribute("jobName")
 	public String getJobName(HttpServletRequest request) {
 		String path = request.getPathInfo();
+		if(path==null) {
+			path=request.getServletPath();
+		}
 		int index = path.lastIndexOf("jobs/") + 5;
 		if (index >= 0) {
 			path = path.substring(index);
