@@ -15,9 +15,19 @@
  */
 package org.springframework.batch.admin.service;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.ContextResource;
@@ -28,13 +38,6 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternUtils;
 import org.springframework.util.Assert;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * An implementation of {@link FileService} that deals with files only in the
@@ -93,6 +96,16 @@ public class LocalFileService implements FileService, InitializingBean, Resource
 		}
 
 		File directory = new File(outputDir, parent);
+
+		try {
+			if(!new URI(directory.getAbsolutePath()).normalize().getPath().startsWith(this.outputDir.getAbsolutePath())) {
+				throw new IllegalArgumentException("Can not write to directory: " + directory.getAbsolutePath());
+			}
+		}
+		catch (URISyntaxException e) {
+			throw new IOException(e);
+		}
+
 		directory.mkdirs();
 		Assert.state(directory.exists() && directory.isDirectory(), "Could not create directory: " + directory);
 
@@ -244,6 +257,7 @@ public class LocalFileService implements FileService, InitializingBean, Resource
 				path = path.substring(1);
 			}
 		}
+
 		return path;
 	}
 
