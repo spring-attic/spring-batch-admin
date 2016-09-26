@@ -2,7 +2,6 @@ package org.springframework.batch.admin.service;
 
 import java.io.File;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Before;
@@ -49,8 +48,14 @@ public class LocalFileServiceIntegrationTests {
 
 	@Before
 	public void setUp() throws Exception {
-		System.out.println(">> temp dir = " + System.getProperty("java.io.tmpdir"));
-		FileUtils.deleteDirectory(service.getUploadDirectory());
+		File bucket = new File(service.getUploadDirectory(), "spam/bucket");
+		if(bucket.exists()) {
+			bucket.delete();
+		}
+		File crap = new File(service.getUploadDirectory(), "spam/bucket/crap");
+		if(crap.exists()) {
+			crap.delete();
+		}
 		files.unsubscribe(handler);
 		files.subscribe(handler);
 	}

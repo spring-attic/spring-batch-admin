@@ -81,8 +81,6 @@ public class LocalFileService implements FileService, InitializingBean, Resource
 		}
 		Assert.state(outputDir.exists(), "Output directory does not exist " + outputDir);
 		Assert.state(outputDir.isDirectory(), "Output file is not a directory " + outputDir);
-
-		System.out.println(">> OUTPUT DIR = " + outputDir.getAbsolutePath());
 	}
 
 	public FileInfo createFile(String path) throws IOException {
@@ -100,11 +98,9 @@ public class LocalFileService implements FileService, InitializingBean, Resource
 		File directory = new File(outputDir, parent);
 
 		try {
-			System.out.println(">> Requested Path: " + new URI(directory.getAbsolutePath()).normalize().getPath());
-			System.out.println(">> Output Path: " + new URI(this.outputDir.getAbsolutePath()).normalize().getPath());
-		if(!new URI(directory.getAbsolutePath()).normalize().getPath().startsWith(this.outputDir.getAbsolutePath())) {
-			throw new IllegalArgumentException("Can not write to directory: " + directory.getAbsolutePath());
-		}
+			if(!new URI(directory.getAbsolutePath()).normalize().getPath().startsWith(this.outputDir.getAbsolutePath())) {
+				throw new IllegalArgumentException("Can not write to directory: " + directory.getAbsolutePath());
+			}
 		}
 		catch (URISyntaxException e) {
 			throw new IOException(e);
@@ -115,7 +111,6 @@ public class LocalFileService implements FileService, InitializingBean, Resource
 
 		FileInfo result = new FileInfo(path);
 		File dest = new File(outputDir, result.getFileName());
-		System.out.println(">> file name = " + result.getFileName());
 		dest.createNewFile();
 
 		return result;
