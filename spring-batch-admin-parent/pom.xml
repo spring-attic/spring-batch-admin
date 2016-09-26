@@ -24,17 +24,17 @@
 		<developer>
 			<id>dsyer</id>
 			<name>Dave Syer</name>
-			<email>dsyer@vmware.com</email>
+			<email>dsyer@pivotal.io</email>
 		</developer>
 		<developer>
 			<id>mminella</id>
 			<name>Michael Minella</name>
-			<email>mminella@vmware.com</email>
+			<email>mminella@pivotal.io</email>
 		</developer>
 		<developer>
 			<id>cschaefer</id>
 			<name>Chris Schaefer</name>
-			<email>cschaefer@gopivotal.com</email>
+			<email>cschaefer@pivotal.io</email>
 		</developer>
 	</developers>
 	<properties>

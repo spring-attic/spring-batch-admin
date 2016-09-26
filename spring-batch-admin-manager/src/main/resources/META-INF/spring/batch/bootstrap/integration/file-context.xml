@@ -15,6 +15,7 @@
 	<bean id="fileService" class="org.springframework.batch.admin.service.LocalFileService"
 			xmlns="http://www.springframework.org/schema/beans">
 		<property name="fileSender" ref="fileSender" />
+		<property name="outputDir" value="${batch.files.upload-dir:#{systemProperties['java.io.tmpdir']}}"/>
 	</bean>
 
 	<bean id="customEditorConfigurer" class="org.springframework.beans.factory.config.CustomEditorConfigurer"

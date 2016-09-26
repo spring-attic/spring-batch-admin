@@ -81,6 +81,12 @@ Getting Started with Spring Batch Admin
     wiped and re-created just set <<<batch.data.source.init=false>>>
     (in the properties file or as a System property).
 
+    * To configure where input files are uploaded to, add the property <<batch.files.upload-dir=/sba/input>>
+    to one of your batch configuration files.  By default, the java temp directory is used
+    <<System.getProperty("java.io.tmpdir")>>.  It's important to note that files are not
+    permitted to be uploaded into any directory other than the one configured or a
+    subdirectory of it.
+
 * Overriding Components from Spring Batch Admin
 
   The system tries to provide some useful defaults for things like transaction manager,
