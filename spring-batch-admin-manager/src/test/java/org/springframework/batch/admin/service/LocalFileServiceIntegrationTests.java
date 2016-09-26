@@ -1,8 +1,5 @@
 package org.springframework.batch.admin.service;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 
 import org.apache.commons.io.FileUtils;
@@ -11,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.Resource;
@@ -22,6 +20,9 @@ import org.springframework.integration.core.MessageHandler;
 import org.springframework.integration.core.SubscribableChannel;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @ContextConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -48,6 +49,7 @@ public class LocalFileServiceIntegrationTests {
 
 	@Before
 	public void setUp() throws Exception {
+		System.out.println(">> temp dir = " + System.getProperty("java.io.tmpdir"));
 		FileUtils.deleteDirectory(service.getUploadDirectory());
 		files.unsubscribe(handler);
 		files.subscribe(handler);
