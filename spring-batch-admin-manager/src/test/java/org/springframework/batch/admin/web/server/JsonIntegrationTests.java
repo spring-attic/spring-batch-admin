@@ -180,7 +180,7 @@ public class JsonIntegrationTests {
 		RestTemplate template = new RestTemplate();
 
 		PropertiesFactoryBean propertiesFactoryBean = new PropertiesFactoryBean();
-		propertiesFactoryBean.setLocation(new ClassPathResource("/org/springframework/batch/admin/web/managerOld/json-resources.properties"));
+		propertiesFactoryBean.setLocation(new ClassPathResource("/org/springframework/batch/admin/web/manager/json-resources.properties"));
 		propertiesFactoryBean.afterPropertiesSet();
 		Properties properties = propertiesFactoryBean.getObject();
 
