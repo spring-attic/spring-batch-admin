@@ -15,9 +15,6 @@
  */
 package org.springframework.batch.admin.launch;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
@@ -39,8 +37,12 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.poller.DirectPoller;
 import org.springframework.batch.test.JobRepositoryTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 @ContextConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -69,6 +71,7 @@ public class JobLauncherSynchronizerIntegrationTests {
 	}
 
 	@Test
+	@DirtiesContext
 	public void testFakeRestart() throws Exception {
 
 		// Test if we can fake a restart by creating a job execution and failing
@@ -99,6 +102,7 @@ public class JobLauncherSynchronizerIntegrationTests {
 	}
 
 	@Test
+	@DirtiesContext
 	public void testLaunchWithJobRunning() throws Exception {
 		JobExecution jobExecution;
 		jobExecution = jobRepositoryTestUtils.createJobExecutions("test-job", new String[0], 1).get(0);
@@ -122,6 +126,7 @@ public class JobLauncherSynchronizerIntegrationTests {
 	}
 
 	@Test
+	@DirtiesContext
 	public void testLaunchWithJobRunningButFails() throws Exception {
 
 		jobRepositoryTestUtils.removeJobExecutions();
@@ -172,6 +177,7 @@ public class JobLauncherSynchronizerIntegrationTests {
 	}
 
 	@Test
+	@DirtiesContext
 	public void testAbandonedWhenCheckJobDuringLaunchFails() throws Exception {
 
 		jobRepositoryTestUtils.removeJobExecutions();
