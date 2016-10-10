@@ -15,6 +15,8 @@
  */
 package org.springframework.batch.admin.domain;
 
+import java.util.Locale;
+
 public class CumulativeHistory {
 
 	private int count;
@@ -60,7 +62,7 @@ public class CumulativeHistory {
 
 	@Override
 	public String toString() {
-		return String.format("[N=%d, min=%f, max=%f, mean=%f, sigma=%f]", count, min, max, getMean(),
+		return String.format(Locale.ENGLISH, "[N=%d, min=%f, max=%f, mean=%f, sigma=%f]", count, min, max, getMean(),
 				getStandardDeviation());
 	}
 
