@@ -5,7 +5,7 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
 
 /**
@@ -14,12 +14,12 @@ import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer
  */
 public class StagingWriter implements ItemWriter<String> {
 
-	private SimpleJdbcTemplate jdbcTemplate;
+	private JdbcTemplate jdbcTemplate;
 	
 	private DataFieldMaxValueIncrementer incrementer;
 
 	public void setDataSource(DataSource dataSource) {
-		jdbcTemplate = new SimpleJdbcTemplate(dataSource);
+		jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 	
 	public void setIncrementer(DataFieldMaxValueIncrementer incrementer) {

@@ -31,7 +31,7 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
@@ -48,18 +48,18 @@ public class StagingJobTests {
 	@Autowired
 	private Job job;
 
-	private SimpleJdbcTemplate jdbcTemplate;
+	private JdbcTemplate jdbcTemplate;
 
 	@Autowired
 	public void setDataSource(DataSource dataSource) {
-		jdbcTemplate = new SimpleJdbcTemplate(dataSource);
+		jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
 	@Test
 	@DirtiesContext
 	public void testSmallLaunch() throws Exception {
 
-		int before = jdbcTemplate.queryForInt("SELECT COUNT(1) from LEAD_INPUTS");
+		int before = jdbcTemplate.queryForObject("SELECT COUNT(1) from LEAD_INPUTS", Integer.class);
 
 		JobParameters jobParameters = new JobParametersBuilder().addString("input.file", "classpath:data/test.txt")
 				.addLong("timestamp", System.currentTimeMillis()).toJobParameters();
@@ -69,7 +69,5 @@ public class StagingJobTests {
 
 		List<Map<String, Object>> result = jdbcTemplate.queryForList("SELECT * from LEAD_INPUTS");
 		assertEquals(7, result.size() - before);
-		// System.err.println(result);
-
 	}
 }
