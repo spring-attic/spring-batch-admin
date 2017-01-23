@@ -13,6 +13,7 @@
 		<property name="jobService">
 			<bean class="org.springframework.aop.framework.ProxyFactoryBean">
 				<property name="targetName" value="jobService" />
+				<property name="proxyTargetClass" value="true" />
 			</bean>
 		</property>
 		<property name="defaultDomain" value="spring.application" />

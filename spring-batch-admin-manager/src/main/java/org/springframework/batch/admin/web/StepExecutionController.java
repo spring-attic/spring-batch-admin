@@ -15,16 +15,7 @@
  */
 package org.springframework.batch.admin.web;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TimeZone;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.springframework.batch.admin.domain.JobExecutionInfo;
 import org.springframework.batch.admin.domain.StepExecutionHistory;
 import org.springframework.batch.admin.domain.StepExecutionInfo;
@@ -44,11 +35,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.io.IOException;
+import java.util.*;
+
 /**
  * Controller for step executions.
- * 
+ *
  * @author Dave Syer
- * 
+ *
  */
 @Controller
 public class StepExecutionController {
