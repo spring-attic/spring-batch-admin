@@ -1,4 +1,6 @@
-Web application and API for managing and monitoring [Spring Batch](http://static.springsource.org/spring-batch) jobs.  The application consists of a web UI using Spring MVC, a Java service API and a RESTful (JSON) API.  The web application is highly customizable, and is an ideal platform for deploying Spring Batch jobs.  It can also be used to monitor jobs running in other processes. See the main [project website](http://static.springsource.org/spring-batch-admin) for more details.
+# NOTE: This project is being moved to the Spring Attic and is not recommended for new projects.  [Spring Cloud Data Flow](https://cloud.spring.io/spring-cloud-dataflow/) is the recommended replacement for managing and monitoring [Spring Batch](https://projects.spring.io/spring-batch/) jobs going forward.  You can read more about migrating to Spring Cloud Data Flow [here](https://github.com/spring-projects/spring-batch-admin/blob/master/MIGRATION.md).  
+
+Web application and API for managing and monitoring [Spring Batch](https://projects.spring.io/spring-batch/) jobs.  The application consists of a web UI using Spring MVC, a Java service API and a RESTful (JSON) API.  The web application is highly customizable, and is an ideal platform for deploying Spring Batch jobs.  It can also be used to monitor jobs running in other processes. See the main [project website](http://static.springsource.org/spring-batch-admin) for more details.
 
 # Getting Started Using SpringSource Tool Suite (STS)
 
