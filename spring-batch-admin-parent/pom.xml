@@ -6,10 +6,10 @@
 	<version>2.0.0.BUILD-SNAPSHOT</version>
 	<name>Spring Batch Admin Parent</name>
 	<description>A set of services (Java, JSON) and a UI (webapp) for managing and launching Spring Batch jobs.</description>
-	<url>http://docs.spring.io/spring-batch-admin</url>
+	<url>https://docs.spring.io/spring-batch-admin</url>
 	<packaging>pom</packaging>
 	<scm>
-		<url>http://github.com/spring-projects/spring-batch-admin</url>
+		<url>https://github.com/spring-projects/spring-batch-admin</url>
 		<connection>scm:git:git://github.com/spring-projects/spring-batch-admin.git</connection>
 		<developerConnection>scm:git:git://github.com/spring-projects/spring-batch-admin.git</developerConnection>
 	  <tag>HEAD</tag>
@@ -17,7 +17,7 @@
 	<licenses>
 		<license>
 			<name>Apache 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
 		</license>
 	</licenses>
 	<developers>

@@ -8,7 +8,7 @@
 	<version>2.0.0.BUILD-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<scm>
-		<url>http://github.com/spring-projects/spring-batch-admin</url>
+		<url>https://github.com/spring-projects/spring-batch-admin</url>
 		<connection>scm:git:git://github.com/spring-projects/spring-batch-admin.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/spring-projects/spring-batch-admin.git</developerConnection>
 	  <tag>HEAD</tag>
@@ -24,7 +24,7 @@
 	<licenses>
 		<license>
 			<name>Apache 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
 		</license>
 	</licenses>
 	<properties>
@@ -174,7 +174,7 @@
 				</plugin>
 				<plugin><!--
 						   run `mvn package assembly:assembly` to trigger assembly creation.
-						   see http://www.sonatype.com/books/mvnref-book/reference/assemblies-set-dist-assemblies.html -->
+						   see https://www.sonatype.com/books/mvnref-book/reference/assemblies-set-dist-assemblies.html -->
 				  <artifactId>maven-assembly-plugin</artifactId>
 				  <inherited>false</inherited>
 				  <executions>
@@ -418,19 +418,19 @@
 					<links>
 						<link>http://java.sun.com/j2ee/1.4/docs/api</link>
 						<link>http://java.sun.com/j2se/1.5.0/docs/api</link>
-						<link>http://jakarta.apache.org/commons/collections/apidocs-COLLECTIONS_3_0/</link>
-						<link>http://jakarta.apache.org/commons/dbcp/apidocs/</link>
-						<link>http://jakarta.apache.org/commons/fileupload/apidocs/</link>
-						<link>http://jakarta.apache.org/commons/httpclient/apidocs/</link>
-						<link>http://jakarta.apache.org/commons/pool/apidocs/</link>
-						<link>http://jakarta.apache.org/commons/logging/apidocs/</link>
+						<link>https://jakarta.apache.org/commons/collections/apidocs-COLLECTIONS_3_0/</link>
+						<link>https://jakarta.apache.org/commons/dbcp/apidocs/</link>
+						<link>https://jakarta.apache.org/commons/fileupload/apidocs/</link>
+						<link>https://jakarta.apache.org/commons/httpclient/apidocs/</link>
+						<link>https://jakarta.apache.org/commons/pool/apidocs/</link>
+						<link>https://jakarta.apache.org/commons/logging/apidocs/</link>
 						<link>http://junit.sourceforge.net/javadoc/</link>
-						<link>http://logging.apache.org/log4j/docs/api/</link>
-						<link>http://jakarta.apache.org/regexp/apidocs/</link>
-						<link>http://jakarta.apache.org/velocity/api/</link>
-						<link>http://static.springsource.org/spring/docs/3.0.x/javadoc-api/</link>
-						<link>http://static.springframework.org/spring-batch/apidocs/</link>
-						<link>http://static.springframework.org/spring-ws/site/apidocs/</link>
+						<link>https://logging.apache.org/log4j/docs/api/</link>
+						<link>https://jakarta.apache.org/regexp/apidocs/</link>
+						<link>https://jakarta.apache.org/velocity/api/</link>
+						<link>https://docs.spring.io/spring/docs/3.0.x/javadoc-api/</link>
+						<link>https://docs.spring.io/spring-batch/apidocs/</link>
+						<link>https://docs.spring.io/spring-ws/site/apidocs/</link>
 					</links>
 				</configuration>
 			</plugin>

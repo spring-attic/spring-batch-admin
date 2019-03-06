@@ -127,7 +127,7 @@
 		<repository>
 			<id>spring-milestones</id>
 			<name>Spring Maven Milestone Repository</name>
-			<url>http://s3.amazonaws.com/maven.springframework.org/milestone</url>
+			<url>https://s3.amazonaws.com/maven.springframework.org/milestone</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
