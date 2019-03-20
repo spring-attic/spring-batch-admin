@@ -14,7 +14,7 @@ Getting Started with Spring Batch Admin
 
   Ways to get the code:
 
-  	[[1]] Use the {{{http://docs.spring.io/downloads/nightly/release-download.php?project=BATCHADM}Spring Community Download}} page.
+  	[[1]] Use the {{{https://docs.spring.io/downloads/nightly/release-download.php?project=BATCHADM}Spring Community Download}} page.
 
     [[2]] Check out the source code from
   	{{{https://github.com/spring-projects/spring-batch-admin}Github}}.
@@ -38,7 +38,7 @@ Getting Started with Spring Batch Admin
 <repository>
 	<id>spring-snapshots</id>
 	<name>Spring Maven Snapshot Repository</name>
-	<url>http://s3.amazonaws.com/maven.springframework.org/snapshot</url>
+	<url>https://s3.amazonaws.com/maven.springframework.org/snapshot</url>
 </repository>
 +---
 

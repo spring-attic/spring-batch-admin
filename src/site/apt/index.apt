@@ -10,15 +10,15 @@ Spring Batch Admin
 * NOTE:  Spring Batch Admin will be moving into the Spring Attic with an end of life
   date to be December 31, 2017. The functionality of Spring Batch Admin has been mostly
   duplicated and expanded upon via
-  {{{http://cloud.spring.io/spring-cloud-dataflow/}Spring Cloud Data Flow}} and we encourage
+  {{{https://cloud.spring.io/spring-cloud-dataflow/}Spring Cloud Data Flow}} and we encourage
   all users to migrate to that going forward.  Documentation on that migration process can
   be found in the Spring Batch Admin Github repository
   {{{https://github.com/spring-projects/spring-batch-admin/blob/master/MIGRATION.md}here}}.
 
   Spring Batch Admin provides a web-based user interface that features 
-  an admin console for {{{http://projects.spring.io/spring-batch/}Spring Batch}}
+  an admin console for {{{https://projects.spring.io/spring-batch/}Spring Batch}}
   applications and systems.  It is an
-  open-source project from {{{http://www.spring.io}Spring}}.
+  open-source project from {{{https://www.spring.io}Spring}}.
   
   Here are some {{{screenshots.html}screenshots of the main use cases}}. 
 

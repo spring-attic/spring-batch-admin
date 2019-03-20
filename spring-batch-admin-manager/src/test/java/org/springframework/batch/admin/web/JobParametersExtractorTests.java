@@ -48,7 +48,7 @@ public class JobParametersExtractorTests {
 	@Test
 	public void testJobWithEscapedLongParameters() throws Exception {
 
-		String jobParameters = "a=http://one,b=ftp://two";
+		String jobParameters = "a=https://one,b=ftp://two";
 		String output = extractor.fromJobParameters(extractor.fromString(jobParameters));
 		assertEquals(StringUtils.commaDelimitedListToSet(jobParameters), StringUtils.commaDelimitedListToSet(output));
 
