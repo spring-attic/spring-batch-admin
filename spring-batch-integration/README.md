@@ -361,7 +361,7 @@ Report issues via the [Spring Batch Admin JIRA][].
 The Spring Integration Extensions Framework is released under version 2.0 of the [Apache License][] unless noted differently for individual extension Modules, but this should be the rare exception.
 
 [administrator guidelines]: https://github.com/spring-projects/spring-integration/wiki/Administrator-Guidelines
-[Apache License]: http://www.apache.org/licenses/LICENSE-2.0
+[Apache License]: https://www.apache.org/licenses/LICENSE-2.0
 [Pull requests]: http://help.github.com/send-pull-requests
 [Spring Batch]: http://projects.spring.io/spring-batch/
 [Spring Integration]: http://projects.spring.io/spring-integration/
