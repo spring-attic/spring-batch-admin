@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:p="http://www.springframework.org/schema/p"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+<beans xmlns="https://www.springframework.org/schema/beans" xmlns:p="https://www.springframework.org/schema/p"
+	xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance" xmlns:context="https://www.springframework.org/schema/context"
 	xsi:schemaLocation="
-		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+		https://www.springframework.org/schema/integration https://www.springframework.org/schema/integration/spring-integration.xsd
+		https://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		https://www.springframework.org/schema/batch https://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+		https://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
 
-	<job id="job1" xmlns="http://www.springframework.org/schema/batch" incrementer="incrementer">
+	<job id="job1" xmlns="https://www.springframework.org/schema/batch" incrementer="incrementer">
 		<step id="step1" parent="step" />
 	</job>
 
-	<job id="job2" xmlns="http://www.springframework.org/schema/batch">
+	<job id="job2" xmlns="https://www.springframework.org/schema/batch">
 		<step id="job2.step1">
 			<partition step="remoteStep" partitioner="partitioner" aggregator="aggregator">
 				<handler grid-size="2" task-executor="taskExecutor" />
@@ -19,7 +19,7 @@
 		</step>
 	</job>
 
-	<step id="step" xmlns="http://www.springframework.org/schema/batch">
+	<step id="step" xmlns="https://www.springframework.org/schema/batch">
 		<tasklet start-limit="100">
 			<chunk commit-interval="1" reader="itemReader" writer="itemWriter" />
 		</tasklet>
@@ -35,19 +35,19 @@
 		<property name="defaultDomain" value="spring.application" />
 	</bean>
 
-	<chain input-channel="input-files" output-channel="job-requests" xmlns="http://www.springframework.org/schema/integration">
+	<chain input-channel="input-files" output-channel="job-requests" xmlns="https://www.springframework.org/schema/integration">
 		<filter method="filter">
-			<bean class="org.springframework.batch.admin.integration.FileParentDirectoryFilter" xmlns="http://www.springframework.org/schema/beans">
+			<bean class="org.springframework.batch.admin.integration.FileParentDirectoryFilter" xmlns="https://www.springframework.org/schema/beans">
 				<property name="parentName" value="staging" />
 			</bean>
 		</filter>
 		<service-activator>
-			<bean class="org.springframework.batch.admin.integration.FileToJobLaunchRequestAdapter" xmlns="http://www.springframework.org/schema/beans">
+			<bean class="org.springframework.batch.admin.integration.FileToJobLaunchRequestAdapter" xmlns="https://www.springframework.org/schema/beans">
 				<property name="job" ref="job1" />
 			</bean>
 		</service-activator>
 		<transformer>
-			<bean class="org.springframework.batch.admin.integration.LastJobParametersJobLaunchRequestEnhancer" xmlns="http://www.springframework.org/schema/beans">
+			<bean class="org.springframework.batch.admin.integration.LastJobParametersJobLaunchRequestEnhancer" xmlns="https://www.springframework.org/schema/beans">
 				<property name="jobService" ref="jobService" />
 			</bean>
 		</transformer>

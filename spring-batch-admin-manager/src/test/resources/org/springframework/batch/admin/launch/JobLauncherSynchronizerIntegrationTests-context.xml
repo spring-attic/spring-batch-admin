@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:aop="http://www.springframework.org/schema/aop"
-	xmlns:beans="http://www.springframework.org/schema/beans"
-	xsi:schemaLocation="http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
-		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+<beans xmlns="https://www.springframework.org/schema/beans"
+	xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="https://www.springframework.org/schema/aop"
+	xmlns:beans="https://www.springframework.org/schema/beans"
+	xsi:schemaLocation="https://www.springframework.org/schema/batch https://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+		https://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd
+		https://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<import resource="classpath*:/META-INF/spring/batch/bootstrap/manager/env-context.xml" />
 	<import resource="classpath*:/META-INF/spring/batch/bootstrap/manager/data-source-context.xml" />
 	<import resource="classpath*:/META-INF/spring/batch/bootstrap/manager/execution-context.xml" />
 
-	<job id="test-job" xmlns="http://www.springframework.org/schema/batch">
+	<job id="test-job" xmlns="https://www.springframework.org/schema/batch">
 		<step id="step1">
 			<tasklet>
 				<beans:bean class="org.springframework.batch.admin.sample.ExampleTasklet"/>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans:beans xmlns="http://www.springframework.org/schema/integration"
-			 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			 xmlns:beans="http://www.springframework.org/schema/beans"
-			 xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd">
+<beans:beans xmlns="https://www.springframework.org/schema/integration"
+			 xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
+			 xmlns:beans="https://www.springframework.org/schema/beans"
+			 xsi:schemaLocation="https://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		https://www.springframework.org/schema/integration https://www.springframework.org/schema/integration/spring-integration.xsd">
 
 	<publish-subscribe-channel id="input-files" />
 	
@@ -13,13 +13,13 @@
 		default-request-channel="input-files" />
 
 	<bean id="fileService" class="org.springframework.batch.admin.service.LocalFileService"
-			xmlns="http://www.springframework.org/schema/beans">
+			xmlns="https://www.springframework.org/schema/beans">
 		<property name="fileSender" ref="fileSender" />
 		<property name="outputDir" value="${batch.files.upload-dir:#{systemProperties['java.io.tmpdir']}}"/>
 	</bean>
 
 	<bean id="customEditorConfigurer" class="org.springframework.beans.factory.config.CustomEditorConfigurer"
-			xmlns="http://www.springframework.org/schema/beans">
+			xmlns="https://www.springframework.org/schema/beans">
 		<property name="customEditors">
 			<map key-type="java.lang.String" value-type="java.lang.Class">
 				<entry key="org.springframework.core.io.Resource" value="org.springframework.batch.admin.service.FileServiceResourceConverter" />
@@ -29,7 +29,7 @@
 
 	<!-- Anonymous bean just to allow PropertyEditor to be wired -->
 	<bean class="org.springframework.batch.admin.service.FileServiceResourceConverter"
-			xmlns="http://www.springframework.org/schema/beans">
+			xmlns="https://www.springframework.org/schema/beans">
 		<property name="fileService" ref="fileService" />
 	</bean>
 
