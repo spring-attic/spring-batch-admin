@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.springframework.batch</groupId>
 	<artifactId>spring-batch-admin-parent</artifactId>
 	<version>1.3.2.BUILD-SNAPSHOT</version>
 	<name>Spring Batch Admin Parent</name>
 	<description>A set of services (Java, JSON) and a UI (webapp) for managing and launching Spring Batch jobs.</description>
-	<url>http://docs.spring.io/spring-batch-admin</url>
+	<url>https://docs.spring.io/spring-batch-admin</url>
 	<packaging>pom</packaging>
 	<scm>
-		<url>http://github.com/spring-projects/spring-batch-admin</url>
+		<url>https://github.com/spring-projects/spring-batch-admin</url>
 		<connection>scm:git:git://github.com/spring-projects/spring-batch-admin.git</connection>
 		<developerConnection>scm:git:git://github.com/spring-projects/spring-batch-admin.git</developerConnection>
     <tag>HEAD</tag>
@@ -697,7 +697,7 @@
 			<!-- This has to be defined and visible in default profile for bundlor to work -->
 			<id>spring-ebr</id>
 			<name>Spring Maven Release Repository</name>
-			<url>http://repository.springsource.com/maven/bundles/release</url>
+			<url>https://repository.springsource.com/maven/bundles/release</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
@@ -723,7 +723,7 @@
 		<repository>
 			<id>spring-milestones</id>
 			<name>Spring Maven Milestone Repository</name>
-			<url>http://maven.springframework.org/milestone/</url>
+			<url>https://maven.springframework.org/milestone/</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
@@ -731,12 +731,12 @@
 		<repository>
 			<id>spring-snapshots</id>
 			<name>Spring Maven Snapshot Repository</name>
-			<url>http://maven.springframework.org/snapshot/</url>
+			<url>https://maven.springframework.org/snapshot/</url>
 		</repository>
 		<repository>
 			<id>spring-ebr</id>
 			<name>Spring Enterprise Bundle Repository</name>
-			<url>http://repository.springsource.com/maven/bundles/release/</url>
+			<url>https://repository.springsource.com/maven/bundles/release/</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
@@ -744,7 +744,7 @@
 		<repository>
 			<id>objectstyle</id>
 			<name>ObjectStyle.org Repository</name>
-			<url>http://objectstyle.org/maven2</url>
+			<url>http://objectstyle.org/maven2/</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
