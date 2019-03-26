@@ -31,7 +31,7 @@ As of Spring Batch Integration 1.3, we start providing dedicated XML Namespace s
 <beans ...
 	xmlns:batch-int="http://www.springframework.org/schema/batch-integration"
 	xsi:schemaLocation="...
-		http://www.springframework.org/schema/batch-integration http://www.springframework.org/schema/batch-integration/spring-batch-integration.xsd">
+		http://www.springframework.org/schema/batch-integration https://www.springframework.org/schema/batch-integration/spring-batch-integration.xsd">
 	...
 </beans>
 ```
@@ -45,11 +45,11 @@ A fully configured Spring XML Application Context file for Spring Batch Integrat
 	xmlns:batch-int="http://www.springframework.org/schema/batch-integration"
 	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
 	xsi:schemaLocation="
-		http://www.springframework.org/schema/batch-integration http://www.springframework.org/schema/batch-integration/spring-batch-integration.xsd
-		http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
-		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
+		http://www.springframework.org/schema/batch-integration https://www.springframework.org/schema/batch-integration/spring-batch-integration.xsd
+		http://www.springframework.org/schema/batch https://www.springframework.org/schema/batch/spring-batch.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/integration https://www.springframework.org/schema/integration/spring-integration.xsd
+		http://www.springframework.org/schema/jdbc https://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
 	...
 </beans>
 ```
@@ -58,7 +58,7 @@ You can also append version numbers to the referenced XSD file such as:
 
 ```xml
 xsi:schemaLocation="...
-	http://www.springframework.org/schema/batch-integration http://www.springframework.org/schema/batch-integration/spring-batch-integration.xsd">
+	http://www.springframework.org/schema/batch-integration https://www.springframework.org/schema/batch-integration/spring-batch-integration.xsd">
 ```
 
 However, as a version-less declaration will always use the latest schema, we generally don't recommend appending the version number to the XSD name. Adding a version number, for instance, would create possibly issues when updating the *Spring Batch Integration* dependencies as they may require more recent versions of the XML schema.
@@ -67,16 +67,16 @@ However, as a version-less declaration will always use the latest schema, we gen
 
 When starting Batch Jobs using the core Spring Batch API you basically have 2 options:
 
-* Command line via the [CommandLineJobRunner](http://static.springsource.org/spring-batch/apidocs/org/springframework/batch/core/launch/support/CommandLineJobRunner.html)
-* Programatically via either *[JobOperator](http://static.springsource.org/spring-batch/apidocs/org/springframework/batch/core/launch/JobOperator.html).start()* or *[JobLauncher](http://static.springsource.org/spring-batch/apidocs/org/springframework/batch/core/launch/JobLauncher.html).run()*.
+* Command line via the [CommandLineJobRunner](https://docs.spring.io/spring-batch/apidocs/org/springframework/batch/core/launch/support/CommandLineJobRunner.html)
+* Programatically via either *[JobOperator](https://docs.spring.io/spring-batch/apidocs/org/springframework/batch/core/launch/JobOperator.html).start()* or *[JobLauncher](https://docs.spring.io/spring-batch/apidocs/org/springframework/batch/core/launch/JobLauncher.html).run()*.
 
-> For more information please also see the [Spring Batch][] reference documentation: [Running a Job](http://static.springsource.org/spring-batch/reference/html/configureJob.html#runningAJob)
+> For more information please also see the [Spring Batch][] reference documentation: [Running a Job](https://docs.spring.io/spring-batch/reference/html/configureJob.html#runningAJob)
 
 For example, you may want to use the *CommandLineJobRunner* when invoking Batch Jobs using a shell script. Alternatively, you may use the *JobOperator* directly, for example when using [Spring Batch][] as part of a web application. However, what about more complex use-cases? Maybe you need to poll a remote (S)FTP server to retrieve the data for the Batch Job. Or your application has to support multiple different data sources simultaneously. For example, you may receive data files not only via the web, but also FTP etc. Maybe additional transformation of the input files is needed before invoking [Spring Batch[]. 
 
 Therefore, it would be much more powerful to execute the batch job using [Spring Integration][] and its numerous adapters. For example, you can use a *File Inbound Channel Adapter* to monitor a directory in the file-system and start the Batch Job as soon as the input file arrives. Additionally you can create [Spring Integration][] flows that use multiple different adapters to easily ingest data for your Batch Jobs from multiple sources simultaneously using configuration only. Implementing all these scenarios with [Spring Integration][] is easy as it allow for an decoupled event-driven execution of the *JobLauncher*.
 
-*Spring Batch Integration* provides the *[JobLaunchingMessageHandler](http://static.springsource.org/spring-batch-admin/apidocs/org/springframework/batch/integration/launch/JobLaunchingMessageHandler.html)* that you can use to launch batch jobs. The input for the *JobLaunchingMessageHandler* is provided by a [Spring Integration][] message, which payload is of type *[JobLaunchRequest](http://static.springsource.org/spring-batch-admin/apidocs/org/springframework/batch/integration/launch/JobLaunchRequest.html)*. This class is a wrapper around the Job that needs to be launched as well as the [JobParameters](http://static.springsource.org/spring-batch/apidocs/org/springframework/batch/core/JobParameters.html) necessary to launch the Batch job. 
+*Spring Batch Integration* provides the *[JobLaunchingMessageHandler](https://docs.spring.io/spring-batch-admin/apidocs/org/springframework/batch/integration/launch/JobLaunchingMessageHandler.html)* that you can use to launch batch jobs. The input for the *JobLaunchingMessageHandler* is provided by a [Spring Integration][] message, which payload is of type *[JobLaunchRequest](https://docs.spring.io/spring-batch-admin/apidocs/org/springframework/batch/integration/launch/JobLaunchRequest.html)*. This class is a wrapper around the Job that needs to be launched as well as the [JobParameters](https://docs.spring.io/spring-batch/apidocs/org/springframework/batch/core/JobParameters.html) necessary to launch the Batch job. 
 
 The following image illustrates the typical [Spring Integration][] message flow in order to start a Batch job.
 
@@ -107,13 +107,13 @@ public class FileMessageToJobRequest {
 
 ### The JobExecution Response
 
-When a Batch Job is being executed, a [JobExecution](http://static.springsource.org/spring-batch/apidocs/org/springframework/batch/core/JobExecution.html) instance is returned. This instance can be used to determine the status of an execution. If a *JobExecution* was able to be created successfully, it will always be returned, regardless of whether or not the actual execution was successful.
+When a Batch Job is being executed, a [JobExecution](https://docs.spring.io/spring-batch/apidocs/org/springframework/batch/core/JobExecution.html) instance is returned. This instance can be used to determine the status of an execution. If a *JobExecution* was able to be created successfully, it will always be returned, regardless of whether or not the actual execution was successful.
 
-The exact behavior on how the *JobExecution* instance is returned depends on the provided *TaskExecutor*. If a **synchronous** (single-threaded) *TaskExecutor* implementation is used, the *JobExecution* response is only returned *after* the job completes. When using an **asynchronous** *TaskExecutor*, the *JobExecution* instance is returned immediately. Users can then take the *id* of *JobExecution* instance (*JobExecution#getJobId()*) and query the *JobRepository* for the job's updated status using the [JobExplorer](http://static.springsource.org/spring-batch/apidocs/org/springframework/batch/core/explore/JobExplorer.html). For more information, please refer to the *Spring Batch* reference documentation on [Querying the Repository](http://static.springsource.org/spring-batch/reference/html/configureJob.html#queryingRepository).
+The exact behavior on how the *JobExecution* instance is returned depends on the provided *TaskExecutor*. If a **synchronous** (single-threaded) *TaskExecutor* implementation is used, the *JobExecution* response is only returned *after* the job completes. When using an **asynchronous** *TaskExecutor*, the *JobExecution* instance is returned immediately. Users can then take the *id* of *JobExecution* instance (*JobExecution#getJobId()*) and query the *JobRepository* for the job's updated status using the [JobExplorer](https://docs.spring.io/spring-batch/apidocs/org/springframework/batch/core/explore/JobExplorer.html). For more information, please refer to the *Spring Batch* reference documentation on [Querying the Repository](https://docs.spring.io/spring-batch/reference/html/configureJob.html#queryingRepository).
 
 For more information regarding the returned *JobExecution* instance, please see: 
 
-* http://static.springsource.org/spring-batch/reference/html/domain.html#domainJobExecution
+* https://docs.spring.io/spring-batch/reference/html/domain.html#domainJobExecution
 
 ### Java Bean Configuration
 
@@ -152,39 +152,39 @@ As of *Spring Batch Integration 1.3*, dedicated XML namespace for launching *[Sp
 **id**
 Identifies the underlying Spring bean definition, which is an instance of either:
 
-* [EventDrivenConsumer](http://static.springsource.org/spring-integration/api/org/springframework/integration/endpoint/EventDrivenConsumer.html) or
-* [PollingConsumer](http://static.springsource.org/spring-integration/api/org/springframework/integration/endpoint/PollingConsumer.html)
+* [EventDrivenConsumer](https://docs.spring.io/spring-integration/api/org/springframework/integration/endpoint/EventDrivenConsumer.html) or
+* [PollingConsumer](https://docs.spring.io/spring-integration/api/org/springframework/integration/endpoint/PollingConsumer.html)
 
 The exact implementation depends on whether the component's input channel is a
 
-* [SubscribableChannel](http://static.springsource.org/spring-integration/api/org/springframework/integration/core/SubscribableChannel.html) or
-* [PollableChannel](http://static.springsource.org/spring-integration/api/org/springframework/integration/core/PollableChannel.html)
+* [SubscribableChannel](https://docs.spring.io/spring-integration/api/org/springframework/integration/core/SubscribableChannel.html) or
+* [PollableChannel](https://docs.spring.io/spring-integration/api/org/springframework/integration/core/PollableChannel.html)
 
 **auto-startup**
 Boolean flag to indicate that the endpoint should start automatically on startup. The default is *true*.
 
 **request-channel**
-The input [MessageChannel](http://static.springsource.org/spring-integration/api/org/springframework/integration/MessageChannel.html) of this endpoint.
+The input [MessageChannel](https://docs.spring.io/spring-integration/api/org/springframework/integration/MessageChannel.html) of this endpoint.
 
 **reply-channel**
-*Message Channel* to which the resulting *[JobExecution](http://static.springsource.org/spring-batch/apidocs/org/springframework/batch/core/JobExecution.html)* payload will be sent.
+*Message Channel* to which the resulting *[JobExecution](https://docs.spring.io/spring-batch/apidocs/org/springframework/batch/core/JobExecution.html)* payload will be sent.
 
 **reply-timeout**
 Allows you to specify how long this gateway will wait for the reply message to be sent successfully to the reply channel before throwing an exception. This attribute only applies when the channel might block, for example when using a bounded queue channel that is currently full.
 
-Also, keep in mind that when sending to a [DirectChannel](http://static.springsource.org/spring-integration/api/org/springframework/integration/channel/DirectChannel.html), the invocation will occur in the sender's thread. Therefore, the failing of the send operation may be caused by other components further downstream.
+Also, keep in mind that when sending to a [DirectChannel](https://docs.spring.io/spring-integration/api/org/springframework/integration/channel/DirectChannel.html), the invocation will occur in the sender's thread. Therefore, the failing of the send operation may be caused by other components further downstream.
 
-The *reply-timeout* attribute maps to the *sendTimeout* property of the underlying [MessagingTemplate](http://static.springsource.org/spring-integration/api/org/springframework/integration/core/MessagingTemplate.html) instance (org.springframework.integration.core.MessagingTemplate). The attribute will default, if not specified, to *-1*, meaning that by default, the Gateway will wait indefinitely. The value is specified in milliseconds.
+The *reply-timeout* attribute maps to the *sendTimeout* property of the underlying [MessagingTemplate](https://docs.spring.io/spring-integration/api/org/springframework/integration/core/MessagingTemplate.html) instance (org.springframework.integration.core.MessagingTemplate). The attribute will default, if not specified, to *-1*, meaning that by default, the Gateway will wait indefinitely. The value is specified in milliseconds.
 
 **job-launcher**
-Pass in a custom *[JobLauncher](http://static.springsource.org/spring-batch/apidocs/org/springframework/batch/core/launch/JobLauncher.html)* bean reference. This attribute is optional. If not specified the adapter will re-use the instance that is registered under the id *jobLauncher* (E.g. when using the [@EnableBatchProcessing](http://static.springsource.org/spring-batch/apidocs/org/springframework/batch/core/configuration/annotation/EnableBatchProcessing.html) annotation via JavaConfig). If no default instance exists an exception is thrown.
+Pass in a custom *[JobLauncher](https://docs.spring.io/spring-batch/apidocs/org/springframework/batch/core/launch/JobLauncher.html)* bean reference. This attribute is optional. If not specified the adapter will re-use the instance that is registered under the id *jobLauncher* (E.g. when using the [@EnableBatchProcessing](https://docs.spring.io/spring-batch/apidocs/org/springframework/batch/core/configuration/annotation/EnableBatchProcessing.html) annotation via JavaConfig). If no default instance exists an exception is thrown.
 
 **order**
-Specifies the order for invocation when this endpoint is connected as a subscriber to a [SubscribableChannel](http://static.springsource.org/spring-integration/api/org/springframework/integration/core/SubscribableChannel.html).
+Specifies the order for invocation when this endpoint is connected as a subscriber to a [SubscribableChannel](https://docs.spring.io/spring-integration/api/org/springframework/integration/core/SubscribableChannel.html).
 
 #### Sub-Elements
 
-When this Gateway is receiving messages from a [PollableChannel](http://static.springsource.org/spring-integration/api/org/springframework/integration/core/PollableChannel.html), you must either provide a global default Poller or provide a Poller sub-element to the 
+When this Gateway is receiving messages from a [PollableChannel](https://docs.spring.io/spring-integration/api/org/springframework/integration/core/PollableChannel.html), you must either provide a global default Poller or provide a Poller sub-element to the 
 *Job-Launching Gateway*:
 
 ```xml
@@ -200,13 +200,13 @@ As [Spring Batch][] jobs can run for long times, providing progress information 
 * Active polling or
 * Event-driven, using listeners.
 
-When starting a *Spring Batch* job asynchronously, e.g. by using the *Job-Launching Gateway*, a [JobExecution](http://static.springsource.org/spring-batch/apidocs/org/springframework/batch/core/JobExecution.html) instance is returned. Thus, *JobExecution#getJobId* can be used to continuously poll for status updates by retrieving updated instances of the *JobExecution* from the *JobRepository* using the *JobExplorer*. However, this is considered sub-optimal and an event-driven approach should be preferred.
+When starting a *Spring Batch* job asynchronously, e.g. by using the *Job-Launching Gateway*, a [JobExecution](https://docs.spring.io/spring-batch/apidocs/org/springframework/batch/core/JobExecution.html) instance is returned. Thus, *JobExecution#getJobId* can be used to continuously poll for status updates by retrieving updated instances of the *JobExecution* from the *JobRepository* using the *JobExplorer*. However, this is considered sub-optimal and an event-driven approach should be preferred.
 
 Therefore, [Spring Batch][] provides listeners such as:
 
-* [StepListener](http://static.springsource.org/spring-batch/apidocs/org/springframework/batch/core/StepListener.html)
-* [ChunkListener](http://static.springsource.org/spring-batch/apidocs/org/springframework/batch/core/ChunkListener.html)
-* [JobExecutionListener](http://static.springsource.org/spring-batch/apidocs/org/springframework/batch/core/JobExecutionListener.html)
+* [StepListener](https://docs.spring.io/spring-batch/apidocs/org/springframework/batch/core/StepListener.html)
+* [ChunkListener](https://docs.spring.io/spring-batch/apidocs/org/springframework/batch/core/ChunkListener.html)
+* [JobExecutionListener](https://docs.spring.io/spring-batch/apidocs/org/springframework/batch/core/JobExecutionListener.html)
 
 In the following example, a *Spring Batch* job was configured with *JobExecutionListener*. Thus, *Spring Integration* will receive and process any Batch job status changes. For example, the received *JobExecution* can be inspected using a *Router*. Job that are deemed recoverable may cause a restart of a Spring Batch job while a successful job completion may be routed to an Mail Outbound Channel Adapter, so that Email notification are sent out. 
 
@@ -238,8 +238,8 @@ The two integration approaches discussed so far suggest use-cases where [Spring 
 
 Asynchronous Processors help you to to scale the processing of items. In the asynchronous processor use-case, an *ItemProcessor* serves as a dispatcher, executing the *ItemProcessor*'s logic for an item on a new thread. The *Future* is passed to the *AsynchItemWriter* to be written once the processor completes.
 
-* [AsyncItemWriter](http://static.springsource.org/spring-batch/spring-batch-integration/apidocs/org/springframework/batch/integration/async/AsyncItemWriter.html)
-* [AsyncItemProcessor](http://static.springsource.org/spring-batch/spring-batch-integration/apidocs/org/springframework/batch/integration/async/AsyncItemProcessor.html)
+* [AsyncItemWriter](https://docs.spring.io/spring-batch/spring-batch-integration/apidocs/org/springframework/batch/integration/async/AsyncItemWriter.html)
+* [AsyncItemProcessor](https://docs.spring.io/spring-batch/spring-batch-integration/apidocs/org/springframework/batch/integration/async/AsyncItemProcessor.html)
 
 Therefore, you can increase performance by using asynchronous item processing, basically allowing you to implement *fork-join* scenarios. The *AsyncItemWriter* will gather the results and write back the chunk as soon as all the results become available.
 
@@ -247,23 +247,23 @@ Therefore, you can increase performance by using asynchronous item processing, b
 
 ![Alt text](src/reference/images/remote-chunking.png "Remote Chunking")
 
-Taking things one step further, one can also externalize the chunk processing using the *[ChunkMessageChannelItemWriter](http://static.springsource.org/spring-batch/spring-batch-integration/apidocs/org/springframework/batch/integration/chunk/ChunkMessageChannelItemWriter.html)* which is provided by *Spring Batch Integration*. That way you can send an entire chunk to a Gateway, reducing *Spring Batch*'s responsibilities to read items, group them and send out the chunk. Once sent, *Spring Batch* will continue the process of reading and grouping items, without waiting for the results. Rather it is the responsibility of the *ChunkMessageChannelItemWriter* to gather the results and integrate them back into the [Spring Batch][] process. 
+Taking things one step further, one can also externalize the chunk processing using the *[ChunkMessageChannelItemWriter](https://docs.spring.io/spring-batch/spring-batch-integration/apidocs/org/springframework/batch/integration/chunk/ChunkMessageChannelItemWriter.html)* which is provided by *Spring Batch Integration*. That way you can send an entire chunk to a Gateway, reducing *Spring Batch*'s responsibilities to read items, group them and send out the chunk. Once sent, *Spring Batch* will continue the process of reading and grouping items, without waiting for the results. Rather it is the responsibility of the *ChunkMessageChannelItemWriter* to gather the results and integrate them back into the [Spring Batch][] process. 
 
 Using *Spring Integration* you have full control over the concurrency of your processes, for instance by using *QueueChannel*s instead of *DirectChannels*. Furthermore, by relying on *Spring Integration*'s rich collection of Channel Adapters (E.g. JMS or AMQP), you can distribute chunks of a Batch job to external systems for processing.
 
-For more information, please also consult the *Spring Batch* manual, specifically the chapter on [Remote Chunking](http://static.springsource.org/spring-batch/reference/html/scalability.html#remoteChunking).
+For more information, please also consult the *Spring Batch* manual, specifically the chapter on [Remote Chunking](https://docs.spring.io/spring-batch/reference/html/scalability.html#remoteChunking).
 
 ### Remote Partitioning
 
 ![Alt text](src/reference/images/remote-partitioning.png "Remote Chunking")
 
-Remote Partitioning, on the other hand, is useful when the problem is not the processing of items, but the associated I/O represents the bottleneck. Using Remote Partitioning, work can be farmed out to slaves that execute complete [Spring Batch][] steps. Thus, each slave has its own *reader*, *processor* and *writer*. For this purpose, *Spring Batch Integration* provides the [MessageChannelPartitionHandler](http://static.springsource.org/spring-batch/apidocs/org/springframework/batch/integration/partition/MessageChannelPartitionHandler.html).
+Remote Partitioning, on the other hand, is useful when the problem is not the processing of items, but the associated I/O represents the bottleneck. Using Remote Partitioning, work can be farmed out to slaves that execute complete [Spring Batch][] steps. Thus, each slave has its own *reader*, *processor* and *writer*. For this purpose, *Spring Batch Integration* provides the [MessageChannelPartitionHandler](https://docs.spring.io/spring-batch/apidocs/org/springframework/batch/integration/partition/MessageChannelPartitionHandler.html).
 
-This implementation of the [PartitionHandler](http://static.springsource.org/spring-batch/apidocs/org/springframework/batch/core/partition/PartitionHandler.html) interface uses *MessageChannel* instances to send instructions to remote workers and receive their responses. This provides a nice abstraction from the transports (E.g. JMS or AMQP) being used to communicate with the remote workers.
+This implementation of the [PartitionHandler](https://docs.spring.io/spring-batch/apidocs/org/springframework/batch/core/partition/PartitionHandler.html) interface uses *MessageChannel* instances to send instructions to remote workers and receive their responses. This provides a nice abstraction from the transports (E.g. JMS or AMQP) being used to communicate with the remote workers.
 
 For more information, please see:
 
-* http://static.springsource.org/spring-batch/reference/html/scalability.html#partitioning
+* https://docs.spring.io/spring-batch/reference/html/scalability.html#partitioning
 
 # Resources
 
@@ -280,19 +280,19 @@ The book [Spring Integration in Action][] by Mark Fisher, Jonas Partner, Marius 
 ### Presentations
 
 * Introduction to Spring Integration and Spring Batch (Video)
-  - http://www.infoq.com/presentations/Spring-Integration-Batch
+  - https://www.infoq.com/presentations/Spring-Integration-Batch
 * Introduction to Spring Integration and Spring Batch (Slides)
-  - http://www.slideshare.net/hillert/introduction-to-spring-integration-and-spring-batch
+  - https://www.slideshare.net/hillert/introduction-to-spring-integration-and-spring-batch
 * Heavy Lifting in the Cloud with Spring Batch
   - https://github.com/mminella/Spring-Batch-Talk-2.0 - Slides and code
-  - http://www.youtube.com/watch?v=CYTj5YT7CZU - Video
+  - https://www.youtube.com/watch?v=CYTj5YT7CZU - Video
 * Deploying and Monitoring Spring Integration and Spring Batch Applications
-  - http://www.slideshare.net/DaveSyer/syer-monitoring-integration-and-batch
+  - https://www.slideshare.net/DaveSyer/syer-monitoring-integration-and-batch
 
 ### Articles
 
 * Spring Batch integration module for GridGain
-  - http://aloiscochard.blogspot.com/2010/04/spring-batch-integration-module-for.html
+  - https://aloiscochard.blogspot.com/2010/04/spring-batch-integration-module-for.html
 
 ## Related GitHub projects
 
@@ -362,12 +362,12 @@ The Spring Integration Extensions Framework is released under version 2.0 of the
 
 [administrator guidelines]: https://github.com/spring-projects/spring-integration/wiki/Administrator-Guidelines
 [Apache License]: http://www.apache.org/licenses/LICENSE-2.0
-[Pull requests]: http://help.github.com/send-pull-requests
-[Spring Batch]: http://projects.spring.io/spring-batch/
-[Spring Integration]: http://projects.spring.io/spring-integration/
+[Pull requests]: https://help.github.com/send-pull-requests
+[Spring Batch]: https://projects.spring.io/spring-batch/
+[Spring Integration]: https://projects.spring.io/spring-integration/
 [contributor guidelines]: https://github.com/spring-projects/spring-integration/wiki/Contributor-guidelines
 
-[Maven]: http://maven.apache.org
+[Maven]: https://maven.apache.org
 [Spring Batch Admin JIRA]: https://jira.spring.io/browse/BATCHADM
 
 [Spring Batch]: https://github.com/spring-projects/spring-batch
@@ -382,13 +382,13 @@ The Spring Integration Extensions Framework is released under version 2.0 of the
 [Spring XD]: https://github.com/spring-projects/spring-xd
 [Spring for Apache Hadoop]: https://github.com/spring-projects/spring-hadoop
 
-[Spring Integration in Action]: http://www.manning.com/fisher/
-[Pro Spring Integration]: http://www.apress.com/9781430233459
-[Pro Spring Batch]: http://www.apress.com/9781430234524
+[Spring Integration in Action]: https://www.manning.com/fisher/
+[Pro Spring Integration]: https://www.apress.com/9781430233459
+[Pro Spring Batch]: https://www.apress.com/9781430234524
 
-[Spring forums]: http://forum.spring.io/
-[spring-integration tag]: http://stackoverflow.com/questions/tagged/spring-integration
-[spring-batch tag]: http://stackoverflow.com/questions/tagged/spring-batch
+[Spring forums]: https://forum.spring.io/
+[spring-integration tag]: https://stackoverflow.com/questions/tagged/spring-integration
+[spring-batch tag]: https://stackoverflow.com/questions/tagged/spring-batch
 
-[Stack Overflow]: http://stackoverflow.com/faq
-[Commercial support]: http://springsource.com/support/springsupport
+[Stack Overflow]: https://stackoverflow.com/faq
+[Commercial support]: https://springsource.com/support/springsupport

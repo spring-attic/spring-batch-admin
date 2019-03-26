@@ -89,5 +89,5 @@ staging area by doing the deploy command again, but once it is
 released they are in Maven Central and they never come out again.
 
 [Sonatype]: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide
-[Downloads]: http://static.springframework.org/downloads/nightly/release-download.php?project=BATCHADM
-[CommunityDownloads]: http://docs.spring.io/downloads/nightly/release-download.php?project=BATCHADM
+[Downloads]: https://docs.spring.io/downloads/nightly/release-download.php?project=BATCHADM
+[CommunityDownloads]: https://docs.spring.io/downloads/nightly/release-download.php?project=BATCHADM
